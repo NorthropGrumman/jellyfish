@@ -64,6 +64,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    static final String NAME = "create-java-service-generated-config";
 
+   private static final String CONNECTOR_SUFFIX = "Connector";
+
    private ITransportConfigurationService transportConfigService;
    private IScenarioService scenarioService;
    private IJavaServiceGenerationService generateService;
@@ -74,12 +76,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    @Override
    protected void runDefaultPhase() {
+      IJellyFishCommandOptions options = getOptions();
       IModel model = getModel();
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
 
-      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(getOptions(), model);
-      GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, getOptions());
+      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
+      GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options);
       dto.setProjectDirectoryName(projectInfo.getDirectoryName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -97,17 +100,21 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
+      IProjectInformation connectorInfo = projectNamingService.getConnectorProjectName(options, model);
       String packagez = packageNamingService.getConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
             .setModelName(model.getName())
             .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
+            .setBaseProjectArtifactName(
+                  projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
             .setConnectorClassname(
-                  // TODO(Cameron): Is this really how we should be creating the connector name?
-                  buildConnectorName(projectNamingService.getConnectorProjectName(options, model), model.getName()));
+                  String.format("%s.%s.%s%s",
+                                connectorInfo.getGroupId(),
+                                connectorInfo.getArtifactId(),
+                                model.getName(), CONNECTOR_SUFFIX));
 
       dto.addSubscriberClassname("com.ngc.seaside.threateval.tps.bridge.pubsub.TrackPrioritySubscriber");
 
@@ -295,9 +302,5 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             CommonParameters.DEPLOYMENT_MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.CLEAN);
-   }
-
-   private String buildConnectorName(IProjectInformation info, String modelName) {
-      return info.getGroupId() + "." + info.getArtifactId() + "." + modelName + "Connector";
    }
 }
