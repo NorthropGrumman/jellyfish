@@ -159,10 +159,10 @@ public class SystemDescriptors {
       if (b == null) {
          throw new NullPointerException("b may not be null!");
       }
-      Set<IModel> aTypes = new HashSet<>();
-      Set<IModel> bTypes = new HashSet<>();
-      traverseRefinementHierarchy(a, aTypes::add);
-      traverseRefinementHierarchy(b, bTypes::add);
-      return !Sets.intersection(aTypes, bTypes).isEmpty();
+      Set<IModel> hierarchyOfA = new HashSet<>();
+      Set<IModel> hierarchyOfB = new HashSet<>();
+      traverseRefinementHierarchy(a, hierarchyOfA::add);
+      traverseRefinementHierarchy(b, hierarchyOfB::add);
+      return !Sets.intersection(hierarchyOfA, hierarchyOfB).isEmpty();
    }
 }
