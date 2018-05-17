@@ -27,32 +27,35 @@ public class TransportProviderDependenciesUtil {
    public static Set<String> getTransportProviderDependencies(IJellyFishCommandOptions options,
                                                               ITransportConfigurationService transportConfigService) {
 
-      IParameter<?> parameter = options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
-      if (parameter == null) {
+      IParameter<?> modelParameter = options.getParameters().getParameter(CommonParameters.MODEL.getName());
+      IParameter<?> deploymentParameter = options.getParameters()
+                                                 .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      if (modelParameter == null || deploymentParameter == null) {
          return Collections.emptySet();
       }
-      Optional<IModel> deploymentModel = options.getSystemDescriptor().findModel(parameter.getStringValue());
-      if (!deploymentModel.isPresent()) {
+      Optional<IModel> model = options.getSystemDescriptor().findModel(modelParameter.getStringValue());
+      Optional<IModel> deploymentModel = options.getSystemDescriptor().findModel(deploymentParameter.getStringValue());
+      if (!model.isPresent() || !deploymentModel.isPresent()) {
          return Collections.emptySet();
       }
       Set<TransportConfigurationType> types =
-            transportConfigService.getConfigurationTypes(options, deploymentModel.get());
+            transportConfigService.getConfigurationTypes(options, model.get());
 
       Set<String> dependencies = new LinkedHashSet<>();
 
       if (types.contains(TransportConfigurationType.MULTICAST)) {
          MulticastTransportProviderConfigDto multicastDto = new MulticastTransportProviderConfigDto(null, false);
-         dependencies.addAll(multicastDto.getDependencies(false, true, false));
+         dependencies.addAll(multicastDto.getDependencies(options, model.get(), false, true, false));
       }
       if (types.contains(TransportConfigurationType.REST)) {
          SparkTransportProviderConfigDto sparkDto = new SparkTransportProviderConfigDto(null, false);
-         dependencies.addAll(sparkDto.getDependencies(false, true, false));
+         dependencies.addAll(sparkDto.getDependencies(options, model.get(), false, true, false));
          HttpClientTransportProviderConfigDto httpClientDto = new HttpClientTransportProviderConfigDto(null, false);
-         dependencies.addAll(httpClientDto.getDependencies(false, true, false));
+         dependencies.addAll(httpClientDto.getDependencies(options, model.get(), false, true, false));
       }
       if (types.contains(TransportConfigurationType.ZERO_MQ)) {
          ZeroMqTransportProviderConfigDto zeroMqDto = new ZeroMqTransportProviderConfigDto(null, null, false);
-         dependencies.addAll(zeroMqDto.getDependencies(false, true, false));
+         dependencies.addAll(zeroMqDto.getDependencies(options, model.get(), false, true, false));
       }
 
       return dependencies;

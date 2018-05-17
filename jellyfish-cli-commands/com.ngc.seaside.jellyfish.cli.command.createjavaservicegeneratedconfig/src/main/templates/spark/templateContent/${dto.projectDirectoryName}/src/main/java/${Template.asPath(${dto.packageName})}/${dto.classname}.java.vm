@@ -1,11 +1,13 @@
 package ${dto.packageName};
 
-import com.ngc.seaside.service.transport.api.ITransportProvider;
-import com.ngc.seaside.service.transport.api.TransportConfiguration;
-import com.ngc.seaside.service.transport.impl.topic.spark.HttpVerb;
-import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic;
-import com.ngc.seaside.service.transport.impl.topic.spark.SparkTopics;
-import ${dto.topicsImport};
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportProvider"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.TransportConfiguration"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.spark.HttpVerb"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.spark.SparkTopics"))
+#foreach ($import in $dto.imports)
+import ${import};
+#end
 
 public class ${dto.classname} {
 
@@ -14,9 +16,8 @@ public class ${dto.classname} {
 
    public static void configure(TransportConfiguration config, ITransportProvider<SparkTopic> sparkProvider) {
 #foreach ($topic in $dto.topics)
-       SparkTopics factory = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port});
-
-       SparkTopic ${topic.variableName} = factory.when(HttpVerb.${topic.httpMethod})
+       SparkTopic ${topic.variableName} = SparkTopics.boundTo("${topic.networkInterface.name}", ${topic.port})
+             .when(HttpVerb.${topic.httpMethod})
              .onPath("${topic.path}")
              .accept("${topic.contentType}")
              .respondWithType("${topic.contentType}")
@@ -27,9 +28,7 @@ public class ${dto.classname} {
 #foreach ($entry in $dto.topics)
        config.whenReceiving()
              .withTransportProvider(sparkProvider)
-#foreach ($topic in $dto.topics)
-             .onPhysicalTopic(${topic.variableName})
-#end
+             .onPhysicalTopic(${entry.variableName})
              .enableResponses(true)
              .useApplicationTopic(t -> ${entry.name});
 

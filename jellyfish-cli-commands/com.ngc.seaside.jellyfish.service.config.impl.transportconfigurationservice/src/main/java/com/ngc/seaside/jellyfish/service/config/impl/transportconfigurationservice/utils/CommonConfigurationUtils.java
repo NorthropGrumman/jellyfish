@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
+package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils;
 
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
@@ -9,12 +9,13 @@ import java.util.Objects;
 
 public class CommonConfigurationUtils {
 
-   static final String
+   public static final String
          NETWORK_INTERFACE_QUALIFIED_NAME =
          "com.ngc.seaside.systemdescriptor.deployment.NetworkInterface";
-   static final String NETWORK_ADDRESS_QUALIFIED_NAME = "com.ngc.seaside.systemdescriptor.deployment.NetworkAddress";
-   static final String NETWORK_INTERFACE_NAME_FIELD_NAME = "name";
-   static final String NETWORK_ADDRESS_ADDRESS_FIELD_NAME = "address";
+   public static final String NETWORK_ADDRESS_QUALIFIED_NAME =
+         "com.ngc.seaside.systemdescriptor.deployment.NetworkAddress";
+   public static final String NETWORK_INTERFACE_NAME_FIELD_NAME = "name";
+   public static final String NETWORK_ADDRESS_ADDRESS_FIELD_NAME = "address";
 
    static NetworkInterface getNetworkInterface(IPropertyDataValue value) {
       if (!Objects.equals(NETWORK_INTERFACE_QUALIFIED_NAME, value.getReferencedDataType().getFullyQualifiedName())) {

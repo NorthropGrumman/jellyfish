@@ -58,9 +58,9 @@ public class ${dto.modelName}TransportConfiguration {
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
+
 #foreach ($transportProvider in $dto.transportProviders)
 #set ($methodName = ${StringUtils.capitalize($transportProvider.providerName)})
-
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
          target = "(component.name=${transportProvider.componentName})")
@@ -71,5 +71,6 @@ public class ${dto.modelName}TransportConfiguration {
    public void remove${methodName}(ITransportProvider<${transportProvider.topicType}> ref) {
       set${methodName}(null);
    }
+
 #end
 }

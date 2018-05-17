@@ -1,8 +1,10 @@
 package com.ngc.seaside.jellyfish.service.config.api;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
@@ -27,13 +29,13 @@ public interface ITransportConfigurationService {
    String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field);
 
    /**
-    * Returns the transport configuration types used by the given deployment model.
+    * Returns the transport configuration types used by the given model with the given deployment model.
     *
     * @param options         jellyfish options
-    * @param deploymentModel deployment model
+    * @param model           model
     * @return the transport configuration types used by the given deployment model
     */
-   Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel deploymentModel);
+   Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model);
 
    /**
     * Returns the multicast configurations for the given field, or an empty collection if there are no multicast
@@ -65,4 +67,16 @@ public interface ITransportConfigurationService {
     * @return the Zero MQ configurations for the given field
     */
    Collection<ZeroMqConfiguration> getZeroMqConfiguration(IJellyFishCommandOptions options, IDataReferenceField field);
+   
+   /**
+    * Returns the telemetry configurations for the given model, or an empty collection if there are no telemetry
+    * configurations for the model. The telemetry configurations can be found in the model's own properties, or as a 
+    * part in the jellyfish command option's {@link CommonParameters#DEPLOYMENT_MODEL}.
+    * 
+    * @param options jellyfish options
+    * @param model   model
+    * @return the telemetry configurations for the given model
+    */
+   Collection<TelemetryConfiguration> getTelemetryConfiguration(IJellyFishCommandOptions options, 
+            IModel model);
 }

@@ -223,7 +223,8 @@ public class ZeroMqTransportProviderConfigDto implements ITransportProviderConfi
    }
 
    @Override
-   public Set<String> getDependencies(boolean topic, boolean provider, boolean module) {
+   public Set<String> getDependencies(IJellyFishCommandOptions options, IModel model, boolean topic, boolean provider,
+            boolean module) {
       Set<String> dependencies = new LinkedHashSet<>();
       if (topic || provider) {
          dependencies.add(ZEROMQ_TOPIC_DEPENDENCY);

@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.d
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,10 +16,11 @@ public class GeneratedServiceConfigDto {
    private final IBuildManagementService buildManagementService;
    private final IJellyFishCommandOptions options;
 
-   private String modelName;
+   private IModel model;
    private String packageName;
    private String projectDirectoryName;
    private String baseProjectArtifactName;
+   private boolean hasTelemetry;
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
 
@@ -28,12 +30,16 @@ public class GeneratedServiceConfigDto {
       this.options = options;
    }
 
-   public String getModelName() {
-      return modelName;
+   public IModel getModel() {
+      return model;
    }
 
-   public GeneratedServiceConfigDto setModelName(String modelName) {
-      this.modelName = modelName;
+   public String getModelName() {
+      return model.getName();
+   }
+
+   public GeneratedServiceConfigDto setModel(IModel model) {
+      this.model = model;
       return this;
    }
 
@@ -61,6 +67,15 @@ public class GeneratedServiceConfigDto {
 
    public GeneratedServiceConfigDto setProjectDirectoryName(String projectDirectoryName) {
       this.projectDirectoryName = projectDirectoryName;
+      return this;
+   }
+
+   public boolean hasTelemetry() {
+      return hasTelemetry;
+   }
+
+   public GeneratedServiceConfigDto setTelemetry(boolean hasTelemetry) {
+      this.hasTelemetry = hasTelemetry;
       return this;
    }
 

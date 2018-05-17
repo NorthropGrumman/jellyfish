@@ -101,7 +101,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-            .setModelName(model.getName())
+            .setModel(model)
             .setPackageName(packagez)
             .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
                                               .getArtifactId())
@@ -221,7 +221,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             String templateName = transportProvider.getTemplate();
             templateService.unpack(templateName, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(true, true, true));
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(options, model, true, true, true));
             clean = false;
          }
       }
