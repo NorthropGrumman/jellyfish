@@ -127,7 +127,9 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                   String.format("%s.%s.%s%s",
                                 connectorInfo.getGroupId(),
                                 connectorInfo.getArtifactId(),
-                                model.getName(), CONNECTOR_SUFFIX));
+                                model.getName(), CONNECTOR_SUFFIX))
+            .setTelemetry(transportConfigService.getConfigurationTypes(getOptions(), model)
+                                .contains(TransportConfigurationType.TELEMETRY));
 
       BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
       List<CorrelationDto> correlationMethodDtos = baseServiceDto.getCorrelationMethods();
@@ -167,7 +169,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       if (dto.hasTelemetry()) {
          TelemetryDto telemetry = new TelemetryDto().setBaseDto(dto)
-                                                    .setClassname(model.getName() + "TelemetryConfiguration");
+               .setClassname(model.getName() + "TelemetryConfiguration");
          DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
          telemetryParams.addParameter(new DefaultParameter<>("dto", telemetry));
          unpackSuffixedTemplate(TELEMETRY_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);
