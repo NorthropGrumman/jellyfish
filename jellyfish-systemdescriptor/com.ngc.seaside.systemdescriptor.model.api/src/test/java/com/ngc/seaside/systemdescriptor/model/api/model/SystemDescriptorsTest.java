@@ -15,9 +15,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -211,5 +213,27 @@ public class SystemDescriptorsTest {
                   SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
       assertFalse("field should not be a primitive data field!",
                   SystemDescriptors.isPrimitiveDataFieldDeclaration(dataField));
+   }
+
+   @Test
+   public void testDoesDetermineIfModelsAreRelated() {
+      IModel a = mock(IModel.class);
+      IModel b = mock(IModel.class);
+      IModel c = mock(IModel.class);
+
+      when(a.getRefinedModel()).thenReturn(Optional.empty());
+      when(b.getRefinedModel()).thenReturn(Optional.of(a));
+      when(c.getRefinedModel()).thenReturn(Optional.empty());
+
+      assertTrue("b refines a so models should be related!",
+                 SystemDescriptors.areModelsRelated(a, b));
+      assertTrue("b refines a so models should be related!",
+                 SystemDescriptors.areModelsRelated(b, a));
+      assertFalse("neither a nor c refines any models so they should not be related!",
+                  SystemDescriptors.areModelsRelated(a, c));
+      assertFalse("neither a nor c refines any models so they should not be related!",
+                  SystemDescriptors.areModelsRelated(c, a));
+      assertTrue("a model should be related to itself!",
+                 SystemDescriptors.areModelsRelated(a, a));
    }
 }

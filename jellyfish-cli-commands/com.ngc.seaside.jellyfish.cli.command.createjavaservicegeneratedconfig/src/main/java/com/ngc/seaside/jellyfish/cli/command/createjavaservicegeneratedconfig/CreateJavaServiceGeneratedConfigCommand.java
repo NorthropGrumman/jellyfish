@@ -19,11 +19,13 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dt
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetry.TelemetryDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -62,6 +64,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    static final String CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String CONFIG_BUILD_TEMPLATE_SUFFIX = "build";
+   static final String TELEMETRY_CONFIG_TEMPLATE_SUFFIX = "telemetry";
 
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
@@ -113,11 +116,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-            .setModelName(model.getName())
+            .setModel(model)
             .setPackageName(packagez)
             .setBaseProjectArtifactName(
                   projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
+            .setTelemetry(transportConfigService.getConfigurationTypes(getOptions(), model)
+                          .contains(TransportConfigurationType.TELEMETRY))
             .setConnectorClassname(
                   String.format("%s.%s.%s%s",
                                 connectorInfo.getGroupId(),
@@ -159,6 +164,15 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("StringUtils", StringUtils.class));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
+
+      if (dto.hasTelemetry()) {
+         TelemetryDto telemetry = new TelemetryDto().setBaseDto(dto)
+                                                    .setClassname(model.getName() + "TelemetryConfiguration");
+         DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
+         telemetryParams.addParameter(new DefaultParameter<>("dto", telemetry));
+         unpackSuffixedTemplate(TELEMETRY_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);
+      }
+
       registerProject(projectInfo);
    }
 
@@ -275,7 +289,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             String templateName = transportProvider.getTemplate();
             templateService.unpack(templateName, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(true, false, false));
+            dto.addTransportProviderDependencies(transportProvider.getDependencies(options, model, true, false, false));
             clean = false;
          }
       }

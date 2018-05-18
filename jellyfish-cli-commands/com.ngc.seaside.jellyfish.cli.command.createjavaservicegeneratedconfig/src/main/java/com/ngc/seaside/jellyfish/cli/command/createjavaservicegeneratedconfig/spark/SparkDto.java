@@ -3,11 +3,13 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.s
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SparkDto {
    private GeneratedServiceConfigDto baseDto;
-   private String topicsImport;
+   private Set<String> imports = new LinkedHashSet<>();
    private List<SparkTopicDto> topics = new ArrayList<>();
    private String classname;
 
@@ -21,12 +23,12 @@ public class SparkDto {
       return this;
    }
 
-   public String getTopicsImport() {
-      return topicsImport;
+   public Set<String> getImports() {
+      return imports;
    }
 
-   public SparkDto setTopicsImport(String topicsImport) {
-      this.topicsImport = topicsImport;
+   public SparkDto addImport(String imp) {
+      this.imports.add(imp);
       return this;
    }
 

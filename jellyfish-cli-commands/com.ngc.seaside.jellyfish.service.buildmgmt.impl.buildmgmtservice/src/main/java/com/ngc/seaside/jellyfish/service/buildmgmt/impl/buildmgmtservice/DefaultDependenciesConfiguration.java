@@ -72,7 +72,10 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.impl.topic.zeromq"),
                       artifact("service.transport.impl.provider.zeromq"),
                       artifact("service.transport.impl.provider.zeromq.module"),
-                      artifact("service.readiness.impl.defaultreadinessservice"));
+                      artifact("service.readiness.impl.defaultreadinessservice"))
+                      artifact("service.telemetry.api"),
+                      artifact("service.telemetry.impl.basetelemetryservice"),
+                      artifact("service.telemetry.impl.jsontelemetryservice"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {
@@ -166,6 +169,13 @@ public class DefaultDependenciesConfiguration {
             .version("4.1.0")
             .includes(artifact("guice")
                             .groupId("com.google.inject")
+                            .scope(DependencyScope.BUILD));
+
+      config.addGroup()
+            .versionPropertyName("gsonVersion")
+            .version("2.8.2")
+            .includes(artifact("gson")
+                            .groupId("com.google.code.gson")
                             .scope(DependencyScope.BUILD));
    }
 

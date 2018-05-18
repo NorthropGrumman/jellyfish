@@ -31,6 +31,9 @@ dependencies {
    bundles "com.ngc.seaside:service.transport.api:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
    bundles "com.ngc.seaside:service.readiness.impl.defaultreadinessservice:$starfishVersion"
+   bundles "com.ngc.seaside:service.telemetry.api:$starfishVersion"
+   bundles "com.ngc.seaside:service.telemetry.impl.basetelemetryservice:$starfishVersion"
+   bundles "com.ngc.seaside:service.telemetry.impl.jsontelemetryservice:$starfishVersion"
 
    blocs "com.ngc.blocs:api:$blocsCoreVersion"
    blocs "com.ngc.blocs:file.impl.common.fileutilities:$blocsCoreVersion"
@@ -58,6 +61,7 @@ dependencies {
    thirdParty 'commons-collections:commons-collections:3.2.1'
    thirdParty 'commons-logging:commons-logging-osgi:1.1.1'
    thirdParty "com.google.protobuf:protobuf-java:$protobufVersion"
+   thirdParty "com.google.code.gson:gson:$gsonVersion"
 
    platform "com.ngc.blocs:service.deployment.impl.common.autodeploymentservice:$blocsCoreVersion"
    platform "org.eclipse.equinox:equinox-common:3.6.200.v20130402-1505"

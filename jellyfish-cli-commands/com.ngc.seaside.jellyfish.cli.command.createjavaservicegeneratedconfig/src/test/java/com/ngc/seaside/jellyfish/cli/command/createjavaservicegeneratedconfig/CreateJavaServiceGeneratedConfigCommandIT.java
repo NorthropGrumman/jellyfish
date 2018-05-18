@@ -321,6 +321,39 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       assertTrue(Files.isRegularFile(multicastFile));
    }
 
+   @Test
+   public void restTelemetry() throws Throwable {
+      addGeneratedConfigTemplatePath(SPARK_TEMPLATE);
+      addGeneratedConfigTemplatePath(CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
+            + CreateJavaServiceGeneratedConfigCommand.TELEMETRY_CONFIG_TEMPLATE_SUFFIX);
+
+      transportConfigService.addRestTelemetryConfiguration("TrackPriorityService", "localhost", "0.0.0.0", 52412,
+                                                  "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
+
+      run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+
+      Path projectDir =
+            outputDirectory.getRoot()
+                  .toPath()
+                  .resolve("com.ngc.seaside.threateval.trackpriorityservice.config");
+      Path srcDir =
+            projectDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
+                                         "trackpriorityservice", "config"));
+
+      Path buildFile = projectDir.resolve("build.generated.gradle");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
+      Path restFile = srcDir.resolve("TrackPriorityServiceTelemetryConfiguration.java");
+      Files.walk(srcDir).forEach(System.out::println);
+      assertTrue(Files.isRegularFile(buildFile));
+      assertTrue(Files.isRegularFile(configurationFile));
+      assertTrue(Files.isRegularFile(restFile));
+   }
+   
    private void run(Object... args) {
       for (int i = 0; i < args.length; i += 2) {
          String parameterName = args[i].toString();
