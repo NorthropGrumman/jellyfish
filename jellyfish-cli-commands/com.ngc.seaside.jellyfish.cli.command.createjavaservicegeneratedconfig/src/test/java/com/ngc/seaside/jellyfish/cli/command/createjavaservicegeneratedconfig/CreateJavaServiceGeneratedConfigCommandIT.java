@@ -240,11 +240,11 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
                                                   "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
-          "com.ngc.seaside.threateval.TrackPriorityService",
-          CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-          CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-          outputDirectory.getRoot().getAbsolutePath(),
-          CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
 
       Path projectDir =
             outputDirectory.getRoot()
@@ -343,11 +343,11 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
                                                            HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
-          "com.ngc.seaside.threateval.TrackPriorityService",
-          CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
-          CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
-          outputDirectory.getRoot().getAbsolutePath(),
-          CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
+            "com.ngc.seaside.threateval.TrackPriorityService",
+            CreateJavaServiceGeneratedConfigCommand.DEPLOYMENT_MODEL_PROPERTY, "",
+            CreateJavaServiceGeneratedConfigCommand.OUTPUT_DIRECTORY_PROPERTY,
+            outputDirectory.getRoot().getAbsolutePath(),
+            CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED);
 
       Path projectDir =
             outputDirectory.getRoot()
