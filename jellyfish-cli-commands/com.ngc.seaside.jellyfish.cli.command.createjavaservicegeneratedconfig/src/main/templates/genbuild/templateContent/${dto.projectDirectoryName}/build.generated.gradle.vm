@@ -9,7 +9,6 @@ dependencies {
 #end
    implementation "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
    implementation "${dto.getFormattedDependency('com.ngc.blocs:properties.resource.impl.common.propertiesresource')}"
-   implementation "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
    implementation "${dto.getFormattedDependency('org.osgi:osgi.core')}"
    implementation "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
    implementation "${dto.getFormattedDependency('com.google.guava:guava')}"
