@@ -9,6 +9,11 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BasicPubSubDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.CorrelationDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.InputDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
@@ -48,6 +53,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -67,6 +73,10 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    static final String NAME = "create-java-service-generated-config";
 
+   private static final String CONNECTOR_SUFFIX = "Connector";
+   private static final String SUBSCRIBER_SUFFIX = "Subscriber";
+
+   private IBaseServiceDtoFactory baseServiceDtoFactory;
    private ITransportConfigurationService transportConfigService;
    private IScenarioService scenarioService;
    private IJavaServiceGenerationService generateService;
@@ -77,12 +87,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    @Override
    protected void runDefaultPhase() {
+      IJellyFishCommandOptions options = getOptions();
       IModel model = getModel();
       Path outputDirectory = getOutputDirectory();
       boolean clean = getBooleanParameter(CLEAN_PROPERTY);
 
-      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(getOptions(), model);
-      GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, getOptions());
+      IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
+      GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options);
       dto.setProjectDirectoryName(projectInfo.getDirectoryName());
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
@@ -100,17 +111,42 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getGeneratedConfigProjectName(options, model);
+      IProjectInformation connectorInfo = projectNamingService.getConnectorProjectName(options, model);
       String packagez = packageNamingService.getConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
             .setModel(model)
             .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-                                              .getArtifactId())
+            .setBaseProjectArtifactName(
+                  projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
             .setProjectDirectoryName(outputDir.relativize(projectDir).toString())
             .setTelemetry(transportConfigService.getConfigurationTypes(getOptions(), model)
-               .contains(TransportConfigurationType.TELEMETRY));
+                          .contains(TransportConfigurationType.TELEMETRY))
+            .setConnectorClassname(
+                  String.format("%s.%s.%s%s",
+                                connectorInfo.getGroupId(),
+                                connectorInfo.getArtifactId(),
+                                model.getName(), CONNECTOR_SUFFIX))
+            .setTelemetry(transportConfigService.getConfigurationTypes(getOptions(), model)
+                                .contains(TransportConfigurationType.TELEMETRY));
+
+      BaseServiceDto baseServiceDto = baseServiceDtoFactory.newDto(getOptions(), model);
+      List<CorrelationDto> correlationMethodDtos = baseServiceDto.getCorrelationMethods();
+      List<BasicPubSubDto> pubSubMethods = baseServiceDto.getBasicPubSubMethods();
+      String packageName = packageNamingService.getPubSubBridgePackageName(options, model);
+
+      for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
+         for (InputDto inputDto : correlationMethodDto.getInputs()) {
+            dto.addSubscriber(
+                  String.format("%s.%s%s", packageName, inputDto.getType(), SUBSCRIBER_SUFFIX));
+         }
+      }
+
+      for (BasicPubSubDto pubSubMethod : pubSubMethods) {
+         dto.addSubscriber(
+               String.format("%s.%s%s", packageName, pubSubMethod.getInput().getType(), SUBSCRIBER_SUFFIX));
+      }
 
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
@@ -130,15 +166,15 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("StringUtils", StringUtils.class));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
-      
+
       if (dto.hasTelemetry()) {
          TelemetryDto telemetry = new TelemetryDto().setBaseDto(dto)
-                                                    .setClassname(model.getName() + "TelemetryConfiguration");
+               .setClassname(model.getName() + "TelemetryConfiguration");
          DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
          telemetryParams.addParameter(new DefaultParameter<>("dto", telemetry));
          unpackSuffixedTemplate(TELEMETRY_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);
       }
-      
+
       registerProject(projectInfo);
    }
 
@@ -210,6 +246,14 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
    public void removeScenarioService(IScenarioService ref) {
       setScenarioService(null);
+   }
+
+   public void setBaseServiceDtoFactory(IBaseServiceDtoFactory ref) {
+      this.baseServiceDtoFactory = ref;
+   }
+
+   public void removeBaseServiceDtoFactory(IBaseServiceDtoFactory ref) {
+      setBaseServiceDtoFactory(null);
    }
 
    @SuppressWarnings({"unchecked", "rawtypes"})
@@ -306,5 +350,4 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.CLEAN);
    }
-   
 }

@@ -5,6 +5,8 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.BaseServiceDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.IBaseServiceDtoFactory;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedBuildManagementService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedPackageNamingService;
@@ -39,6 +41,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -48,6 +51,7 @@ import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedco
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto.SPARK_TEMPLATE;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto.ZEROMQ_TEMPLATE;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,6 +73,9 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
 
    private MockedTemplateService templateService;
 
+   @Mock
+   private IBaseServiceDtoFactory baseServiceDtoFactory;
+
    private IProjectNamingService projectService = new MockedProjectNamingService();
 
    private IPackageNamingService packageService = new MockedPackageNamingService();
@@ -82,7 +89,6 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    private IScenarioService scenarioService = new MockedScenarioService();
 
    /**
-    *
     * @return Pub Sub Model used for testing
     */
    public static Model newPubSubModelForTesting() {
@@ -116,7 +122,6 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    }
 
    /**
-    *
     * @return Response Model used for testing
     */
    public static Model newRequestResponseModelForTesting() {
@@ -175,11 +180,17 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       when(jellyFishCommandOptions.getParameters()).thenReturn(parameters);
       when(jellyFishCommandOptions.getSystemDescriptor()).thenReturn(systemDescriptor);
 
+      BaseServiceDto baseServiceDto = mock(BaseServiceDto.class);
+      when(baseServiceDto.getCorrelationMethods()).thenReturn(new ArrayList<>());
+      when(baseServiceDto.getBasicPubSubMethods()).thenReturn(new ArrayList<>());
+      when(baseServiceDtoFactory.newDto(any(), any())).thenReturn(baseServiceDto);
+
       command = new CreateJavaServiceGeneratedConfigCommand();
       command.setLogService(logService);
       command.setProjectNamingService(projectService);
       command.setPackageNamingService(packageService);
       command.setTemplateService(templateService);
+      command.setBaseServiceDtoFactory(baseServiceDtoFactory);
       command.setBuildManagementService(buildManagementService);
       command.setJavaServiceGenerationService(generateService);
       command.setTransportConfigurationService(transportConfigService);
@@ -325,10 +336,11 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
    public void restTelemetry() throws Throwable {
       addGeneratedConfigTemplatePath(SPARK_TEMPLATE);
       addGeneratedConfigTemplatePath(CreateJavaServiceGeneratedConfigCommand.class.getPackage().getName() + "-"
-            + CreateJavaServiceGeneratedConfigCommand.TELEMETRY_CONFIG_TEMPLATE_SUFFIX);
+                                     + CreateJavaServiceGeneratedConfigCommand.TELEMETRY_CONFIG_TEMPLATE_SUFFIX);
 
       transportConfigService.addRestTelemetryConfiguration("TrackPriorityService", "localhost", "0.0.0.0", 52412,
-                                                  "/trackPriorityRequest", "application/x-protobuf", HttpMethod.POST);
+                                                           "/trackPriorityRequest", "application/x-protobuf",
+                                                           HttpMethod.POST);
 
       run(CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,
             "com.ngc.seaside.threateval.TrackPriorityService",
@@ -348,12 +360,11 @@ public class CreateJavaServiceGeneratedConfigCommandIT {
       Path buildFile = projectDir.resolve("build.generated.gradle");
       Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
       Path restFile = srcDir.resolve("TrackPriorityServiceTelemetryConfiguration.java");
-      Files.walk(srcDir).forEach(System.out::println);
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
       assertTrue(Files.isRegularFile(restFile));
    }
-   
+
    private void run(Object... args) {
       for (int i = 0; i < args.length; i += 2) {
          String parameterName = args[i].toString();

@@ -26,6 +26,7 @@ dependencies {
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.request.impl.microservicerequestservice')}"
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
    bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.readiness.impl.defaultreadinessservice')}"
 #foreach ($dependency in $dto.transportProviderDependencies)
    bundles "${dto.getFormattedDependency($dependency)}"
 #end

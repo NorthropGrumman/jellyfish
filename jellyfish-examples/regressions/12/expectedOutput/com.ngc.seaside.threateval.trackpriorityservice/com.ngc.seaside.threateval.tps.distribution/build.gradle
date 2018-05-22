@@ -30,6 +30,7 @@ dependencies {
    bundles "com.ngc.seaside:service.request.impl.microservicerequestservice:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.api:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.defaulttransportservice:$starfishVersion"
+   bundles "com.ngc.seaside:service.readiness.impl.defaultreadinessservice:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.topic.spark:$starfishVersion"
    bundles "com.ngc.seaside:service.telemetry.api:$starfishVersion"
    bundles "com.ngc.seaside:service.transport.impl.provider.spark:$starfishVersion"

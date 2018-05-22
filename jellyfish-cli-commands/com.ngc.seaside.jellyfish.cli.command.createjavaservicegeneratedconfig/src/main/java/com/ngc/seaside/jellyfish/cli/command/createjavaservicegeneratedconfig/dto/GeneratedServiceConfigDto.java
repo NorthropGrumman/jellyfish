@@ -20,9 +20,12 @@ public class GeneratedServiceConfigDto {
    private String packageName;
    private String projectDirectoryName;
    private String baseProjectArtifactName;
+   private String connectorClassname;
    private boolean hasTelemetry;
+
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
+   private List<String> subscribers = new ArrayList<>();
 
    public GeneratedServiceConfigDto(IBuildManagementService buildManagementService,
                                     IJellyFishCommandOptions options) {
@@ -97,8 +100,25 @@ public class GeneratedServiceConfigDto {
       return this;
    }
 
+   public String getConnectorClassname() {
+      return this.connectorClassname;
+   }
+
+   public GeneratedServiceConfigDto setConnectorClassname(String connectorClassname) {
+      this.connectorClassname = connectorClassname;
+      return this;
+   }
+
+   public List<String> getSubscribers() {
+      return subscribers;
+   }
+
+   public GeneratedServiceConfigDto addSubscriber(String subscriberClassname) {
+      this.subscribers.add(subscriberClassname);
+      return this;
+   }
+
    /**
-    *
     * @param groupAndArtifactId String of the group ID that you want formatted
     * @return String of formatted dependency
     */
