@@ -5,6 +5,8 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 public class TelemetryDto {
 
+   public static final String ITELEMETRY_SERVICE = "com.ngc.seaside.service.telemetry.api.ITelemetryService";
+
    private GeneratedServiceConfigDto baseDto;
    private String classname;
 
@@ -31,6 +33,12 @@ public class TelemetryDto {
 
    public TelemetryDto setBaseDto(GeneratedServiceConfigDto baseDto) {
       this.baseDto = baseDto;
+      return this;
+   }
+
+   public TelemetryDto addReadinessConfigurations() {
+      this.baseDto.addRequiredReadinessClasses(ITELEMETRY_SERVICE);
+      this.baseDto.addRequiredReadinessClasses(getPackageName() + "." + getClassname());
       return this;
    }
 
