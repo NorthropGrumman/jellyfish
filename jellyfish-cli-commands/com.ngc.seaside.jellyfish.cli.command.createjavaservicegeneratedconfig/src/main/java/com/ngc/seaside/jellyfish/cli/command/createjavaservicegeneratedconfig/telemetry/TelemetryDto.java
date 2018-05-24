@@ -36,6 +36,11 @@ public class TelemetryDto {
       return this;
    }
 
+   /**
+    * Adds the telemetry service and telemetry configuration classes to the readiness configuration.
+    * 
+    * @return this
+    */
    public TelemetryDto addReadinessConfigurations() {
       this.baseDto.addRequiredReadinessClasses(ITELEMETRY_SERVICE);
       this.baseDto.addRequiredReadinessClasses(getPackageName() + "." + getClassname());
