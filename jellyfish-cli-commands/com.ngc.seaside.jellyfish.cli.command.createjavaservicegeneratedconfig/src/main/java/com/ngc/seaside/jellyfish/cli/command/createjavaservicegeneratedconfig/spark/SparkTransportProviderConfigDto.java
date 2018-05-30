@@ -82,51 +82,51 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
                .collect(Collectors.toCollection(LinkedHashSet::new));
       
       int count = 1;
-      for (RestTelemetryConfiguration configuration : telemetryConfigurations) {
-         RestConfiguration restConfig = configuration.getConfig();
-         String variableName = StringUtils.uncapitalize(model.getName())
-                               + "TelemetryRequest"
-                               + (telemetryConfigurations.size() > 1 ? count : "");
-         SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(restConfig.getNetworkAddress())
-               .setNetworkInterface(restConfig.getNetworkInterface())
-               .setPort(restConfig.getPort())
-               .setHttpMethod(restConfig.getHttpMethod())
-               .setPath(restConfig.getPath())
-               .setContentType(restConfig.getContentType())
-                                                     .setVariableName(variableName)
-                                                     .setName(TELEMETRY_TOPIC);
-
-         sparkDto.addTopic(topicDto);
-         sparkDto.addImport(TELEMETRY_SERVICE_QUALIFIED_NAME);
-         count++;
+      if (!test) {
+         for (RestTelemetryConfiguration configuration : telemetryConfigurations) {
+            RestConfiguration restConfig = configuration.getConfig();
+            String variableName = StringUtils.uncapitalize(model.getName())
+                                  + "TelemetryRequest"
+                                  + (telemetryConfigurations.size() > 1 ? count : "");
+            SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(restConfig.getNetworkAddress())
+                  .setNetworkInterface(restConfig.getNetworkInterface())
+                  .setPort(restConfig.getPort())
+                  .setHttpMethod(restConfig.getHttpMethod())
+                  .setPath(restConfig.getPath())
+                  .setContentType(restConfig.getContentType())
+                                                        .setVariableName(variableName)
+                                                        .setName(TELEMETRY_TOPIC);
+   
+            sparkDto.addTopic(topicDto);
+            sparkDto.addImport(TELEMETRY_SERVICE_QUALIFIED_NAME);
+            count++;
+         }
       }
       
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();
          boolean isOutput = model.getOutputs().contains(field);
-         boolean shouldReceive = !(isOutput ^ test);
-         if (!shouldReceive) {
-            // Spark transport provider can only receive, not send
-            continue;
-         }
-         Collection<RestConfiguration> configurations =
-               transportConfigurationService.getRestConfiguration(options, field);
-         count = 1;
-         for (RestConfiguration configuration : configurations) {
-            SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
-                  .setNetworkInterface(configuration.getNetworkInterface())
-                  .setPort(configuration.getPort())
-                  .setHttpMethod(configuration.getHttpMethod())
-                  .setPath(configuration.getPath())
-                  .setContentType(configuration.getContentType())
-                  .setVariableName(
-                        field.getName() + (configurations.size() > 1 ? count
-                                                                     : ""))
-                  .setName(topicsPrefix + topicName);
-
-            sparkDto.addTopic(topicDto);
-            count++;
+         boolean shouldReceive = isOutput == test;
+         if (shouldReceive) {
+            Collection<RestConfiguration> configurations =
+                  transportConfigurationService.getRestConfiguration(options, field);
+            count = 1;
+            for (RestConfiguration configuration : configurations) {
+               SparkTopicDto topicDto = new SparkTopicDto().setNetworkAddress(configuration.getNetworkAddress())
+                     .setNetworkInterface(configuration.getNetworkInterface())
+                     .setPort(configuration.getPort())
+                     .setHttpMethod(configuration.getHttpMethod())
+                     .setPath(configuration.getPath())
+                     .setContentType(configuration.getContentType())
+                     .setVariableName(
+                           field.getName() + (configurations.size() > 1 ? count
+                                                                        : ""))
+                     .setName(topicsPrefix + topicName);
+   
+               sparkDto.addTopic(topicDto);
+               count++;
+            }
          }
       }
 
