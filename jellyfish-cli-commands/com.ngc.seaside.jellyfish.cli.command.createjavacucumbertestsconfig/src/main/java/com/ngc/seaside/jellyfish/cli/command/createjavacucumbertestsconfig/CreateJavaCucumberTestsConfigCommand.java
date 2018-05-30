@@ -221,9 +221,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
          
          Optional<Object> object = transportProvider.getConfigurationDto(dto, options, model, topicsClassName, topics);
          if (object.isPresent()) {         
-            if (telemetryPresent && (object.get() instanceof SparkDto)) {
-               continue;   
-            } else {
+            if (!telemetryPresent || !(object.get() instanceof SparkDto)) {
                DefaultParameterCollection parameters = new DefaultParameterCollection();
                parameters.addParameter(new DefaultParameter<>("dto", object.get()));
                String templateName = transportProvider.getTemplate();
@@ -231,7 +229,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
                dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
                dto.addTransportProviderDependencies(transportProvider.getDependencies(options, model, true, true, true));
                clean = false;
-            }
+            } 
          }
       }
 
