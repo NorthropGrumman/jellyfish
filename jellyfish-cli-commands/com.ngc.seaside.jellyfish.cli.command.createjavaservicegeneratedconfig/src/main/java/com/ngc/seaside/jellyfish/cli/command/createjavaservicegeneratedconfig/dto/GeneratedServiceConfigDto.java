@@ -25,7 +25,8 @@ public class GeneratedServiceConfigDto {
 
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
-   private List<String> subscribers = new ArrayList<>();
+   private Set<String> readinessSubscribers = new LinkedHashSet<>();
+   private Set<String> requiredReadinessClasses = new LinkedHashSet<>();
 
    public GeneratedServiceConfigDto(IBuildManagementService buildManagementService,
                                     IJellyFishCommandOptions options) {
@@ -109,12 +110,21 @@ public class GeneratedServiceConfigDto {
       return this;
    }
 
-   public List<String> getSubscribers() {
-      return subscribers;
+   public Set<String> getReadinessSubscribers() {
+      return readinessSubscribers;
    }
 
-   public GeneratedServiceConfigDto addSubscriber(String subscriberClassname) {
-      this.subscribers.add(subscriberClassname);
+   public GeneratedServiceConfigDto addReadinessSubscriber(String subscriberClassname) {
+      this.readinessSubscribers.add(subscriberClassname);
+      return this;
+   }
+
+   public Set<String> getRequiredReadinessClasses() {
+      return requiredReadinessClasses;
+   }
+
+   public GeneratedServiceConfigDto addRequiredReadinessClasses(String classname) {
+      this.requiredReadinessClasses.add(classname);
       return this;
    }
 

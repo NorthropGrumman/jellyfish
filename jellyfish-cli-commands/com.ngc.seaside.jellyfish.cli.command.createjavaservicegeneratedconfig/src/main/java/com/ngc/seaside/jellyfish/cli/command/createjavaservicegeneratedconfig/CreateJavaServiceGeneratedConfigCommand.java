@@ -138,13 +138,13 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
 
       for (CorrelationDto correlationMethodDto : correlationMethodDtos) {
          for (InputDto inputDto : correlationMethodDto.getInputs()) {
-            dto.addSubscriber(
+            dto.addReadinessSubscriber(
                   String.format("%s.%s%s", packageName, inputDto.getType(), SUBSCRIBER_SUFFIX));
          }
       }
 
       for (BasicPubSubDto pubSubMethod : pubSubMethods) {
-         dto.addSubscriber(
+         dto.addReadinessSubscriber(
                String.format("%s.%s%s", packageName, pubSubMethod.getInput().getType(), SUBSCRIBER_SUFFIX));
       }
 
@@ -162,14 +162,19 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             model,
             transportProviders);
 
+      TelemetryDto telemetry = new TelemetryDto();
+      if (dto.hasTelemetry()) {
+         telemetry.setBaseDto(dto)
+                  .setClassname(model.getName() + "TelemetryConfiguration")
+                  .addReadinessConfigurations();
+      }
+
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("StringUtils", StringUtils.class));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
 
       if (dto.hasTelemetry()) {
-         TelemetryDto telemetry = new TelemetryDto().setBaseDto(dto)
-               .setClassname(model.getName() + "TelemetryConfiguration");
          DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
          telemetryParams.addParameter(new DefaultParameter<>("dto", telemetry));
          unpackSuffixedTemplate(TELEMETRY_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);

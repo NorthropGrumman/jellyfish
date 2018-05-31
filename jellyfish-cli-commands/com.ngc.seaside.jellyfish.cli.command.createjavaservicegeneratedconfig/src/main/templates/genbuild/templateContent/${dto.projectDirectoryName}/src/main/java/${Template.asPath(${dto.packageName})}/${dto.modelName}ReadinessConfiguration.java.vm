@@ -25,14 +25,16 @@ public class ${dto.modelName}ReadinessConfiguration {
       IReadinessConfiguration config = readinessService.newConfiguration();
       config.require()
             .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
+#foreach ( $class in $dto.requiredReadinessClasses )
             .require()
-            .componentActivated("(component.name=${dto.connectorClassname})")#if ( ${dto.subscribers.isEmpty()} );#end
-
-#foreach ( $subscriber in $dto.subscribers )
-            .require()
-            .componentActivated(IEventSubscriber.class, "(component.name=${subscriber})")#if ( !$foreach.hasNext );#end
-
+            .componentActivated(${class}.class)
 #end
+#foreach ( $subscriber in $dto.readinessSubscribers )
+            .require()
+            .componentActivated(IEventSubscriber.class, "(component.name=${subscriber})")
+#end
+            .require()
+            .componentActivated("(component.name=${dto.connectorClassname})");
 
       readinessService.register(config);
 
