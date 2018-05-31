@@ -13,12 +13,14 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dt
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -215,7 +217,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       String topicsClassName = transportTopicsClass.getFullyQualifiedName();
       for (ITransportProviderConfigDto transportProvider : transportProviders) {
          Optional<Object> object = transportProvider.getConfigurationDto(dto, options, model, topicsClassName, topics);
-         if (object.isPresent()) {
+         if (object.isPresent()) {         
             DefaultParameterCollection parameters = new DefaultParameterCollection();
             parameters.addParameter(new DefaultParameter<>("dto", object.get()));
             String templateName = transportProvider.getTemplate();
@@ -225,7 +227,6 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
             clean = false;
          }
       }
-
       return clean;
    }
 
