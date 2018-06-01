@@ -5,7 +5,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
-import java.util.Set;
+import java.util.Map;
 
 public class ConfigDto {
 
@@ -15,8 +15,7 @@ public class ConfigDto {
    private IModel model;
    private String packageName;
    private String projectName;
-   private Set<String> projectDependencies;
-   private Set<String> transportProviderDependencies;
+   private Map<String, String> projectDependencies;
 
    public ConfigDto(IBuildManagementService buildManagementService,
                     IJellyFishCommandOptions options) {
@@ -51,20 +50,12 @@ public class ConfigDto {
       return this;
    }
 
-   public Set<String> getProjectDependencies() {
+   public Map<String, String> getProjectDependencies() {
       return projectDependencies;
    }
 
-   public void setProjectDependencies(Set<String> projectDependencies) {
+   public void setProjectDependencies(Map<String, String> projectDependencies) {
       this.projectDependencies = projectDependencies;
-   }
-
-   public Set<String> getTransportProviderDependencies() {
-      return transportProviderDependencies;
-   }
-
-   public void setTransportProviderDependencies(Set<String> transportProviderDependencies) {
-      this.transportProviderDependencies = transportProviderDependencies;
    }
 
    /**

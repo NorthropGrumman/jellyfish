@@ -1,3 +1,0 @@
-
-include 'com.ngc.seaside.threateval.engagementtrackpriorityservice.config'
-project(':com.ngc.seaside.threateval.engagementtrackpriorityservice.config').name = 'engagementtrackpriorityservice.config'

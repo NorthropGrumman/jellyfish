@@ -21,6 +21,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.mu
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetry.TelemetryDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
@@ -99,7 +100,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(CONFIG_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
-
+      buildManagementService.registerDependency(options, CommonDependencies.SPARK_CORE.getGropuId(),
+               CommonDependencies.SPARK_CORE.getArtifactId());
       registerProject(projectInfo);
    }
 
@@ -297,6 +299,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
             templateService.unpack(templateName, parameters, outputDirectory, clean);
             dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
             dto.addTransportProviderDependencies(transportProvider.getDependencies(options, model, true, false, false));
+            dto.addDistributionDependencies(transportProvider.getDependencies(options, model, false, true, false));
             clean = false;
          }
       }
