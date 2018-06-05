@@ -3,9 +3,6 @@ rootProject.name = 'jellyfish-cli'
 include 'com.ngc.seaside.jellyfish.api'
 project(':com.ngc.seaside.jellyfish.api').name = 'jellyfish.api'
 
-include 'com.ngc.seaside.jellyfish'
-project(':com.ngc.seaside.jellyfish').name = 'jellyfish'
-
 include 'com.ngc.seaside.jellyfish.impl.provider'
 project(':com.ngc.seaside.jellyfish.impl.provider').name = 'jellyfish.impl.provider'
 
@@ -15,104 +12,8 @@ project(':com.ngc.seaside.jellyfish.cli.command.validate').name = 'jellyfish.cli
 include 'com.ngc.seaside.jellyfish.cli.command.help'
 project(':com.ngc.seaside.jellyfish.cli.command.help').name = 'jellyfish.cli.command.help'
 
-include 'com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand'
-project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishcommand').name = 'jellyfish.cli.command.createjellyfishcommand'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject'
-project(':com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject').name = 'jellyfish.cli.command.createjellyfishgradleproject'
-
-include 'com.ngc.seaside.jellyfish.cli.gradle.plugins'
-project(':com.ngc.seaside.jellyfish.cli.gradle.plugins').name = 'jellyfish.cli.gradle.plugins'
-
-include 'com.ngc.seaside.jellyfish.cli.command.testutils'
-project(':com.ngc.seaside.jellyfish.cli.command.testutils').name = 'jellyfish.cli.command.testutils'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector').name = 'jellyfish.cli.command.createjavaprotobufconnector'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createdomain'
-project(':com.ngc.seaside.jellyfish.cli.command.createdomain').name = 'jellyfish.cli.command.createdomain'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavadistribution'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavadistribution').name = 'jellyfish.cli.command.createjavadistribution'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaservice'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaservice').name = 'jellyfish.cli.command.createjavaservice'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages'
-project(':com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages').name = 'jellyfish.cli.command.createprotocolbuffermessages'
-
-include 'com.ngc.seaside.jellyfish.cli.command.samplecommand'
-project(':com.ngc.seaside.jellyfish.cli.command.samplecommand').name = 'jellyfish.cli.command.samplecommand'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaevents'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaevents').name = 'jellyfish.cli.command.createjavaevents'
-
-include 'com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation'
-project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation').name = 'jellyfish.cli.command.report.requirementsallocation'
-
-include 'com.ngc.seaside.jellyfish.cli.command.report.requirementsverification'
-project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsverification').name = 'jellyfish.cli.command.report.requirementsverification'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject').name = 'jellyfish.cli.command.createjavaserviceproject'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicebase'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicebase').name = 'jellyfish.cli.command.createjavaservicebase'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig').name = 'jellyfish.cli.command.createjavaserviceconfig'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests').name = 'jellyfish.cli.command.createjavacucumbertests'
-
 include 'com.ngc.seaside.jellyfish.service.api'
 project(':com.ngc.seaside.jellyfish.service.api').name = 'jellyfish.service.api'
 
-include 'com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices'
-project(':com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices').name = 'jellyfish.service.codegen.impl.codegenservices'
-
-include 'com.ngc.seaside.jellyfish.service.name.impl.namingservices'
-project(':com.ngc.seaside.jellyfish.service.name.impl.namingservices').name = 'jellyfish.service.name.impl.namingservices'
-
-include 'com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice'
-project(':com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice').name = 'jellyfish.service.scenario.impl.scenarioservice'
-
-include 'com.ngc.seaside.jellyfish.service.data.impl.dataservice'
-project(':com.ngc.seaside.jellyfish.service.data.impl.dataservice').name = 'jellyfish.service.data.impl.dataservice'
-
-include 'com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice'
-project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice').name = 'jellyfish.service.config.impl.transportconfigurationservice'
-
-include 'com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice'
-project(':com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice').name = 'jellyfish.service.requirements.impl.requirementsservice'
-
-include 'com.ngc.seaside.jellyfish.service.feature.impl.featureservice'
-project(':com.ngc.seaside.jellyfish.service.feature.impl.featureservice').name = 'jellyfish.service.feature.impl.featureservice'
-
-include 'com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice'
-project(':com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice').name = 'jellyfish.service.buildmgmt.impl.buildmgmtservice'
-
-include 'com.ngc.blocs.guice.modules'
-project(':com.ngc.blocs.guice.modules').name = 'guice.modules'
-
-include 'com.ngc.seaside.jellyfish.service.impl.parameterservice'
-project(':com.ngc.seaside.jellyfish.service.impl.parameterservice').name = 'jellyfish.service.impl.parameterservice'
-
-include 'com.ngc.seaside.jellyfish.service.impl.promptuserservice'
-project(':com.ngc.seaside.jellyfish.service.impl.promptuserservice').name = 'jellyfish.service.impl.promptuserservice'
-
-include 'com.ngc.seaside.jellyfish.service.impl.propertyservice'
-project(':com.ngc.seaside.jellyfish.service.impl.propertyservice').name = 'jellyfish.service.impl.propertyservice'
-
-include 'com.ngc.seaside.jellyfish.service.impl.templateservice'
-project(':com.ngc.seaside.jellyfish.service.impl.templateservice').name = 'jellyfish.service.impl.templateservice'
-
 include 'com.ngc.seaside.jellyfish.utilities'
 project(':com.ngc.seaside.jellyfish.utilities').name = 'jellyfish.utilities'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig').name = 'jellyfish.cli.command.createjavaservicegeneratedconfig'
-
-include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig'
-project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig').name = 'jellyfish.cli.command.createjavacucumbertestsconfig'

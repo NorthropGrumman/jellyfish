@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.examples.project1.model.impl;
 
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 
 import org.junit.After;
@@ -20,25 +19,21 @@ public class ModelTest {
    @Mock
    private ILogService logService;
 
-   @Mock
-   private IEventService eventService;
-
    @Before
    public void setup() throws Throwable {
       service = new Model();
       service.setLogService(logService);
-      service.setEventService(eventService);
       service.activate();
    }
 
    @Test
-   public void scenario1Test() throws Exception {
+   public void doScenario1Test() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }
 
    @Test
-   public void scenario2Test() throws Exception {
+   public void doScenario2Test() throws Exception {
       // TODO: implement this
       fail("not implemented");
    }

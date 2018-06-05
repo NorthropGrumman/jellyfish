@@ -27,3 +27,6 @@ project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.e
 include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages'
 project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages').name = 'model.messages'
 
+include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.pubsubbridge'
+project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.pubsubbridge').name = 'model.pubsubbridge'
+

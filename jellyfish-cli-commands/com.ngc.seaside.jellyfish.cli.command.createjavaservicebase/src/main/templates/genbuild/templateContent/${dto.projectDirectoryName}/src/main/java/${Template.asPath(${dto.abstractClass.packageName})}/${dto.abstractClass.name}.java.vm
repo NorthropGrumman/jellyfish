@@ -1,0 +1,268 @@
+package ${dto.abstractClass.packageName};
+
+#set ($ignore = $dto.abstractClass.imports.add("com.google.common.base.Preconditions"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.api.IContext"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.api.IStatus"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.api.IServiceModule"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.api.ServiceStatus"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.event.api.Subscriber"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.IFaultManagementService"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))
+#set ($ignore = $dto.abstractClass.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
+#if (!$dto.correlationMethods.isEmpty())
+#set ($ignore = $dto.abstractClass.imports.add("java.util.Collection"))
+#set ($ignore = $dto.abstractClass.imports.add("java.util.function.Function"))
+#set ($ignore = $dto.abstractClass.imports.add("java.util.stream.Collectors"))
+#end
+
+#foreach ($i in $dto.abstractClass.imports)
+import ${i};
+#end
+
+public abstract class ${dto.abstractClass.name}
+   implements IServiceModule, ${dto.interface.name} {
+
+   public final static String NAME = "service:${dto.model.fullyQualifiedName}";
+
+   protected IContext<?> context;
+
+   protected ServiceStatus status = ServiceStatus.DEACTIVATED;
+
+   protected ILogService logService;
+
+   protected IFaultManagementService faultManagementService;
+
+   protected IThreadService threadService;
+
+#if ($dto.correlationServiceRequired)
+   protected ICorrelationService correlationService;
+
+#end
+#if (!$dto.correlationMethods.isEmpty())
+   protected final Map<ICorrelationTrigger<?>, Function<ICorrelationStatus<?>, ?>> triggers =
+         new ConcurrentHashMap<>();
+   
+#end
+################################## Pub sub Delegaters ###################################
+#foreach ($method in $dto.basicPubSubMethods)
+   @Override
+   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${method.input.fieldName}, "'${method.input.fieldName}' may not be null!");
+#foreach($correlation in $method.inputOutputCorrelations)
+      updateRequestWithCorrelation(${method.input.fieldName}.${correlation.getterSnippet});
+#end
+#if ($method.isCorrelating())
+      try {
+#end
+         ${method.output.type} output = ${method.name}(${method.input.fieldName});
+#foreach($correlation in $method.inputOutputCorrelations)
+		 output.${correlation.setterSnippet}(${method.input.fieldName}.${correlation.getterSnippet});
+#end
+		 return output;
+#if ($method.isCorrelating())
+      } finally {
+	     clearCorrelationFromRequest();
+	  }
+#end
+   }
+
+#end
+################################## Request Response Delegaters ###################################
+#foreach ($method in $dto.basicServerReqResMethods)
+   @Override
+   public ${method.output.type} ${method.serviceMethod}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${method.input.fieldName}, "'${method.input.fieldName}' may not be null!");
+      ${method.output.type} response = ${method.name}(${method.input.fieldName});
+      return response;
+   }
+
+#end
+
+########## Multi-input 1-output methods with input-input correlation Delegaters##########
+#foreach ($method in $dto.correlationMethods)
+#foreach ($input in $method.inputs)
+   @Override
+   public Collection<${method.output.type}> ${method.serviceTryMethod}(${input.type} ${input.fieldName}) throws ServiceFaultException {
+      Preconditions.checkNotNull(${input.fieldName}, "${input.fieldName} may not be null!");
+      return correlationService.correlate(${input.fieldName})
+            .stream()
+            .filter(ICorrelationStatus::isCorrelationComplete)
+            .map(status -> triggers.get(status.getTrigger()).apply(status))
+            .map(${method.output.type}.class::cast)
+            .collect(Collectors.toList());
+   }
+
+#end
+#end
+################################## Pub sub methods ###################################
+#foreach ($method in $dto.basicPubSubMethods)
+   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+
+#end
+################################## Request Response ##################################
+#foreach($method in $dto.basicServerReqResMethods)
+   protected abstract ${method.output.type} ${method.name}(${method.input.type} ${method.input.fieldName}) throws ServiceFaultException;
+
+#end
+################################## Multi-input 1-output methods with input-input correlation ##################################
+#foreach($method in $dto.correlationMethods)
+   protected abstract ${method.output.type} ${method.name}(
+#foreach ($input in $method.inputs)
+      ${input.type} ${input.fieldName}#if ($foreach.hasNext),
+#{else});
+#end
+#end
+
+#end
+################################## Activate ###################################
+   protected void activate() {
+#foreach($method in $dto.correlationMethods)
+      ${method.serviceTriggerRegister}();
+#end
+      setStatus(ServiceStatus.ACTIVATED);
+      logService.info(getClass(), "activated");
+   }
+
+################################# Deactivate ##################################
+   protected void deactivate() {
+#if (!$dto.correlationMethods.isEmpty())
+      triggers.keySet().forEach(ICorrelationTrigger::unregister);
+      triggers.clear();   
+#end
+      setStatus(ServiceStatus.DEACTIVATED);
+      logService.info(getClass(), "deactivated");
+   }
+
+################################# Correlation Triggers ########################
+#foreach($method in $dto.triggerRegistrationMethods)
+   private void ${method.name}() {
+      ICorrelationTrigger<${method.triggerType}> trigger = correlationService.newTrigger(${method.triggerType}.class)
+#foreach($event in $method.eventProducers)
+         .addEventIdProducer(${event.type}.class, a -> a.${event.getterSnippet})
+#end
+#foreach($completion in $method.completionStatements)
+         .addCompletenessCondition(${completion.input1Type}.class, ${completion.input2Type}.class,  (a, b) ->
+            Objects.equal(a.${completion.input1GetterSnippet}, b.${completion.input2GetterSnippet}))
+#end
+         .register();
+      triggers.put(trigger, this::${method.serviceFromStatus});
+   }
+
+#end
+############################ Correlation Status Methods ########################
+#foreach($method in $dto.triggerRegistrationMethods)
+   private ${method.output.type} ${method.serviceFromStatus}(ICorrelationStatus<?> status) {
+      updateRequestWithCorrelation(status.getEvent());
+      try {
+         ${method.output.type} output = ${method.correlationMethod}(
+#foreach ($input in $method.inputs)
+               status.getData(${input.type}.class)#if( $foreach.hasNext ),
+#{else});
+#end
+#end
+#foreach($correlation in $method.inputOutputCorrelations)
+         output.${correlation.setterSnippet}(status.getData(${correlation.inputType}.class).${correlation.getterSnippet});
+#end
+         return output;
+      } finally {
+         clearCorrelationFromRequest();
+      }
+   }
+
+#end
+   @Override
+   public String getName() {
+      return NAME;
+   }
+
+   @Override
+   public IContext<?> getContext() {
+      return context;
+   }
+
+   @Override
+   public void setContext(@SuppressWarnings("rawtypes") IContext context) {
+      this.context = context;
+   }
+
+   @Override
+   public IStatus<ServiceStatus> getStatus() {
+      return status;
+   }
+
+   @Override
+   public boolean setStatus(IStatus<ServiceStatus> status) {
+      Preconditions.checkNotNull(status, "status may not be null!");
+      this.status = status.getStatus();
+      return true;
+   }
+
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+#if ($dto.correlationServiceRequired)
+   public void setCorrelationService(ICorrelationService ref) {
+      this.correlationService = ref;
+   }
+
+   public void removeCorrelationService(ICorrelationService ref) {
+      setCorrelationService(null);
+   }
+
+#end
+   public void setFaultManagementService(IFaultManagementService ref) {
+      this.faultManagementService = ref;
+   }
+
+   public void removeFaultManagementService(IFaultManagementService ref) {
+      setFaultManagementService(null);
+   }
+
+   public void setThreadService(IThreadService ref) {
+      this.threadService = ref;
+   }
+
+   public void removeThreadService(IThreadService ref) {
+      setThreadService(null);
+   }
+
+#if (!$dto.correlationMethods.isEmpty())
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   private void updateRequestWithCorrelation(ILocalCorrelationEvent<?> event) {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(event);
+      }
+   }
+
+#end
+#if ($dto.correlationRequestHandlingEnabled)
+   @SuppressWarnings("unchecked")
+   private void updateRequestWithCorrelation(Object correlationEventId) {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(
+            correlationService.newLocalCorrelationEvent(correlationEventId));
+      }
+   }
+
+#end
+#if (!$dto.correlationMethods.isEmpty() || $dto.correlationRequestHandlingEnabled)
+   @SuppressWarnings("rawtypes")
+   private void clearCorrelationFromRequest() {
+      IRequest request = Requests.getCurrentRequest();
+      if (request instanceof IServiceRequest) {
+         ((IServiceRequest) request).setLocalCorrelationEvent(null);
+      }
+   }
+
+#end
+}
+   
+   

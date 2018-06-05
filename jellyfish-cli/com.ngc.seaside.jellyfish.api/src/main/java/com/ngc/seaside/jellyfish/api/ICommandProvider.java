@@ -8,7 +8,7 @@ package com.ngc.seaside.jellyfish.api;
  *
  * @see ICommand
  */
-public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<S>>  {
+public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<S>, R> {
 
    /**
     * The usage's description should provide a detailed set of instructions on how to use this
@@ -17,10 +17,10 @@ public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<
     * @return the provider's and its commands usage.
     */
    IUsage getUsage();
-   
+
    /**
     * Get the command.
-    * 
+    *
     * @param commandName the command name.
     * @return the command
     */
@@ -44,8 +44,9 @@ public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<
     * Run the command by name. The options will vary depending on what type of commands this
     * provider can run.
     *
-    * @param arguments   the arguments used to run a command.
+    * @param arguments the arguments used to run a command
+    * @return the results of the command
     */
-   void run(String[] arguments);
+   R run(String[] arguments);
 
 }

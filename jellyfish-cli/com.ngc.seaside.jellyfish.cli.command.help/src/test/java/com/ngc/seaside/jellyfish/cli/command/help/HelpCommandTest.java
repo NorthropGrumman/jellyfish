@@ -4,8 +4,8 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.junit.After;
@@ -26,22 +26,28 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class HelpCommandTest {
 
-   private static final IUsage USAGE_1 = new DefaultUsage("Usage 1",
-                                                          new DefaultParameter<>("param1_1")
-                                                                .setDescription("Description 1_1").setRequired(true),
-                                                          new DefaultParameter<>("param1_2")
-                                                                .setDescription("Description 1_2").setRequired(false));
+   private static final IUsage USAGE_1 = new DefaultUsage(
+         "Usage 1",
+         new DefaultParameter<>("param1_1")
+               .setDescription("Description 1_1")
+               .setRequired(true),
+         new DefaultParameter<>("param1_2")
+               .setDescription("Description 1_2")
+               .setRequired(false));
 
-   private static final IUsage USAGE_2 = new DefaultUsage("Usage 2",
-                                                          new DefaultParameter<>("param2_1")
-                                                                .setDescription("Description 2_1").setRequired(true),
-                                                          new DefaultParameter<>("param2_2")
-                                                                .setDescription("Description 2_2").setRequired(false));
+   private static final IUsage USAGE_2 = new DefaultUsage(
+         "Usage 2",
+         new DefaultParameter<>("param2_1")
+               .setDescription("Description 2_1")
+               .setRequired(true),
+         new DefaultParameter<>("param2_2")
+               .setDescription("Description 2_2")
+               .setRequired(false));
 
    private HelpCommand cmd;
 
    @Mock
-   private IJellyFishCommandOptions options;
+   private ICommandOptions options;
 
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 

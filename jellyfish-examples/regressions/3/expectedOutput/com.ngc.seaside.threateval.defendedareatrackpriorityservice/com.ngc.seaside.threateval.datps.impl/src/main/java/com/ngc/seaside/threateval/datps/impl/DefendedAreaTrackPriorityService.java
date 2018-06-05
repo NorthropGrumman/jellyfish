@@ -7,7 +7,6 @@ import com.ngc.seaside.threateval.datps.event.common.datatype.SystemTrack;
 import com.ngc.seaside.threateval.datps.event.datatype.TrackPriority;
 import com.ngc.seaside.threateval.datps.event.defendedarea.datatype.ImpactAssessment;
 import com.ngc.blocs.service.api.IServiceModule;
-import com.ngc.blocs.service.event.api.IEventService;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.service.fault.api.IFaultManagementService;
 import com.ngc.blocs.service.thread.api.IThreadService;
@@ -24,10 +23,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class DefendedAreaTrackPriorityService extends AbstractDefendedAreaTrackPriorityService {
 
    @Override
-   public TrackPriority calculateTrackPriority(
-      SystemTrack systemTrack,
-      ImpactAssessment impactAssessment,
-      ILocalCorrelationEvent<String> correlationEvent) throws ServiceFaultException {
+   public TrackPriority doCalculateTrackPriority(
+               SystemTrack systemTrack,
+               ImpactAssessment impactAssessment) {
          // TODO: implement this
          throw new UnsupportedOperationException("not implemented");
    }
@@ -51,17 +49,6 @@ public class DefendedAreaTrackPriorityService extends AbstractDefendedAreaTrackP
    @Override
    public void removeLogService(ILogService ref) {
       super.removeLogService(ref);
-   }
-
-   @Override
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeEventService")
-   public void setEventService(IEventService ref) {
-      super.setEventService(ref);
-   }
-
-   @Override
-   public void removeEventService(IEventService ref) {
-      super.removeEventService(ref);
    }
 
    @Override

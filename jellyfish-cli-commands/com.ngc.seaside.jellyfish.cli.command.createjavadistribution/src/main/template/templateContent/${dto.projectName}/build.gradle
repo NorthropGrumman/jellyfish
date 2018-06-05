@@ -1,0 +1,82 @@
+#set( $D = '$' )
+apply plugin: 'com.ngc.seaside.service-distribution'
+
+seasideDistribution {
+    buildDir = 'build'
+    distributionName = "${D}{group}.${D}{project.name}-${D}{version}"
+    distributionDir = "build/distribution/${D}{group}.${D}{project.name}-${D}{version}"
+    distributionDestDir = 'build/distribution/'
+}
+
+configurations {
+   thirdParty2 {
+      transitive = false
+   }
+}
+
+dependencies {
+#foreach ($dependency in $dto.projectDependencies)
+   bundles project(":$dependency")
+#end
+
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.api')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.correlation.impl.correlationservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.fault.impl.faultloggingservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.monitoring.impl.loggingmonitoringservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.request.impl.microservicerequestservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.transport.impl.defaulttransportservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.readiness.impl.defaultreadinessservice')}"
+#foreach ($dependency in $dto.transportProviderDependencies)
+   bundles "${dto.getFormattedDependency($dependency)}"
+#end
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.api')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.impl.basetelemetryservice')}"
+   bundles "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.impl.jsontelemetryservice')}"
+
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:api')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:file.impl.common.fileutilities')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:security.impl.common.securityutilities')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:jaxb.impl.common.jaxbutilities')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:xml.resource.impl.common.xmlresource')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.log.impl.common.logservice')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.event.impl.common.eventservice')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.resource.impl.common.resourceservice')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:notification.impl.common.notificationsupport')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:properties.resource.impl.common.propertiesresource')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.framework.impl.common.frameworkmgmtservice')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:component.impl.common.componentutilities')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.notification.impl.common.notificationservice')}"
+   blocs "${dto.getFormattedDependency('com.ngc.blocs:service.thread.impl.common.threadservice')}"
+
+   thirdParty 'com.sparkjava:spark-core:2.6.0'
+   thirdParty 'com.google.guava:guava:17.0'
+   thirdParty2 "${dto.getFormattedDependency('com.google.guava:guava')}"
+   thirdParty 'commons-io:commons-io:1.4'
+   thirdParty 'log4j:log4j-osgi:1.2.17' // This version has the corrected log4j manifest.
+   thirdParty 'commons-beanutils:commons-beanutils:1.8.3'
+   thirdParty 'commons-lang:commons-lang:2.4'
+   thirdParty 'commons-collections:commons-collections:3.2.1'
+   thirdParty 'commons-logging:commons-logging-osgi:1.1.1'
+   thirdParty "${dto.getFormattedDependency('com.google.protobuf:protobuf-java')}"
+   thirdParty "${dto.getFormattedDependency('com.google.code.gson:gson')}"
+
+   platform "${dto.getFormattedDependency('com.ngc.blocs:service.deployment.impl.common.autodeploymentservice')}"
+   platform "org.eclipse.equinox:equinox-common:3.6.200.v20130402-1505"
+   platform "org.eclipse.equinox:equinox-osgi-services:3.4.0.v20140312-2051"
+   platform "org.eclipse.equinox:equinox-console:1.1.0.v20140131-1639"
+   platform "org.eclipse.equinox:equinox-launcher:1.3.0.v20140415-2008"
+   platform "org.apache.felix:gogo.runtime:0.10.0.v201209301036"
+   platform "org.eclipse.equinox:equinox-registry:3.5.400.v20140428-1507"
+   platform "org.apache.felix:gogo.command:0.10.0.v201209301215"
+   platform "org.apache.felix:gogo.shell:0.10.0.v201212101605"
+   platform "org.eclipse.equinox:equinox-ds:1.4.1-20120926-201320"
+   platform "org.eclipse.equinox:equinox-util:1.0.500-20130404-1337"
+   platform "org.eclipse.equinox:equinox-simpleconfigurator:1.1.0.v20131217-1203"
+   platform "org.eclipse.equinox:equinox-osgi:3.10.0"
+}
+
+copyThirdPartyBundles {
+   from configurations.thirdParty2
+}

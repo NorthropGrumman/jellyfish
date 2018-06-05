@@ -4,11 +4,66 @@ import com.ngc.seaside.threateval.ThreatEvaluation
 import com.ngc.seaside.systemdescriptor.deployment.multicast.MulticastConfiguration
 import com.ngc.seaside.systemdescriptor.deployment.rest.RestConfiguration
 import com.ngc.seaside.systemdescriptor.deployment.rest.HttpMethod
+import com.ngc.seaside.systemdescriptor.telemetry.RestTelemetry
 
 model DemoThreatEvalDeployment refines ThreatEvaluation {
 	metadata {
 			"description" : "This deployment model allows the ThreatEvaluation system to be deployed on a single machine or VM.  All addresses reference either localhost or virtual multicast addresses.",
 			"stereotypes": ["system", "deployment"]
+	}
+	
+	parts {
+		refine defendedAreaTrackPriorityService {
+			properties {
+				RestTelemetry telemtry
+				
+				telemtry.config.serverAddress.address = "localhost"
+				telemtry.config.serverInterface.name = "0.0.0.0"
+				telemtry.config.port = 52412
+				telemtry.config.httpMethod = HttpMethod.GET
+				telemtry.config.contentType = "application/json"
+				telemtry.config.path = "/telemetry"
+			}
+		}
+		
+		refine classificationTrackPriorityService {
+			properties {
+				RestTelemetry telemtry
+				
+				telemtry.config.serverAddress.address = "localhost"
+				telemtry.config.serverInterface.name = "0.0.0.0"
+				telemtry.config.port = 52413
+				telemtry.config.httpMethod = HttpMethod.GET
+				telemtry.config.contentType = "application/json"
+				telemtry.config.path = "/telemetry"
+			}
+		}
+		
+		refine engagementTrackPriorityService {
+			properties {
+				RestTelemetry telemtry
+				
+				telemtry.config.serverAddress.address = "localhost"
+				telemtry.config.serverInterface.name = "0.0.0.0"
+				telemtry.config.port = 52414
+				telemtry.config.httpMethod = HttpMethod.GET
+				telemtry.config.contentType = "application/json"
+				telemtry.config.path = "/telemetry"
+			}
+		}
+		
+		refine trackPriorityService {
+			properties {
+				RestTelemetry telemtry
+				
+				telemtry.config.serverAddress.address = "localhost"
+				telemtry.config.serverInterface.name = "0.0.0.0"
+				telemtry.config.port = 52415
+				telemtry.config.httpMethod = HttpMethod.GET
+				telemtry.config.contentType = "application/json"
+				telemtry.config.path = "/telemetry"
+			}
+		}
 	}
 
 	links {

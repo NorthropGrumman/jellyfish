@@ -117,7 +117,7 @@ model ZeroMqDemoThreatEvalDeployment refines ThreatEvaluation {
 				RestConfiguration restConfiguration
 
 				restConfiguration.serverAddress.address = "localhost"
-				restConfiguration.serverInterface.name = "*"
+				restConfiguration.serverInterface.name = "0.0.0.0"
 				restConfiguration.port = 52412
 				restConfiguration.httpMethod = HttpMethod.POST
 				restConfiguration.contentType = "application/x-protobuf"

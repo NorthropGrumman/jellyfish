@@ -1,0 +1,16 @@
+dependencies {
+   api "com.ngc.seaside:jellyfish.service.api:$version"
+   api "com.ngc.blocs:service.api:$blocsVersion"
+
+   implementation project(':jellyfish.service.scenario.impl.scenarioservice')
+   implementation project(':jellyfish.service.impl.templateservice')
+   implementation project(':jellyfish.service.impl.propertyservice')
+   implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
+   implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   implementation "org.mockito:mockito-core:$mockitoVersion"
+   implementation "junit:junit:$junitVersion"
+
+   runtimeOnly "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+}

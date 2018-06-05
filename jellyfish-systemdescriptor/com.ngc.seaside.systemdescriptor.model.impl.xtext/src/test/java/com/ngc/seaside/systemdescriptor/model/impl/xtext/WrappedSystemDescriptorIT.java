@@ -76,6 +76,8 @@ public class WrappedSystemDescriptorIT {
 
    private XtextResourceSet resourceSet;
 
+   private Collection<XtextResource> resources = new ArrayList<>();
+
    @Before
    public void setup() throws Throwable {
       TerminalsStandaloneSetup.doSetup();
@@ -136,6 +138,8 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/models/Speaker.sd"));
       resourceOf(pathTo("clocks/models/Alarm.sd"));
       resourceOf(pathTo("clocks/AlarmClock.sd"));
+
+      resolveAllResources();
       assertValid();
 
       // This is how you get the parsing result from an XText resource.  The result has the errors.
@@ -353,6 +357,7 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/models/Alarm.sd"));
       resourceOf(pathTo("clocks/AlarmClock.sd"));
 
+      resolveAllResources();
       // This is how you get the parsing result from an XText resource.  The result has the errors.
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
@@ -385,6 +390,7 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/models/Alarm.sd"));
       resourceOf(pathTo("clocks/AlarmClock.sd"));
 
+      resolveAllResources();
       IParseResult result = ((XtextResource) goTimeResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
@@ -420,6 +426,7 @@ public class WrappedSystemDescriptorIT {
       resourceOf(pathTo("clocks/AlarmClock.sd"));
       Resource refinedResource = resourceOf(pathTo("clocks/LoudAlarmClock.sd"));
 
+      resolveAllResources();
       IParseResult result = ((XtextResource) refinedResource).getParseResult();
       assertFalse("should not have errors!",
                   result.hasSyntaxErrors());
@@ -479,6 +486,13 @@ public class WrappedSystemDescriptorIT {
       streams.values().forEach(Closeables::closeQuietly);
    }
 
+   private void resolveAllResources() {
+      for (XtextResource resource : resources) {
+         // Force resolution of all proxy objects.
+         resource.getResourceSet().getResource(resource.getURI(), true);
+      }
+   }
+
    private void assertValid() {
       Iterator<Resource> i = resourceSet.getResources().iterator();
       XtextResource resource = (XtextResource) i.next();
@@ -507,7 +521,7 @@ public class WrappedSystemDescriptorIT {
    private XtextResource resourceOf(Path file) throws IOException {
       XtextResource r = (XtextResource) resourceSet.createResource(
             URI.createFileURI(file.toAbsolutePath().toFile().toString()));
-      r.load(streamOf(file), resourceSet.getLoadOptions());
+      resources.add(r);
       return r;
    }
 

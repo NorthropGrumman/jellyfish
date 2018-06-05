@@ -1,10 +1,10 @@
 allprojects {
     group = 'com.ngc.seaside'
-    version = '2.5.0-SNAPSHOT'
+    version = '2.8.0-SNAPSHOT'
 
     ext {
         blocsPluginVersion = '0.5'
-        seasidePluginsVersion = '2.8.0'
+        seasidePluginsVersion = '2.12.0'
         sonarqubePluginVersion = '2.5'
         xtextPluginVersion = '1.0.15'
 
@@ -12,12 +12,14 @@ allprojects {
         blocsVersion = '2.1.1'
         blocsCoreVersion = '2.1.1'
         blocsDomainVersion = '2.3.1'
-        bootstrapCommandsVersion = '1.2'  
+        bootstrapCommandsVersion = '1.2'
         commonsIOVersion = '2.5'
         commonsLangVersion = '2.6'
         commonsLang3Version = '3.5'
         emfVersion = '2.12.0'
         glassfishJsonVersion = '1.1'
+        guavaVersionForModelXtextImpl = '18.0'
+        guavaVersionForStandardStepsImpl = '19.0'
         guavaVersion = '22.0'
         guiceVersion = '4.1.0'
         junitVersion = '4.12'
