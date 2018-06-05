@@ -1,3 +1,3 @@
 # jellyfish-packaging
-Jellyfish-packaging consists of the standard command line interface and Gradle plugins for running the commands
-from the jellyfish-cli-commands project.
+This project is used to prepare different packages or distributions of Jellyfish.  It builds the Eclipse update site 
+for the System Descriptor language, the Jellyfish command line interface, and the Jellyfish Gradle plugins.

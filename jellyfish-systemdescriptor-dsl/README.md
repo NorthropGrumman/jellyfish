@@ -4,15 +4,16 @@ This is an Eclipse XText project which defines the System Descriptor language an
 * the validation logic and rules of the DSL
 * content assists and Eclipse plugins for using Eclipse as a System Descriptor editor
 
-Checkout [Modeling with the System Descriptor](http://10.207.42.137/confluence/display/SEAS/Modeling+with+the+System+Descriptor) for a detailed guide of language.
+Checkout [Modeling with the System Descriptor](http://10.207.42.137/confluence/display/SEAS/Modeling+with+the+System+Descriptor) for a detailed guide of the language.
 
 | Platform | Download Link |
 |----------|---------------|
-| Windows  | http://10.207.42.137/resources/jellyfish/eclipse-dsl-oxygen-2-win32-x86_64.zip |
-| Linux    | http://10.207.42.137/resources/jellyfish/eclipse-dsl-oxygen-2-linux-gtk-x86_64 |
+| Windows  | https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-oxygen-2-win32-x86_64.zip |
+| Linux    | https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-oxygen-2-linux-gtk-x86_64.zip |
 
 # Installation and Setup with Eclipse
-Installation requires Eclipse and the update site.  Download Eclipse from the links below.  You can download the update site from [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).  Unzip the update site to any location you want.
+Installation requires Eclipse and the update site.  Download Eclipse from the links below.  You can download the update site from [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).
+Unzip the update site to any location you want.
 
 See [Ch. 2 Installation and Setup](http://10.207.42.137/confluence/display/SEAS/Ch.+2+Installation+and+Setup) for detailed instructions and images.  Alternatively, you can follow the quick setup below:
 1. Select **Help**->**Install New Software**.
@@ -35,7 +36,8 @@ The project builds with Gradle.  Simply run the following command from the `jell
 ```
 ./gradlew clean build 
 ```
-This will build project, run the tests, and create the Eclipse update site.  The update site can be found at `com.ngc.seaside.systemdescriptor.updatesite/build`.  Note the Gradle build will download Eclipse if needed.  This is required to build the update site and can take a minute or so to actually complete the download.
+This will build project, run the tests, and create the Eclipse update site.  The update site can be found at `com.ngc.seaside.systemdescriptor.updatesite/build`.  Note the Gradle build will download Eclipse if needed.
+This is required to build the update site and can take a minute or so to actually complete the download.
 
 # Importing the Project with Eclipse
 The project can be imported into Eclipse as a Gradle project.  Make sure your have downloaded the version of Eclipse referenced in **Installation and Setup with Eclipse**.
@@ -44,4 +46,5 @@ The project can be imported into Eclipse as a Gradle project.  Make sure your ha
 1. Select Gradle -> Existing Gradle Project and click Next.
 1. Click Next again and make sure the root directory is set to the `jellyfish-systemdescriptor-dsl` directory of the repository.
 1. Click Finish to complete the import.  
-Sometimes, Eclipse doesn't play well with the Gradle wrapper.  If an error happends during the import, download Gradle yourself, and set the **Local installation directory** field in the last screen to the location where you have already installed Gradle.  Click finish to try the import again.
+Sometimes, Eclipse doesn't play well with the Gradle wrapper.  If an error happends during the import, download Gradle yourself, and set the **Local installation directory** field in the last screen to
+the location where you have already installed Gradle.  Click finish to try the import again.
