@@ -1,5 +1,7 @@
 # jellyfish-cli
-Jellyfish-cli consists of the base api for building tools on top of the System Descriptor lanaguage.
+This project contains the base tooling API for building tools for the System Descriptor lanaguage.  The
+[jellyfish-cli-commands](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-cli-commands) project
+contains a reference implementation of various commands that preform tasks related to processing System Descriptor projects.
 
-An implementation of the jellyfish cli is contained in the jellyfish-cli-commands project and packaged in the
-jellyfish-packaging project.
+[jellyfish-packaging](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-cli-commands)
+contains the projects for building a distribution of Jellyfish as a command line interface and as Gradle plugins.

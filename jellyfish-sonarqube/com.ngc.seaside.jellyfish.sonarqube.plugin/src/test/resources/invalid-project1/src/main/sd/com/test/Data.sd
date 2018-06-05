@@ -1,0 +1,9 @@
+package com.test
+
+import com.test3.Data1
+
+// This file is missing the opening { symbol.
+data Data extends com.test1.Data1
+  com.test2.Data1 field1
+  Data1 field2
+}

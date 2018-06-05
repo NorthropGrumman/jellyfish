@@ -1,9 +1,10 @@
-#jellyfish-systemdescriptor
+# jellyfish-systemdescriptor
 This project contains API and implementation bundles related to working with System Descriptor projects.  See the
-quick start guide below for information about how to read System Descriptor projects.
+quick start guide below for information about how to read System Descriptor projects.  Note this is the API most
+clients will use to interact with System Descriptor projects as it hides the details of the grammar and parsing.
 
 # API and Implementations
-API and basic implementation bundles does not have dependencies on XText or the DSL. 
+API and basic implementation bundles do not have dependencies on XText or the DSL. 
 
 ## com.ngc.seaside.systemdescriptor.model.api
 Contains the model interfaces used by the System Descriptor language.
@@ -193,9 +194,4 @@ Modules have service loader files at `src/main/resources/META-INF/services/com.g
 ```
 com.ngc.seaside.systemdescriptor.scenario.impl.cook.module.CookStepHandlerModule 
 ```
-
 Always export the package that contains the module.
-
-See
-http://10.207.42.42:8080/display/SEAS/JellyFish+-+How+to+extend+JellyFish#JellyFish-HowtoextendJellyFish-CreatingnewScenarioStepKeywordsorVerbs
-for a complete tutorial.

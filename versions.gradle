@@ -30,6 +30,7 @@ allprojects {
         protobufVersion = '3.2.0'
         velocityVersion = '2.0'
         xtextVersion = '2.12.0'
+        sonarqubeVersion = '6.7'
 
         m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
         dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
