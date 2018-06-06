@@ -13,6 +13,11 @@ import java.util.Set;
 
 public class GeneratedServiceConfigDto {
 
+   public static final String READINESS_SERVICE_DEPENDENCY =
+            "com.ngc.seaside:service.readiness.impl.defaultreadinessservice";
+   public static final String TRANSPORT_SERVICE_DEPENDENCY =
+            "com.ngc.seaside:service.transport.impl.defaulttransportservice";
+
    private final IBuildManagementService buildManagementService;
    private final IJellyFishCommandOptions options;
 
@@ -25,13 +30,21 @@ public class GeneratedServiceConfigDto {
 
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
+   private Set<String> distributionDependencies = new LinkedHashSet<>();
    private Set<String> readinessSubscribers = new LinkedHashSet<>();
    private Set<String> requiredReadinessClasses = new LinkedHashSet<>();
 
+   /**
+    * Constructor. Adds common default distribution dependencies.
+    * @param buildManagementService build management service
+    * @param options jellyfish command options
+    */
    public GeneratedServiceConfigDto(IBuildManagementService buildManagementService,
                                     IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
+      this.distributionDependencies.add(TRANSPORT_SERVICE_DEPENDENCY);
+      this.distributionDependencies.add(READINESS_SERVICE_DEPENDENCY);
    }
 
    public IModel getModel() {
@@ -98,6 +111,15 @@ public class GeneratedServiceConfigDto {
 
    public GeneratedServiceConfigDto addTransportProviderDependencies(Collection<String> dependencies) {
       this.transportProviderDependencies.addAll(dependencies);
+      return this;
+   }
+
+   public Set<String> getDistributionDependencies() {
+      return distributionDependencies;
+   }
+
+   public GeneratedServiceConfigDto addDistributionDependencies(Collection<String> dependencies) {
+      this.distributionDependencies.addAll(dependencies);
       return this;
    }
 

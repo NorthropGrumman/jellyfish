@@ -1,5 +1,11 @@
 #set( $D = '$' )
 
+configurations {
+   defaultBundles {
+      extendsFrom configurations.default
+   }
+}
+
 dependencies {
     #foreach ($project in  $dto.projectDependencies)
     compile project(':${project}')
@@ -11,6 +17,9 @@ dependencies {
     compile "${build.getFormattedDependency('org.osgi:osgi.core')}"
     compile "${build.getFormattedDependency('org.osgi:osgi.enterprise')}"
     compile "${build.getFormattedDependency('com.google.guava:guava')}"
+
+    defaultBundles "${build.getFormattedDependency('com.ngc.seaside:service.fault.impl.faultloggingservice')}"
+    defaultBundles "${build.getFormattedDependency('com.ngc.seaside:service.correlation.impl.correlationservice')}"
 }
 
 jar {

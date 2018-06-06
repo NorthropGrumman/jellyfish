@@ -29,6 +29,7 @@ public class DefaultDependenciesConfiguration {
       configureProtoBuffers(config);
       configureOsgi(config);
       configureGoogle(config);
+      configureSpark(config);
       configureCucumber(config);
       configureUnitTesting(config);
 
@@ -38,7 +39,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureSeasideGradlePlugins(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("seasidePluginsVersion")
-            .version("2.11.0")
+            .version("2.13.0")
             .includes(artifact("gradle.plugins")
                             .groupId("com.ngc.seaside")
                             .scope(DependencyScope.BUILDSCRIPT));
@@ -47,7 +48,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.6.0")
+            .version("2.8.1")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
@@ -176,6 +177,22 @@ public class DefaultDependenciesConfiguration {
             .version("2.8.2")
             .includes(artifact("gson")
                             .groupId("com.google.code.gson")
+                            .scope(DependencyScope.BUILD));
+
+      config.addGroup()
+            .versionPropertyName("protobufVersion")
+            .version("3.2.0")
+            .includes(artifact("protobuf-java")
+                            .groupId("com.google.protobuf")
+                            .scope(DependencyScope.BUILD));
+   }
+
+   private static void configureSpark(DependenciesConfiguration config) {
+      config.addGroup()
+            .versionPropertyName("sparkVersion")
+            .version("2.6.0")
+            .includes(artifact("spark-core")
+                            .groupId("com.sparkjava")
                             .scope(DependencyScope.BUILD));
    }
 

@@ -6,6 +6,8 @@ package com.ngc.seaside.jellyfish.service.buildmgmt.api;
 public enum CommonDependencies {
 
    PROTOBUF_GRADLE_PLUGIN("com.google.protobuf", "protobuf-gradle-plugin"),
+   PROTOBUF_JAVA("com.google.protobuf", "protobuf-java"),
+   SPARK_CORE("com.sparkjava", "spark-core"),
    OSGI_CORE("org.osgi", "osgi.core"),
    OSGI_ENTERPRISE("org.osgi", "osgi.enterprise"),
    GAUVA("com.google.guava", "guava"),

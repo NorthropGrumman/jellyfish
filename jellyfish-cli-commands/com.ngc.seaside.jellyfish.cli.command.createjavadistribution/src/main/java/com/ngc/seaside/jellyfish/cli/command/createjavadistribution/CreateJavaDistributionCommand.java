@@ -10,9 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto.ConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavadistribution.dto.TransportProviderDependenciesUtil;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -30,8 +28,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaDistributionCommand extends AbstractJellyfishCommand implements IJellyFishCommand {
@@ -46,8 +45,6 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    private static final String NAME = "create-java-distribution";
-
-   private ITransportConfigurationService transportConfigService;
 
    public CreateJavaDistributionCommand() {
       super(NAME);
@@ -80,20 +77,19 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       dto.setProjectName(info.getDirectoryName());
       dto.setPackageName(pkg);
       dto.setModel(model);
-      dto.setTransportProviderDependencies(
-            TransportProviderDependenciesUtil.getTransportProviderDependencies(options, transportConfigService));
 
-      Set<String> projectDependencies = new LinkedHashSet<String>();
-      projectDependencies.add(projectNamingService.getEventsProjectName(options, model).getArtifactId());
+      Map<String, String> projectDependencies = new LinkedHashMap<>();
+      String defaultBundles = "defaultBundles";
+      addProjectDependency(projectDependencies, projectNamingService::getEventsProjectName, null);
       if (CommonParameters.evaluateBooleanParameter(options.getParameters(), CREATE_SERVICE_DOMAIN_PROPERTY, true)) {
-         projectDependencies.add(projectNamingService.getDomainProjectName(options, model).getArtifactId());
+         addProjectDependency(projectDependencies, projectNamingService::getDomainProjectName, null);
       }
-      projectDependencies.add(projectNamingService.getConnectorProjectName(options, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getConfigProjectName(options, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getMessageProjectName(options, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getServiceProjectName(options, model).getArtifactId());
-      projectDependencies.add(projectNamingService.getPubSubBridgeProjectName(options, model).getArtifactId());
+      addProjectDependency(projectDependencies, projectNamingService::getConnectorProjectName, defaultBundles);
+      addProjectDependency(projectDependencies, projectNamingService::getConfigProjectName, defaultBundles);
+      addProjectDependency(projectDependencies, projectNamingService::getBaseServiceProjectName, defaultBundles);
+      addProjectDependency(projectDependencies, projectNamingService::getMessageProjectName, null);
+      addProjectDependency(projectDependencies, projectNamingService::getServiceProjectName, null);
+      addProjectDependency(projectDependencies, projectNamingService::getPubSubBridgeProjectName, null);
       dto.setProjectDependencies(projectDependencies);
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
@@ -148,17 +144,6 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       super.setBuildManagementService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTransportConfigurationService")
-   public void setTransportConfigurationService(ITransportConfigurationService ref) {
-      this.transportConfigService = ref;
-   }
-
-   public void removeTransportConfigurationService(ITransportConfigurationService ref) {
-      setTransportConfigurationService(null);
-   }
-
    protected void doCreateDirectories(Path outputDirectory) {
       try {
          Files.createDirectories(outputDirectory);
@@ -178,5 +163,9 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
                               CommonParameters.CLEAN
       );
    }
-}
 
+   private void addProjectDependency(Map<String, String> dependencyMap,
+            BiFunction<IJellyFishCommandOptions, IModel, IProjectInformation> function, String configuration) {
+      dependencyMap.put(function.apply(getOptions(), getModel()).getArtifactId(), configuration);
+   }
+}

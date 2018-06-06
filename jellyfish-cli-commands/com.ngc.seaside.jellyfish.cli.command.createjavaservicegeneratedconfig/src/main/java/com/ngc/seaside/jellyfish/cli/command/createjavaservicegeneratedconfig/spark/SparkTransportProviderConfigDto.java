@@ -33,15 +33,15 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
    private static final String SPARK_TEST_CONFIGURATION_CLASS_NAME_SUFFIX = "SparkTestConfiguration";
    private static final String SPARK_PROVIDER_VARIABLE_NAME = "sparkProvider";
    private static final String SPARK_TOPIC = "com.ngc.seaside.service.transport.impl.topic.spark.SparkTopic";
-   private static final String
-         SPARK_MODULE =
+   private static final String SPARK_MODULE =
          "com.ngc.seaside.service.transport.impl.provider.spark.module.SparkTransportProviderModule";
    private static final String SPARK_TOPIC_DEPENDENCY = "com.ngc.seaside:service.transport.impl.topic.spark";
    private static final String TELEMETRY_TOPIC_DEPENDENCY = "com.ngc.seaside:service.telemetry.api";
    private static final String SPARK_PROVIDER_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark";
    private static final String SPARK_MODULE_DEPENDENCY = "com.ngc.seaside:service.transport.impl.provider.spark.module";
-   private static final String
-         SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY =
+   private static final String JSON_TELEMETRY_DEPENDENCY =
+            "com.ngc.seaside:service.telemetry.impl.jsontelemetryservice";
+   private static final String SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY =
          "com.ngc.seaside:service.log.impl.common.sl4jlogservicebridge";
    private static final String SPARK_CORE_DEPENDENCY = "com.sparkjava:spark-core";
    private static final String TELEMETRY_SERVICE_QUALIFIED_NAME = 
@@ -145,19 +145,23 @@ public class SparkTransportProviderConfigDto implements ITransportProviderConfig
    @Override
    public Set<String> getDependencies(IJellyFishCommandOptions options, IModel model, boolean topic, boolean provider,
             boolean module) {
+      boolean hasTelemetry = transportConfigurationService == null
+               || transportConfigurationService.getConfigurationTypes(options, model)
+                        .contains(TransportConfigurationType.TELEMETRY);
       Set<String> dependencies = new LinkedHashSet<>();
       if (topic || provider) {
          dependencies.add(SPARK_TOPIC_DEPENDENCY);
-         if (transportConfigurationService == null
-               || transportConfigurationService.getConfigurationTypes(options, model)
-                                            .contains(TransportConfigurationType.TELEMETRY)) {
+         if (hasTelemetry) {
             dependencies.add(TELEMETRY_TOPIC_DEPENDENCY);
          }
       }
       if (provider) {
          dependencies.add(SPARK_PROVIDER_DEPENDENCY);
          dependencies.add(SL4J_LOG_SERVICE_BRIDGE_DEPENDENCY);
-         //dependencies.add(SPARK_CORE_DEPENDENCY);
+         dependencies.add(SPARK_CORE_DEPENDENCY);
+         if (hasTelemetry) {
+            dependencies.add(JSON_TELEMETRY_DEPENDENCY);
+         }
       }
       if (module) {
          dependencies.add(SPARK_MODULE_DEPENDENCY);

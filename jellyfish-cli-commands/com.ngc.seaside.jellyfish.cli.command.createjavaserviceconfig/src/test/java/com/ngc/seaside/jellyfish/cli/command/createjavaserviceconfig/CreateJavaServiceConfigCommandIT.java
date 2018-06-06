@@ -27,11 +27,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -117,19 +119,13 @@ public class CreateJavaServiceConfigCommandIT {
 
       command.run(jellyFishCommandOptions);
 
-      assertFileLinesEquals(
-            "build.gradle not correct!",
-            Paths.get("src", "test", "resources", "expectedfiles", "service-config-build.gradle.expected"),
-            Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice.config", "build.gradle"));
-
-      assertFileLinesEquals(
-            "transport config not correct!",
-            Paths.get("src", "test", "resources", "expectedfiles", "service-transport-config.java.expected"),
-            Paths.get(outputDirectory.getRoot().getAbsolutePath(),
-                      "com.ngc.seaside.threateval.engagementtrackpriorityservice.config",
-                      "src/main/java/com/ngc/seaside/threateval/engagementtrackpriorityservice/transport/config"
-                      + "/EngagementTrackPriorityServiceTransportConfiguration.java"));
+      Path configDir = outputDirectory.getRoot().toPath()
+               .resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.config");
+      assertTrue(Files.isDirectory(configDir));
+      assertTrue(Files.isRegularFile(configDir.resolve("build.gradle")));
+      Path srcDir = configDir.resolve(Paths.get("src", "main", "java", "com", "ngc", "seaside", "threateval",
+               "engagementtrackpriorityservice", "transport", "config"));
+      assertTrue(Files.isRegularFile(srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java")));
    }
 
    /**
