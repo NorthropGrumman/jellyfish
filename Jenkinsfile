@@ -49,7 +49,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-dsl') {
                sh 'chmod a+x ../gradlew'
-               sh '../gradlew clean ci'
+               sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -58,7 +58,7 @@ pipeline {
       stage('Build jellyfish-systemdescriptor') {
          steps {
             dir('jellyfish-systemdescriptor') {
-               sh '../gradlew clean ci'
+               sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
         }
@@ -67,7 +67,7 @@ pipeline {
       stage('Build jellyfish-cli') {
          steps {
             dir('jellyfish-cli') {
-               sh '../gradlew clean ci'
+               sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -76,7 +76,7 @@ pipeline {
       stage('Build jellyfish-cli-commands') {
          steps {
             dir('jellyfish-cli-commands') {
-               sh '../gradlew clean ci'
+               sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -85,7 +85,7 @@ pipeline {
       stage('Build jellyfish-packaging') {
          steps {
             dir('jellyfish-packaging') {
-               sh '../gradlew clean ci'
+               sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -94,7 +94,7 @@ pipeline {
       stage('Test jellyfish') {
          steps {
             dir('jellyfish-examples') {
-               sh '../gradlew clean build install --stacktrace --continue'
+               sh '../gradlew clean build --parallel -S --continue'
             }
          }
       }
