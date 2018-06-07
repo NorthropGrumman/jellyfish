@@ -1,15 +1,15 @@
 
+configurations {
+   defaultBundles {
+      extendsFrom configurations.default
+   }
+}
+
 dependencies {
-   compile project(':databagsservice.base')
+   implementation project(':databagsservice.base')
 
-   compile "com.ngc.seaside:service.transport.api:$starfishVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "com.ngc.blocs:properties.resource.impl.common.propertiesresource:$blocsCoreVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "com.google.guava:guava:$guavaVersion"
-
-   testCompile "com.ngc.blocs:test.impl.common.testutilities:$blocsCoreVersion"
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   implementation "com.ngc.seaside:service.transport.api:$starfishVersion"
+   implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
+   implementation "org.osgi:osgi.core:$osgiVersion"
+   implementation "org.osgi:osgi.enterprise:$osgiVersion"
 }

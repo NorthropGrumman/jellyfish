@@ -1,16 +1,16 @@
 #set( $D = '$' )
 
+configurations {
+   defaultBundles {
+      extendsFrom configurations.default
+   }
+}
+
 dependencies {
-   compile project(':${dto.baseProjectArtifactName}')
+   implementation project(':${dto.baseProjectArtifactName}')
 
-   compile "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
-   compile "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
-   compile "${dto.getFormattedDependency('com.ngc.blocs:properties.resource.impl.common.propertiesresource')}"
-   compile "${dto.getFormattedDependency('org.osgi:osgi.core')}"
-   compile "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
-   compile "${dto.getFormattedDependency('com.google.guava:guava')}"
-
-   testCompile "${dto.getFormattedDependency('com.ngc.blocs:test.impl.common.testutilities')}"
-   testCompile "${dto.getFormattedDependency('junit:junit')}"
-   testCompile "${dto.getFormattedDependency('org.mockito:mockito-core')}"
+   implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+   implementation "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
+   implementation "${dto.getFormattedDependency('org.osgi:osgi.core')}"
+   implementation "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
 }

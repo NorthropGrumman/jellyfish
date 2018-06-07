@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.ConnectorDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.ReqResTopic;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
@@ -139,6 +140,8 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(PUBSUB_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      buildManagementService.registerDependency(getOptions(), CommonDependencies.PROTOBUF_JAVA.getGropuId(),
+               CommonDependencies.PROTOBUF_JAVA.getArtifactId());
       buildManagementService.registerProject(getOptions(), info);
    }
 
