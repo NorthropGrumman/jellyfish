@@ -115,7 +115,7 @@ file(regressionsFolderName).eachDir { folder ->
     // Build the generated project
     def buildTask = createRegressionBuildTask("buildRegression${regressionName}", generatedFolder)
     buildTask.description = "Builds the generated regression ${regressionName}"
-    buildTask.dependsOn [buildSystemDescriptorProjects, generateTask]
+    buildTask.dependsOn buildSystemDescriptorProjects, generateTask
     buildRegressions.dependsOn buildTask
 
     // Diff the expected and generated projects
