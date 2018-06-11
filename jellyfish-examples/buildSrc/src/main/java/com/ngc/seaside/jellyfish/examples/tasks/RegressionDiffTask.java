@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 public class RegressionDiffTask extends DefaultTask {
 
@@ -20,23 +21,23 @@ public class RegressionDiffTask extends DefaultTask {
    private File generatedDir;
 
    private Collection<String> excludedFileRegularExpressions = new ArrayList<>(Arrays.asList(
-      ".*\\.bin$",
-      ".*\\.bnd$",
-      ".*\\.jar$",
-      ".*\\.lock$",
-      ".*\\.class$",
-      ".*\\.tar$",
-      ".*\\.tar\\.gz$",
-      ".*\\.tgz",
-      ".*\\.html?$",
-      ".*\\.zip$",
-      ".*javadoc.*",
-      "\\.cli-dependencies.md5",
-      "build\\.generated\\.gradle",
-      // Ignore anything inside generate-projects because that will always be the same anyway.
-      ".*" + File.separatorChar + "generated-projects" + File.separatorChar + ".*",
-      "(.*[\\\\/])?tmp([\\\\/].*)?",
-      "(.*[\\\\/])?\\.gradle([\\\\/].*)?"));
+         ".*\\.bin$",
+         ".*\\.bnd$",
+         ".*\\.jar$",
+         ".*\\.lock$",
+         ".*\\.class$",
+         ".*\\.tar$",
+         ".*\\.tar\\.gz$",
+         ".*\\.tgz",
+         ".*\\.html?$",
+         ".*\\.zip$",
+         ".*javadoc.*",
+         "\\.cli-dependencies.md5",
+         "build\\.generated\\.gradle",
+         // Ignore anything inside generate-projects because that will always be the same anyway.
+         ".*" + Pattern.quote(File.separatorChar + "generated-projects" + File.separatorChar) + ".*",
+         "(.*[\\\\/])?tmp([\\\\/].*)?",
+         "(.*[\\\\/])?\\.gradle([\\\\/].*)?"));
 
    public String getRegression() {
       return regression;
@@ -95,7 +96,7 @@ public class RegressionDiffTask extends DefaultTask {
     * Recursively search through the project tree, comparing directories and files along the way. Return a false value
     * if a mismatch is found.
     *
-    * @param expectedDir the folder corresponding to the expected project
+    * @param expectedDir  the folder corresponding to the expected project
     * @param generatedDir the folder corresponding to the generated project
     * @return a boolean value indicating that the directory tree is equal
     * @throws IOException Working with FileUtils library
@@ -142,7 +143,7 @@ public class RegressionDiffTask extends DefaultTask {
             File subFileGenDir = generatedFiles.get(i);
 
             if (subFileDefDir.isFile() && subFileGenDir.isDirectory() ||
-               subFileDefDir.isDirectory() && subFileGenDir.isFile()) {
+                subFileDefDir.isDirectory() && subFileGenDir.isFile()) {
                prettyPrintFilesDifferentType(subFileDefDir, subFileGenDir);
                typeEquality = false;
             }
@@ -219,7 +220,7 @@ public class RegressionDiffTask extends DefaultTask {
          String generatedFileLine;
          int lineNum = 0;
          while ((expectedFileLine = expectedBr.readLine()) != null
-            && (generatedFileLine = generatedBr.readLine()) != null) {
+                && (generatedFileLine = generatedBr.readLine()) != null) {
             lineNum++;
 
             if (!expectedFileLine.equals(generatedFileLine)) {
@@ -239,14 +240,14 @@ public class RegressionDiffTask extends DefaultTask {
    /**
     * Method to display a user friendly message indicating that the files do not contain equal contents
     *
-    * @param defFile - the evaluated file in the given project
-    * @param genFile - the evaluated file in the generated project
+    * @param defFile     - the evaluated file in the given project
+    * @param genFile     - the evaluated file in the generated project
     * @param diffLineNum - the line number where the difference was observed
-    * @param defLine - the contents of the evaluated line in the given project
-    * @param genLine - the contents of the evaluated line in the generated project
+    * @param defLine     - the contents of the evaluated line in the given project
+    * @param genLine     - the contents of the evaluated line in the generated project
     */
    private void prettyPrintFilesNotEqual(File defFile, File genFile, int diffLineNum,
-            String defLine, String genLine) {
+                                         String defLine, String genLine) {
       getProject().getLogger().error("--------------------\nFiles are not equal. Valid differences found:");
       getProject().getLogger().error(" Expected File: " + defFile.getAbsolutePath());
       getProject().getLogger().error("Generated File: " + genFile.getAbsolutePath() + "\n");
@@ -264,9 +265,11 @@ public class RegressionDiffTask extends DefaultTask {
     */
    private void prettyPrintFilesDifferentType(File file1, File file2) {
       if (file1.isFile() && file2.isDirectory()) {
-         getProject().getLogger().error("File " + file1.getName() + " is a FILE and File " + file2.getName() + " is a DIRECTORY");
+         getProject().getLogger()
+               .error("File " + file1.getName() + " is a FILE and File " + file2.getName() + " is a DIRECTORY");
       } else {
-         getProject().getLogger().error("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
+         getProject().getLogger()
+               .error("File " + file1.getName() + " is a DIRECTORY and File " + file2.getName() + " is a FILE");
       }
    }
 
