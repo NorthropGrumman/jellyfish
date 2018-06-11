@@ -31,6 +31,10 @@ public class RegressionDiffTask extends DefaultTask {
       ".*\\.html?$",
       ".*\\.zip$",
       ".*javadoc.*",
+      "\\.cli-dependencies.md5",
+      "build\\.generated\\.gradle",
+      // Ignore anything inside generate-projects because that will always be the same anyway.
+      ".*" + File.separatorChar + "generated-projects" + File.separatorChar + ".*",
       "(.*[\\\\/])?tmp([\\\\/].*)?",
       "(.*[\\\\/])?\\.gradle([\\\\/].*)?"));
 
