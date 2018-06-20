@@ -49,7 +49,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-dsl') {
                sh 'chmod a+x ../gradlew'
-               sh '../gradlew clean ci --parallel'
+               sh '../gradlew clean ci'
                junit '**/build/test-results/test/*.xml'
             }
          }
