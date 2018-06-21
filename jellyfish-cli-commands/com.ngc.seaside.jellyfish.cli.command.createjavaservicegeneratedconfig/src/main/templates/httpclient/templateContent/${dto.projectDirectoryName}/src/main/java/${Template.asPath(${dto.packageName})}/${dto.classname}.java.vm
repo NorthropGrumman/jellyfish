@@ -17,15 +17,14 @@ public class ${dto.classname} {
             "http://${topic.networkAddress.address}:${topic.port}${topic.path}",
             HttpClientVerb.${topic.httpMethod},
             HttpClientTopic.DEFAULT_TIMEOUT,
-            HttpClientTopic.ContentTypes.PROTOCOL_BUFFERS);
+            "${topic.contentType}");
 
 #end
 #foreach ($entry in $dto.topics)
       config.whenSending()
             .toApplicationTopic(${entry.name})
             .useTransportProvider(httpClientProvider)
-            .onPhysicalTopic(t -> ${entry.variableName})#if (! $foreach.hasNext);
-#end
+            .onPhysicalTopic(t -> ${entry.variableName});
 
 #end
    }

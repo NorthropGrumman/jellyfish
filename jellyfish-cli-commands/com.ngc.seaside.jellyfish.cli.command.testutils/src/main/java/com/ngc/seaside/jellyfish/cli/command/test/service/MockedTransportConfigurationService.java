@@ -16,6 +16,7 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqTcpTranspor
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class MockedTransportConfigurationService implements ITransportConfigurationService {
@@ -134,6 +136,15 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    @Override
    public String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field) {
       return field.getType().getName().toUpperCase();
+   }
+
+   @Override
+   public Optional<String> getTelemetryTransportTopicName(IJellyFishCommandOptions options, IModelReferenceField part) {
+      Collection<TelemetryConfiguration> configs = getTelemetryConfiguration(options, part.getType());
+      if (configs.isEmpty()) {
+         return Optional.empty();
+      }
+      return Optional.of(part.getName().toUpperCase() + "_TELEMETRY");
    }
 
    @Override

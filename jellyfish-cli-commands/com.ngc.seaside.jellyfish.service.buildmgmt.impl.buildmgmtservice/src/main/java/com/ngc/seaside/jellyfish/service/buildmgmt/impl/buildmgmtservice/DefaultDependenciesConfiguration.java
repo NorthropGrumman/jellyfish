@@ -76,7 +76,8 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.readiness.impl.defaultreadinessservice"),
                       artifact("service.telemetry.api"),
                       artifact("service.telemetry.impl.basetelemetryservice"),
-                      artifact("service.telemetry.impl.jsontelemetryservice"));
+                      artifact("service.telemetry.impl.jsontelemetryservice"),
+                      artifact("service.telemetry.impl.jsontelemetryservice.module"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {
