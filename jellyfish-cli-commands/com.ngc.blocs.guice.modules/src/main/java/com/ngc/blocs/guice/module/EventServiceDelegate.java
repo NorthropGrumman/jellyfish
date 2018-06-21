@@ -47,25 +47,25 @@ public class EventServiceDelegate implements IEventService {
    }
 
    @Override
-   public boolean removeSubscriber(Object obj) {
-      return delegate.removeSubscriber(obj);
-   }
-
-   @Override
    public <T> boolean addSubscriber(IEventSubscriber<T> subscriber, IEventTopic<? extends T> topic,
             @SuppressWarnings("unchecked") IEventTopic<? extends T>... optionalTopics) {
       return delegate.addSubscriber(subscriber, topic, optionalTopics);
    }
 
    @Override
-   public <T> boolean removeSubscriber(IEventSubscriber<T> subscriber, IEventTopic<? extends T> topic,
-            @SuppressWarnings("unchecked") IEventTopic<? extends T>... optionalTopics) {
-      return delegate.removeSubscriber(subscriber, topic, optionalTopics);
+   public <T> boolean addSubscriber(IEventSubscriber<T> subscriber, Collection<IEventTopic<? extends T>> topics) {
+      return delegate.addSubscriber(subscriber, topics);
    }
 
    @Override
-   public <T> boolean addSubscriber(IEventSubscriber<T> subscriber, Collection<IEventTopic<? extends T>> topics) {
-      return delegate.addSubscriber(subscriber, topics);
+   public boolean removeSubscriber(Object obj) {
+      return delegate.removeSubscriber(obj);
+   }
+
+   @Override
+   public <T> boolean removeSubscriber(IEventSubscriber<T> subscriber, IEventTopic<? extends T> topic,
+            @SuppressWarnings("unchecked") IEventTopic<? extends T>... optionalTopics) {
+      return delegate.removeSubscriber(subscriber, topic, optionalTopics);
    }
 
    @Override
