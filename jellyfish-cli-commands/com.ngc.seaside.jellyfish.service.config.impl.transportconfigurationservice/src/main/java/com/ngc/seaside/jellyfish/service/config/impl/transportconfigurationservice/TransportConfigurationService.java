@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -66,6 +67,19 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       }
 
       return topic.toUpperCase();
+   }
+
+   @Override
+   public Optional<String> getTelemetryTransportTopicName(IJellyFishCommandOptions options, IModelReferenceField part) {
+      Collection<TelemetryConfiguration> configs = getTelemetryConfiguration(options, part.getType());
+      if (configs.isEmpty()) {
+         return Optional.empty();
+      }
+      String topic = part.getName();
+      for (int i = 0; i < PATTERNS.length; i++) {
+         topic = PATTERNS[i].matcher(topic).replaceAll(REPLACEMENTS[i]);
+      }
+      return Optional.of(topic.toUpperCase() + "_TELEMETRY");
    }
 
    @Override

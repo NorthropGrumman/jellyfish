@@ -12,9 +12,11 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfigurati
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 public class TransportConfigurationServiceGuiceWrapper implements ITransportConfigurationService {
@@ -32,6 +34,11 @@ public class TransportConfigurationServiceGuiceWrapper implements ITransportConf
    @Override
    public String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field) {
       return this.delegate.getTransportTopicName(flow, field);
+   }
+
+   @Override
+   public Optional<String> getTelemetryTransportTopicName(IJellyFishCommandOptions options, IModelReferenceField part) {
+      return delegate.getTelemetryTransportTopicName(options, part);
    }
 
    @Override

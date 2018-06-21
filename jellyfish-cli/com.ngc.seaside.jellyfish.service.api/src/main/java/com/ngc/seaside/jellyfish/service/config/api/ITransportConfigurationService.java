@@ -9,8 +9,10 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfigurati
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,6 +29,17 @@ public interface ITransportConfigurationService {
     * @throws IllegalArgumentException if the given flow does not reference {@code field}
     */
    String getTransportTopicName(IMessagingFlow flow, IDataReferenceField field);
+
+   /**
+    * Gets the name of the transport topic that should be used for getting the telemetry of the model with the given
+    * part, or {@link Optional#empty()} if there is no transport topic associated with the given mdoel part.
+    * 
+    * @param options jellyfish options
+    * @param part model part
+    * @return the name of the transport topic that should be used for getting the telemetry of the model with the given
+    *         part
+    */
+   Optional<String> getTelemetryTransportTopicName(IJellyFishCommandOptions options, IModelReferenceField part);
 
    /**
     * Returns the transport configuration types used by the given model with the given deployment model.
