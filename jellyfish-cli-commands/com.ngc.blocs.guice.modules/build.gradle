@@ -4,5 +4,7 @@ dependencies {
    implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
    implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
    implementation "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsVersion"
+   implementation "com.ngc.blocs:service.event.impl.common.eventservice:$blocsVersion"
+   implementation "com.ngc.blocs:service.notification.impl.common.notificationservice:$blocsVersion"
 }
 
