@@ -1,1 +1,4 @@
 rootProject.name = 'jellyfish-cli-analysis-commands'
+
+include 'com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice'
+project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name = 'jellyfish.service.analysis.impl.analysisservice'
