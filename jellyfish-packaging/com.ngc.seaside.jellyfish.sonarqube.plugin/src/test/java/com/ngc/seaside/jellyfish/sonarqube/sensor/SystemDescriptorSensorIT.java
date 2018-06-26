@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
-import com.ngc.seaside.jellyfish.sonarqube.sensor.SystemDescriptorSensor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +16,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SystemDescriptorSensorIT {
+
    private static final String SENSOR_NAME = SystemDescriptorSensor.class.getSimpleName();
 
    private static final Path BASE_DIR = Paths.get("build", "resources", "test");
@@ -40,9 +42,9 @@ public class SystemDescriptorSensorIT {
    public void definesCorrectSensorName() {
       sensor.describe(descriptor);
       assertEquals(
-         "sensor name is incorrect",
-         descriptor.name(),
-         SENSOR_NAME
+            "sensor name is incorrect",
+            descriptor.name(),
+            SENSOR_NAME
       );
    }
 
@@ -50,13 +52,13 @@ public class SystemDescriptorSensorIT {
    public void definesCorrectLanguage() {
       sensor.describe(descriptor);
       assertEquals(
-         "the sensor should be available for only one language!",
-         descriptor.languages().size(), 1
+            "the sensor should be available for only one language!",
+            descriptor.languages().size(), 1
       );
       assertEquals(
-         "the language should be: " + SystemDescriptorLanguage.KEY,
-         descriptor.languages().toArray()[0],
-         SystemDescriptorLanguage.KEY
+            "the language should be: " + SystemDescriptorLanguage.KEY,
+            descriptor.languages().toArray()[0],
+            SystemDescriptorLanguage.KEY
       );
    }
 
@@ -64,24 +66,24 @@ public class SystemDescriptorSensorIT {
    public void definesCorrectInputFileType() {
       sensor.describe(descriptor);
       assertEquals(
-         "the file type for input files should be: " + Type.MAIN,
-         descriptor.type(),
-         Type.MAIN
+            "the file type for input files should be: " + Type.MAIN,
+            descriptor.type(),
+            Type.MAIN
       );
    }
 
    @Test
    public void doesParseValidProject() throws IOException {
-     projectPath = BASE_DIR.resolve("valid-project");
-     context = SensorContextTester.create(projectPath.toFile());
-     addProjectInputFiles(context.fileSystem(), projectPath);
+      projectPath = BASE_DIR.resolve("valid-project");
+      context = SensorContextTester.create(projectPath.toFile());
+      addProjectInputFiles(context.fileSystem(), projectPath);
 
-     sensor.execute(context);
+      sensor.execute(context);
 
-     assertTrue(
-        "a valid project should not have issues!",
-        context.allIssues().isEmpty()
-     );
+      assertTrue(
+            "a valid project should not have issues!",
+            context.allIssues().isEmpty()
+      );
    }
 
    @Test
@@ -93,8 +95,8 @@ public class SystemDescriptorSensorIT {
       sensor.execute(context);
 
       assertFalse(
-         "an invalid file should have issues!",
-         context.allIssues().isEmpty()
+            "an invalid file should have issues!",
+            context.allIssues().isEmpty()
       );
    }
 
@@ -107,24 +109,24 @@ public class SystemDescriptorSensorIT {
       sensor.execute(context);
 
       assertFalse(
-         "a project with only warnings should have issues!",
-         context.allIssues().isEmpty()
+            "a project with only warnings should have issues!",
+            context.allIssues().isEmpty()
       );
    }
 
    private void addProjectInputFiles(DefaultFileSystem fs, Path path) throws IOException {
       Files.walk(path)
-           .filter(p -> p.toFile().isFile())
-           .filter(p -> p.toString().endsWith(".sd"))
-           .map(this::createTestInputFile)
-           .forEach(fs::add);
+            .filter(p -> p.toFile().isFile())
+            .filter(p -> p.toString().endsWith(".sd"))
+            .map(this::createTestInputFile)
+            .forEach(fs::add);
    }
 
    private DefaultInputFile createTestInputFile(Path file) {
       return new TestInputFileBuilder("", file.toString())
-         .setModuleBaseDir(BASE_DIR)
-         .initMetadata(readContentsOfTestInputFile(file))
-         .build();
+            .setModuleBaseDir(BASE_DIR)
+            .initMetadata(readContentsOfTestInputFile(file))
+            .build();
    }
 
    private String readContentsOfTestInputFile(Path file) {

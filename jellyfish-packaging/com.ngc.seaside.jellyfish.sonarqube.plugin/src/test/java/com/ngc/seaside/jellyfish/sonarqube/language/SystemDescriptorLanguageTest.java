@@ -8,29 +8,30 @@ import static org.junit.Assert.assertEquals;
 
 
 public class SystemDescriptorLanguageTest {
-    private static final String NAME = "System Descriptor";
-    private static final String KEY = "systemdescriptor";
-    private static final String[] FILE_SUFFIXES = { "sd" };
 
-    private SystemDescriptorLanguage language;
+   private static final String NAME = "System Descriptor";
+   private static final String KEY = "systemdescriptor";
+   private static final String[] FILE_SUFFIXES = {"sd"};
 
-    @Before
-    public void beforeTests() {
-        language = new SystemDescriptorLanguage();
-    }
+   private SystemDescriptorLanguage language;
 
-    @Test
-    public void providesCorrectFileSuffixes() {
-        assertArrayEquals(language.getFileSuffixes(), FILE_SUFFIXES);
-    }
+   @Before
+   public void beforeTests() {
+      language = new SystemDescriptorLanguage();
+   }
 
-    @Test
-    public void definesCorrectName() {
-        assertEquals(language.getName(), NAME);
-    }
+   @Test
+   public void providesCorrectFileSuffixes() {
+      assertArrayEquals(language.getFileSuffixes(), FILE_SUFFIXES);
+   }
 
-    @Test
-    public void definesCorrectKey() {
-        assertEquals(language.getKey(), KEY);
-    }
+   @Test
+   public void definesCorrectName() {
+      assertEquals(language.getName(), NAME);
+   }
+
+   @Test
+   public void definesCorrectKey() {
+      assertEquals(language.getKey(), KEY);
+   }
 }
