@@ -5,7 +5,6 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.junit.Before;
@@ -90,11 +89,10 @@ public class ParsingDelegateIT {
       assertFalse("parsing should not be successful!", result.isSuccessful());
 
       IParsingIssue issue = result.getIssues().iterator().next();
-      ISourceLocation location = issue.getLocation();
-      assertEquals("wrong line number!", 9, location.getLineNumber());
-      assertEquals("wrong column number!", 3, location.getColumn());
+      assertEquals("wrong line number!", 9, issue.getLineNumber());
+      assertEquals("wrong column number!", 3, issue.getColumn());
       assertNotNull("error message should not be null!", issue.getMessage());
-      assertEquals("file not correct!", time.toAbsolutePath(), location.getPath());
+      assertEquals("file not correct!", time.toAbsolutePath(), issue.getOffendingFile());
    }
 
    /**

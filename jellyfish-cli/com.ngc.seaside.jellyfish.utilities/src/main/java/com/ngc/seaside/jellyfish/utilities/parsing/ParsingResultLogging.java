@@ -6,7 +6,6 @@ import com.google.common.io.LineProcessor;
 
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.io.IOException;
@@ -68,7 +67,7 @@ public class ParsingResultLogging {
    private static Collection<String> printIssue(IParsingIssue issue) {
       Collection<String> lines = new ArrayList<>();
 
-      Path offendingFile = issue.getLocation().getPath();
+      Path offendingFile = issue.getOffendingFile();
       lines.add("----------------------------------------");
       lines.add(String.format("File: %s", offendingFile == null ? "unknown"
                                                                 : offendingFile.toAbsolutePath()));
@@ -84,15 +83,14 @@ public class ParsingResultLogging {
       Collection<String> lines = new ArrayList<>();
 
       try {
-         ISourceLocation location = issue.getLocation();
-         String line = Files.asCharSource(location.getPath().toFile(),
+         String line = Files.asCharSource(issue.getOffendingFile().toFile(),
                                           Charsets.UTF_8)
-               .readLines(new LineFinder(location.getLineNumber()));
+               .readLines(new LineFinder(issue.getLineNumber()));
          if (line != null) {
             lines.add("");
             lines.add(line);
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < location.getColumn(); i++) {
+            for (int i = 1; i < issue.getColumn(); i++) {
                sb.append(' ');
             }
             lines.add(sb.append("^").toString());

@@ -5,14 +5,12 @@ import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Paths;
@@ -46,13 +44,12 @@ public class ValidateCommandTest {
 
    @Test(expected = CommandException.class)
    public void testValidateInvalidResult() {
-      IParsingIssue issue = mock(IParsingIssue.class, Mockito.RETURNS_DEEP_STUBS);
-      ISourceLocation location = issue.getLocation();
+      IParsingIssue issue = mock(IParsingIssue.class);
       when(issue.getSeverity()).thenReturn(Severity.ERROR);
       when(issue.getMessage()).thenReturn("some error message");
-      when(location.getLineNumber()).thenReturn(4);
-      when(location.getColumn()).thenReturn(3);
-      when(location.getPath()).thenReturn(Paths.get("src", "test", "resources", "invalidFile.txt"));
+      when(issue.getLineNumber()).thenReturn(4);
+      when(issue.getColumn()).thenReturn(3);
+      when(issue.getOffendingFile()).thenReturn(Paths.get("src", "test", "resources", "invalidFile.txt"));
 
       when(parsingResult.isSuccessful()).thenReturn(false);
       when(parsingResult.getIssues()).thenReturn(Collections.singletonList(issue));

@@ -11,10 +11,8 @@ import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.XTextSourceLocatorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocatorService;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
@@ -53,7 +51,6 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
    protected void configure() {
       // Use either the standalone or embedded constructor to create the service.
       bind(ISystemDescriptorService.class).toConstructor(constructor).asEagerSingleton();
-      bind(ISourceLocatorService.class).to(XTextSourceLocatorService.class).in(Singleton.class);
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
       bindDefaultValidators();
