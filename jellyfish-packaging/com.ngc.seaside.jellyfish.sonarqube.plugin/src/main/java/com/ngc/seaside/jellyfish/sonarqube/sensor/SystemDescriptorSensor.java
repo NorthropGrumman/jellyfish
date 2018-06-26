@@ -9,6 +9,7 @@ import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.sonar.api.batch.InstantiationStrategy;
@@ -71,10 +72,11 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private void setIssueLocation(SensorContext c, IParsingIssue parsingIssue, NewIssue issue) {
-      InputFile f = getInputFileFromRealFile(c, parsingIssue.getOffendingFile());
+      ISourceLocation sourceLocation = parsingIssue.getLocation();
+      InputFile f = getInputFileFromRealFile(c, sourceLocation.getPath());
       NewIssueLocation location = issue.newLocation()
             .on(f)
-            .at(f.selectLine(parsingIssue.getLineNumber()))
+            .at(f.selectLine(sourceLocation.getLineNumber()))
             .message(parsingIssue.getMessage());
       issue.at(location);
    }
