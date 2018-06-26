@@ -16,6 +16,7 @@ buildscript {
         classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
         classpath "com.ngc.blocs:gradle.plugin:$blocsPluginVersion"
+        classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:1.0-RC1"
     }
 }
 
