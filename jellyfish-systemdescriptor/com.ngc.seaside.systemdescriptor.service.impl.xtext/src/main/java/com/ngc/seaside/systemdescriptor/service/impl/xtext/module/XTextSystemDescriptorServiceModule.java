@@ -14,7 +14,7 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelega
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.XTextSourceLocatorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocatorService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;

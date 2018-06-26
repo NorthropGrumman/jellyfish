@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.source.api;
+package com.ngc.seaside.systemdescriptor.service.source.api;
 
 import java.nio.file.Path;
 

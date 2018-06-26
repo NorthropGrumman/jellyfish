@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.source;
 
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocatorService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;

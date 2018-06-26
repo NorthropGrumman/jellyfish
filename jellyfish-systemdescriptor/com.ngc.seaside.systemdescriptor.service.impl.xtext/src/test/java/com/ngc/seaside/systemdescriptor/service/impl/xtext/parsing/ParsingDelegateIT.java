@@ -5,7 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.ngc.seaside.systemdescriptor.source.api;
+package com.ngc.seaside.systemdescriptor.service.source.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;

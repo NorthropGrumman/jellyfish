@@ -1,6 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.api;
 
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.util.Optional;

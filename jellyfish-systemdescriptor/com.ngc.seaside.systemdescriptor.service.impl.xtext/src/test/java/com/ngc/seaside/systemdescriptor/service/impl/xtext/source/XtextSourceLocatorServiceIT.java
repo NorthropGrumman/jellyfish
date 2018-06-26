@@ -11,8 +11,8 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocatorService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.junit.BeforeClass;
