@@ -21,7 +21,5 @@ cd ./jellyfish-systemdescriptor-dsl \
 && ../gradlew $params \
 && cd ../jellyfish-cli-analysis-commands \
 && ../gradlew $params \
-&& cd ../jellyfish-sonarqube \
-&& ../gradlew $params \
 && cd ../jellyfish-packaging \
 && ../gradlew $params

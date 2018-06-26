@@ -1,5 +1,0 @@
-rootProject.name = 'jellyfish-sonarqube'
-
-include 'com.ngc.seaside.jellyfish.sonarqube.plugin'
-
-project(':com.ngc.seaside.jellyfish.sonarqube.plugin').name = 'jellyfish.sonarqube.plugin'
