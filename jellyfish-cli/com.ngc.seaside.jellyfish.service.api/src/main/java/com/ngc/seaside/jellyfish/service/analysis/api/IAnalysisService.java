@@ -10,15 +10,15 @@ public interface IAnalysisService {
    /**
     * Adds a finding to the analysis.
     * 
-    * @param finding an issue found within the System Descriptor project
+    * @param finding a finding within the System Descriptor project
     */
-   void addFinding(SystemDescriptorFinding finding);
+   void addFinding(SystemDescriptorFinding<? extends ISystemDescriptorFindingType> finding);
 
    /**
     * Returns the list of findings added to this service.
     * 
     * @return the list of findings
     */
-   List<SystemDescriptorFinding> getFindings();
+   List<SystemDescriptorFinding<ISystemDescriptorFindingType>> getFindings();
 
 }
