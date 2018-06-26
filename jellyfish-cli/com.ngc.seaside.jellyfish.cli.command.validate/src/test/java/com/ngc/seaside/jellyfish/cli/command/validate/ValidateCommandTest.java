@@ -5,7 +5,7 @@ import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.junit.Before;

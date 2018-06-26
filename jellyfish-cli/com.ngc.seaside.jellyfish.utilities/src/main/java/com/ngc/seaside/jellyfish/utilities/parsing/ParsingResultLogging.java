@@ -3,10 +3,9 @@ package com.ngc.seaside.jellyfish.utilities.parsing;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
-
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.io.IOException;
