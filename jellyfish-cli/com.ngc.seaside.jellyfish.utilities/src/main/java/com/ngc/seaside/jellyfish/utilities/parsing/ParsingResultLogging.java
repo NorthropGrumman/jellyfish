@@ -3,9 +3,9 @@ package com.ngc.seaside.jellyfish.utilities.parsing;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
-
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class ParsingResultLogging {
    private static Collection<String> printIssue(IParsingIssue issue) {
       Collection<String> lines = new ArrayList<>();
 
-      Path offendingFile = issue.getOffendingFile();
+      Path offendingFile = issue.getLocation().getPath();
       lines.add("----------------------------------------");
       lines.add(String.format("File: %s", offendingFile == null ? "unknown"
                                                                 : offendingFile.toAbsolutePath()));
@@ -83,14 +83,15 @@ public class ParsingResultLogging {
       Collection<String> lines = new ArrayList<>();
 
       try {
-         String line = Files.asCharSource(issue.getOffendingFile().toFile(),
+         ISourceLocation location = issue.getLocation();
+         String line = Files.asCharSource(location.getPath().toFile(),
                                           Charsets.UTF_8)
-               .readLines(new LineFinder(issue.getLineNumber()));
+               .readLines(new LineFinder(location.getLineNumber()));
          if (line != null) {
             lines.add("");
             lines.add(line);
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < issue.getColumn(); i++) {
+            for (int i = 1; i < location.getColumn(); i++) {
                sb.append(' ');
             }
             lines.add(sb.append("^").toString());
