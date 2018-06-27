@@ -13,7 +13,6 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -47,27 +46,65 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
 
    @Override
    public void run(ICommandOptions commandOptions) {
-      // Sort by severity first.
-      Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings = ArrayListMultimap.create();
-      for (SystemDescriptorFinding<?> finding : analysisService.getFindings()) {
-         findings.put(finding.getType().getSeverity(), finding);
+      Collection<SystemDescriptorFinding<ISystemDescriptorFindingType>> all = analysisService.getFindings();
+      if (all.isEmpty()) {
+         logService.info(getClass(), "No findings to report.");
+      } else {
+         // Sort by severity first.
+         Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings =
+               ArrayListMultimap.create();
+         for (SystemDescriptorFinding<?> finding : all) {
+            findings.put(finding.getType().getSeverity(), finding);
+         }
+
+         StringBuilder sb = new StringBuilder(NEWLINE);
+         logSummary(findings, sb);
+         sb.append(NEWLINE).append("# Errors").append(NEWLINE);
+         logFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR),
+                     sb);
+         sb.append(NEWLINE).append("# Warnings").append(NEWLINE);
+         logFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING),
+                     sb);
+         sb.append(NEWLINE);
+         logFindings(findings.get(ISystemDescriptorFindingType.Severity.INFO),
+                     sb);
+         sb.append(NEWLINE);
+         logRuntimeInformation(sb, commandOptions);
+
+         logService.info(getClass(), sb);
       }
+   }
 
-      StringBuilder sb = new StringBuilder(NEWLINE);
-      logSummary(findings, sb);
-      sb.append(NEWLINE).append("# Errors").append(NEWLINE);
-      logFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR),
-                  sb);
-      sb.append(NEWLINE).append("# Warnings").append(NEWLINE);
-      logFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING),
-                  sb);
-      sb.append(NEWLINE);
-      logFindings(findings.get(ISystemDescriptorFindingType.Severity.INFO),
-                  sb);
-      sb.append(NEWLINE);
-      logRuntimeInformation(sb, commandOptions);
+   @Activate
+   public void activate() {
+      logService.debug(ConsoleAnalysisReportCommand.class, "Activated.");
+   }
 
-      logService.info(getClass(), sb);
+   @Deactivate
+   public void deactivate() {
+      logService.debug(ConsoleAnalysisReportCommand.class, "Deactivated.");
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeAnalysisService")
+   public void setAnalysisService(IAnalysisService ref) {
+      this.analysisService = ref;
+   }
+
+   public void removeAnalysisService(IAnalysisService ref) {
+      setAnalysisService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeLogService")
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
    }
 
    private static void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
@@ -114,40 +151,7 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
       return s;
    }
 
-   @Activate
-   public void activate() {
-      logService.debug(ConsoleAnalysisReportCommand.class, "Activated.");
-   }
-
-   @Deactivate
-   public void deactivate() {
-      logService.debug(ConsoleAnalysisReportCommand.class, "Deactivated.");
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeAnalysisService")
-   public void setAnalysisService(IAnalysisService ref) {
-      this.analysisService = ref;
-   }
-
-   public void removeAnalysisService(IAnalysisService ref) {
-      setAnalysisService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
-
-   private void logRuntimeInformation(StringBuilder sb, ICommandOptions commandOptions) {
+   private static void logRuntimeInformation(StringBuilder sb, ICommandOptions commandOptions) {
       sb.append("# Runtime Information").append(NEWLINE);
       sb.append("Jellyfish executed with the following parameters:").append(NEWLINE);
       commandOptions.getParameters().getAllParameters()
