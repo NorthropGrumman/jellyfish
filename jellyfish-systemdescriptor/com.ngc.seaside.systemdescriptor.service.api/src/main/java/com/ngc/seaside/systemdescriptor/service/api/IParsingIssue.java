@@ -1,8 +1,8 @@
 package com.ngc.seaside.systemdescriptor.service.api;
 
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -30,32 +30,10 @@ public interface IParsingIssue {
    Optional<String> getErrorCode();
 
    /**
-    * Gets the line number of the offending resource that caused this issue.
-    *
-    * @return the line number of the offending resource that caused this issue
+    * Gets the source location to the root cause of this issue.
+    * 
+    * @return the source location to the root cause of this issue
     */
-   int getLineNumber();
+   ISourceLocation getLocation();
 
-   /**
-    * Gets the column number on the line of the offending resource that caused this issue.
-    *
-    * @return the column number on the line of the offending resource that caused this issue
-    */
-   int getColumn();
-
-   int getOffset();
-
-   /**
-    * Gets the position of the character where the issue is "out of scope".
-    *
-    * @return the position of the character where the issue is "out of scope"
-    */
-   int getLength();
-
-   /**
-    * Gets a path to the file that is the root of this issue.
-    *
-    * @return the path to the file that is the root of this issue
-    */
-   Path getOffendingFile();
 }
