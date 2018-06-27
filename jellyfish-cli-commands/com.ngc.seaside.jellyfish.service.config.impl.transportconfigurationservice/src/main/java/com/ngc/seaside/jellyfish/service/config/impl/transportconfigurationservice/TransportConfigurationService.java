@@ -9,10 +9,12 @@ import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryReportingConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.MulticastConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.RestConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TelemetryConfigurationUtils;
+import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TelemetryReportingConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TransportConfigurationServiceUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.ZeroMqConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
@@ -83,6 +85,19 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    }
 
    @Override
+   public Optional<String> getTelemetryReportingTransportTopicName(IJellyFishCommandOptions options, IModel model) {
+      Collection<TelemetryConfiguration> configs = getTelemetryConfiguration(options, model);
+      if (configs.isEmpty()) {
+         return Optional.empty();
+      }
+      String topic = model.getName();
+      for (int i = 0; i < PATTERNS.length; i++) {
+         topic = PATTERNS[i].matcher(topic).replaceAll(REPLACEMENTS[i]);
+      }
+      return Optional.of(topic.toUpperCase() + "_TELEMETRY_REPORTING");
+   }
+
+   @Override
    public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
       Set<TransportConfigurationType> types = new LinkedHashSet<>();
       IParameter<?> deploymentParam = options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
@@ -94,6 +109,9 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             IData type = property.getReferencedDataType();
             if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
                types.add(TransportConfigurationType.TELEMETRY);
+            }
+            if (TelemetryReportingConfigurationUtils.isTelemetryConfiguration(type)) {
+               types.add(TransportConfigurationType.TELEMETRY_REPORTING);
             }
          }
       }
@@ -107,6 +125,9 @@ public class TransportConfigurationService implements ITransportConfigurationSer
                   IData type = property.getReferencedDataType();
                   if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
                      types.add(TransportConfigurationType.TELEMETRY);
+                  }
+                  if (TelemetryReportingConfigurationUtils.isTelemetryConfiguration(type)) {
+                     types.add(TransportConfigurationType.TELEMETRY_REPORTING);
                   }
                }
             }
@@ -183,7 +204,19 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             TelemetryConfigurationUtils::getRestTelemetryConfiguration));
       return configurations;
    }
-   
+
+   @Override
+   public Collection<TelemetryReportingConfiguration> getTelemetryReportingConfiguration(
+            IJellyFishCommandOptions options, IModel model) {
+      List<TelemetryReportingConfiguration> configurations = new ArrayList<>();
+
+      configurations.addAll(getModelPartConfigurations(options, model, 
+               TelemetryReportingConfigurationUtils.REST_TELEMETRY_REPORTING_CONFIGURATION_QUALIFIED_NAME,
+               TelemetryReportingConfigurationUtils::getRestTelemetryReportingConfiguration));
+
+      return configurations;
+   }
+
    /**
     * Returns the collection of configurations for the given field.
     *
@@ -211,7 +244,7 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       }
       return configurations;
    }
-   
+
    private <T> Collection<T> getModelPartConfigurations(IJellyFishCommandOptions options, IModel model, 
             String configQualifiedName, Function<IPropertyDataValue, T> function) {
       IModel aggregatedModel = sdService.getAggregatedView(model);
