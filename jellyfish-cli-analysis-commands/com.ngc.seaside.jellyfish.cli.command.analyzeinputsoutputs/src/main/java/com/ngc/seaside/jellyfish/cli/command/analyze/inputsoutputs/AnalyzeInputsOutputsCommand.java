@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 
@@ -15,16 +16,6 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
 
    public AnalyzeInputsOutputsCommand() {
       super(NAME);
-   }
-
-   @Override
-   protected void doRun() {
-      System.out.println("HELLO WORLD!");
-   }
-
-   @Override
-   protected IUsage createUsage() {
-      throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
@@ -47,4 +38,15 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
    public void removeAnalysisService(IAnalysisService ref) {
       setAnalysisService(null);
    }
+
+   @Override
+   protected void doRun() {
+      System.out.println("HELLO WORLD!");
+   }
+
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage("Checks that models which have inputs also have outputs.");
+   }
+
 }
