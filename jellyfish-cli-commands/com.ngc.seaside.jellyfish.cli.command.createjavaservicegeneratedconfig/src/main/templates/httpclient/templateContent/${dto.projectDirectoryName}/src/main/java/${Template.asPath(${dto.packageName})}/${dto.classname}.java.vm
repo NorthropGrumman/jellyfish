@@ -17,6 +17,7 @@ public class ${dto.classname} {
             "http://${topic.networkAddress.address}:${topic.port}${topic.path}",
             HttpClientVerb.${topic.httpMethod},
             HttpClientTopic.DEFAULT_TIMEOUT,
+            "${topic.contentType}",
             "${topic.contentType}");
 
 #end

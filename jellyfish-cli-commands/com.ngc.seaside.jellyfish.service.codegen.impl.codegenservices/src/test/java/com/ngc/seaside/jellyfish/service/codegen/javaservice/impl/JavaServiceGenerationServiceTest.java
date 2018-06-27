@@ -73,11 +73,14 @@ public class JavaServiceGenerationServiceTest {
    public void setup() {
       when(model.getName()).thenReturn("EngagementTrackPriorityService");
       when(model.getScenarios()).thenReturn(new NamedChildCollection<>());
+      when(model.getParts()).thenReturn(new NamedChildCollection<>());
 
       when(packageNamingService.getServiceInterfacePackageName(options, model)).thenReturn(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.api");
       when(packageNamingService.getServiceBaseImplementationPackageName(options, model)).thenReturn(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl");
+      when(transportConfService.getTelemetryReportingTransportTopicName(any(), any())).thenReturn(Optional.empty());
+      when(transportConfService.getTelemetryTransportTopicName(any(), any())).thenReturn(Optional.empty());
 
       service = new JavaServiceGenerationService();
       service.setLogService(logService);

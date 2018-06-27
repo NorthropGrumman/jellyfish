@@ -39,6 +39,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -255,9 +256,11 @@ public class TransportConfigurationService implements ITransportConfigurationSer
             () -> String.format("Configuration is not completely set for model %s", 
                   aggregatedModel.getFullyQualifiedName())));
       
-      IModel deploymentModel = sdService.getAggregatedView(
-            TransportConfigurationServiceUtils.getDeploymentModel(options));
-      for (IModelReferenceField part : deploymentModel.getParts()) {
+      Collection<IModelReferenceField> parts = TransportConfigurationServiceUtils.getOptionalDeploymentModel(options)
+                  .map(sdService::getAggregatedView)
+                  .map(deploymentModel -> (Collection<IModelReferenceField>) deploymentModel.getParts())
+                  .orElse(Collections.emptySet());
+      for (IModelReferenceField part : parts) {
          if (Objects.equals(part.getType().getFullyQualifiedName(), model.getFullyQualifiedName())) {
             configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(part::getProperties,
                   configQualifiedName,

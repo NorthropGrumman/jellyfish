@@ -100,7 +100,7 @@ public class DefaultDependenciesConfiguration {
 
       config.addGroup()
             .versionPropertyName("blocsCoreVersion")
-            .version("2.2.0")
+            .version("2.3.2")
             .defaultGroupId("com.ngc.blocs")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("api"),
