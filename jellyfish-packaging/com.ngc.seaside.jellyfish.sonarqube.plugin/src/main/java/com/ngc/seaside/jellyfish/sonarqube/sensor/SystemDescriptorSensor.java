@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxErrorRule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
@@ -21,6 +22,8 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import java.nio.file.Path;
 
@@ -30,6 +33,8 @@ import java.nio.file.Path;
  */
 @InstantiationStrategy(InstantiationStrategy.PER_PROJECT)
 public class SystemDescriptorSensor implements Sensor {
+
+   private static final Logger LOGGER = Loggers.get(SystemDescriptorSensor.class);
 
    private final ISystemDescriptorService systemDescriptorService;
 
@@ -51,17 +56,31 @@ public class SystemDescriptorSensor implements Sensor {
 
    @Override
    public void execute(SensorContext c) {
+      LOGGER.debug("Beginning scan of project {}.", c.fileSystem().baseDir().toPath());
+      // Use c.config().getStringArray() for multivalues.
+      // See https://github.com/SonarSource/sonarqube/blob/master/sonar-plugin-api/src/main/java/org/
+      // sonar/api/config/Configuration.java
+      // For info about how to escape , in values.  IE
+      // "one,\"two,three\",\" four \""
+      // yields
+      // ["one", "two,three", " four "]
+      // We'll use this to configure which analysis to run via the project's build.gradle file which contains the
+      // settings.
+
+      // Use c.config().get(SystemDescriptorProperties.HELLO_WORLD) to get properties set in the build.gradle file
+      // of a project being scanned.
+
+      // LOGGER.debug("Value of property is {}.",
+      // c.config().get(SystemDescriptorProperties.HELLO_WORLD).orElse("NOT SET"));
+
       // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
-      IParsingResult r = systemDescriptorService
-            .parseProject(
-                  c.fileSystem()
-                        .baseDir()
-                        .toPath()
-            );
+      IParsingResult r = systemDescriptorService.parseProject(c.fileSystem().baseDir().toPath());
 
       for (IParsingIssue i : r.getIssues()) {
          saveIssue(c, i);
       }
+
+      LOGGER.debug("Scan complete.");
    }
 
    private void saveIssue(SensorContext c, IParsingIssue i) {

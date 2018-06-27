@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.sonarqube;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.profile.DefaultSystemDescriptorQualityProfile;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SystemDescriptorRulesDefinition;
 import com.ngc.seaside.jellyfish.sonarqube.sensor.SystemDescriptorSensor;
 
@@ -23,6 +24,7 @@ public class JellyfishPlugin implements Plugin {
       c.addExtension(SystemDescriptorRulesDefinition.class);
       c.addExtension(DefaultSystemDescriptorQualityProfile.class);
       c.addExtension(SystemDescriptorSensor.class);
+      c.addExtensions(SystemDescriptorProperties.getProperties());
 
       LOGGER.info("Jellyfish plugin successfully installed.");
    }
