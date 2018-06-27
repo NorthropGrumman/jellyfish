@@ -73,14 +73,27 @@ pipeline {
          }
       }
 
-      stage('Build jellyfish-cli-commands') {
-         steps {
-            dir('jellyfish-cli-commands') {
-               sh '../gradlew clean ci --parallel'
-               junit '**/build/test-results/test/*.xml'
+      stage('Build jellyfish commands') {
+         parallel {
+            stage('Build jellyfish-cli-commands') {
+               steps {
+                  dir('jellyfish-cli-commands') {
+                     sh '../gradlew clean ci --parallel'
+                     junit '**/build/test-results/test/*.xml'
+                  }
+               }
+            }
+            stage('Build jellyfish-cli-analysis-commands') {
+               steps {
+                  dir('jellyfish-cli-analysis-commands') {
+                     sh '../gradlew clean ci --parallel'
+                     junit '**/build/test-results/test/*.xml'
+                  }
+               }
             }
          }
       }
+      
 
       stage('Build jellyfish-packaging') {
          steps {
