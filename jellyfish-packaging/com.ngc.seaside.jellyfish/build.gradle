@@ -25,6 +25,10 @@ dependencies {
     implementation "com.ngc.seaside:jellyfish.service.impl.templateservice:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+
+    implementation "com.ngc.seaside:jellyfish.service.analysis.impl.analysisservice:$version"
+   implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
+
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
     implementation "org.osgi:osgi.core:$osgiVersion"
