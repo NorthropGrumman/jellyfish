@@ -15,7 +15,7 @@ buildscript {
       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
       classpath "com.ngc.blocs:gradle.plugin:0.5"
       classpath "com.ngc.seaside:gradle.plugins:2.13.0"
-      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.9.0-SNAPSHOT"
+      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.10.0-SNAPSHOT"
       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
    }
 }
@@ -39,15 +39,15 @@ subprojects {
    version = '1.0-SNAPSHOT'
 
    ext {
-      blocsCoreVersion = '2.2.0'
+      blocsCoreVersion = '2.3.2'
       cucumberVersion = '1.2.5'
       guavaVersion = '22.0'
       guiceVersion = '4.1.0'
-      jellyfishVersion = '2.9.0-SNAPSHOT'
+      jellyfishVersion = '2.10.0-SNAPSHOT'
       junitVersion = '4.12'
       mockitoVersion = '2.7.14'
       osgiVersion = '6.0.0'
       protobufVersion = '3.2.0'
-      starfishVersion = '2.10.0'
+      starfishVersion = '2.11.0-SNAPSHOT'
    }
 }
