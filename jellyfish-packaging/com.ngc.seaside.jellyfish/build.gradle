@@ -109,6 +109,7 @@ dependencies {
    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
 
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
+   implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"

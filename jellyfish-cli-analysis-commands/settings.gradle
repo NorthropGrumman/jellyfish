@@ -5,3 +5,6 @@ project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name
 
 include 'com.ngc.seaside.jellyfish.cli.command.analyzeinputsoutputs'
 project(':com.ngc.seaside.jellyfish.cli.command.analyzeinputsoutputs').name = 'jellyfish.cli.command.analyzeinputsoutputs'
+
+include 'com.ngc.seaside.jellyfish.cli.command.consoleanalysisreport'
+project(':com.ngc.seaside.jellyfish.cli.command.consoleanalysisreport').name = 'jellyfish.cli.command.consoleanalysisreport'
