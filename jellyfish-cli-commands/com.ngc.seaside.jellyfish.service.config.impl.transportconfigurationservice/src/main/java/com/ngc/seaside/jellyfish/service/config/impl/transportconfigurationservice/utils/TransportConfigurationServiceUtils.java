@@ -103,10 +103,13 @@ public class TransportConfigurationServiceUtils {
    public static Optional<IModel> getOptionalDeploymentModel(IJellyFishCommandOptions options) {
       IParameter<?> deploymentModelParameter = options.getParameters()
             .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
-      if (deploymentModelParameter == null) {
+      if (deploymentModelParameter == null || deploymentModelParameter.getValue() == null) {
          return Optional.empty();
       }
       String deploymentModel = deploymentModelParameter.getStringValue();
+      if (deploymentModel == null) {
+         return Optional.empty();
+      }
       return options.getSystemDescriptor().findModel(deploymentModel);
    }
 }
