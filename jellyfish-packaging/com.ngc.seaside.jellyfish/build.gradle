@@ -108,6 +108,7 @@ dependencies {
    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-build@zip"
    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
 
+   implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
 

@@ -65,6 +65,12 @@ public class DefaultCommandProviderGuiceWrapper implements ICommandProvider<
    }
 
    @Override
+   public void run(String command, ICommandOptions commandOptions) {
+      injectCommandsIfNeeded();
+      delegate.run(command, commandOptions);
+   }
+
+   @Override
    public ICommand<ICommandOptions> getCommand(String commandName) {
       injectCommandsIfNeeded();
       return delegate.getCommand(commandName);

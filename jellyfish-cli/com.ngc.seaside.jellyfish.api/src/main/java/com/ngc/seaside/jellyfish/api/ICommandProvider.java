@@ -49,4 +49,11 @@ public interface ICommandProvider<S extends ICommandOptions, T extends ICommand<
     */
    R run(String[] arguments);
 
+   /**
+    * Runs a command with the given options.
+    *
+    * @param command        the name of the command to run
+    * @param commandOptions the options to run the command with
+    */
+   void run(String command, S commandOptions);
 }

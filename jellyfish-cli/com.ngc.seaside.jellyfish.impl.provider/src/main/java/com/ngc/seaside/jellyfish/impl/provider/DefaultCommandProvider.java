@@ -48,6 +48,16 @@ public class DefaultCommandProvider extends AbstractCommandProvider<
       return runCommand(commandName, parameters);
    }
 
+   @Override
+   public void run(String command, ICommandOptions commandOptions) {
+      Preconditions.checkNotNull(command, "command may not be null!");
+      Preconditions.checkArgument(!command.trim().isEmpty(), "command may not be empty!");
+      Preconditions.checkNotNull(commandOptions, "commandOptions may not be null!");
+      ICommand<ICommandOptions> c = getCommand(command);
+      Preconditions.checkArgument(c != null, "no command named '%s' found!", command);
+      verifyRequiredParameters(c, commandOptions.getParameters());
+      c.run(commandOptions);
+   }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
