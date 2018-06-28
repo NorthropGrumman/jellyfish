@@ -13,6 +13,7 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -59,10 +60,10 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
 
          StringBuilder sb = new StringBuilder(NEWLINE);
          logSummary(findings, sb);
-         sb.append(NEWLINE).append("# Errors").append(NEWLINE);
+         sb.append(NEWLINE).append("# Errors").append(NEWLINE).append(NEWLINE);
          logFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR),
                      sb);
-         sb.append(NEWLINE).append("# Warnings").append(NEWLINE);
+         sb.append(NEWLINE).append("# Warnings").append(NEWLINE).append(NEWLINE);
          logFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING),
                      sb);
          sb.append(NEWLINE);
