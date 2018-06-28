@@ -5,6 +5,9 @@ import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.seaside.jellyfish.api.ICommand;
 
+/**
+ * The Guice module for the console report command.
+ */
 public class ConsoleAnalysisReportCommandGuiceModule extends AbstractModule {
 
    @Override

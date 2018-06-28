@@ -13,7 +13,6 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -24,10 +23,16 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * A report command that outputs all findings added to the {@link IAnalysisService} to the console via the log service.
+ */
 public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
 
    private static final String NEWLINE = System.lineSeparator();
 
+   /**
+    * The name of the command.
+    */
    public static final String NAME = "console-report";
 
    private ILogService logService;

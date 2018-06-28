@@ -70,20 +70,20 @@ public class ConsoleAnalysisReportCommandTest {
 
    private static final ISystemDescriptorFindingType FOO_TYPE = ISystemDescriptorFindingType.createFindingType(
          "foo",
-         "## Foo\n" +
-         "Foos are bad and cause issues with stuff.  Too many foos are even worse.",
+         "## Foo\n"
+         + "Foos are bad and cause issues with stuff.  Too many foos are even worse.",
          ISystemDescriptorFindingType.Severity.ERROR);
 
    private static final ISystemDescriptorFindingType BAR_TYPE = ISystemDescriptorFindingType.createFindingType(
          "bar",
-         "## Bar\n" +
-         "Bars aren't too bad but they can be annoying.  You should avoid these where possible.",
+         "## Bar\n"
+         + "Bars aren't too bad but they can be annoying.  You should avoid these where possible.",
          ISystemDescriptorFindingType.Severity.WARNING);
 
    private static final ISystemDescriptorFindingType COO_TYPE = ISystemDescriptorFindingType.createFindingType(
          "coo",
-         "# Coo\n" +
-         "Coos are okay.  Trust me.",
+         "# Coo\n"
+         + "Coos are okay.  Trust me.",
          ISystemDescriptorFindingType.Severity.INFO);
 
    private static SystemDescriptorFinding<ISystemDescriptorFindingType> newFinding(ISystemDescriptorFindingType type,
