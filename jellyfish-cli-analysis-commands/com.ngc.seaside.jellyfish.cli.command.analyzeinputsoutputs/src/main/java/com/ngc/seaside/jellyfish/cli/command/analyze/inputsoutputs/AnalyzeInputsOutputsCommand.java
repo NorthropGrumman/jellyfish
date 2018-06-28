@@ -2,6 +2,9 @@ package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
@@ -13,7 +16,7 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
    public static final String NAME = "analyze-inputs-outputs";
 
    // REMOVE THIS
-   private IJellyFishCommandProvider jellyFishCommandProvider;
+   private ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> jellyFishCommandProvider;
 
    public AnalyzeInputsOutputsCommand() {
       super(NAME);
@@ -29,11 +32,11 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
       logService.debug(AnalyzeInputsOutputsCommand.class, "Deactivated.");
    }
 
-   public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+   public void setJellyFishCommandProvider(ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> ref) {
       this.jellyFishCommandProvider = ref;
    }
 
-   public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+   public void removeJellyFishCommandProvider(ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> ref) {
       setJellyFishCommandProvider(null);
    }
 
@@ -61,6 +64,6 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
    protected void doRun() {
       super.doRun();
       // This is temporary.  For testing only.
-      jellyFishCommandProvider.run("console-report", getOptions());
+      jellyFishCommandProvider.run(new String[]{"console-report"});
    }
 }

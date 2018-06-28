@@ -3,6 +3,9 @@ package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 import com.google.inject.Inject;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
@@ -18,7 +21,7 @@ public class AnalyzeInputsOutputsCommandGuiceWrapper implements IJellyFishComman
    public AnalyzeInputsOutputsCommandGuiceWrapper(ILogService logService,
                                                   IAnalysisService analysisService,
                                                   ISourceLocatorService sourceLocatorService,
-                                                  IJellyFishCommandProvider jellyFishCommandProvider) {
+                                                  ICommandProvider jellyFishCommandProvider) {
       delegate.setLogService(logService);
       delegate.setAnalysisService(analysisService);
       delegate.setSourceLocatorService(sourceLocatorService);
