@@ -4,10 +4,6 @@ dependencies {
    implementation "com.ngc.seaside:jellyfish.service.api:$version"
    implementation "com.ngc.seaside:jellyfish.utilities:$version"
 
-   // Move this to utils bundle.
-   implementation "commons-io:commons-io:$commonsIOVersion"
-   implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
-
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "org.osgi:osgi.core:$osgiVersion"

@@ -2,22 +2,26 @@ package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.ICommand;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.ICommandProvider;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishAnalysisCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
+/**
+ * An analysis that checks for models which contain inputs but no outputs.  See
+ * http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs for details.
+ */
 public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisCommand {
 
+   /**
+    * The name of the command.
+    */
    public static final String NAME = "analyze-inputs-outputs";
 
-   // REMOVE THIS
-   private ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> jellyFishCommandProvider;
-
+   /**
+    * Creates a new command.
+    */
    public AnalyzeInputsOutputsCommand() {
       super(NAME);
    }
@@ -30,14 +34,6 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
    @Override
    public void deactivate() {
       logService.debug(AnalyzeInputsOutputsCommand.class, "Deactivated.");
-   }
-
-   public void setJellyFishCommandProvider(ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> ref) {
-      this.jellyFishCommandProvider = ref;
-   }
-
-   public void removeJellyFishCommandProvider(ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> ref) {
-      setJellyFishCommandProvider(null);
    }
 
    @Override
@@ -58,12 +54,5 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
                InputsOutputsFindingTypes.INPUTS_WITH_NO_OUTPUTS.createFinding(message, location, 1);
          reportFinding(finding);
       }
-   }
-
-   @Override
-   protected void doRun() {
-      super.doRun();
-      // This is temporary.  For testing only.
-      jellyFishCommandProvider.run(new String[]{"console-report"});
    }
 }

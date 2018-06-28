@@ -6,6 +6,9 @@ import com.google.inject.multibindings.Multibinder;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 
+/**
+ * The model for the analysis command and its finding types.
+ */
 public class AnalyzeInputsOutputsCommandGuiceModule extends AbstractModule {
 
    @Override

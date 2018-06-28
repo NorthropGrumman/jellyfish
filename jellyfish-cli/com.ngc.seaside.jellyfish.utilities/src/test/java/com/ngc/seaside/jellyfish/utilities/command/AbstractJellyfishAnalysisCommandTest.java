@@ -1,4 +1,4 @@
-package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
+package com.ngc.seaside.jellyfish.utilities.command;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -157,18 +157,6 @@ public class AbstractJellyfishAnalysisCommandTest {
       return model;
    }
 
-   private IData registeredData(String name) {
-      IData data = mock(IData.class);
-      when(data.getName()).thenReturn(name.substring(name.lastIndexOf('.')));
-      return data;
-   }
-
-   private IEnumeration registeredEnum(String name) {
-      IEnumeration enumeration = mock(IEnumeration.class);
-      when(enumeration.getName()).thenReturn(name.substring(name.lastIndexOf('.')));
-      return enumeration;
-   }
-
    private IModel registeredModel(String name, String stereotype) {
       Metadata metadata = new Metadata();
       metadata.setJson(Json.createObjectBuilder().add(
@@ -180,6 +168,18 @@ public class AbstractJellyfishAnalysisCommandTest {
       when(model.getMetadata()).thenReturn(metadata);
 
       return model;
+   }
+
+   private IData registeredData(String name) {
+      IData data = mock(IData.class);
+      when(data.getName()).thenReturn(name.substring(name.lastIndexOf('.')));
+      return data;
+   }
+
+   private IEnumeration registeredEnum(String name) {
+      IEnumeration enumeration = mock(IEnumeration.class);
+      when(enumeration.getName()).thenReturn(name.substring(name.lastIndexOf('.')));
+      return enumeration;
    }
 
    private static class TestableCommand extends AbstractJellyfishAnalysisCommand {
