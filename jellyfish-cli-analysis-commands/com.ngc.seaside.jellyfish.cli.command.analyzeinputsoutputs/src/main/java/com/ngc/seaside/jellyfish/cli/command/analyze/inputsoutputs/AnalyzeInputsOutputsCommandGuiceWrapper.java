@@ -5,8 +5,10 @@ import com.google.inject.Inject;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 public class AnalyzeInputsOutputsCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -14,9 +16,13 @@ public class AnalyzeInputsOutputsCommandGuiceWrapper implements IJellyFishComman
 
    @Inject
    public AnalyzeInputsOutputsCommandGuiceWrapper(ILogService logService,
-                                                  IAnalysisService analysisService) {
+                                                  IAnalysisService analysisService,
+                                                  ISourceLocatorService sourceLocatorService,
+                                                  IJellyFishCommandProvider jellyFishCommandProvider) {
       delegate.setLogService(logService);
       delegate.setAnalysisService(analysisService);
+      delegate.setSourceLocatorService(sourceLocatorService);
+      delegate.setJellyFishCommandProvider(jellyFishCommandProvider);
       delegate.activate();
    }
 

@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -45,6 +46,9 @@ public class AbstractJellyfishAnalysisCommandTest {
    @Mock
    private IJellyFishCommandOptions options;
 
+   @Mock
+   private ILogService logService;
+
    @Before
    public void setup() {
       parameters = new DefaultParameterCollection();
@@ -52,6 +56,8 @@ public class AbstractJellyfishAnalysisCommandTest {
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
 
       command = new TestableCommand();
+      command.setLogService(logService);
+      command.activate();
    }
 
    @Test
@@ -134,6 +140,13 @@ public class AbstractJellyfishAnalysisCommandTest {
       assertEquals("too many enums analyzed!",
                    1,
                    command.enums.size());
+   }
+
+   @Test
+   public void testDoesLoadResource() {
+      String resource = AbstractJellyfishAnalysisCommand.getResource("docs/example.md", getClass());
+      assertTrue("content not correct!",
+                 resource.contains("# This is an example"));
    }
 
    private IModel registeredModel(String name) {

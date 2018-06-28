@@ -2,18 +2,18 @@ package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
-
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisCommand {
 
    public static final String NAME = "analyze-inputs-outputs";
 
-   private IAnalysisService analysisService;
+   // REMOVE THIS
+   private IJellyFishCommandProvider jellyFishCommandProvider;
 
    public AnalyzeInputsOutputsCommand() {
       super(NAME);
@@ -29,25 +29,38 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
       logService.debug(AnalyzeInputsOutputsCommand.class, "Deactivated.");
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeAnalysisService")
-   public void setAnalysisService(IAnalysisService ref) {
-      this.analysisService = ref;
+   public void setJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+      this.jellyFishCommandProvider = ref;
    }
 
-   public void removeAnalysisService(IAnalysisService ref) {
-      setAnalysisService(null);
-   }
-
-   @Override
-   protected void doRun() {
+   public void removeJellyFishCommandProvider(IJellyFishCommandProvider ref) {
+      setJellyFishCommandProvider(null);
    }
 
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Checks that models which have inputs also have outputs.",
-                              CommonParameters.MODEL);
+                              CommonParameters.MODEL,
+                              CommonParameters.STEREOTYPES);
    }
 
+   @Override
+   protected void analyzeModel(IModel model) {
+      if (!model.getInputs().isEmpty() && model.getOutputs().isEmpty()) {
+         // Make this message an action message for fixing the issue.  This seems to be the pattern for the built
+         // in Sonarqube rules.
+         String message = "Add one or more outputs to the component.";
+         ISourceLocation location = sourceLocatorService.getLocation(model, false);
+         SystemDescriptorFinding<?> finding =
+               InputsOutputsFindingTypes.INPUTS_WITH_NO_OUTPUTS.createFinding(message, location, 1);
+         reportFinding(finding);
+      }
+   }
+
+   @Override
+   protected void doRun() {
+      super.doRun();
+      // This is temporary.  For testing only.
+      jellyFishCommandProvider.run("console-report", getOptions());
+   }
 }
