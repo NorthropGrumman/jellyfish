@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.service.execution.api;
 
+import com.google.inject.Injector;
+
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -12,6 +14,14 @@ import java.nio.file.Path;
 public interface IJellyfishExecution {
 
    /**
+    * Gets the injector that was used to run Jellyfish.  This injector will contain all the services and components
+    * that made up Jellyfish.  Clients can use the injector to get a reference to any of these components.
+    *
+    * @return the injector used to run Jellyfish
+    */
+   Injector getInjector();
+
+   /**
     * Gets the command options used to execute Jellyfish.
     *
     * @return the command options used to execute Jellyfish
@@ -20,6 +30,7 @@ public interface IJellyfishExecution {
 
    /**
     * Gets the number of milliseconds it took to execute Jellyfish.
+    *
     * @return the number of milliseconds it took to execute Jellyfish
     */
    long getExecutionDuration();
