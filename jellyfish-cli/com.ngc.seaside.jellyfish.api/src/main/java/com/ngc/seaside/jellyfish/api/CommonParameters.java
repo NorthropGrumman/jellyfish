@@ -21,6 +21,9 @@ public enum CommonParameters implements IParameter<String> {
                                                  + " settings.gradle file"),
    PHASE("phase",
          "Indicates which phase of the command should be executed.  This command supports the following phases: "),
+   STEREOTYPES("stereotypes",
+               "A comma separated listed of stereotypes used to select models in the project.  This limits the scope of"
+               + " the command to these models."),
 
    @Deprecated
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()
