@@ -94,7 +94,11 @@ public class JellyFishProjectGenerator {
    private static Map<String, String> asPureJavaTypes(Map<?, ?> map) {
       Map<String, String> pure = new HashMap<>();
       for (Map.Entry<?, ?> entry : map.entrySet()) {
-         pure.put(entry.getKey().toString(), entry.getValue().toString());
+         Object key = entry.getKey();
+         Object value = entry.getValue();
+         if (key != null && value != null) {
+            pure.put(key.toString(), value.toString());
+         }
       }
       return pure;
    }

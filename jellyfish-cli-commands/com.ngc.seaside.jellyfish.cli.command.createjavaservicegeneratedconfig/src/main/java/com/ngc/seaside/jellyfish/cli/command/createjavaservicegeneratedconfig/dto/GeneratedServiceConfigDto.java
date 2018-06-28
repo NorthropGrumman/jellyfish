@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto;
 
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetryreporting.TelemetryReportingDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class GeneratedServiceConfigDto {
@@ -27,6 +29,7 @@ public class GeneratedServiceConfigDto {
    private String baseProjectArtifactName;
    private String connectorClassname;
    private boolean hasTelemetry;
+   private TelemetryReportingDto telemetryReporting;
 
    private List<TransportProviderDto> transportProviders = new ArrayList<>();
    private Set<String> transportProviderDependencies = new LinkedHashSet<>();
@@ -93,6 +96,15 @@ public class GeneratedServiceConfigDto {
 
    public GeneratedServiceConfigDto setTelemetry(boolean hasTelemetry) {
       this.hasTelemetry = hasTelemetry;
+      return this;
+   }
+
+   public Optional<TelemetryReportingDto> getTelemetryReporting() {
+      return Optional.ofNullable(telemetryReporting);
+   }
+
+   public GeneratedServiceConfigDto setTelemetryReporting(TelemetryReportingDto telemetryReporting) {
+      this.telemetryReporting = telemetryReporting;
       return this;
    }
 

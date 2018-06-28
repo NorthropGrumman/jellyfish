@@ -5,10 +5,12 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.Cr
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.TransportProviderDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetryreporting.TelemetryReportingDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryReportingConfiguration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
@@ -131,8 +133,31 @@ public class HttpClientTransportProviderConfigDto implements ITransportProviderC
                telemetryCount++;
             }
          }
+      } else if (dto.getTelemetryReporting().isPresent()) {
+         TelemetryReportingDto reportingDto = dto.getTelemetryReporting().get();
+         Set<RestTelemetryReportingConfiguration> reportingConfigs = reportingDto.getConfigs().stream()
+                  .filter(RestTelemetryReportingConfiguration.class::isInstance)
+                  .map(RestTelemetryReportingConfiguration.class::cast)
+                  .collect(Collectors.toCollection(LinkedHashSet::new));
+         int telemetryCount = 1;
+         for (RestTelemetryReportingConfiguration configuration : reportingConfigs) {
+            RestConfiguration restConfig = configuration.getConfig();
+            String variableName = StringUtils.uncapitalize(model.getName())
+                     + "TelemetryReporting"
+                     + (reportingConfigs.size() > 1 ? telemetryCount : "");
+            HttpClientTopicDto topicDto = new HttpClientTopicDto().setNetworkAddress(restConfig.getNetworkAddress())
+                     .setNetworkInterface(restConfig.getNetworkInterface())
+                     .setPort(restConfig.getPort())
+                     .setHttpMethod(restConfig.getHttpMethod())
+                     .setPath(restConfig.getPath())
+                     .setContentType(restConfig.getContentType())
+                     .setVariableName(variableName)
+                     .setName(reportingDto.getTopic());
+            httpClientDto.addTopic(topicDto);
+            telemetryCount++;
+         }
       }
-      
+
       for (Map.Entry<String, IDataReferenceField> entry : topics.entrySet()) {
          String topicName = entry.getKey();
          IDataReferenceField field = entry.getValue();

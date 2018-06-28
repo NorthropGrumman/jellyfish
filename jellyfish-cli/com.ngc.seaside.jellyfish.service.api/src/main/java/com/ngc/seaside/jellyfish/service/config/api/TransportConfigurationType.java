@@ -23,5 +23,10 @@ public enum TransportConfigurationType {
    /**
     * Telemetry.
     */
-   TELEMETRY
+   TELEMETRY,
+
+   /**
+    * Telemetry Reporting.
+    */
+   TELEMETRY_REPORTING
 }

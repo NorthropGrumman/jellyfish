@@ -9,7 +9,9 @@ import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkAddress;
 import com.ngc.seaside.jellyfish.service.config.api.dto.NetworkInterface;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryReportingConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryReportingConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ConnectionType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqTcpTransportConfiguration;
@@ -33,6 +35,8 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    private Map<String, Collection<RestConfiguration>> restConfigurations = new LinkedHashMap<>();
    private Map<String, Collection<ZeroMqConfiguration>> zeroMqConfigurations = new LinkedHashMap<>();
    private Map<String, Collection<TelemetryConfiguration>> telemetryConfigurations = new LinkedHashMap<>();
+   private Map<String, Collection<TelemetryReportingConfiguration>> telemetryReportingConfigurations =
+            new LinkedHashMap<>();
 
    /**
     * Creates a multicast configuration.
@@ -118,7 +122,7 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
     * @return a configured RestConfiguration
     */
    public RestTelemetryConfiguration addRestTelemetryConfiguration(String modelName, String address,
-                                                                   String interfaceName, int port, String path, 
+                                                                   String interfaceName, int port, String path,
                                                                    String contentType, HttpMethod httpMethod) {
       RestConfiguration restConfiguration =
             new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
@@ -130,6 +134,36 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
       RestTelemetryConfiguration configuration = new RestTelemetryConfiguration();
       configuration.setConfig(restConfiguration);
       telemetryConfigurations.computeIfAbsent(modelName, __ -> new LinkedHashSet<>()).add(configuration);
+      return configuration;
+   }
+
+   /**
+    * Creates a rest telemetry reporting configuration.
+    *
+    * @param modelName the model name
+    * @param rateInSeconds rate in seconds
+    * @param address the address
+    * @param interfaceName the interface name
+    * @param port the port number
+    * @param path the path name
+    * @param contentType the content type
+    * @param httpMethod the http method
+    * @return a configured RestConfiguration
+    */
+   public RestTelemetryReportingConfiguration addRestTelemetryReprotingConfiguration(String modelName,
+            int rateInSeconds, String address, String interfaceName, int port, String path, String contentType,
+            HttpMethod httpMethod) {
+      RestConfiguration restConfiguration =
+               new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
+                        .setNetworkInterface(new NetworkInterface().setName(interfaceName))
+                        .setPort(port)
+                        .setPath(path)
+                        .setContentType(contentType)
+                        .setHttpMethod(httpMethod);
+      RestTelemetryReportingConfiguration configuration = new RestTelemetryReportingConfiguration();
+      configuration.setRateInSeconds(rateInSeconds);
+      configuration.setConfig(restConfiguration);
+      telemetryReportingConfigurations.computeIfAbsent(modelName, __ -> new LinkedHashSet<>()).add(configuration);
       return configuration;
    }
 
@@ -145,6 +179,15 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
          return Optional.empty();
       }
       return Optional.of(part.getName().toUpperCase() + "_TELEMETRY");
+   }
+
+   @Override
+   public Optional<String> getTelemetryReportingTransportTopicName(IJellyFishCommandOptions options, IModel model) {
+      Collection<TelemetryReportingConfiguration> configs = getTelemetryReportingConfiguration(options, model);
+      if (configs.isEmpty()) {
+         return Optional.empty();
+      }
+      return Optional.of(model.getName().toUpperCase() + "_TELEMETRY");
    }
 
    @Override
@@ -172,6 +215,12 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
    }
 
    @Override
+   public Collection<TelemetryReportingConfiguration> getTelemetryReportingConfiguration(
+            IJellyFishCommandOptions options, IModel model) {
+      return telemetryReportingConfigurations.getOrDefault(model.getName(), Collections.emptySet());
+   }
+
+   @Override
    public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
       Set<TransportConfigurationType> types = new HashSet<>();
       if (!multicastConfigurations.isEmpty()) {
@@ -185,6 +234,9 @@ public class MockedTransportConfigurationService implements ITransportConfigurat
       }
       if (!telemetryConfigurations.isEmpty()) {
          types.add(TransportConfigurationType.TELEMETRY);
+      }
+      if (!telemetryReportingConfigurations.isEmpty()) {
+         types.add(TransportConfigurationType.TELEMETRY_REPORTING);
       }
       return types;
    }
