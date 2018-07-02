@@ -23,7 +23,13 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -90,7 +96,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          sb.append(NEWLINE);
          logRuntimeInformation(sb, commandOptions);
 
-         logService.info(getClass(), sb);
+         outputReport(commandOptions, sb.toString());
       }
    }
 
@@ -135,6 +141,31 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
    public void removeReportingOutputService(IReportingOutputService ref) {
       setReportingOutputService(null);
+   }
+
+   private void outputReport(ICommandOptions commandOptions, String report) {
+      String html = reportingOutputService.convert(report);
+      Path outputDirectory = Paths.get(commandOptions.getParameters()
+                                             .getParameter(CommonParameters.OUTPUT_DIRECTORY.getName())
+                                             .getStringValue());
+      Path outputFile = outputDirectory.resolve(commandOptions.getParameters()
+                                                      .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
+                                                      .getStringValue())
+            .toAbsolutePath();
+      // If the parent directory does not exists, create it.  This method will not throw an exception if the directory
+      // already exists.
+      try {
+         Files.createDirectories(outputDirectory);
+         // Overwrite any existing file.
+         Files.write(outputFile,
+                     Collections.singleton(html),
+                     StandardOpenOption.CREATE,
+                     StandardOpenOption.TRUNCATE_EXISTING);
+      } catch (IOException e) {
+         throw new RuntimeException("error while writing HTML report to " + outputFile, e);
+      }
+
+      logService.debug(getClass(), "Successfully created HTML report at %s.", outputDirectory);
    }
 
    private static void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
@@ -186,7 +217,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       sb.append("Jellyfish executed with the following parameters:").append(NEWLINE);
       commandOptions.getParameters().getAllParameters()
             .stream()
-            .map(p -> p.getName() + "=" + p.getValue())
+            .map(p -> "* " + p.getName() + " = " + p.getValue())
             .forEach(v -> sb.append(v).append(NEWLINE));
    }
 }

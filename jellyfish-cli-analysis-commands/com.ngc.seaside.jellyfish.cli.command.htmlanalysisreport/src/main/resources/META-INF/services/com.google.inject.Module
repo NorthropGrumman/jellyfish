@@ -1,1 +1,1 @@
-com.ngc.seaside.jellyfish.cli.command.report.console.ConsoleAnalysisReportCommandGuiceModule
+com.ngc.seaside.jellyfish.cli.command.report.html.HtmlAnalysisReportCommand

@@ -3,8 +3,8 @@ package com.ngc.seaside.jellyfish.cli.command.report.html;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
@@ -19,11 +19,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,6 +36,8 @@ public class HtmlAnalysisReportCommandIT {
    private HtmlAnalysisReportCommand command;
 
    private Path outputDirectory;
+
+   private DefaultParameterCollection parameters;
 
    @Rule
    public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -50,23 +54,19 @@ public class HtmlAnalysisReportCommandIT {
    @Mock
    private ICommandOptions options;
 
-   @Mock
-   private IParameterCollection parameters;
-
    @Before
    public void setup() throws Throwable {
       outputDirectory = temporaryFolder.newFolder().toPath();
-      outputDirectory = Paths.get("build", "foo");
 
       // Just return whatever is given.
       when(reportingOutputService.convert(anyString()))
             .then(invocation -> invocation.getArgument(0));
 
-      when(parameters.getAllParameters()).thenReturn(Arrays.asList(
-            new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName())
-                  .setValue(outputDirectory.toAbsolutePath()),
-            new DefaultParameter<>(HtmlAnalysisReportCommand.REPORT_FILE_NAME_PARAMETER_NAME)
-                  .setValue("test.html")));
+      parameters = new DefaultParameterCollection();
+      parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName())
+                                    .setValue(outputDirectory.toAbsolutePath()));
+      parameters.addParameter(new DefaultParameter<>(HtmlAnalysisReportCommand.REPORT_FILE_NAME_PARAMETER_NAME)
+                                    .setValue("test.html"));
       when(options.getParameters()).thenReturn(parameters);
 
       List<SystemDescriptorFinding<ISystemDescriptorFindingType>> findings = Arrays.asList(
@@ -88,6 +88,8 @@ public class HtmlAnalysisReportCommandIT {
    @Test
    public void testDoesGenerateHtmlReport() {
       command.run(options);
+      assertTrue("report not created!",
+                 Files.isRegularFile(outputDirectory.resolve("test.html")));
    }
 
    private static final ISystemDescriptorFindingType FOO_TYPE = ISystemDescriptorFindingType.createFindingType(
