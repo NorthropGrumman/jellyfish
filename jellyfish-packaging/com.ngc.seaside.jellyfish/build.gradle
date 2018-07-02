@@ -27,6 +27,7 @@ dependencies {
    implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
 
    implementation "com.ngc.seaside:jellyfish.service.analysis.impl.analysisservice:$version"
+   implementation "com.ngc.seaside:jellyfish.service.analysis.impl.markdownreportingservice:$version"
 
    implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
    implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
@@ -112,6 +113,7 @@ dependencies {
    implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
+   implementation "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version"
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
