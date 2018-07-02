@@ -1,0 +1,58 @@
+package ${dto.packageName};
+
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportProvider"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.TransportConfiguration"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ConnectionType"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopic"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopics"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.zeromq.transport.TCP"))
+#set ($dto.imports.package = $dto.packageName)
+#foreach ($topic in $dto.topics)
+#set ($ignore = $dto.imports.add($topic.socketType))
+#set ($ignore = $dto.variables.add($topic, $topic.variableName))
+#foreach ($transportTopic in $topic.transportTopics)
+#set ($ignore = $dto.imports.add($transportTopic.type))
+#end
+#end
+${dto.imports.generateJava()}
+
+public class ${dto.configurationClassName} {
+
+   private ${dto.configurationClassName}() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<ZeroMQTopic> zeroMqProvider) {
+#foreach ($topic in $dto.topics)
+      ZeroMQTopic ${dto.variables.get($topic)} = ZeroMQTopics.createTopic()
+            .setConnectionType(ConnectionType.${topic.connectionType})
+            .setSocket(new ${dto.imports.getType($topic.socketType)}())
+            .setTransportType(new TCP("${topic.networkInterface}", ${topic.port}));
+
+#end
+#foreach ($entry in $dto.sendTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+#foreach ($topic in $topics)
+#foreach ($transportTopic in $topic.transportTopics)
+      config.whenSending()
+            .toApplicationTopic(${dto.imports.getType($transportTopic.type)}.${transportTopic.value})
+            .useTransportProvider(zeroMqProvider)
+            .onEagerPhysicalTopic(${dto.variables.get($topic)});
+#end
+#end
+#end
+
+#foreach ($entry in $dto.receiveTopics.entrySet())
+#set ($name = $entry.key)
+#set ($topics = $entry.value)
+#foreach ($topic in $topics)
+#foreach ($transportTopic in $topic.transportTopics)
+      config.whenReceiving()
+            .withTransportProvider(zeroMqProvider)
+            .onPhysicalTopic(${dto.variables.get($topic)})
+            .useApplicationTopic(t -> ${dto.imports.getType($transportTopic.type)}.${transportTopic.value});
+#end
+#end
+#end
+   }
+}

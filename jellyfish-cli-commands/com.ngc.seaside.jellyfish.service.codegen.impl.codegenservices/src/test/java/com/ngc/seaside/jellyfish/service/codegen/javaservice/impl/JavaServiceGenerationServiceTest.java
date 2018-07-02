@@ -3,6 +3,8 @@ package com.ngc.seaside.jellyfish.service.codegen.javaservice.impl;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.test.scenarios.FlowFactory;
+import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetryConfigurationService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
@@ -68,7 +70,7 @@ public class JavaServiceGenerationServiceTest {
 
    @Mock
    private ICorrelationDescription test;
-
+   
    @Before
    public void setup() {
       when(model.getName()).thenReturn("EngagementTrackPriorityService");
@@ -79,14 +81,14 @@ public class JavaServiceGenerationServiceTest {
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.api");
       when(packageNamingService.getServiceBaseImplementationPackageName(options, model)).thenReturn(
             "com.ngc.seaside.threateval.engagementtrackpriorityservice.base.impl");
-      when(transportConfService.getTelemetryReportingTransportTopicName(any(), any())).thenReturn(Optional.empty());
-      when(transportConfService.getTelemetryTransportTopicName(any(), any())).thenReturn(Optional.empty());
 
       service = new JavaServiceGenerationService();
       service.setLogService(logService);
       service.setScenarioService(scenarioService);
       service.setPackageNamingService(packageNamingService);
       service.setTransportConfigurationService(transportConfService);
+      service.setTelemetryConfigurationService(new MockedTelemetryConfigurationService());
+      service.setTelemetryReportingConfigurationService(new MockedTelemetryReportingConfigurationService());
       service.activate();
    }
 

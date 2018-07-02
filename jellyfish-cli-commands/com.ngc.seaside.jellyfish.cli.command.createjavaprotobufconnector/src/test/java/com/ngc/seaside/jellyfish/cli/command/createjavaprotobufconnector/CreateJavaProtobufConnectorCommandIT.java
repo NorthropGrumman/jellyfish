@@ -13,7 +13,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedRequirementsService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedScenarioService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTransportConfigurationService;
+import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.JellyfishCommandPhase;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;

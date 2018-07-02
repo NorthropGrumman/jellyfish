@@ -8,22 +8,16 @@ import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationServi
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.config.api.dto.MulticastConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.RestConfiguration;
-import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryConfiguration;
-import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryReportingConfiguration;
 import com.ngc.seaside.jellyfish.service.config.api.dto.zeromq.ZeroMqConfiguration;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.MulticastConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.RestConfigurationUtils;
-import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TelemetryConfigurationUtils;
-import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TelemetryReportingConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.TransportConfigurationServiceUtils;
 import com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice.utils.ZeroMqConfigurationUtils;
 import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
-import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
@@ -39,11 +33,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -73,66 +64,12 @@ public class TransportConfigurationService implements ITransportConfigurationSer
    }
 
    @Override
-   public Optional<String> getTelemetryTransportTopicName(IJellyFishCommandOptions options, IModelReferenceField part) {
-      Collection<TelemetryConfiguration> configs = getTelemetryConfiguration(options, part.getType());
-      if (configs.isEmpty()) {
-         return Optional.empty();
-      }
-      String topic = part.getName();
-      for (int i = 0; i < PATTERNS.length; i++) {
-         topic = PATTERNS[i].matcher(topic).replaceAll(REPLACEMENTS[i]);
-      }
-      return Optional.of(topic.toUpperCase() + "_TELEMETRY");
-   }
-
-   @Override
-   public Optional<String> getTelemetryReportingTransportTopicName(IJellyFishCommandOptions options, IModel model) {
-      Collection<TelemetryConfiguration> configs = getTelemetryConfiguration(options, model);
-      if (configs.isEmpty()) {
-         return Optional.empty();
-      }
-      String topic = model.getName();
-      for (int i = 0; i < PATTERNS.length; i++) {
-         topic = PATTERNS[i].matcher(topic).replaceAll(REPLACEMENTS[i]);
-      }
-      return Optional.of(topic.toUpperCase() + "_TELEMETRY_REPORTING");
-   }
-
-   @Override
    public Set<TransportConfigurationType> getConfigurationTypes(IJellyFishCommandOptions options, IModel model) {
       Set<TransportConfigurationType> types = new LinkedHashSet<>();
       IParameter<?> deploymentParam = options.getParameters().getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
       IModel deploymentModel = options.getSystemDescriptor().findModel(deploymentParam.getStringValue()).orElse(null);
-      IModel aggregatedModel = sdService.getAggregatedView(model);
       IModel aggregatedDeploymentModel = deploymentModel == null ? null : sdService.getAggregatedView(deploymentModel);
-      for (IProperty property : aggregatedModel.getProperties()) {
-         if (property.getType() == DataTypes.DATA) {
-            IData type = property.getReferencedDataType();
-            if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
-               types.add(TransportConfigurationType.TELEMETRY);
-            }
-            if (TelemetryReportingConfigurationUtils.isTelemetryConfiguration(type)) {
-               types.add(TransportConfigurationType.TELEMETRY_REPORTING);
-            }
-         }
-      }
       if (aggregatedDeploymentModel != null) {
-         for (IModelReferenceField field : aggregatedDeploymentModel.getParts()) {
-            // We only want to include telemetry support if the deployment model contains a part
-            // of the type referenced in the "model" parameter given at runtime.  This field (and only this field)
-            // needs to have telemetry related properties in order for telemetry support to be enabled.
-            if (SystemDescriptors.areModelsRelated(field.getType(), model)) {
-               for (IProperty property : field.getProperties()) {
-                  IData type = property.getReferencedDataType();
-                  if (TelemetryConfigurationUtils.isTelemetryConfiguration(type)) {
-                     types.add(TransportConfigurationType.TELEMETRY);
-                  }
-                  if (TelemetryReportingConfigurationUtils.isTelemetryConfiguration(type)) {
-                     types.add(TransportConfigurationType.TELEMETRY_REPORTING);
-                  }
-               }
-            }
-         }
          for (IModelLink<? extends IReferenceField> link : aggregatedDeploymentModel.getLinks()) {
             for (IProperty property : link.getProperties()) {
                if (property.getType() == DataTypes.DATA) {
@@ -196,28 +133,6 @@ public class TransportConfigurationService implements ITransportConfigurationSer
       return configurations;
    }
 
-   @Override
-   public Collection<TelemetryConfiguration> getTelemetryConfiguration(IJellyFishCommandOptions options, IModel model) {
-      List<TelemetryConfiguration> configurations = new ArrayList<>();
-
-      configurations.addAll(getModelPartConfigurations(options, model, 
-            TelemetryConfigurationUtils.REST_TELEMETRY_CONFIGURATION_QUALIFIED_NAME,
-            TelemetryConfigurationUtils::getRestTelemetryConfiguration));
-      return configurations;
-   }
-
-   @Override
-   public Collection<TelemetryReportingConfiguration> getTelemetryReportingConfiguration(
-            IJellyFishCommandOptions options, IModel model) {
-      List<TelemetryReportingConfiguration> configurations = new ArrayList<>();
-
-      configurations.addAll(getModelPartConfigurations(options, model, 
-               TelemetryReportingConfigurationUtils.REST_TELEMETRY_REPORTING_CONFIGURATION_QUALIFIED_NAME,
-               TelemetryReportingConfigurationUtils::getRestTelemetryReportingConfiguration));
-
-      return configurations;
-   }
-
    /**
     * Returns the collection of configurations for the given field.
     *
@@ -243,33 +158,6 @@ public class TransportConfigurationService implements ITransportConfigurationSer
                      link.getSource().getName(),
                      link.getTarget().getName())));
       }
-      return configurations;
-   }
-
-   private <T> Collection<T> getModelPartConfigurations(IJellyFishCommandOptions options, IModel model, 
-            String configQualifiedName, Function<IPropertyDataValue, T> function) {
-      IModel aggregatedModel = sdService.getAggregatedView(model);
-      Collection<T> configurations = new LinkedHashSet<>();
-      configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(aggregatedModel::getProperties,
-            configQualifiedName,
-            function,
-            () -> String.format("Configuration is not completely set for model %s", 
-                  aggregatedModel.getFullyQualifiedName())));
-      
-      Collection<IModelReferenceField> parts = TransportConfigurationServiceUtils.getOptionalDeploymentModel(options)
-                  .map(sdService::getAggregatedView)
-                  .map(deploymentModel -> (Collection<IModelReferenceField>) deploymentModel.getParts())
-                  .orElse(Collections.emptySet());
-      for (IModelReferenceField part : parts) {
-         if (Objects.equals(part.getType().getFullyQualifiedName(), model.getFullyQualifiedName())) {
-            configurations.addAll(TransportConfigurationServiceUtils.getConfigurations(part::getProperties,
-                  configQualifiedName,
-                  function,
-                  () -> String.format("Configuration is not completely set part %s in deployment model",
-                        part.getName())));
-         }
-      }
-      
       return configurations;
    }
 
