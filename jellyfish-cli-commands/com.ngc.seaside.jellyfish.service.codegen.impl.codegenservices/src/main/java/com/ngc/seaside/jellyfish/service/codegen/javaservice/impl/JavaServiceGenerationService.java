@@ -14,6 +14,7 @@ import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingF
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import org.osgi.service.component.annotations.Activate;
@@ -77,6 +78,10 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
       for (IScenario scenario : model.getScenarios()) {
          configurePubSubTransportTopics(dto, options, scenario);
          configureReqResTransportTopics(dto, options, scenario);
+      }
+      transportConfigService.getTelemetryReportingTransportTopicName(options, model).ifPresent(dto.getValues()::add);
+      for (IModelReferenceField part : model.getParts()) {
+         transportConfigService.getTelemetryTransportTopicName(options, part).ifPresent(dto.getValues()::add);
       }
 
       return dto;

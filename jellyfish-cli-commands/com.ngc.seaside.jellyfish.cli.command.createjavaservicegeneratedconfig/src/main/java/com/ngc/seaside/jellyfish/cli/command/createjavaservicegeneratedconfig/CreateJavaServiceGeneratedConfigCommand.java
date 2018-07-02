@@ -20,6 +20,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.ht
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetry.TelemetryDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.telemetryreporting.TelemetryReportingDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -27,6 +28,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationServi
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
+import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.TelemetryReportingConfiguration;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -66,6 +68,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    static final String CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String CONFIG_BUILD_TEMPLATE_SUFFIX = "build";
    static final String TELEMETRY_CONFIG_TEMPLATE_SUFFIX = "telemetry";
+   static final String TELEMETRY_REPORTING_CONFIG_TEMPLATE_SUFFIX = "telemetryreporting";
 
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
@@ -150,6 +153,31 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                String.format("%s.%s%s", packageName, pubSubMethod.getInput().getType(), SUBSCRIBER_SUFFIX));
       }
 
+      if (transportConfigService.getConfigurationTypes(getOptions(), model)
+               .contains(TransportConfigurationType.TELEMETRY_REPORTING)) {
+         Collection<TelemetryReportingConfiguration> reportingConfigs =
+                  transportConfigService.getTelemetryReportingConfiguration(getOptions(), model);
+         long rates = reportingConfigs.stream().mapToInt(TelemetryReportingConfiguration::getRateInSeconds).distinct()
+                  .count();
+         if (rates > 1) {
+            logService.warn(getClass(), "Cannot generate multiple telemetry reporting with different rates");
+         } else if (rates == 1) {
+            TelemetryReportingDto reportingDto = new TelemetryReportingDto();
+            reportingDto.setBaseDto(dto);
+            reportingDto.setClassname("TelemetryReporting");
+            int rate = reportingConfigs.iterator().next().getRateInSeconds();
+            reportingDto.setRateInMilliseconds(1000 * rate);
+            EnumDto topicsEnum = baseServiceDto.getTopicsEnum();
+            reportingDto.setTopicsImport(topicsEnum.getFullyQualifiedName());
+            String topicName =
+                     transportConfigService.getTelemetryReportingTransportTopicName(getOptions(), model).get();
+            reportingDto.setTopic(topicsEnum.getName() + "." + topicName);
+            reportingConfigs.forEach(reportingDto::addConfig);
+            reportingDto.addReadinessConfigurations();
+            dto.setTelemetryReporting(reportingDto);
+         }
+      }
+
       Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
             new MulticastTransportProviderConfigDto(transportConfigService, false),
             new SparkTransportProviderConfigDto(transportConfigService, false),
@@ -180,6 +208,11 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
          DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
          telemetryParams.addParameter(new DefaultParameter<>("dto", telemetry));
          unpackSuffixedTemplate(TELEMETRY_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);
+      }
+      if (dto.getTelemetryReporting().isPresent()) {
+         DefaultParameterCollection telemetryParams = new DefaultParameterCollection();
+         telemetryParams.addParameter(new DefaultParameter<>("dto", dto.getTelemetryReporting().get()));
+         unpackSuffixedTemplate(TELEMETRY_REPORTING_CONFIG_TEMPLATE_SUFFIX, telemetryParams, outputDir, false);
       }
 
       registerProject(projectInfo);

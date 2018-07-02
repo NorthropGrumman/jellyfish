@@ -16,6 +16,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyData
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -93,4 +94,22 @@ public class TransportConfigurationServiceUtils {
             .orElseThrow(() -> new IllegalStateException("Cannot find deployment model " + deploymentModel));
    }
 
+   /**
+    * Gets the deployment model from the options, or {@link Optional#empty()} if there is none.
+    * 
+    * @param options jellyfish command options
+    * @return deployment model
+    */
+   public static Optional<IModel> getOptionalDeploymentModel(IJellyFishCommandOptions options) {
+      IParameter<?> deploymentModelParameter = options.getParameters()
+            .getParameter(CommonParameters.DEPLOYMENT_MODEL.getName());
+      if (deploymentModelParameter == null || deploymentModelParameter.getValue() == null) {
+         return Optional.empty();
+      }
+      String deploymentModel = deploymentModelParameter.getStringValue();
+      if (deploymentModel == null) {
+         return Optional.empty();
+      }
+      return options.getSystemDescriptor().findModel(deploymentModel);
+   }
 }
