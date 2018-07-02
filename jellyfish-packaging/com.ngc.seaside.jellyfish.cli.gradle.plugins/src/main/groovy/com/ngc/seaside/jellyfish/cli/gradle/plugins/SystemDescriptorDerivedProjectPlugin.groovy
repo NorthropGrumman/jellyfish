@@ -37,7 +37,7 @@ class SystemDescriptorDerivedProjectPlugin implements Plugin<Project> {
                .setCommand(p.command)
                .setArguments([
                (CommonParameters.MODEL.name)                 : "${systemDescriptor.model}",
-               (CommonParameters.DEPLOYMENT_MODEL.name)      : "${systemDescriptor.deploymentModel}",
+               (CommonParameters.DEPLOYMENT_MODEL.name)      : systemDescriptor.deploymentModel,
                (CommonParameters.GROUP_ARTIFACT_VERSION.name): gav,
                (CommonParameters.OUTPUT_DIRECTORY.name)      : "${p.rootDir.absolutePath}",
                (CommonParameters.UPDATE_GRADLE_SETTING.name) : 'false',
