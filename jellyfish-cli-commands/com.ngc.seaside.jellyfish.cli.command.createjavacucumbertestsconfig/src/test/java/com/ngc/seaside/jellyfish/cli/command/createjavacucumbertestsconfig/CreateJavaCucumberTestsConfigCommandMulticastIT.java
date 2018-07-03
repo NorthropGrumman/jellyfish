@@ -80,7 +80,7 @@ public class CreateJavaCucumberTestsConfigCommandMulticastIT extends CreateJavaC
                         "engagementtrackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path multicastFile = srcDir.resolve("EngagementTrackPriorityServiceMulticastConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));

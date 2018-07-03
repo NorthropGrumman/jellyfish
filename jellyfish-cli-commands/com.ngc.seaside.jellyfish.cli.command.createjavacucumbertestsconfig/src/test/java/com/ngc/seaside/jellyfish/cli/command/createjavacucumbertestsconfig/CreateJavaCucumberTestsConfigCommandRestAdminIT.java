@@ -92,7 +92,7 @@ public class CreateJavaCucumberTestsConfigCommandRestAdminIT
                         "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       Path sparkFile = srcDir.resolve("TrackPriorityServiceSparkConfiguration.java");
       Path httpFile = srcDir.resolve("TrackPriorityServiceHttpClientConfiguration.java");
 

@@ -94,14 +94,14 @@ public class CreateJavaCucumberTestsConfigCommandRestTelemetryIT
                         "trackpriorityservice", "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
+      Path configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       Path sparkFile = srcDir.resolve("TrackPriorityServiceSparkConfiguration.java");
       Path httpFile = srcDir.resolve("TrackPriorityServiceHttpClientConfiguration.java");
       Path telemetryFile = srcDir.resolve("TrackPriorityServiceTelemetryConfiguration.java");
-      
+
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
-      assertTrue(Files.isRegularFile(telemetryFile));
+      assertFalse(Files.isRegularFile(telemetryFile));
       assertTrue(Files.isRegularFile(httpFile));
       assertFalse(Files.isRegularFile(sparkFile));
    }

@@ -96,7 +96,7 @@ public class CreateJavaCucumberTestsConfigCommandZeroMqTcpIT extends CreateJavaC
                "testsconfig"));
 
       Path buildFile = projectDir.resolve("build.generated.gradle");
-      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTransportConfiguration.java");
+      Path configurationFile = srcDir.resolve("EngagementTrackPriorityServiceTestTransportConfiguration.java");
       Path zeroMqFile = srcDir.resolve("EngagementTrackPriorityServiceZeroMqConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
@@ -119,7 +119,7 @@ public class CreateJavaCucumberTestsConfigCommandZeroMqTcpIT extends CreateJavaC
                         "testsconfig"));
 
       buildFile = projectDir.resolve("build.generated.gradle");
-      configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
+      configurationFile = srcDir.resolve("TrackPriorityServiceTestTransportConfiguration.java");
       zeroMqFile = srcDir.resolve("TrackPriorityServiceZeroMqConfiguration.java");
 
       assertTrue(Files.isRegularFile(buildFile));
