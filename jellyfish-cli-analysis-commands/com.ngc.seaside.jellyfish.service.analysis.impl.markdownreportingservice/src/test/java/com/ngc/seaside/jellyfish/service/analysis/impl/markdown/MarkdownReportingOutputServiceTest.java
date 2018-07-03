@@ -19,13 +19,18 @@ public class MarkdownReportingOutputServiceTest {
       String md =
             "# This is a heading" + System.lineSeparator()
             + "This is a description of *some errors* and _some warnings_" + System.lineSeparator()
-            + "and stuff and stuff and stuff";
+            + "and stuff and stuff and stuff" + System.lineSeparator()
+            + "## This is a sub heading" + System.lineSeparator()
+            + "This is more sub heading topics with link [www.google.com](www.google.com)";
       String expected =
             "<h1>This is a heading</h1>\n"
             + "<p>This is a description of <em>some errors</em> and <em>some warnings</em>\n"
-            + "and stuff and stuff and stuff</p>\n";
+            + "and stuff and stuff and stuff</p>\n"
+            + "<h2>This is a sub heading</h2>\n"
+            + "<p>This is more sub heading topics with link <a href=\"www.google.com\">www.google.com</a></p>\n";
 
       String result = markdownReportingOutputService.convert(md);
+      System.out.println(result);
       assertEquals("did not convert markdown to HTML correctly!",
                    expected,
                    result);
