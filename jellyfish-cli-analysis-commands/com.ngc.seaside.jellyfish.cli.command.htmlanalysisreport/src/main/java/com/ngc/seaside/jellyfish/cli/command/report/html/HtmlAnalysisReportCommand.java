@@ -15,6 +15,7 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 import org.osgi.service.component.annotations.Activate;
@@ -45,8 +46,11 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    public static final String NAME = "html-report";
 
    static final String REPORT_FILE_NAME_PARAMETER_NAME = "reportFileName";
+   static final String HTML_REPORT_TEMPLATE_SUFFIX = "html";
 
    private ILogService logService;
+
+   private ITemplateService templateService;
 
    private IAnalysisService analysisService;
 
@@ -134,6 +138,17 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
          policy = ReferencePolicy.STATIC,
+         unbind = "removeTemplateService")
+   public void setTemplateService(ITemplateService ref) {
+      this.templateService = ref;
+   }
+
+   public void removeTemplateService(ITemplateService ref) {
+      setTemplateService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
          unbind = "removeReportingOutputService")
    public void setReportingOutputService(IReportingOutputService ref) {
       this.reportingOutputService = ref;
@@ -166,6 +181,16 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       }
 
       logService.debug(getClass(), "Successfully created HTML report at %s.", outputDirectory);
+   }
+
+   private void outputReport(ICommandOptions options, HtmlReportDto dto) {
+      Path outputDirectory = Paths.get(options.getParameters()
+                                             .getParameter(CommonParameters.OUTPUT_DIRECTORY.getName())
+                                             .getStringValue());
+      templateService.unpack(getClass().getPackage().getName() + "-" + HTML_REPORT_TEMPLATE_SUFFIX,
+                             options.getParameters(),
+                             outputDirectory,
+                             true);
    }
 
    private static void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,

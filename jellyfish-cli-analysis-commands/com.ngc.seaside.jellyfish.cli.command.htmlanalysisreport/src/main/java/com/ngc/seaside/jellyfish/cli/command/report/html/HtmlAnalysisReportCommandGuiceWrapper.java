@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
 /**
  * The Guice wrapper for the HTML command.
@@ -21,11 +22,13 @@ public class HtmlAnalysisReportCommandGuiceWrapper implements ICommand<ICommandO
     */
    @Inject
    public HtmlAnalysisReportCommandGuiceWrapper(ILogService logService,
+                                                ITemplateService templateService,
                                                 IAnalysisService analysisService,
                                                 IReportingOutputService reportingOutputService) {
       delegate.setLogService(logService);
       delegate.setAnalysisService(analysisService);
       delegate.setReportingOutputService(reportingOutputService);
+      delegate.setTemplateService(templateService);
       delegate.activate();
    }
 
