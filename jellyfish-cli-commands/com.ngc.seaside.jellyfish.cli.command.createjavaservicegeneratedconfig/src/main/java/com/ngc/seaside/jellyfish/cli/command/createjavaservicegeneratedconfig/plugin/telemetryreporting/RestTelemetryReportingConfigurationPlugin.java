@@ -74,7 +74,7 @@ public class RestTelemetryReportingConfigurationPlugin
 
       RestTelemetryReportingTemplateDto dto =
                new RestTelemetryReportingTemplateDto(context,
-                        context.getModel().getName() + "TelemetryReportingConfiguration", topicType, topicValue.get(),
+                        context.getModel().getName() + "TelemetryReporting", topicType, topicValue.get(),
                         configs.iterator().next().getRateInSeconds());
 
       return Optional.ofNullable(dto);

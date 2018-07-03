@@ -10,6 +10,9 @@ package ${dto.packageName};
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate"))
 #set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Reference"))
+#foreach ($class in $dto.classes)
+#set ($ignore = $dto.imports.add($class))
+#end
 ${dto.imports.generateJava()}
 
 @Component(service = ${dto.model.name}ReadinessConfiguration.class, immediate = true)
@@ -26,7 +29,7 @@ public class ${dto.model.name}ReadinessConfiguration {
             .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
 #foreach ( $class in $dto.classes )
             .require()
-            .componentActivated(${class}.class)
+            .componentActivated(${dto.imports.getType($class)}.class)
 #end
 #foreach ( $subscriber in $dto.eventSubscribers )
             .require()

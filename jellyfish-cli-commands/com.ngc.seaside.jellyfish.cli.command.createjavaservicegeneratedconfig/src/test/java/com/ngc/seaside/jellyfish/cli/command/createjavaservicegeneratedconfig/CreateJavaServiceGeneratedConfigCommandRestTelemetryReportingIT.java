@@ -107,7 +107,7 @@ public class CreateJavaServiceGeneratedConfigCommandRestTelemetryReportingIT
       Path configurationFile = srcDir.resolve("TrackPriorityServiceTransportConfiguration.java");
       Path sparkFile = srcDir.resolve("TrackPriorityServiceSparkConfiguration.java");
       Path httpFile = srcDir.resolve("TrackPriorityServiceHttpClientConfiguration.java");
-      Path telemetryReportingFile = srcDir.resolve("TrackPriorityServiceTelemetryReportingConfiguration.java");
+      Path telemetryReportingFile = srcDir.resolve("TrackPriorityServiceTelemetryReporting.java");
 
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
