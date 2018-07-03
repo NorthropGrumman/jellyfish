@@ -57,7 +57,7 @@ public class RestTelemetryReportingConfigurationPlugin
          return Optional.empty();
       }
 
-      long rates = configs.stream().mapToInt(TelemetryReportingConfiguration::getRateInSeconds).distinct()
+      long rates = configs.stream().mapToInt(TelemetryReportingConfiguration::getRateInMilliseconds).distinct()
                .count();
 
       if (rates > 1) {
@@ -75,7 +75,7 @@ public class RestTelemetryReportingConfigurationPlugin
       RestTelemetryReportingTemplateDto dto =
                new RestTelemetryReportingTemplateDto(context,
                         context.getModel().getName() + "TelemetryReporting", topicType, topicValue.get(),
-                        configs.iterator().next().getRateInSeconds());
+                        configs.iterator().next().getRateInMilliseconds());
 
       return Optional.ofNullable(dto);
    }

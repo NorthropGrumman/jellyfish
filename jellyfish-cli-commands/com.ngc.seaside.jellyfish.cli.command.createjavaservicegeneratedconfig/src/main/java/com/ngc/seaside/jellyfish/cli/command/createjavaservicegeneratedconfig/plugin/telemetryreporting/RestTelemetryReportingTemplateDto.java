@@ -17,14 +17,14 @@ public class RestTelemetryReportingTemplateDto extends BaseConfigurationDto {
     * @param className name of generated class
     * @param topicType fully-qualified name of class containing the topic
     * @param topicValue static variable name of topic
-    * @param rateInSeconds rate in seconds
+    * @param rateInMilliseconds rate in seconds
     */
    public RestTelemetryReportingTemplateDto(ConfigurationContext context, String className, String topicType,
-                                            String topicValue, int rateInSeconds) {
+                                            String topicValue, int rateInMilliseconds) {
       super(context);
       this.className = className;
       this.topic = new TransportTopicDto(topicType, topicValue);
-      this.rateInMilliseconds = 1000 * rateInSeconds;
+      this.rateInMilliseconds = rateInMilliseconds;
    }
 
    public String getPackageName() {

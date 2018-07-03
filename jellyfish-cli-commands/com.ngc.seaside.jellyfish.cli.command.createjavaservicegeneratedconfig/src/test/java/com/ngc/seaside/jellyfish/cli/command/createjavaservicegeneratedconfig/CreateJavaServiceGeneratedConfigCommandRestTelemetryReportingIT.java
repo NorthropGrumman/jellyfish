@@ -83,7 +83,7 @@ public class CreateJavaServiceGeneratedConfigCommandRestTelemetryReportingIT
    @Test
    public void restTelemetryReporting() throws Throwable {
 
-      telemetryReportingService.addRestTelemetryReportingConfiguration(model, 1, "localhost", "0.0.0.0", 52412,
+      telemetryReportingService.addRestTelemetryReportingConfiguration(model, 1000, "localhost", "0.0.0.0", 52412,
                "/trackPriorityRequest", "application/x-protobuf",
                HttpMethod.POST);
 

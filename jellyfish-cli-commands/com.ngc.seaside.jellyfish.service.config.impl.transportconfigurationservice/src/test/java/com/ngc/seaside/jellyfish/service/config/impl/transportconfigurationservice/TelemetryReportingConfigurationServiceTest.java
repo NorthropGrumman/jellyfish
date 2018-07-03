@@ -57,7 +57,7 @@ public class TelemetryReportingConfigurationServiceTest {
       IModel deploymentModel = mock(IModel.class, RETURNS_DEEP_STUBS);
       String modelName = "com.ngc.Model";
       IModel model = mock(IModel.class, RETURNS_DEEP_STUBS);
-      int rate = 1;
+      int rate = 1000;
       String address = "localhost";
       String interfaceName = "0.0.0.0";
       int port = 8081;
@@ -86,7 +86,7 @@ public class TelemetryReportingConfigurationServiceTest {
       assertTrue(configurations.iterator().next() instanceof RestTelemetryReportingConfiguration);
       RestTelemetryReportingConfiguration config =
                (RestTelemetryReportingConfiguration) configurations.iterator().next();
-      assertEquals(rate, config.getRateInSeconds());
+      assertEquals(rate, config.getRateInMilliseconds());
       RestConfiguration restConfig = config.getConfig();
       assertEquals(address, restConfig.getNetworkAddress().getAddress());
       assertEquals(interfaceName, restConfig.getNetworkInterface().getName());

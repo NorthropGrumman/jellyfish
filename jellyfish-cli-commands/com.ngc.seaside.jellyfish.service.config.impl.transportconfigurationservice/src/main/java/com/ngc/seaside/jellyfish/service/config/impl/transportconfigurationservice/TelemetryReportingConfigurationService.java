@@ -24,7 +24,7 @@ public class TelemetryReportingConfigurationService
    public static final String REST_TELEMETRY_REPORTING_CONFIGURATION_QUALIFIED_NAME =
             "com.ngc.seaside.systemdescriptor.telemetry.RestTelemetryReporting";
 
-   public static final String RATE_FIELD_NAME = "rateInSeconds";
+   public static final String RATE_FIELD_NAME = "rateInMilliseconds";
    public static final String CONFIG_FIELD_NAME = "config";
 
    @Override
@@ -63,7 +63,7 @@ public class TelemetryReportingConfigurationService
       IPropertyDataValue restProperty = value.getData(getField(value, CONFIG_FIELD_NAME));
       RestConfiguration restConfig = RestConfigurationUtils.getRestConfiguration(restProperty);
       configuration.setConfig(restConfig);
-      configuration.setRateInSeconds(rate);
+      configuration.setRateInMilliseconds(rate);
       return configuration;
    }
    

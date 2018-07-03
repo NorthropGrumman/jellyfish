@@ -25,7 +25,7 @@ public class MockedTelemetryReportingConfigurationService extends
     * Creates a rest telemetry reporting configuration.
     *
     * @param model model
-    * @param rateInSeconds rate in seconds
+    * @param rateInMilliseconds rate in milliseconds
     * @param address the address
     * @param interfaceName the interface name
     * @param port the port number
@@ -35,7 +35,7 @@ public class MockedTelemetryReportingConfigurationService extends
     * @return a configured RestConfiguration
     */
    public RestTelemetryReportingConfiguration addRestTelemetryReportingConfiguration(IModel model,
-            int rateInSeconds, String address, String interfaceName, int port, String path, String contentType,
+            int rateInMilliseconds, String address, String interfaceName, int port, String path, String contentType,
             HttpMethod httpMethod) {
       RestConfiguration restConfiguration =
                new RestConfiguration().setNetworkAddress(new NetworkAddress().setAddress(address))
@@ -45,7 +45,7 @@ public class MockedTelemetryReportingConfigurationService extends
                         .setContentType(contentType)
                         .setHttpMethod(httpMethod);
       RestTelemetryReportingConfiguration configuration = new RestTelemetryReportingConfiguration();
-      configuration.setRateInSeconds(rateInSeconds);
+      configuration.setRateInMilliseconds(rateInMilliseconds);
       configuration.setConfig(restConfiguration);
       return addConfiguration(model, configuration);
    }
