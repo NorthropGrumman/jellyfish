@@ -73,7 +73,7 @@ public class RestAdminSystemTopicPlugin implements ITransportTopicConfigurationP
       DefaultTransportTopicConfigurationDto<RestConfigurationDto> restartConfigDto =
                new DefaultTransportTopicConfigurationDto<>(restartDto);
       restartConfigDto.addTransportTopic(RestAdminTopicPlugin.ADMIN_TOPIC_TYPE,
-               RestAdminTopicPlugin.SHUTDOWN_TOPIC_VALUE);
+               RestAdminTopicPlugin.RESTART_TOPIC_VALUE);
       return Arrays.asList(shutdownConfigDto, restartConfigDto);
    }
 
