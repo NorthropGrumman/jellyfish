@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,8 +110,7 @@ public class CreateJavaServiceGeneratedConfigCommandZeroMqTcpIT extends CreateJa
 
       assertTrue(Files.isRegularFile(buildFile));
       assertTrue(Files.isRegularFile(configurationFile));
-      assertTrue(Files.walk(projectDir.getParent()).map(Object::toString).collect(Collectors.joining(",")),
-               Files.isRegularFile(zeroMqFile));
+      assertTrue(Files.isRegularFile(zeroMqFile));
 
       run(
                CreateJavaServiceGeneratedConfigCommand.MODEL_PROPERTY,

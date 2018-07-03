@@ -16,7 +16,7 @@ public class ZeroMqTcpTemplateDto extends AbstractTransportProviderConfiguration
 
    private static final String ZEROMQ_TOPIC =
             "com.ngc.seaside.service.transport.impl.topic.zeromq.ZeroMQTopic";
-   private static final String CONFIGURATION_TYPE_SUFFIX = "ZeroMQConfiguration";
+   private static final String CONFIGURATION_TYPE_SUFFIX = "ZeroMqConfiguration";
    private static final String ZEROMQ_PROVIDER_TARGET =
             "(component.name=com.ngc.seaside.service.transport.impl.provider.zeromq.ZeroMQTransportProvider)";
    private static final String ZEROMQ_MODULE =
