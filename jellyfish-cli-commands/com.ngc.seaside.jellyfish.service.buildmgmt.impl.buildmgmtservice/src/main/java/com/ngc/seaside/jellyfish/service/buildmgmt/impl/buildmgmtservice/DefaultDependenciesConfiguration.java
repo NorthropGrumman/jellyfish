@@ -48,7 +48,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.11.0-SNAPSHOT")
+            .version("2.11.1")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
@@ -77,7 +77,9 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.telemetry.api"),
                       artifact("service.telemetry.impl.basetelemetryservice"),
                       artifact("service.telemetry.impl.jsontelemetryservice"),
-                      artifact("service.telemetry.impl.jsontelemetryservice.module"));
+                      artifact("service.telemetry.impl.jsontelemetryservice.module"),
+                      artifact("service.admin.api"),
+                      artifact("service.admin.impl.defaultadminservice"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {

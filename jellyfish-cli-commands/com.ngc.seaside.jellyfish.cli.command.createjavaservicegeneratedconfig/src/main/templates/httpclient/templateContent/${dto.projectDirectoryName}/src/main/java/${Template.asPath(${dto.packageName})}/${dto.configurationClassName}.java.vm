@@ -1,0 +1,41 @@
+package ${dto.packageName};
+
+#set ($dto.imports.package = $dto.packageName)
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportProvider"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.TransportConfiguration"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientTopic"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.topic.httpclient.HttpClientVerb"))
+#foreach ($topic in $dto.topics)
+#set ($ignore = $dto.variables.add($topic, $topic.variableName))
+#foreach ($transportTopic in $topic.transportTopics)
+#set ($ignore = $dto.imports.add($transportTopic.type))
+#end
+#end
+${dto.imports.generateJava()}
+
+public class ${dto.configurationClassName} {
+
+   private ${dto.configurationClassName}() {
+   }
+
+   public static void configure(TransportConfiguration config, ITransportProvider<HttpClientTopic> httpClientProvider) {
+#foreach ($topic in $dto.topics)
+      HttpClientTopic ${dto.variables.get($topic)} = new HttpClientTopic(
+            "http://${topic.networkAddress}:${topic.port}${topic.path}",
+            HttpClientVerb.${topic.httpMethod},
+            HttpClientTopic.DEFAULT_TIMEOUT,
+            "${topic.contentType}",
+            "${topic.contentType}");
+
+#end
+
+#foreach ($topic in $dto.topics)
+#foreach ($transportTopic in $topic.transportTopics)
+      config.whenSending()
+            .toApplicationTopic(${dto.imports.getType($transportTopic.type)}.${transportTopic.value})
+            .useTransportProvider(httpClientProvider)
+            .onPhysicalTopic(t -> ${dto.variables.get($topic)});
+#end
+#end
+   }
+}

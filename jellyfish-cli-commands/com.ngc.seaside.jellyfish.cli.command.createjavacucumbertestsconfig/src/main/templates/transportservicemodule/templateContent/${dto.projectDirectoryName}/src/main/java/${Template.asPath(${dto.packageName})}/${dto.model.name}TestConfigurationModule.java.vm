@@ -1,0 +1,21 @@
+package ${dto.packageName};
+
+#set ($dto.imports.package = $dto.packageName)
+#set ($ignore = $dto.imports.add("com.google.inject.AbstractModule"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.impl.defaultz.module.DefaultTransportServiceModule"))
+#foreach ($module in $dto.modules)
+#set ($ignore = $dto.imports.add($module))
+#end
+${dto.imports.generateJava()}
+
+public class ${dto.model.name}TestConfigurationModule extends AbstractModule {
+
+   @Override
+   protected void configure() {
+      install(new DefaultTransportServiceModule());
+#foreach ($module in $dto.modules)
+      install(new ${dto.imports.getType($module)}());
+#end
+   }
+
+}

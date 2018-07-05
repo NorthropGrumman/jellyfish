@@ -247,12 +247,12 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    }
 
    private static String getLocationString(ISourceLocation location) {
-      String s = "<location unknown>";
-      if (location != null) {
-         s =
-               String.format("%s, line: %s, col: %s\n", location.getPath(), location.getLineNumber(),
-                             location.getColumn());
-      }
-      return s;
+      return "<div class=\"source-location\">\n"
+             + "<div class=\"position-information\">\n"
+             + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
+             + "<span class=\"line\">" + location.getLineNumber() + "</span>\n"
+             + "<span class=\"col\">" + location.getColumn() + "</span>\n"
+             + "</div>\n"
+             + "</div>\n";
    }
 }
