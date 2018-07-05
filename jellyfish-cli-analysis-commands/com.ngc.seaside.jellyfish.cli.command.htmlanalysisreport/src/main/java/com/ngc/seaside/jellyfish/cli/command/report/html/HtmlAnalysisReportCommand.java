@@ -46,7 +46,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    public static final String NAME = "html-report";
 
    static final String REPORT_FILE_NAME_PARAMETER_NAME = "reportFileName";
-   static final String HTML_REPORT_TEMPLATE_SUFFIX = "html";
+   static final String HTML_REPORT_TEMPLATE_SUFFIX = "report";
 
    private ILogService logService;
 
@@ -100,7 +100,12 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          sb.append(NEWLINE);
          logRuntimeInformation(sb, commandOptions);
 
-         outputReport(commandOptions, sb.toString());
+         HtmlReportDto dto = new HtmlReportDto()
+               .setContent(reportingOutputService.convert(sb.toString()))
+               .setReportName(commandOptions.getParameters()
+                                    .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
+                                    .getStringValue());
+         outputReport(commandOptions, dto);
       }
    }
 

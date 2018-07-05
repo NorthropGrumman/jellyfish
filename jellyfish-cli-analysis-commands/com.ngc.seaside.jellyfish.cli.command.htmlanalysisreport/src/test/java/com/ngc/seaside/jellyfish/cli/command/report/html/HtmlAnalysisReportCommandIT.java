@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
@@ -42,6 +43,8 @@ public class HtmlAnalysisReportCommandIT {
    @Rule
    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+   private MockedTemplateService templateService;
+
    @Mock
    private ILogService logService;
 
@@ -57,6 +60,13 @@ public class HtmlAnalysisReportCommandIT {
    @Before
    public void setup() throws Throwable {
       outputDirectory = temporaryFolder.newFolder().toPath();
+
+      templateService = new MockedTemplateService()
+            .useRealPropertyService()
+            .setTemplateDirectory(
+                  HtmlAnalysisReportCommand.class.getPackage() + "-"
+                  + HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX,
+                  Paths.get("src", "main", "templates", HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX));
 
       // Just return whatever is given.
       when(reportingOutputService.convert(anyString()))
@@ -80,6 +90,7 @@ public class HtmlAnalysisReportCommandIT {
 
       command = new HtmlAnalysisReportCommand();
       command.setLogService(logService);
+      command.setTemplateService(templateService);
       command.setAnalysisService(analysisService);
       command.setReportingOutputService(reportingOutputService);
       command.activate();
