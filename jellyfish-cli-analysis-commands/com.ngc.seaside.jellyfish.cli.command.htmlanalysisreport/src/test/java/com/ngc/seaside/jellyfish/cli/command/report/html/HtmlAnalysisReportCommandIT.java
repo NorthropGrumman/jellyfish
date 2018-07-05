@@ -60,11 +60,13 @@ public class HtmlAnalysisReportCommandIT {
    @Before
    public void setup() throws Throwable {
       outputDirectory = temporaryFolder.newFolder().toPath();
+      // TODO TH: REMOVE THIS
+      outputDirectory = Paths.get("build", "blah");
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
-                  HtmlAnalysisReportCommand.class.getPackage() + "-"
+                  HtmlAnalysisReportCommand.class.getPackage().getName() + "-"
                   + HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates", HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX));
 

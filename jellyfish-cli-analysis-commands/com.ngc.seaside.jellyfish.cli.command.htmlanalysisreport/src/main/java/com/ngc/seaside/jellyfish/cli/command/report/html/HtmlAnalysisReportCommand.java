@@ -7,9 +7,11 @@ import com.google.common.collect.Multimap;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
@@ -24,14 +26,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * A report command that outputs all findings added to the {@link IAnalysisService} to an HTML report.
@@ -86,25 +83,15 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
             findings.put(finding.getType().getSeverity(), finding);
          }
 
-         StringBuilder sb = new StringBuilder(NEWLINE);
-         logSummary(findings, sb);
-         sb.append(NEWLINE).append("# Errors").append(NEWLINE).append(NEWLINE);
-         logFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR),
-                     sb);
-         sb.append(NEWLINE).append("# Warnings").append(NEWLINE).append(NEWLINE);
-         logFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING),
-                     sb);
-         sb.append(NEWLINE);
-         logFindings(findings.get(ISystemDescriptorFindingType.Severity.INFO),
-                     sb);
-         sb.append(NEWLINE);
-         logRuntimeInformation(sb, commandOptions);
-
          HtmlReportDto dto = new HtmlReportDto()
-               .setContent(reportingOutputService.convert(sb.toString()))
                .setReportName(commandOptions.getParameters()
                                     .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
                                     .getStringValue());
+         addSummary(findings, dto);
+         addErrors(findings, dto);
+         addWarnings(findings, dto);
+         addRuntimeInformation(commandOptions, dto);
+
          outputReport(commandOptions, dto);
       }
    }
@@ -163,91 +150,109 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       setReportingOutputService(null);
    }
 
-   private void outputReport(ICommandOptions commandOptions, String report) {
-      String html = reportingOutputService.convert(report);
-      Path outputDirectory = Paths.get(commandOptions.getParameters()
-                                             .getParameter(CommonParameters.OUTPUT_DIRECTORY.getName())
-                                             .getStringValue());
-      Path outputFile = outputDirectory.resolve(commandOptions.getParameters()
-                                                      .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
-                                                      .getStringValue())
-            .toAbsolutePath();
-      // If the parent directory does not exists, create it.  This method will not throw an exception if the directory
-      // already exists.
-      try {
-         Files.createDirectories(outputDirectory);
-         // Overwrite any existing file.
-         Files.write(outputFile,
-                     Collections.singleton(html),
-                     StandardOpenOption.CREATE,
-                     StandardOpenOption.TRUNCATE_EXISTING);
-      } catch (IOException e) {
-         throw new RuntimeException("error while writing HTML report to " + outputFile, e);
+   private void addSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
+                           HtmlReportDto dto) {
+      String section = "<div class=\"summary\">\n"
+                       + "<h1>Summary</h1>\n"
+                       + "<p>"
+                       + findings.get(ISystemDescriptorFindingType.Severity.ERROR).size()
+                       + " "
+                       + ISystemDescriptorFindingType.Severity.ERROR.toString().toLowerCase()
+                       + "s"
+                       + "</p>\n"
+                       + "<p>"
+                       + findings.get(ISystemDescriptorFindingType.Severity.WARNING).size()
+                       + " "
+                       + ISystemDescriptorFindingType.Severity.WARNING.toString().toLowerCase()
+                       + "s"
+                       + "</p>\n"
+                       + "</div>\n";
+      dto.addContent(section);
+   }
+
+   private void addErrors(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
+                          HtmlReportDto dto) {
+      StringBuilder section = new StringBuilder();
+      section.append("<div class=\"errors\">\n");
+      section.append("<h1>Errors</h1>\n");
+      appendFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR), section);
+      section.append("</div>\n");
+      dto.addContent(section.toString());
+   }
+
+   private void addWarnings(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
+                            HtmlReportDto dto) {
+      StringBuilder section = new StringBuilder();
+      section.append("<div class=\"warnings\">\n");
+      section.append("<h1>Warnings</h1>\n");
+      appendFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING), section);
+      section.append("</div>\n");
+      dto.addContent(section.toString());
+   }
+
+   private void appendFindings(Collection<SystemDescriptorFinding<?>> findings,
+                               StringBuilder sb) {
+      // Group into types.
+      Multimap<ISystemDescriptorFindingType, SystemDescriptorFinding<?>> sorted = LinkedListMultimap.create();
+      findings.forEach(f -> sorted.put(f.getType(), f));
+
+      for (ISystemDescriptorFindingType type : sorted.keySet()) {
+         sb.append("<div class=\"finding-type\">\n");
+         sb.append(reportingOutputService.convert(type.getDescription()));
+
+         for (SystemDescriptorFinding<?> finding : sorted.get(type)) {
+            sb.append("<div class=\"finding\">\n");
+            sb.append(getLocationString(finding.getLocation().orElse(null)));
+            sb.append(reportingOutputService.convert(finding.getMessage()));
+            sb.append("</div>\n");
+         }
+
+         sb.append("</div>\n");
+      }
+   }
+
+   private void addRuntimeInformation(ICommandOptions commandOptions, HtmlReportDto dto) {
+      StringBuilder section = new StringBuilder();
+      section.append("<div class=\"runtime-info\">\n")
+            .append("<h1>Runtime Information</h1>\n")
+            .append("<p>")
+            .append("Jellyfish executed with the following parameters:\n")
+            .append("<ul>\n");
+
+      for (IParameter<?> param : commandOptions.getParameters().getAllParameters()) {
+         section.append("<li>")
+               .append(param.getName())
+               .append(" = ")
+               .append(param.getStringValue())
+               .append("</li>\n");
       }
 
-      logService.debug(getClass(), "Successfully created HTML report at %s.", outputDirectory);
+      section.append("</ul>\n")
+            .append("</p>\n")
+            .append("</div>\n");
+      dto.addContent(section.toString());
    }
 
    private void outputReport(ICommandOptions options, HtmlReportDto dto) {
       Path outputDirectory = Paths.get(options.getParameters()
                                              .getParameter(CommonParameters.OUTPUT_DIRECTORY.getName())
                                              .getStringValue());
+
+      DefaultParameterCollection params = new DefaultParameterCollection(options.getParameters());
+      params.addParameter(new DefaultParameter<>("dto", dto));
       templateService.unpack(getClass().getPackage().getName() + "-" + HTML_REPORT_TEMPLATE_SUFFIX,
-                             options.getParameters(),
+                             params,
                              outputDirectory,
                              true);
-   }
-
-   private static void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
-                                  StringBuilder sb) {
-      sb.append("# Summary").append(NEWLINE);
-      sb.append(findings.get(ISystemDescriptorFindingType.Severity.ERROR).size())
-            .append(" ")
-            .append(ISystemDescriptorFindingType.Severity.ERROR.toString().toLowerCase())
-            .append("s")
-            .append(NEWLINE);
-      sb.append(findings.get(ISystemDescriptorFindingType.Severity.WARNING).size())
-            .append(" ")
-            .append(ISystemDescriptorFindingType.Severity.WARNING.toString().toLowerCase())
-            .append("s")
-            .append(NEWLINE);
-   }
-
-   private static void logFindings(Collection<SystemDescriptorFinding<?>> findings,
-                                   StringBuilder sb) {
-      // Group into types.
-      Multimap<ISystemDescriptorFindingType, SystemDescriptorFinding<?>> sorted = LinkedListMultimap.create();
-      findings.forEach(f -> sorted.put(f.getType(), f));
-
-      for (ISystemDescriptorFindingType type : sorted.keySet()) {
-         sb.append(type.getDescription())
-               .append(NEWLINE)
-               .append(NEWLINE);
-         for (Iterator<SystemDescriptorFinding<?>> i = sorted.get(type).iterator(); i.hasNext(); ) {
-            SystemDescriptorFinding<?> finding = i.next();
-            sb.append(getLocationString(finding.getLocation().orElse(null))).append(NEWLINE);
-            sb.append(finding.getMessage()).append(NEWLINE);
-            if (i.hasNext()) {
-               sb.append(NEWLINE);
-            }
-         }
-      }
    }
 
    private static String getLocationString(ISourceLocation location) {
       String s = "<location unknown>";
       if (location != null) {
-         s = String.format("%s, line: %s, col: %s", location.getPath(), location.getLineNumber(), location.getColumn());
+         s =
+               String.format("%s, line: %s, col: %s\n", location.getPath(), location.getLineNumber(),
+                             location.getColumn());
       }
       return s;
-   }
-
-   private static void logRuntimeInformation(StringBuilder sb, ICommandOptions commandOptions) {
-      sb.append("# Runtime Information").append(NEWLINE);
-      sb.append("Jellyfish executed with the following parameters:").append(NEWLINE);
-      commandOptions.getParameters().getAllParameters()
-            .stream()
-            .map(p -> "* " + p.getName() + " = " + p.getValue())
-            .forEach(v -> sb.append(v).append(NEWLINE));
    }
 }
