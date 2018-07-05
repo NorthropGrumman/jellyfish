@@ -7,17 +7,16 @@ configurations {
 }
 
 dependencies {
-   implementation project(':${dto.baseProjectArtifactName}')
-
-   implementation "${dto.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
-#foreach ($dependency in $dto.transportProviderDependencies)
+   implementation project(':${dto.baseProjectName}')
+#foreach ($dependency in $dto.compileDependencies)
    implementation "${dto.getFormattedDependency($dependency)}"
 #end
+   
    implementation "${dto.getFormattedDependency('com.ngc.blocs:service.api')}"
    implementation "${dto.getFormattedDependency('org.osgi:osgi.core')}"
    implementation "${dto.getFormattedDependency('org.osgi:osgi.enterprise')}"
 
-#foreach ($dependency in $dto.distributionDependencies)
+#foreach ($dependency in $dto.defaultBundles)
    defaultBundles "${dto.getFormattedDependency($dependency)}"
 #end
 }

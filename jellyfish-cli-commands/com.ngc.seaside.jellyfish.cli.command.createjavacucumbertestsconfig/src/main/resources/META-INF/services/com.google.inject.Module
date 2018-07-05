@@ -1,1 +1,2 @@
 com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.CreateJavaCucumberTestsConfigCommandGuiceModule
+com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.plugin.module.DefaultTestConfigurationPluginModule

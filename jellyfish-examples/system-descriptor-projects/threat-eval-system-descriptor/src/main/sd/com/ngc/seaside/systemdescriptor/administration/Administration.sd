@@ -1,0 +1,8 @@
+package com.ngc.seaside.systemdescriptor.administration
+
+data Administration {
+	metadata {
+		"description" : "Defines the administration configuration for a system or service.  Data types can extend this type to enable alternative ways to configure administration.  In most cases, one of these specific types of properties are applied to a model instead of applying this type as a property directly.",
+		"target": "model"
+	}
+}

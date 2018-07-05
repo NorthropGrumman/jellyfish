@@ -7,6 +7,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.ITelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
@@ -35,6 +37,8 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
    private IScenarioService scenarioService;
    private ITransportConfigurationService transportConfigService;
+   private ITelemetryConfigurationService telemetryConfigService;
+   private ITelemetryReportingConfigurationService telemetryReportingConfigService;
    private IPackageNamingService packageNamingService;
    private ILogService logService;
 
@@ -79,9 +83,9 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
          configurePubSubTransportTopics(dto, options, scenario);
          configureReqResTransportTopics(dto, options, scenario);
       }
-      transportConfigService.getTelemetryReportingTransportTopicName(options, model).ifPresent(dto.getValues()::add);
+      telemetryReportingConfigService.getTransportTopicName(options, model).ifPresent(dto.getValues()::add);
       for (IModelReferenceField part : model.getParts()) {
-         transportConfigService.getTelemetryTransportTopicName(options, part).ifPresent(dto.getValues()::add);
+         telemetryConfigService.getTransportTopicName(options, part).ifPresent(dto.getValues()::add);
       }
 
       return dto;
@@ -131,6 +135,24 @@ public class JavaServiceGenerationService implements IJavaServiceGenerationServi
 
    public void removeTransportConfigurationService(ITransportConfigurationService ref) {
       setTransportConfigurationService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTelemetryConfigurationService(ITelemetryConfigurationService ref) {
+      this.telemetryConfigService = ref;
+   }
+
+   public void removeTelemetryConfigurationService(ITelemetryConfigurationService ref) {
+      setTelemetryConfigurationService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+   public void setTelemetryReportingConfigurationService(ITelemetryReportingConfigurationService ref) {
+      this.telemetryReportingConfigService = ref;
+   }
+
+   public void removeTelemetryReportingConfigurationService(ITelemetryReportingConfigurationService ref) {
+      setTelemetryReportingConfigurationService(null);
    }
 
    private void configurePubSubTransportTopics(EnumDto dto, IJellyFishCommandOptions options, IScenario scenario) {

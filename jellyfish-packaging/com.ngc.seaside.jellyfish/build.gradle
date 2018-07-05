@@ -93,19 +93,23 @@ dependencies {
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-genbuild@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-httpclient@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-multicast@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-readiness@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-spark@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetry@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetryreporting@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-transportservice@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-transportserviceguice@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-zeromq@zip"
 
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-build@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-config@zip"
-
+    
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-build@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
-
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-transportservicemodule@zip"
+    
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }

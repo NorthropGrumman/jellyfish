@@ -1,0 +1,87 @@
+package ${dto.packageName};
+
+#set ($dto.imports.package = $dto.packageName)
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.thread.api.ISubmittedTask"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.thread.api.IThreadService"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.time.api.Time"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.readiness.api.IReadinessService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.readiness.api.Readiness"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.api.ITelemetryService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.request.api.FutureSettingCallback"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Activate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Reference"))
+#set ($ignore = $dto.imports.add("java.util.concurrent.ScheduledFuture"))
+#set ($ignore = $dto.imports.add("java.util.function.Function"))
+#set ($ignore = $dto.imports.add($dto.topic.type))
+${dto.imports.generateJava()}
+
+@Component(service = ${dto.className}.class, immediate = true)
+public class ${dto.className} {
+
+   private ILogService logService;
+   private ITelemetryService telemetryService;
+   private IThreadService threadService;
+   private IReadinessService readinessService;
+   private ISubmittedTask<Void, ScheduledFuture<Void>> task;
+
+   @Activate
+   public void activate() {
+      logService.debug(getClass(), "activated");
+      task = threadService.executePeriodically(getClass().getName(),
+                                               this::sendTelemetry,
+                                               Time.getCurrentTime(),
+                                               ${dto.rateInMilliseconds});
+   }
+
+   @Deactivate
+   public void deactivate() {
+      task.getFuture().cancel(false);
+      task = null;
+      logService.debug(getClass(), "Deactivated");
+   }
+
+   @Reference
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   @Reference
+   public void setTelemetryService(ITelemetryService ref) {
+      this.telemetryService = ref;
+   }
+
+   public void removeTelemetryService(ITelemetryService ref) {
+      setTelemetryService(null);
+   }
+
+   @Reference
+   public void setThreadService(IThreadService ref) {
+      this.threadService = ref;
+   }
+
+   public void removeThreadService(IThreadService ref) {
+      setThreadService(null);
+   }
+
+   @Reference
+   public void setReadinessService(IReadinessService ref) {
+      this.readinessService = ref;
+   }
+
+   public void removeReadinessService(IReadinessService ref) {
+      setReadinessService(null);
+   }
+
+   private void sendTelemetry() {
+      if (readinessService.getReadiness() == Readiness.READY) {
+         telemetryService.publishTelemetry(${dto.imports.getType($dto.topic.type)}.${dto.topic.value}, new FutureSettingCallback<>(Function.identity()));
+      }
+   }
+}

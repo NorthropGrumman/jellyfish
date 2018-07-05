@@ -22,17 +22,17 @@ public class RestTelemetryReportingConfiguration extends TelemetryReportingConfi
          return false;
       }
       RestTelemetryReportingConfiguration that = (RestTelemetryReportingConfiguration) o;
-      return this.getRateInSeconds() == that.getRateInSeconds()
+      return this.getRateInMilliseconds() == that.getRateInMilliseconds()
                && Objects.equals(this.config, that.config);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(getRateInSeconds(), config);
+      return Objects.hash(getRateInMilliseconds(), config);
    }
 
    @Override
    public String toString() {
-      return "RestTelemetryReporting[rateInSeconds=" + getRateInSeconds() + "," + config.toString() + "]";
+      return "RestTelemetryReporting[rateInSeconds=" + getRateInMilliseconds() + "," + config.toString() + "]";
    }
 }
