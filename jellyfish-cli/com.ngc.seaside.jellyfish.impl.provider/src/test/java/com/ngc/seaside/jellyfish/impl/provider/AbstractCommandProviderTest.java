@@ -41,6 +41,11 @@ public class AbstractCommandProviderTest {
          public Void run(String[] arguments) {
             throw new UnsupportedOperationException("not implemented");
          }
+
+         @Override
+         public void run(String command, ICommandOptions commandOptions) {
+            throw new UnsupportedOperationException("not implemented");
+         }
       };
       provider.activate();
    }

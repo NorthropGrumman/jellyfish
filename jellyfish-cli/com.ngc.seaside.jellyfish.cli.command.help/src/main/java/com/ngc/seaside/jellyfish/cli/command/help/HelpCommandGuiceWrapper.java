@@ -58,9 +58,12 @@ public class HelpCommandGuiceWrapper implements ICommand<ICommandOptions> {
 
    private void injectCommandsIfNeeded() {
       if (areCommandsInjected.compareAndSet(false, true)) {
-         TypeLiteral<Set<IJellyFishCommand>> type = new TypeLiteral<Set<IJellyFishCommand>>() {
+         TypeLiteral<Set<IJellyFishCommand>> jfCommandsType = new TypeLiteral<Set<IJellyFishCommand>>() {
          };
-         injector.getInstance(Key.get(type)).forEach(delegate::addCommand);
+         injector.getInstance(Key.get(jfCommandsType)).forEach(delegate::addCommand);
+         TypeLiteral<Set<ICommand>> commandsType = new TypeLiteral<Set<ICommand>>() {
+         };
+         injector.getInstance(Key.get(commandsType)).forEach(delegate::addCommand);
       }
    }
 }

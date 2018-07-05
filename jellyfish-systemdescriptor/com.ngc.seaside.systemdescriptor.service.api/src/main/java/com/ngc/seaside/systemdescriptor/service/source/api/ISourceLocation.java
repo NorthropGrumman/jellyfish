@@ -36,5 +36,4 @@ public interface ISourceLocation {
     * @return the character length of the location
     */
    int getLength();
-
 }

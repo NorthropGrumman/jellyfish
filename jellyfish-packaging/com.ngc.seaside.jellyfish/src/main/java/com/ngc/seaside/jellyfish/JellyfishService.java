@@ -57,7 +57,7 @@ public class JellyfishService implements IJellyfishService {
             System.setProperty(BLOCS_HOME_SYSTEM_PROPERTY, getDefaultBlocsHome());
          }
 
-         Injector injector = createInjector(modules);
+         Injector injector = createInjector(mods);
          return runCommand(injector, command, arguments, sw);
       } catch (Throwable t) {
          String msg = String.format("unable to run Jellyfish with the command %s and args %s!",
@@ -101,10 +101,15 @@ public class JellyfishService implements IJellyfishService {
     *
     * @param options           the result to adapt
     * @param executionDuration the time taken to run Jellyfish
+    * @param injector the injector used to run Jellyfish
     * @return the adapted result
     */
-   protected IJellyfishExecution adaptResult(ICommandOptions options, long executionDuration) {
-      return new JellyfishExecution(options).setExecutionDuration(executionDuration);
+   protected IJellyfishExecution adaptResult(ICommandOptions options,
+                                             long executionDuration,
+                                             Injector injector) {
+      return new JellyfishExecution(options)
+            .setExecutionDuration(executionDuration)
+            .setInjector(injector);
    }
 
    /**
@@ -112,10 +117,15 @@ public class JellyfishService implements IJellyfishService {
     *
     * @param options           the result to adapt
     * @param executionDuration the time taken to run Jellyfish
+    * @param injector the injector used to run Jellyfish
     * @return the adapted result
     */
-   protected IJellyfishExecution adaptResult(IJellyFishCommandOptions options, long executionDuration) {
-      return new JellyfishExecution(options).setExecutionDuration(executionDuration);
+   protected IJellyfishExecution adaptResult(IJellyFishCommandOptions options,
+                                             long executionDuration,
+                                             Injector injector) {
+      return new JellyfishExecution(options)
+            .setExecutionDuration(executionDuration)
+            .setInjector(injector);
    }
 
    private IJellyfishExecution runCommand(Injector injector,
@@ -129,10 +139,14 @@ public class JellyfishService implements IJellyfishService {
             injector.getInstance(ICommandProvider.class);
       // Is this a Jellyfish command which requires an SD project?
       if (jfProvider.getCommand(command) != null) {
-         return adaptResult(jfProvider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
+         return adaptResult(jfProvider.run(buildArgs(command, arguments)),
+                            sw.elapsed(TimeUnit.MILLISECONDS),
+                            injector);
       } else {
          // Otherwise, this must be a default command that does not require an SD project.
-         return adaptResult(defaultProvider.run(buildArgs(command, arguments)), sw.elapsed(TimeUnit.MILLISECONDS));
+         return adaptResult(defaultProvider.run(buildArgs(command, arguments)),
+                            sw.elapsed(TimeUnit.MILLISECONDS),
+                            injector);
       }
    }
 
@@ -170,6 +184,7 @@ public class JellyfishService implements IJellyfishService {
    private static class JellyfishExecution implements IJellyfishExecution {
 
       private final IJellyFishCommandOptions options;
+      private Injector injector;
       private long executionDuration;
 
       private JellyfishExecution(IJellyFishCommandOptions options) {
@@ -180,6 +195,11 @@ public class JellyfishService implements IJellyfishService {
          DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
          options.setParameters(basicOptions.getParameters());
          this.options = options;
+      }
+
+      @Override
+      public Injector getInjector() {
+         return injector;
       }
 
       @Override
@@ -194,6 +214,11 @@ public class JellyfishService implements IJellyfishService {
 
       JellyfishExecution setExecutionDuration(long executionDuration) {
          this.executionDuration = executionDuration;
+         return this;
+      }
+
+      JellyfishExecution setInjector(Injector injector) {
+         this.injector = injector;
          return this;
       }
    }
