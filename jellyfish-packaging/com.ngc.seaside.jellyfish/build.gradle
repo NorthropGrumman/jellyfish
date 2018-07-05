@@ -112,16 +112,16 @@ dependencies {
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-transportservicemodule@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
    
-   implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version:template-report@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version:template-report@zip"
 
-   testImplementation "junit:junit:$junitVersion"
+    testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 

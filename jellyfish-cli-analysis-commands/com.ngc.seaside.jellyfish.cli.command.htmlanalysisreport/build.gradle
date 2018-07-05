@@ -1,3 +1,5 @@
+apply plugin: 'com.ngc.seaside.command'
+
 dependencies {
    api "com.ngc.seaside:jellyfish.api:$version"
 
