@@ -48,7 +48,29 @@
 	  padding: 0.25rem;
 	  margin: 0 1rem;
 	  border: 1px solid lightgrey;
-	  margi
+	}
+
+	.finding {
+	  background-color: #fff;
+	}
+
+	.finding p {
+	  font-size: 1.1em;
+	  margin-bottom: 0;
+	}
+
+	.source-location .source-code {
+	  margin-top: 0.5rem;
+	}
+
+	.source-location pre.line {
+	  padding: 0;
+	  margin: 0;
+	}
+
+	.source-location .offending {
+	  background-color: yellow;
+	}
   </style>
 </head>
 

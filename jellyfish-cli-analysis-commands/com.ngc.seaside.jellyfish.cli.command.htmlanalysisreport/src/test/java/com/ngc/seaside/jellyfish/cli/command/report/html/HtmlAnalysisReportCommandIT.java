@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -124,11 +125,15 @@ public class HtmlAnalysisReportCommandIT {
          ISystemDescriptorFindingType.Severity.INFO);
 
    private static SystemDescriptorFinding<ISystemDescriptorFindingType> newFinding(ISystemDescriptorFindingType type,
-                                                                                   String description) {
+                                                                                   String description)
+         throws URISyntaxException {
+      Path path = Paths.get(HtmlAnalysisReportCommandIT.class.getClassLoader().getResource("example.sd").toURI());
+
       ISourceLocation location = mock(ISourceLocation.class);
-      when(location.getPath()).thenReturn(Paths.get("foo/bar/stuff.sd"));
-      when(location.getLineNumber()).thenReturn(10);
-      when(location.getColumn()).thenReturn(19);
+      when(location.getPath()).thenReturn(path);
+      when(location.getLineNumber()).thenReturn(3);
+      when(location.getColumn()).thenReturn(7);
+      when(location.getLength()).thenReturn(7);
       return type.createFinding(description, location, 1);
    }
 }

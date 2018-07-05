@@ -26,9 +26,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A report command that outputs all findings added to the {@link IAnalysisService} to an HTML report.
@@ -247,13 +250,62 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
                              true);
    }
 
-   private static String getLocationString(ISourceLocation location) {
+   private String getLocationString(ISourceLocation location) {
       return "<div class=\"source-location\">\n"
              + "<div class=\"position-information\">\n"
-             + "<span class=\"file-name\">File " + location.getPath() + "</span>\n"
-             + "<span class=\"line\">Line " + location.getLineNumber() + "</span>\n"
-             + "<span class=\"col\">Col " + location.getColumn() + "</span>\n"
+             + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
+             + "<span class=\"line-number\">line " + location.getLineNumber() + "</span>\n"
+             + "<span class=\"col\">col " + location.getColumn() + "</span>\n"
+             + getLocationContents(location)
              + "</div>\n"
              + "</div>\n";
+   }
+
+   private static final int PRECEDING_LINES_TO_SHOW = 3;
+   private static final int SUCCEEDING_LINES_TO_SHOW = 3;
+
+   private String getLocationContents(ISourceLocation location) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("<div class=\"source-code language-sd\">\n");
+
+      try {
+         List<String> lines = Files.readAllLines(location.getPath());
+         int line = location.getLineNumber() - 1;
+
+         for (int i = Math.max(0, line - PRECEDING_LINES_TO_SHOW);
+              i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
+              i++) {
+            if (i == line) {
+               sb.append("<span class=\"line offending-line\">")
+                     .append(getOffendingLineContents(lines.get(i), location))
+                     .append("</span>\n");
+            } else {
+               sb.append("<pre class=\"line\">")
+                     .append(lines.get(i))
+                     .append("</pre>\n");
+            }
+         }
+
+         sb.append("</div>\n");
+      } catch (IOException e) {
+         logService.error(getClass(), e, "Unable to read source from %s for finding location.", location.getPath());
+         sb = new StringBuilder("source not available");
+      }
+
+      return sb.toString();
+   }
+
+   private static String getOffendingLineContents(String line, ISourceLocation location) {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < line.length(); i++) {
+         if (i + 1 == location.getColumn()) {
+            sb.append("<pre class=\"offending\">");
+         }
+         sb.append(line.charAt(i));
+         if (i + 1 == location.getColumn() + location.getLength() - 1) {
+            sb.append("</pre>");
+         }
+      }
+      return sb.toString();
    }
 }
