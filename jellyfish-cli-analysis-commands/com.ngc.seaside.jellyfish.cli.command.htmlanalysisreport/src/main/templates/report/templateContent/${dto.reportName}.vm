@@ -19,7 +19,7 @@
 
 	h1 {
 	  margin-top: 5rem;
-	  border-bottom: 1px solid #212529;
+
 	}
 
 	h1:first-child {
@@ -30,6 +30,25 @@
 	  text-decoration: none;
 	  color: #007bff;
 	}
+
+	.finding-type {
+	  margin-bottom: 2.5rem;
+	  padding: 0.5rem;
+	  border-radius: 5px;
+	  border: 1px solid lightgrey;
+	  background-color: #f8f9fa;
+	}
+
+	.finding-type:last-child {
+	  margin-bottom: 0;
+	}
+
+	.finding-type .finding {
+	  border-radius: 5px;
+	  padding: 0.25rem;
+	  margin: 0 1rem;
+	  border: 1px solid lightgrey;
+	  margi
   </style>
 </head>
 

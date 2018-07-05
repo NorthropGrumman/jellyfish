@@ -66,7 +66,7 @@ public class HtmlAnalysisReportCommandIT {
       templateService = new MockedTemplateService()
             .useRealPropertyService()
             .setTemplateDirectory(
-                  HtmlAnalysisReportCommand.class.getPackage().getName() + "-"
+                  HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_PREFIX + "-"
                   + HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX,
                   Paths.get("src", "main", "templates", HtmlAnalysisReportCommand.HTML_REPORT_TEMPLATE_SUFFIX));
 

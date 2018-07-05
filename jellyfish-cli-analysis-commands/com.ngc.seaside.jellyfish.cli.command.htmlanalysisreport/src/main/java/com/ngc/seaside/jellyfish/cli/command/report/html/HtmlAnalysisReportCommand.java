@@ -35,14 +35,15 @@ import java.util.Collection;
  */
 public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
-   private static final String NEWLINE = System.lineSeparator();
-
    /**
     * The name of the command.
     */
    public static final String NAME = "html-report";
 
    static final String REPORT_FILE_NAME_PARAMETER_NAME = "reportFileName";
+
+   static final String HTML_REPORT_TEMPLATE_PREFIX = "com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport";
+
    static final String HTML_REPORT_TEMPLATE_SUFFIX = "report";
 
    private ILogService logService;
@@ -240,7 +241,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
       DefaultParameterCollection params = new DefaultParameterCollection(options.getParameters());
       params.addParameter(new DefaultParameter<>("dto", dto));
-      templateService.unpack(getClass().getPackage().getName() + "-" + HTML_REPORT_TEMPLATE_SUFFIX,
+      templateService.unpack(HTML_REPORT_TEMPLATE_PREFIX + "-" + HTML_REPORT_TEMPLATE_SUFFIX,
                              params,
                              outputDirectory,
                              true);
@@ -249,9 +250,9 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    private static String getLocationString(ISourceLocation location) {
       return "<div class=\"source-location\">\n"
              + "<div class=\"position-information\">\n"
-             + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
-             + "<span class=\"line\">" + location.getLineNumber() + "</span>\n"
-             + "<span class=\"col\">" + location.getColumn() + "</span>\n"
+             + "<span class=\"file-name\">File " + location.getPath() + "</span>\n"
+             + "<span class=\"line\">Line " + location.getLineNumber() + "</span>\n"
+             + "<span class=\"col\">Col " + location.getColumn() + "</span>\n"
              + "</div>\n"
              + "</div>\n";
    }
