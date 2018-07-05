@@ -1,1 +1,2 @@
 com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommandGuiceModule
+com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.module.DefaultConfigurationPluginModule

@@ -1,0 +1,71 @@
+package ${dto.packageName};
+
+#set ($dto.imports.package = $dto.packageName)
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventSubscriber"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.service.log.api.ILogService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.readiness.api.IReadinessConfiguration"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.readiness.api.IReadinessService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportEventSource"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Activate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Component"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Deactivate"))
+#set ($ignore = $dto.imports.add("org.osgi.service.component.annotations.Reference"))
+#foreach ($class in $dto.classes)
+#set ($ignore = $dto.imports.add($class))
+#end
+${dto.imports.generateJava()}
+
+@Component(service = ${dto.model.name}ReadinessConfiguration.class, immediate = true)
+public class ${dto.model.name}ReadinessConfiguration {
+
+   private ILogService logService;
+
+   private IReadinessService readinessService;
+
+   @Activate
+   public void activate() {
+      IReadinessConfiguration config = readinessService.newConfiguration();
+      config.require()
+            .persistentEventPublished(ITransportEventSource.CONFIGURATION_REFRESHED_TOPIC)
+#foreach ( $class in $dto.classes )
+            .require()
+            .componentActivated(${dto.imports.getType($class)}.class)
+#end
+#foreach ( $subscriber in $dto.eventSubscribers )
+            .require()
+            .componentActivated(IEventSubscriber.class, "(component.name=${subscriber})")
+#end
+#foreach ( $component in $dto.components )
+            .require()
+            .componentActivated("(component.name=${component})")
+#end
+            ;
+
+      readinessService.register(config);
+
+      logService.debug(getClass(), "Activated.");
+   }
+
+   @Deactivate
+   public void deactivate() {
+      logService.debug(getClass(), "Deactivated.");
+   }
+
+   @Reference
+   public void setLogService(ILogService ref) {
+      this.logService = ref;
+   }
+
+   public void removeLogService(ILogService ref) {
+      setLogService(null);
+   }
+
+   @Reference
+   public void setReadinessService(IReadinessService ref) {
+      this.readinessService = ref;
+   }
+
+   public void removeReadinessService(IReadinessService ref) {
+      setReadinessService(null);
+   }
+}

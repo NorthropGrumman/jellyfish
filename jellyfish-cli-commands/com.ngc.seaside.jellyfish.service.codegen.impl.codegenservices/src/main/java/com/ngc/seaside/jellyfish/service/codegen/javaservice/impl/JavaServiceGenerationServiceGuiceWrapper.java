@@ -6,6 +6,8 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
+import com.ngc.seaside.jellyfish.service.config.api.ITelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
@@ -16,15 +18,20 @@ public class JavaServiceGenerationServiceGuiceWrapper implements IJavaServiceGen
    private final JavaServiceGenerationService javaServiceGenerationService;
 
    @Inject
-   public JavaServiceGenerationServiceGuiceWrapper(ILogService logService,
-                                                   IScenarioService scenarioService,
-                                                   IPackageNamingService packageNamingService,
-                                                   ITransportConfigurationService transportConfigService) {
+   public JavaServiceGenerationServiceGuiceWrapper(
+         ILogService logService,
+         IScenarioService scenarioService,
+         IPackageNamingService packageNamingService,
+         ITransportConfigurationService transportConfigService,
+         ITelemetryConfigurationService telemetryConfigService,
+         ITelemetryReportingConfigurationService telemetryReportingConfigService) {
       javaServiceGenerationService = new JavaServiceGenerationService();
       javaServiceGenerationService.setLogService(logService);
       javaServiceGenerationService.setScenarioService(scenarioService);
       javaServiceGenerationService.setPackageNamingService(packageNamingService);
       javaServiceGenerationService.setTransportConfigurationService(transportConfigService);
+      javaServiceGenerationService.setTelemetryConfigurationService(telemetryConfigService);
+      javaServiceGenerationService.setTelemetryReportingConfigurationService(telemetryReportingConfigService);
       javaServiceGenerationService.activate();
    }
 

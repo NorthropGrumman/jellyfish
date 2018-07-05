@@ -1,152 +1,156 @@
 apply plugin: 'com.ngc.seaside.application'
 
 configurations {
-   commandTemplate
+    commandTemplate
 }
 
 dependencies {
-   api "com.ngc.seaside:jellyfish.api:$version"
-   api "com.ngc.seaside:jellyfish.service.api:$version"
-   api "com.google.guava:guava:$guavaVersion"
-   api "com.google.inject:guice:$guiceVersion"
+    api "com.ngc.seaside:jellyfish.api:$version"
+    api "com.ngc.seaside:jellyfish.service.api:$version"
+    api "com.google.guava:guava:$guavaVersion"
+    api "com.google.inject:guice:$guiceVersion"
 
-   implementation "com.ngc.seaside:guice.modules:$version"
-   implementation "com.ngc.seaside:jellyfish.service.name.impl.namingservices:$version"
-   implementation "com.ngc.seaside:jellyfish.service.codegen.impl.codegenservices:$version"
-   implementation "com.ngc.seaside:jellyfish.service.scenario.impl.scenarioservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.data.impl.dataservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.config.impl.transportconfigurationservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.requirements.impl.requirementsservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.feature.impl.featureservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.buildmgmt.impl.buildmgmtservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.impl.parameterservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.impl.promptuserservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.impl.propertyservice:$version"
-   implementation "com.ngc.seaside:jellyfish.service.impl.templateservice:$version"
-   implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
-   implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+    implementation "com.ngc.seaside:guice.modules:$version"
+    implementation "com.ngc.seaside:jellyfish.service.name.impl.namingservices:$version"
+    implementation "com.ngc.seaside:jellyfish.service.codegen.impl.codegenservices:$version"
+    implementation "com.ngc.seaside:jellyfish.service.scenario.impl.scenarioservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.data.impl.dataservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.config.impl.transportconfigurationservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.requirements.impl.requirementsservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.feature.impl.featureservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.buildmgmt.impl.buildmgmtservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.impl.parameterservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.impl.promptuserservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.impl.propertyservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.impl.templateservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.analysis.impl.analysisservice:$version"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+    implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+    implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
+    implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
+    implementation "org.osgi:osgi.core:$osgiVersion"
+    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-   implementation "com.ngc.seaside:jellyfish.service.analysis.impl.analysisservice:$version"
+    implementation "com.ngc.seaside:jellyfish.impl.provider:$version"
+    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
 
-   implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
-   implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
-   implementation "org.osgi:osgi.core:$osgiVersion"
-   implementation "org.osgi:osgi.enterprise:$osgiVersion"
-   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.help:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.validate:$version"
 
-   implementation "com.ngc.seaside:jellyfish.impl.provider:$version"
-   implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.help:$version"
-   implementation "com.ngc.seaside:jellyfish.cli.command.validate:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createdomain:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createdomain:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-proto@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createdomain:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createdomain:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjellyfishgradleproject:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjellyfishgradleproject:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-genbuild@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createprotocolbuffermessages:$version:template-proto@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-java@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjellyfishgradleproject:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjellyfishgradleproject:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version:template-genbuild@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-genbuild@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaevents:$version:template-java@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.report.requirementsverification:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.report.requirementsverification:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaprotobufconnector:$version:template-genbuild@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.report.requirementsallocation:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.report.requirementsallocation:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.report.requirementsverification:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.report.requirementsverification:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservice:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservice:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.report.requirementsallocation:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.report.requirementsallocation:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservice:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservice:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-genbuild@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version:template@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-java@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-genbuild@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaserviceconfig:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaserviceconfig:$version:template@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-genbuild@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-java@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-httpclient@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-multicast@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-readiness@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-spark@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetry@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetryreporting@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-transportservice@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-transportserviceguice@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-zeromq@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaserviceconfig:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaserviceconfig:$version:template@zip"
-
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-genbuild@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-httpclient@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-multicast@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-spark@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetry@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-telemetryreporting@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicegeneratedconfig:$version:template-zeromq@zip"
-
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-config@zip"
-
-   implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-build@zip"
-   commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertests:$version:template-config@zip"
+    
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-build@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-transportservicemodule@zip"
 
    implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
+   
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
+
    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
 
    testImplementation "junit:junit:$junitVersion"
-   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
 /**
  * Copy the archive to the distribution directory and rename it to contain the groupId prefix.
  */
 task copyCommandTemplate(type: Copy) {
-   from configurations.commandTemplate {
-      rename { name ->
-         def artifacts = configurations.commandTemplate.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         "${artifact.moduleVersion.id.group}.${artifact.name}-${artifact.moduleVersion.id.version}-${artifact.classifier}.${artifact.extension}"
-      }
-   }
-   into "${buildDir}/commands-templates/templates/"
+    from configurations.commandTemplate {
+        rename { name ->
+            def artifacts = configurations.commandTemplate.resolvedConfiguration.resolvedArtifacts
+            def artifact = artifacts.find { it.file.name == name }
+            "${artifact.moduleVersion.id.group}.${artifact.name}-${artifact.moduleVersion.id.version}-${artifact.classifier}.${artifact.extension}"
+        }
+    }
+    into "${buildDir}/commands-templates/templates/"
 }
 
 seasideApplication {
-   mainClassName = 'com.ngc.seaside.jellyfish.Jellyfish'
-   includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
-   appHomeVarName = 'appHome'
-   appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
-   distributionName = "${project.name}-${project.version}"
-   installationDir = "build/distributions/${project.name}-${project.version}"
+    mainClassName = 'com.ngc.seaside.jellyfish.Jellyfish'
+    includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
+    appHomeVarName = 'appHome'
+    appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+    distributionName = "${project.name}-${project.version}"
+    installationDir = "build/distributions/${project.name}-${project.version}"
 
-   windows {
-      appHomeCmd = "%~dp0.."
-   }
-   unix {
-      appHomeCmd = "pwd -P"
-   }
+    windows {
+        appHomeCmd = "%~dp0.."
+    }
+    unix {
+        appHomeCmd = "pwd -P"
+    }
 }
 
 copyApplicationResources {
-   dependsOn copyCommandTemplate
+    dependsOn copyCommandTemplate
 }

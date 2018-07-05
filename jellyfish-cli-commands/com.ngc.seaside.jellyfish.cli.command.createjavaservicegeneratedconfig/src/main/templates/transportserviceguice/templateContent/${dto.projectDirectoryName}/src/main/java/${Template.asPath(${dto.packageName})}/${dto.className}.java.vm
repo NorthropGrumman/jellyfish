@@ -1,0 +1,43 @@
+package ${dto.packageName};
+
+#set ($dto.imports.package = $dto.packageName)
+#set ($ignore = $dto.imports.add("com.google.inject.Inject"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportProvider"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.ITransportService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.transport.api.TransportConfiguration"))
+#foreach ($transportProvider in $dto.transportProviders)
+#set ($ignore = $dto.imports.add($transportProvider.topicType))
+#set ($ignore = $dto.variables.add($transportProvider, $transportProvider.providerVariableName))
+#end
+${dto.imports.generateJava()}
+
+public class ${dto.className} {
+
+   private ITransportService transportService;
+
+#foreach ($transportProvider in $dto.transportProviders)
+   private ITransportProvider<${dto.imports.getType($transportProvider.topicType)}> ${dto.variables.get($transportProvider)};
+
+#end
+   @Inject
+   public ${dto.className}(ITransportService transportService,
+#foreach ($transportProvider in $dto.transportProviders)
+         ITransportProvider<${dto.imports.getType($transportProvider.topicType)}> ${dto.variables.get($transportProvider)}#if( $foreach.hasNext ),
+#{else}) {
+#end
+#end
+      this.transportService = transportService;   
+#foreach ($transportProvider in $dto.transportProviders)
+      this.${dto.variables.get($transportProvider)} = ${dto.variables.get($transportProvider)};
+#end
+      activate();
+   }
+
+   public void activate() {
+      TransportConfiguration config = new TransportConfiguration();
+#foreach ($transportProvider in $dto.transportProviders)
+      ${dto.imports.getType($transportProvider.configurationType)}.configure(config, ${dto.variables.get($transportProvider)});
+#end
+      transportService.registerConfiguration(config);
+   }
+}

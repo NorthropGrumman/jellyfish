@@ -1,15 +1,164 @@
 package com.ngc.seaside.threateval.deployment
 
 import com.ngc.seaside.threateval.ThreatEvaluation
+import com.ngc.seaside.systemdescriptor.administration.RestAdministration
 import com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqTcpTransportConfiguration
 import com.ngc.seaside.systemdescriptor.deployment.rest.RestConfiguration
 import com.ngc.seaside.systemdescriptor.deployment.rest.HttpMethod
 import com.ngc.seaside.systemdescriptor.deployment.zeromq.ConnectionType
+import com.ngc.seaside.systemdescriptor.telemetry.RestTelemetry
+import com.ngc.seaside.systemdescriptor.telemetry.RestTelemetryReporting
 
 model ZeroMqDemoThreatEvalDeployment refines ThreatEvaluation {
 	metadata {
 			"description" : "This deployment model allows the ThreatEvaluation system to be deployed on a single machine or VM using ZeroMQ.",
 			"stereotypes": ["system", "deployment"]
+	}
+	
+	parts {
+		refine defendedAreaTrackPriorityService {
+			properties {
+				RestTelemetry telemetry
+				RestTelemetryReporting telemetryReporting
+				RestAdministration admin
+
+				telemetry.config.serverAddress.address = "localhost"
+				telemetry.config.serverInterface.name = "0.0.0.0"
+				telemetry.config.port = 52416
+				telemetry.config.httpMethod = HttpMethod.GET
+				telemetry.config.contentType = "application/json"
+				telemetry.config.path = "/telemetry"
+
+				telemetryReporting.config.serverAddress.address = "localhost"
+				telemetryReporting.config.serverInterface.name = "0.0.0.0"
+				telemetryReporting.config.port = 9200
+				telemetryReporting.config.httpMethod = HttpMethod.POST
+				telemetryReporting.config.contentType = "application/json"
+				telemetryReporting.config.path = "/threateval-telemetry/_doc"
+				telemetryReporting.rateInMilliseconds = 1000
+
+				admin.shutdown.serverAddress.address = "localhost"
+				admin.shutdown.serverInterface.name = "0.0.0.0"
+				admin.shutdown.port = 52416
+				admin.shutdown.httpMethod = HttpMethod.GET
+				admin.shutdown.contentType = "application/json"
+				admin.shutdown.path = "/admin/shutdown"
+				admin.restart.serverAddress.address = "localhost"
+				admin.restart.serverInterface.name = "0.0.0.0"
+				admin.restart.port = 52416
+				admin.restart.httpMethod = HttpMethod.GET
+				admin.restart.contentType = "application/json"
+				admin.restart.path = "/admin/restart"
+			}
+		}
+		
+		refine classificationTrackPriorityService {
+			properties {
+				RestTelemetry telemetry
+				RestTelemetryReporting telemetryReporting
+				RestAdministration admin
+
+				telemetry.config.serverAddress.address = "localhost"
+				telemetry.config.serverInterface.name = "0.0.0.0"
+				telemetry.config.port = 52413
+				telemetry.config.httpMethod = HttpMethod.GET
+				telemetry.config.contentType = "application/json"
+				telemetry.config.path = "/telemetry"
+
+				telemetryReporting.config.serverAddress.address = "localhost"
+				telemetryReporting.config.serverInterface.name = "0.0.0.0"
+				telemetryReporting.config.port = 9200
+				telemetryReporting.config.httpMethod = HttpMethod.POST
+				telemetryReporting.config.contentType = "application/json"
+				telemetryReporting.config.path = "/threateval-telemetry/_doc"
+				telemetryReporting.rateInMilliseconds = 1000
+
+				admin.shutdown.serverAddress.address = "localhost"
+				admin.shutdown.serverInterface.name = "0.0.0.0"
+				admin.shutdown.port = 52413
+				admin.shutdown.httpMethod = HttpMethod.GET
+				admin.shutdown.contentType = "application/json"
+				admin.shutdown.path = "/admin/shutdown"
+				admin.restart.serverAddress.address = "localhost"
+				admin.restart.serverInterface.name = "0.0.0.0"
+				admin.restart.port = 52413
+				admin.restart.httpMethod = HttpMethod.GET
+				admin.restart.contentType = "application/json"
+				admin.restart.path = "/admin/restart"
+			}
+		}
+		
+		refine engagementTrackPriorityService {
+			properties {
+				RestTelemetry telemetry
+				RestTelemetryReporting telemetryReporting
+				RestAdministration admin
+
+				telemetry.config.serverAddress.address = "localhost"
+				telemetry.config.serverInterface.name = "0.0.0.0"
+				telemetry.config.port = 52414
+				telemetry.config.httpMethod = HttpMethod.GET
+				telemetry.config.contentType = "application/json"
+				telemetry.config.path = "/telemetry"
+
+				telemetryReporting.config.serverAddress.address = "localhost"
+				telemetryReporting.config.serverInterface.name = "0.0.0.0"
+				telemetryReporting.config.port = 9200
+				telemetryReporting.config.httpMethod = HttpMethod.POST
+				telemetryReporting.config.contentType = "application/json"
+				telemetryReporting.config.path = "/threateval-telemetry/_doc"
+				telemetryReporting.rateInMilliseconds = 1000
+
+				admin.shutdown.serverAddress.address = "localhost"
+				admin.shutdown.serverInterface.name = "0.0.0.0"
+				admin.shutdown.port = 52414
+				admin.shutdown.httpMethod = HttpMethod.GET
+				admin.shutdown.contentType = "application/json"
+				admin.shutdown.path = "/admin/shutdown"
+				admin.restart.serverAddress.address = "localhost"
+				admin.restart.serverInterface.name = "0.0.0.0"
+				admin.restart.port = 52414
+				admin.restart.httpMethod = HttpMethod.GET
+				admin.restart.contentType = "application/json"
+				admin.restart.path = "/admin/restart"
+			}
+		}
+		
+		refine trackPriorityService {
+			properties {
+				RestTelemetry telemetry
+				RestTelemetryReporting telemetryReporting
+				RestAdministration admin
+				
+				telemetry.config.serverAddress.address = "localhost"
+				telemetry.config.serverInterface.name = "0.0.0.0"
+				telemetry.config.port = 52415
+				telemetry.config.httpMethod = HttpMethod.GET
+				telemetry.config.contentType = "application/json"
+				telemetry.config.path = "/telemetry"
+
+				telemetryReporting.config.serverAddress.address = "localhost"
+				telemetryReporting.config.serverInterface.name = "0.0.0.0"
+				telemetryReporting.config.port = 9200
+				telemetryReporting.config.httpMethod = HttpMethod.POST
+				telemetryReporting.config.contentType = "application/json"
+				telemetryReporting.config.path = "/threateval-telemetry/_doc"
+				telemetryReporting.rateInMilliseconds = 1000
+
+				admin.shutdown.serverAddress.address = "localhost"
+				admin.shutdown.serverInterface.name = "0.0.0.0"
+				admin.shutdown.port = 52415
+				admin.shutdown.httpMethod = HttpMethod.GET
+				admin.shutdown.contentType = "application/json"
+				admin.shutdown.path = "/admin/shutdown"
+				admin.restart.serverAddress.address = "localhost"
+				admin.restart.serverInterface.name = "0.0.0.0"
+				admin.restart.port = 52415
+				admin.restart.httpMethod = HttpMethod.GET
+				admin.restart.contentType = "application/json"
+				admin.restart.path = "/admin/restart"
+			}
+		}
 	}
 	
 	links {

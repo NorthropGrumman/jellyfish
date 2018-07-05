@@ -8,32 +8,25 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.dto.GeneratedTestConfigDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.GeneratedServiceConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto.ITransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.httpclient.HttpClientTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.multicast.MulticastTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.spark.SparkTransportProviderConfigDto;
-import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.zeromq.ZeroMqTransportProviderConfigDto;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationContext;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationType;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.IConfigurationPlugin;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.IConfigurationPlugin.DependencyType;
+import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.IConfigurationTemplatePlugin;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
-import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
-import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
-import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
-import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
-import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractMultiphaseJellyfishCommand;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -45,16 +38,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJellyfishCommand
-      implements IJellyFishCommand {
+         implements IJellyFishCommand {
 
    static final String CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String CONFIG_BUILD_TEMPLATE_SUFFIX = "build";
@@ -66,9 +57,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
 
    private static final String NAME = "create-java-cucumber-tests-config";
 
-   private ITransportConfigurationService transportConfigService;
-   private IScenarioService scenarioService;
-   private IJavaServiceGenerationService generateService;
+   private Set<IConfigurationPlugin> plugins = new LinkedHashSet<>();
 
    protected CreateJavaCucumberTestsConfigCommand() {
       super(NAME);
@@ -99,34 +88,39 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       Path outputDir = getOutputDirectory();
 
       IProjectInformation projectInfo = projectNamingService.getCucumberTestsConfigProjectName(options, model);
-      String packagez = packageNamingService.getCucumberTestsConfigPackageName(options, model);
       Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
 
-      GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, options)
-            .setModel(model)
-            .setPackageName(packagez)
-            .setBaseProjectArtifactName(projectNamingService.getBaseServiceProjectName(options, model)
-                                              .getArtifactId())
-            .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
+      GeneratedTestConfigDto dto = new GeneratedTestConfigDto(buildManagementService, options)
+               .setBaseProjectName(projectNamingService.getBaseServiceProjectName(options, model).getArtifactId())
+               .setProjectDirectoryName(outputDir.relativize(projectDir).toString());
 
-      Collection<ITransportProviderConfigDto<?>> transportProviders = Arrays.asList(
-            new MulticastTransportProviderConfigDto(transportConfigService, true),
-            new SparkTransportProviderConfigDto(transportConfigService, true),
-            new HttpClientTransportProviderConfigDto(transportConfigService, true),
-            new ZeroMqTransportProviderConfigDto(transportConfigService, scenarioService, true));
+      ConfigurationContext context = new ConfigurationContext();
+      context.setBasePackage(packageNamingService.getCucumberTestsConfigPackageName(options, model));
+      context.setConfigurationType(ConfigurationType.TEST);
+      context.setModel(model);
+      context.setDeploymentModel(getDeploymentModel());
+      context.setOptions(options);
+      context.setProjectInformation(projectInfo);
+      Set<IConfigurationTemplatePlugin<?>> templates = new LinkedHashSet<>();
+      for (IConfigurationPlugin plugin : plugins) {
+         if (plugin.isValid(context)) {
+            dto.addCompileDependencies(plugin.getDependencies(context, DependencyType.COMPILE));
+            dto.addDefaultModules(plugin.getDependencies(context, DependencyType.MODULE));
 
-      clean = generateAndAddTransportProviders(
-            dto,
-            options,
-            outputDir,
-            clean,
-            model,
-            transportProviders);
+            if (plugin instanceof IConfigurationTemplatePlugin<?>) {
+               templates.add((IConfigurationTemplatePlugin<?>) plugin);
+            }
+         }
+      }
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
-      parameters.addParameter(new DefaultParameter<>("StringUtils", StringUtils.class));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
+
+      for (IConfigurationTemplatePlugin<?> template : templates) {
+         configurePlugin(context, template, outputDir);
+      }
+
       registerProject(projectInfo);
    }
 
@@ -141,29 +135,29 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeLogService")
    public void setLogService(ILogService ref) {
       super.setLogService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateService")
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeTemplateService")
    public void setTemplateService(ITemplateService ref) {
       super.setTemplateService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeProjectNamingService")
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeProjectNamingService")
    public void setProjectNamingService(IProjectNamingService ref) {
       super.setProjectNamingService(ref);
    }
 
    @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removePackageNamingService")
+            policy = ReferencePolicy.STATIC,
+            unbind = "removePackageNamingService")
    public void setPackageNamingService(IPackageNamingService ref) {
       super.setPackageNamingService(ref);
    }
@@ -173,86 +167,35 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       super.setBuildManagementService(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-   public void setTransportConfigurationService(ITransportConfigurationService ref) {
-      this.transportConfigService = ref;
+   @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+   public void addConfigurationPlugin(IConfigurationPlugin ref) {
+      plugins.add(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      this.generateService = ref;
+   public void removeConfigurationPlugin(IConfigurationPlugin ref) {
+      plugins.remove(ref);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
-   public void setScenarioService(IScenarioService ref) {
-      this.scenarioService = ref;
-   }
-
-   @SuppressWarnings({"unchecked", "rawtypes"})
-   private boolean generateAndAddTransportProviders(GeneratedServiceConfigDto dto,
-                                                    IJellyFishCommandOptions options,
-                                                    Path outputDirectory,
-                                                    boolean clean,
-                                                    IModel model,
-                                                    Collection<ITransportProviderConfigDto<?>> transportProviders) {
-      EnumDto transportTopicsClass = generateService.getTransportTopicsDescription(options, model);
-
-      Map<String, IDataReferenceField> topics = new LinkedHashMap<>();
-
-      for (IScenario scenario : model.getScenarios()) {
-         scenarioService.getPubSubMessagingFlow(options, scenario).ifPresent(flow -> {
-            for (IDataReferenceField input : flow.getInputs()) {
-               addToTopicsMap(topics, flow, input);
-            }
-            for (IDataReferenceField output : flow.getOutputs()) {
-               addToTopicsMap(topics, flow, output);
-            }
-         });
-         scenarioService.getRequestResponseMessagingFlow(options, scenario).ifPresent(flow -> {
-            addToTopicsMap(topics, flow, flow.getInput());
-            addToTopicsMap(topics, flow, flow.getOutput());
-         });
-      }
-
-      String topicsClassName = transportTopicsClass.getFullyQualifiedName();
-      for (ITransportProviderConfigDto transportProvider : transportProviders) {
-         Optional<Object> object = transportProvider.getConfigurationDto(dto, options, model, topicsClassName, topics);
-         if (object.isPresent()) {         
-            DefaultParameterCollection parameters = new DefaultParameterCollection();
-            parameters.addParameter(new DefaultParameter<>("dto", object.get()));
-            String templateName = transportProvider.getTemplate();
-            templateService.unpack(templateName, parameters, outputDirectory, clean);
-            dto.addTransportProvider(transportProvider.getTransportProviderDto(object.get()));
-            dto.addTransportProviderDependencies(transportProvider.getDependencies(options, model, true, true, true));
-            clean = false;
+   private <T> void configurePlugin(ConfigurationContext context, IConfigurationTemplatePlugin<T> plugin,
+            Path outputDirectory) {
+      String template = plugin.getTemplate(context);
+      Optional<T> dto = plugin.getConfigurationDto(context);
+      if (template != null && dto.isPresent()) {
+         DefaultParameterCollection parameters = new DefaultParameterCollection();
+         parameters.addParameter(new DefaultParameter<>("dto", dto.get()));
+         for (Entry<String, Object> entry : plugin.getExtraTemplateParameters(context).entrySet()) {
+            parameters.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
          }
-      }
-      return clean;
-   }
-
-   /**
-    * Gets the topic name for the given flow and field and adds the topic with the field to the given map.
-    *
-    * @throws IllegalStateException if the map already contains the given topic with a different field
-    */
-   private void addToTopicsMap(Map<String, IDataReferenceField> map, IMessagingFlow flow, IDataReferenceField field) {
-      String topicName = transportConfigService.getTransportTopicName(flow, field);
-      IDataReferenceField previous = map.put(topicName, field);
-      if (previous != null && !Objects.equals(previous, field)) {
-         throw new IllegalStateException(
-               String.format("Two data reference fields assigned to the same topic %s: %s and %s",
-                             topicName,
-                             field.getName(),
-                             previous.getName()));
+         templateService.unpack(template, parameters, outputDirectory, false);
       }
    }
 
    /**
     * Creates and returns the path to the domain project directory.
     *
-    * @param outputDir   output directory
+    * @param outputDir output directory
     * @param projDirName project directory name
-    * @param clean       whether or not to delete the contents of the directory
+    * @param clean whether or not to delete the contents of the directory
     * @return the path to the domain project directory
     * @throws CommandException if an error occurred in creating the project directory
     */
@@ -270,15 +213,23 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       return projectDir;
    }
 
+   private IModel getDeploymentModel() {
+      ISystemDescriptor sd = getOptions().getSystemDescriptor();
+      IParameterCollection parameters = getOptions().getParameters();
+      final String modelName = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getStringValue();
+      return sd.findModel(modelName)
+               .orElseThrow(() -> new CommandException("Deployment model not found: " + modelName));
+   }
+
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the generated service configuration for a Cucumber tests",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.MODEL.required(),
-            CommonParameters.DEPLOYMENT_MODEL.required(),
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.CLEAN);
+               "Generates the generated service configuration for a Cucumber tests",
+               CommonParameters.GROUP_ID,
+               CommonParameters.ARTIFACT_ID,
+               CommonParameters.MODEL.required(),
+               CommonParameters.DEPLOYMENT_MODEL.required(),
+               CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.CLEAN);
    }
 }

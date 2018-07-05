@@ -1,14 +1,14 @@
 package com.ngc.seaside.jellyfish.service.config.api.dto.telemetry;
 
 public abstract class TelemetryReportingConfiguration {
-   private int rateInSeconds;
+   private int rateInMilliseconds;
 
-   public int getRateInSeconds() {
-      return rateInSeconds;
+   public int getRateInMilliseconds() {
+      return rateInMilliseconds;
    }
 
-   public TelemetryReportingConfiguration setRateInSeconds(int rateInSeconds) {
-      this.rateInSeconds = rateInSeconds;
+   public TelemetryReportingConfiguration setRateInMilliseconds(int rateInMilliseconds) {
+      this.rateInMilliseconds = rateInMilliseconds;
       return this;
    }
 
