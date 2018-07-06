@@ -30,5 +30,5 @@ build/
 !gradle-wrapper.jar
 
 # Jekyll
-_site/
-Gemfile.lock 
+docs/_site/
+docs/Gemfile.lock 
