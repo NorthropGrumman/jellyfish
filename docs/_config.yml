@@ -1,0 +1,26 @@
+name: Architecture as Code 
+baseurl: '/CEACIDE/jellyfish'
+repository_url: 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
+
+# collections:
+#   tutorials:
+#     output: true
+#   wikis:
+#     output: true
+
+defaults:
+  # - scope:
+  #     path: ""
+  #     type: tutorials
+  #   values:
+  #     layout: tutorial
+  # - scope:
+  #     path: ""
+  #     type: wikis
+  #   values:
+  #     layout: wiki
+
+  - scope:
+      path: '' # all files in the project
+    values:
+      layout: 'default'
