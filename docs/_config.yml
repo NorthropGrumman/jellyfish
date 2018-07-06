@@ -1,0 +1,26 @@
+name: Unambiguous System Architecture
+baseurl: '/CEACIDE/jellyfish'
+ceacide_latest_release_endpoint: 'https://github.ms.northgrum.com/api/v3/repos/CEACIDE/jellyfish/releases/latest'
+
+# collections:
+#   tutorials:
+#     output: true
+#   wikis:
+#     output: true
+
+defaults:
+  # - scope:
+  #     path: ""
+  #     type: tutorials
+  #   values:
+  #     layout: tutorial
+  # - scope:
+  #     path: ""
+  #     type: wikis
+  #   values:
+  #     layout: wiki
+
+  - scope:
+      path: '' # all files in the project
+    values:
+      layout: 'default'

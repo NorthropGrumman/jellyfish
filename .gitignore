@@ -29,4 +29,6 @@ build/
 # Avoid ignoring Gradle wrapper jar file
 !gradle-wrapper.jar
 
-# logs
+# Jekyll
+docs/_site/
+docs/Gemfile.lock 
