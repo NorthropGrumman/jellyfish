@@ -10,6 +10,7 @@
 	  <meta name="keywords" content="" />
 	  <link rel="stylesheet" href="{{ safebase }}/assets/css/style.css" />
     <script src="{{ safebase }}/assets/js/jquery-3.3.1/jquery.min.js"></script>
+    <script src="{{ safebase }}/assets/js/jellyfish.js"></script>
   </head>
 
   <body>
@@ -23,5 +24,11 @@
 
       {% include footer.html %}
     </div>
+
+    <script>
+      $(document).ready(function() {
+        renderLatestJellyfishRelease("{{ site.ceacide_latest_release_endpoint }}")
+      })
+    </script>
   </body>
 </html>
