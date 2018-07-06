@@ -1,6 +1,5 @@
-name: Architecture as Code 
+name: Unambiguous System Architecture
 baseurl: '/CEACIDE/jellyfish'
-repository_url: 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 
 # collections:
 #   tutorials:
