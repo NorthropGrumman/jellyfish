@@ -20,11 +20,16 @@ h1 {
 
 h2 {
   font-size: 20pt;
+  margin-top: 1rem;
 }
 
 h3 {
   font-weight: bold;
   font-size: 12pt;
+  text-align: center;
+  background-color: #E3E4E5;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .github {
@@ -94,31 +99,6 @@ h3 {
   background-position-x: 18px;
 }
 
-/*
-#footer {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  height: 1.5em;
-}
-
-#footer .contents {
-  background-color: #7C7C7C;
-  color: #F2F5F7;
-  text-align: right;
-  padding: 0 0.5em;
-}
-*/
-/* For footer */
-#main-container {
-  min-height: 100%;
-  position: relative;
-}
-
-#page-contents {
-  padding-bottom: 4.0em; /* Height of the footer + extra padding */
-}
-
 #stripe {
   background-color: #324553;
   position: absolute;
@@ -145,4 +125,21 @@ h3 {
 #index #get-jellyfish {
   font-weight: bold;
   font-size: 14pt;
+}
+
+#index .book-link {
+  max-width: 330px;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+#index #code-example {
+  border: 1px solid #E3E4E5;
+  padding: 4px;
+}
+
+pre .keyword,
+code .keyword {
+  color: #800F65;
 }

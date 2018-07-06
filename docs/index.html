@@ -54,12 +54,38 @@ title: Unambiguous System Architecture
         "Architecture-as-Code" approach to system engineering and modeling. By utilizing this "Architecture-as-Code"
         technique, the <a href="">flow</a> from systems engineering to development can likewise be improved.
       </p>
+      <p>
+        The SD model describes how the system is to be decomposed, the responsibility of the system, how the system will
+        be tested, and how the system is deployed. This makes it possible to create another type of pipeline from system
+        engineering to development. This pipeline can only be possible if there exists some model that describes the
+        design of the system. The System Descriptor model is therefore the source artifact from which numerous other
+        types of artifacts can be created. These artifacts can be generated using the Jellyfish CLI and evaluated as 
+        part of a pipeline.
+      </p>
+      <p>
+        In short, we wanted to have an architectural tool that can be:
+        <ul>
+          <li>Fully configuration managed (including version controlled)</li>
+          <li>Used to provide a fail-fast approach to System Engineering</li>
+          <li>Used to faciliate rapid innovation and experimentation</li>
+          <li>Used to increase flow from Systems Engineering and Development</li>
+          <li>Used to faciliate and drive down-stream engineering</li>
+          <li>Used to provide traceablity between the architecture and what was actually built</li>
+          <li>Evaluated as a part of a continuous delivery pipeline</li>
+        </ul>
+      </p>
     </div>
 
     <div class="col">
       <h2>Architecture-As-Code</h2>
       <h3>Example System Descriptor Model</h3>
-      CODE EXAMPLE
+      <div id="code-example" class="rounded">
+        {% include example-sd.html %}
+      </div>
+
+      <h2 class="center">Read the Books</h2>
+      <a href="#" class="book-link center btn btn-gold">Modeling with the System Descriptor</a>
+      <a href="#" class="book-link center btn btn-gold">System Descriptor Best Practices</a>
     </div>
   </div>
 </div>
