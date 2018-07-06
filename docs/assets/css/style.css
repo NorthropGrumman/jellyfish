@@ -24,7 +24,7 @@ h2 {
 
 h3 {
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .github {
@@ -35,6 +35,26 @@ h3 {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+
+.btn-gold {
+  color: #FFFFFF;
+  background-color: #F37830;
+}
+
+.btn-gold:hover,
+.btn-gold:focus, 
+.btn-gold:active, 
+.btn-gold.active, 
+.btn-gold:active:focus,
+.open>.dropdown-toggle.btn-gold {
+  color: #fff;
+  background-color: #E46921;
+}
+
+.main.container {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 #header {
@@ -74,31 +94,7 @@ h3 {
   background-position-x: 18px;
 }
 
-
-/*#header #logo-nav-col {
-  text-align: left;
-}
-
-#header #logo-nav-col .btn-link {
-  font-weight: bold;
-}
-
-#header .contents .jf-nav-col {
-  text-align: center;
-}
-
-#header .contents .jf-nav-col .btn-link {
-  color: #F7F5F5;
-  font-size: 14pt;
-  padding: 0;
-}
-
-#header .contents .jf-github,
-#header .contents .jf-github .btn-link  {
-  color: #E36B4A;
-  font-size: 14pt;
-}*/
-
+/*
 #footer {
   width: 100%;
   position: absolute;
@@ -112,7 +108,7 @@ h3 {
   text-align: right;
   padding: 0 0.5em;
 }
-
+*/
 /* For footer */
 #main-container {
   min-height: 100%;
@@ -123,35 +119,30 @@ h3 {
   padding-bottom: 4.0em; /* Height of the footer + extra padding */
 }
 
-.main {
-  padding-top: 1em;
+#stripe {
+  background-color: #324553;
+  position: absolute;
+  width: 100%;
+  height: 245px;
+  z-index: -1;
 }
 
-span.code {
-  font-family: monospace;
-  color: #7B7B7B;
+#index #top-row {
+  height: 245px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.jf-btn-inline {
-  padding: 0px;
-  text-decoration: underline;
+#index #top-row .row:first-child .col {
+  margin-top: 62px;
 }
 
-.subsection-contents {
-  margin-left: 1em;
+#index #top-row h1 {
+  color: #FFFFFF;
+  font-size: 32pt;
 }
 
-.vcenter {
-  display: flex;
-  align-items: center;
+#index #get-jellyfish {
+  font-weight: bold;
+  font-size: 14pt;
 }
-
-.highlighter-rouge pre.highlight {
-  margin-bottom: 0;
-}
-
-.highlighter-rouge {
-  padding-bottom: 1em;
-}
-
-
