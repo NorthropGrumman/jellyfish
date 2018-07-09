@@ -129,6 +129,9 @@ pipeline {
             dir('jellyfish-cli-commands') {
                sh '../gradlew populateM2repo'
             }
+			dir('jellyfish-cli-analysis-commands') {
+               sh '../gradlew populateM2repo'
+            }
             dir('jellyfish-packaging') {
                sh '../gradlew populateM2repo'
             }
@@ -187,6 +190,9 @@ pipeline {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-cli-commands') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+			   dir('jellyfish-cli-analysis-commands') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-packaging') {
