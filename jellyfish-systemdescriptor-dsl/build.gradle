@@ -138,6 +138,11 @@ subprojects {
             options.addStringOption('Xdoclint:none', '-quiet')
         }
     }
+    if (JavaVersion.current().isJava9Compatible()) {
+        tasks.getByName('javadoc') { doc ->
+            options.addBooleanOption('html5', true)
+        }
+    }
 
     /**
      * Ensure we call the 2 new tasks for generating the javadoc and sources artifact jars.
