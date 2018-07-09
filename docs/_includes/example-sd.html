@@ -1,0 +1,41 @@
+<pre class="language-sd">
+<span class="keyword">package</span> alarm
+<span class="keyword">import </span>alarm.Alarm
+<span class="keyword">import</span> alarm.AlarmController
+<span class="keyword">import</span> alarm.AlarmStatus
+<span class="keyword">import</span> alarm.Clock
+<span class="keyword">import</span> alarm.Time
+
+<span class="keyword">model</span> AlarmClock {
+  <span class="keyword">input</span> {
+    Time alarmTime
+  }
+
+  <span class="keyword">output</span> {
+    Time currentTime
+    AlarmStatus alarmStatus
+  }
+
+  <span class="keyword">parts</span> {
+    Alarm alarm
+    AlarmController controller
+    Clock clock
+  }
+
+  <span class="keyword">links</span> {
+    <span class="keyword">link</span> alarmTime -> controller.alarmTime
+    <span class="keyword">link</span> clock.currentTime -> currentTime
+    <span class="keyword">link</span> controller.alarmStatus -> alarmStatus
+    <span class="keyword">link</span> clock.currentTime -> alarm.currentTime
+    <span class="keyword">link</span> controller.alarmTime -> alarm.alarmTime
+    <span class="keyword">link</span> controller.alarmAcknowledgement -> alarm.alarmAcknowledgement
+    <span class="keyword">link</span> alarm.alarmStatus -> controller.alarmStatus
+  }
+
+  <span class="keyword">scenario</span> triggerAlarm {
+    <span class="keyword">given</span> haveReceived alarmTime
+    <span class="keyword">when</span> clockTicks to alarmTime
+    <span class="keyword">then</span> willPublish alarmStatus
+  }
+}
+</pre>
