@@ -304,8 +304,8 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          int line = location.getLineNumber() - 1;
 
          for (int i = Math.max(0, line - PRECEDING_LINES_TO_SHOW);
-              i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
-              i++) {
+                 i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
+                 i++) {
             if (i == line) {
                sb.append("<pre class=\"line offending-line\">")
                      .append(getOffendingLineContents(lines.get(i), location))
