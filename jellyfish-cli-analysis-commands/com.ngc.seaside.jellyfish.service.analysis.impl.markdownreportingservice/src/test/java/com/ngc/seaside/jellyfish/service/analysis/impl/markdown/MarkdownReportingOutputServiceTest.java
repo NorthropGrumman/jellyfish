@@ -30,7 +30,6 @@ public class MarkdownReportingOutputServiceTest {
             + "<p>This is more sub heading topics with link <a href=\"www.google.com\">www.google.com</a></p>\n";
 
       String result = markdownReportingOutputService.convert(md);
-      System.out.println(result);
       assertEquals("did not convert markdown to HTML correctly!",
                    expected,
                    result);

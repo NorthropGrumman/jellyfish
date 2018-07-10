@@ -76,8 +76,8 @@ public class HtmlAnalysisReportCommandIT {
       parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName())
                                     .setValue(outputDirectory.toAbsolutePath()));
-      parameters.addParameter(new DefaultParameter<>(HtmlAnalysisReportCommand.REPORT_FILE_NAME_PARAMETER_NAME)
-                                    .setValue("test.html"));
+      parameters.addParameter(new DefaultParameter<>(HtmlAnalysisReportCommand.REPORT_NAME_PARAMETER_NAME)
+                                    .setValue("test"));
       when(options.getParameters()).thenReturn(parameters);
 
       List<SystemDescriptorFinding<ISystemDescriptorFindingType>> findings = Arrays.asList(

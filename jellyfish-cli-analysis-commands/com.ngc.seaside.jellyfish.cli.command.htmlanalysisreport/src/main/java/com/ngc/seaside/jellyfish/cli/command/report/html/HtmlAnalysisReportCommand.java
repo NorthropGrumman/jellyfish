@@ -46,7 +46,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    /**
     * The name of the argument that configures the name of the report.
     */
-   static final String REPORT_FILE_NAME_PARAMETER_NAME = "reportFileName";
+   static final String REPORT_NAME_PARAMETER_NAME = "reportName";
 
    /**
     * The prefix of the template name for the report.
@@ -88,8 +88,8 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       return new DefaultUsage(
             "Outputs the results of analysis to an HTML report.  This command is rarely ran directly;"
             + " instead it is run with the 'analyze' command.",
-            new DefaultParameter<String>(REPORT_FILE_NAME_PARAMETER_NAME)
-                  .setDescription("The file name of the report to generate.  This file will be located within the"
+            new DefaultParameter<String>(REPORT_NAME_PARAMETER_NAME)
+                  .setDescription("The name of the report to generate.  The report files will be located within the"
                                   + " directory given by the outputDirectory parameter.")
                   .setRequired(true),
             CommonParameters.OUTPUT_DIRECTORY.required());
@@ -111,8 +111,8 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
       HtmlReportDto dto = new HtmlReportDto()
             .setReportName(commandOptions.getParameters()
-                                 .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
-                                 .getStringValue())
+                                 .getParameter(REPORT_NAME_PARAMETER_NAME)
+                                 .getStringValue() + ".html")
             .setTitle("Jellyfish Analysis Report");
       addSummary(findings, dto);
       addErrors(findings, dto);

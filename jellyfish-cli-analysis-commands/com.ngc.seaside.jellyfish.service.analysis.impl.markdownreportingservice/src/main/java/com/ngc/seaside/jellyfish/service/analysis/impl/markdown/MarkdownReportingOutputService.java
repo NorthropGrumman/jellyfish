@@ -9,11 +9,17 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 
+/**
+ * Uses <a href="https://github.com/vsch/flexmark-java">flexmark-java</a> to convert markdown to HTML.
+ */
 public class MarkdownReportingOutputService implements IReportingOutputService {
 
    private final Parser parser;
    private final HtmlRenderer renderer;
 
+   /**
+    * Creates a new {@code MarkdownReportingOutputService}.
+    */
    public MarkdownReportingOutputService() {
       MutableDataSet options = new MutableDataSet();
 
@@ -24,13 +30,15 @@ public class MarkdownReportingOutputService implements IReportingOutputService {
    @Override
    public String convert(String message) {
       Preconditions.checkNotNull(message, "message may not be null!");
-
+      // Note this will not return a complete HTML document.  In only returns HTML.  You need to wrap the results
+      // in <html>, <body> tags, etc.
       Node document = parser.parse(message);
       return renderer.render(document);
    }
 
    @Override
    public String convert(ISourceLocation sourceLocation) {
+      // TODO TH: remove operation.
       throw new UnsupportedOperationException("not implemented");
    }
 }
