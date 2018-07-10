@@ -92,7 +92,6 @@ public class CucumberDto {
       return this;
    }
 
-
    public String getConfigModule() {
       return configModule;
    }
