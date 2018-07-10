@@ -55,6 +55,7 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.transport.api"),
                       artifact("service.correlation.impl.correlationservice"),
                       artifact("service.fault.impl.faultloggingservice"),
+                      artifact("service.fault.impl.faultloggingservice.module"),
                       artifact("service.monitoring.impl.loggingmonitoringservice"),
                       artifact("service.request.impl.microservicerequestservice"),
                       artifact("service.transport.impl.defaulttransportservice"),
@@ -79,7 +80,8 @@ public class DefaultDependenciesConfiguration {
                       artifact("service.telemetry.impl.jsontelemetryservice"),
                       artifact("service.telemetry.impl.jsontelemetryservice.module"),
                       artifact("service.admin.api"),
-                      artifact("service.admin.impl.defaultadminservice"));
+                      artifact("service.admin.impl.defaultadminservice"),
+                      artifact("cucumber.runner"));
    }
 
    private static void configureJellyfish(DependenciesConfiguration config) {

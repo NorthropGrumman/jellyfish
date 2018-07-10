@@ -4,6 +4,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class CucumberDto {
@@ -17,6 +18,7 @@ public class CucumberDto {
    private String className;
    private String transportTopicsClass;
    private Set<String> dependencies;
+   private Set<String> imports = new LinkedHashSet<String>();
    private String configModule;
    private boolean isConfigGenerated;
 
@@ -34,7 +36,7 @@ public class CucumberDto {
       this.projectName = projectName;
       return this;
    }
-   
+
    public String getPackageName() {
       return packageName;
    }
@@ -80,6 +82,15 @@ public class CucumberDto {
       return this;
    }
 
+   public Set<String> getImports() {
+      return imports;
+   }
+
+   public CucumberDto setImports(Set<String> imports) {
+      this.imports = imports;
+      return this;
+   }
+
    public String getConfigModule() {
       return configModule;
    }
@@ -114,8 +125,8 @@ public class CucumberDto {
    public String getFormattedDependency(String groupAndArtifactId) {
       IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
       return String.format("%s:%s:$%s",
-                           dependency.getGroupId(),
-                           dependency.getArtifactId(),
-                           dependency.getVersionPropertyName());
+               dependency.getGroupId(),
+               dependency.getArtifactId(),
+               dependency.getVersionPropertyName());
    }
 }
