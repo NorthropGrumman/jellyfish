@@ -228,7 +228,9 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
          for (SystemDescriptorFinding<?> finding : sorted.get(type)) {
             sb.append("<div class=\"finding\">\n");
-            sb.append(getLocationString(finding.getLocation().orElse(null)));
+            if (finding.getLocation().isPresent()) {
+               sb.append(getLocationContent(finding.getLocation().get(), finding.getType().getSeverity()));
+            }
             sb.append("<div class=\"finding-details\">\n");
             sb.append(reportingOutputService.convert(finding.getMessage()));
             sb.append("</div>\n");
@@ -274,8 +276,16 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
                              true);
    }
 
-   private String getLocationString(ISourceLocation location) {
+   private String getLocationContent(ISourceLocation location, ISystemDescriptorFindingType.Severity severity) {
+      String icon = "";
+      if (severity == ISystemDescriptorFindingType.Severity.ERROR) {
+         icon = "<i class=\"error fas fa-times\"></i> ";
+      } else if (severity == ISystemDescriptorFindingType.Severity.WARNING) {
+         icon = "<i class=\"warning fas fa-exclamation-triangle\"></i> ";
+      }
+
       return "<div class=\"source-location\">\n"
+             + icon
              + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
              + "<span class=\"line-number\">line " + location.getLineNumber() + "</span>\n"
              + "<span class=\"col\">col " + location.getColumn() + "</span>\n"
@@ -294,8 +304,8 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          int line = location.getLineNumber() - 1;
 
          for (int i = Math.max(0, line - PRECEDING_LINES_TO_SHOW);
-                 i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
-                 i++) {
+              i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
+              i++) {
             if (i == line) {
                sb.append("<pre class=\"line offending-line\">")
                      .append(getOffendingLineContents(lines.get(i), location))

@@ -61,6 +61,7 @@ public class HtmlAnalysisReportCommandIT {
    @Before
    public void setup() throws Throwable {
       outputDirectory = temporaryFolder.newFolder().toPath();
+      outputDirectory = Paths.get("build", "blah"); // TODO TH: REMOVE
 
       templateService = new MockedTemplateService()
             .useRealPropertyService()

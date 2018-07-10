@@ -35,10 +35,4 @@ public class MarkdownReportingOutputService implements IReportingOutputService {
       Node document = parser.parse(message);
       return renderer.render(document);
    }
-
-   @Override
-   public String convert(ISourceLocation sourceLocation) {
-      // TODO TH: remove operation.
-      throw new UnsupportedOperationException("not implemented");
-   }
 }
