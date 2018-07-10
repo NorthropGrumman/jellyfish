@@ -79,25 +79,26 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       Collection<SystemDescriptorFinding<ISystemDescriptorFindingType>> all = analysisService.getFindings();
       if (all.isEmpty()) {
          logService.info(getClass(), "No findings to report.");
-      } else {
-         // Sort by severity first.
-         Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings =
-               ArrayListMultimap.create();
-         for (SystemDescriptorFinding<?> finding : all) {
-            findings.put(finding.getType().getSeverity(), finding);
-         }
-
-         HtmlReportDto dto = new HtmlReportDto()
-               .setReportName(commandOptions.getParameters()
-                                    .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
-                                    .getStringValue());
-         addSummary(findings, dto);
-         addErrors(findings, dto);
-         addWarnings(findings, dto);
-         addRuntimeInformation(commandOptions, dto);
-
-         outputReport(commandOptions, dto);
       }
+
+      // Sort by severity first.
+      Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings =
+            ArrayListMultimap.create();
+      for (SystemDescriptorFinding<?> finding : all) {
+         findings.put(finding.getType().getSeverity(), finding);
+      }
+
+      HtmlReportDto dto = new HtmlReportDto()
+            .setReportName(commandOptions.getParameters()
+                                 .getParameter(REPORT_FILE_NAME_PARAMETER_NAME)
+                                 .getStringValue())
+            .setTitle("Jellyfish Analysis Report");
+      addSummary(findings, dto);
+      addErrors(findings, dto);
+      addWarnings(findings, dto);
+      addRuntimeInformation(commandOptions, dto);
+
+      outputReport(commandOptions, dto);
    }
 
    @Activate
@@ -157,19 +158,19 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    private void addSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
                            HtmlReportDto dto) {
       String section = "<div class=\"summary\">\n"
-                       + "<h1>Summary</h1>\n"
-                       + "<p>"
+                       + "<h1 id=\"summary\">Summary</h1>\n"
+                       + "<p><i class=\"error fas fa-times\"></i><a href=\"#errors\"> "
                        + findings.get(ISystemDescriptorFindingType.Severity.ERROR).size()
                        + " "
                        + ISystemDescriptorFindingType.Severity.ERROR.toString().toLowerCase()
                        + "s"
-                       + "</p>\n"
-                       + "<p>"
+                       + "</a></p>\n"
+                       + "<p><i class=\"warning fas fa-exclamation-triangle\"></i><a href=\"#warnings\"> "
                        + findings.get(ISystemDescriptorFindingType.Severity.WARNING).size()
                        + " "
                        + ISystemDescriptorFindingType.Severity.WARNING.toString().toLowerCase()
                        + "s"
-                       + "</p>\n"
+                       + "</a></p>\n"
                        + "</div>\n";
       dto.addContent(section);
    }
@@ -178,7 +179,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
                           HtmlReportDto dto) {
       StringBuilder section = new StringBuilder();
       section.append("<div class=\"errors\">\n");
-      section.append("<h1>Errors</h1>\n");
+      section.append("<h1 id=\"errors\">Errors</h1>\n");
       appendFindings(findings.get(ISystemDescriptorFindingType.Severity.ERROR), section);
       section.append("</div>\n");
       dto.addContent(section.toString());
@@ -188,7 +189,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
                             HtmlReportDto dto) {
       StringBuilder section = new StringBuilder();
       section.append("<div class=\"warnings\">\n");
-      section.append("<h1>Warnings</h1>\n");
+      section.append("<h1 id=\"warnings\">Warnings</h1>\n");
       appendFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING), section);
       section.append("</div>\n");
       dto.addContent(section.toString());
@@ -207,7 +208,9 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          for (SystemDescriptorFinding<?> finding : sorted.get(type)) {
             sb.append("<div class=\"finding\">\n");
             sb.append(getLocationString(finding.getLocation().orElse(null)));
+            sb.append("<div class=\"finding-details\">\n");
             sb.append(reportingOutputService.convert(finding.getMessage()));
+            sb.append("</div>\n");
             sb.append("</div>\n");
          }
 
@@ -252,13 +255,22 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
 
    private String getLocationString(ISourceLocation location) {
       return "<div class=\"source-location\">\n"
-             + "<div class=\"position-information\">\n"
              + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
              + "<span class=\"line-number\">line " + location.getLineNumber() + "</span>\n"
              + "<span class=\"col\">col " + location.getColumn() + "</span>\n"
-             + getLocationContents(location)
              + "</div>\n"
+             + "<div class=\"source-snippet\">\n"
+             + getLocationContents(location)
              + "</div>\n";
+
+//      return "<div class=\"source-location\">\n"
+//             + "<div class=\"position-information\">\n"
+//             + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
+//             + "<span class=\"line-number\">line " + location.getLineNumber() + "</span>\n"
+//             + "<span class=\"col\">col " + location.getColumn() + "</span>\n"
+//             + getLocationContents(location)
+//             + "</div>\n"
+//             + "</div>\n";
    }
 
    private static final int PRECEDING_LINES_TO_SHOW = 3;
@@ -276,9 +288,9 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
               i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
               i++) {
             if (i == line) {
-               sb.append("<span class=\"line offending-line\">")
+               sb.append("<pre class=\"line offending-line\">")
                      .append(getOffendingLineContents(lines.get(i), location))
-                     .append("</span>\n");
+                     .append("</pre>\n");
             } else {
                sb.append("<pre class=\"line\">")
                      .append(lines.get(i))
@@ -299,11 +311,11 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < line.length(); i++) {
          if (i + 1 == location.getColumn()) {
-            sb.append("<pre class=\"offending\">");
+            sb.append("<span class=\"offending\">");
          }
          sb.append(line.charAt(i));
          if (i + 1 == location.getColumn() + location.getLength() - 1) {
-            sb.append("</pre>");
+            sb.append("</span>");
          }
       }
       return sb.toString();

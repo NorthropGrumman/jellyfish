@@ -8,6 +8,7 @@ import java.util.List;
 public class HtmlReportDto {
 
    private String reportName;
+   private String title;
    private final List<String> contents = new ArrayList<>();
 
    public String getReportName() {
@@ -16,6 +17,15 @@ public class HtmlReportDto {
 
    public HtmlReportDto setReportName(String reportName) {
       this.reportName = reportName;
+      return this;
+   }
+
+   public String getTitle() {
+      return title;
+   }
+
+   public HtmlReportDto setTitle(String title) {
+      this.title = title;
       return this;
    }
 
