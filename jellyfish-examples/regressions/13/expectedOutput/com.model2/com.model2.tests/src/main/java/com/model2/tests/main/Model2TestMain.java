@@ -1,15 +1,15 @@
 package com.ngc.seaside.threateval.datps.tests.main;
 
-import com.model2.tests.steps.Model2Steps;
-import com.model2.tests.di.Model2TestModule;
-import com.ngc.blocs.guice.module.ThreadServiceModule;
-import com.ngc.seaside.service.telemetry.api.ITelemetryService;
-import com.ngc.seaside.cucumber.runner.api.CucumberRunnerBuilder;
-import com.ngc.blocs.guice.module.ResourceServiceModule;
-import com.ngc.seaside.service.fault.impl.faultloggingservice.module.LoggingFaultManagementServiceModule;
 import com.ngc.blocs.guice.module.EventServiceModule;
-import com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule;
 import com.ngc.blocs.guice.module.LogServiceModule;
+import com.ngc.blocs.guice.module.ResourceServiceModule;
+import com.ngc.blocs.guice.module.ThreadServiceModule;
+import com.ngc.seaside.cucumber.runner.api.CucumberRunnerBuilder;
+import com.ngc.seaside.service.fault.impl.faultloggingservice.module.LoggingFaultManagementServiceModule;
+import com.ngc.seaside.service.telemetry.api.ITelemetryService;
+import com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule;
+import com.model2.tests.di.Model2TestModule;
+import com.model2.tests.steps.Model2Steps;
 
 /**
  * This application runs the {@link com.model2.tests.steps.Model2Steps Model2Steps}.
