@@ -1,0 +1,19 @@
+package com.ngc.seaside.book.examples.cycles
+
+import com.ngc.seaside.book.examples.cycles.TrafficReport
+import com.ngc.seaside.book.examples.cycles.LocalTrafficReport
+
+model TrafficService {
+  	input {
+		TrafficReport trafficReport
+	}
+
+	output {
+		LocalTrafficReport localTrafficReport
+	}
+	
+	scenario computeLocalTrafficReport {
+		when receiving trafficReport
+		then willPublish localTrafficReport
+	}
+}

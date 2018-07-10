@@ -1,0 +1,8 @@
+package com.ngc.seaside.book.examples.budgets
+
+model MissionComputer {  
+  properties {
+  	string weight
+  	weight = "8g"
+  }
+}

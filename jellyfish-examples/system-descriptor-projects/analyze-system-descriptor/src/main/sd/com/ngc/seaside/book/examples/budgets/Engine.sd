@@ -1,0 +1,8 @@
+package com.ngc.seaside.book.examples.budgets
+
+model Engine {
+  properties {
+  	string weight
+  	weight = "250kg"
+  }
+}

@@ -1,0 +1,61 @@
+package com.ngc.seaside.book.examples.cycles
+
+import com.ngc.seaside.book.examples.cycles.ActiveRoute
+import com.ngc.seaside.book.examples.cycles.TrafficAccident
+import com.ngc.seaside.book.examples.cycles.TrafficReport
+import com.ngc.seaside.book.examples.cycles.WeatherAlert
+import com.ngc.seaside.book.examples.cycles.TrafficService
+import com.ngc.seaside.book.examples.cycles.AccidentService
+import com.ngc.seaside.book.examples.cycles.WeatherService
+import com.ngc.seaside.book.examples.cycles.RouteService
+import com.ngc.seaside.book.examples.cycles.LocalWeatherReport
+
+model RouteSystem {
+	input {
+		TrafficReport traffic
+		TrafficAccident accident
+		WeatherAlert weatherAlert
+	}
+
+	output {
+		ActiveRoute activeRoute
+		LocalWeatherReport localWeather
+	}
+
+	parts {
+		TrafficService trafficService
+		AccidentService accidentService
+		WeatherService weatherService
+		RouteService routeService
+	}
+
+	links {
+		link traffic -> trafficService.trafficReport
+		link accident -> accidentService.trafficAccident
+		link weatherAlert -> weatherService.weatherAlert
+		link weatherService.localWeatherReport -> localWeather
+		
+		link routeService.activeRoute -> activeRoute
+		link trafficService.localTrafficReport -> routeService.localTraffic
+		link accidentService.localAccidentReport -> routeService.localAccident
+		link weatherService.localWeatherReport -> routeService.localWeather
+		
+		link routeService.activeRoute -> weatherService.activeRoute
+	}
+
+	scenario computeActiveRoute1 {
+		when receiving traffic
+		then willPublish activeRoute
+	}
+
+	scenario computeActiveRoute2 {
+		when receiving accident
+		then willPublish activeRoute
+	}
+
+	scenario computeActiveRoute3 {
+		when receiving weatherAlert
+		then willPublish activeRoute
+	     and willPublish localWeather
+	}
+}

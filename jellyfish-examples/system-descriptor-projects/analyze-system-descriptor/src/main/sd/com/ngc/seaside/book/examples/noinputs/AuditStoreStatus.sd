@@ -1,0 +1,11 @@
+package com.ngc.seaside.book.examples.noinputs
+
+data AuditStoreStatus {
+	int totalEventsRecorded
+	string lastUpdateReason
+    string lastUpdateMessage {
+    	metadata {
+    		"optional": "true"
+    	}
+    }
+}

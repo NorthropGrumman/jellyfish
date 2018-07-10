@@ -90,6 +90,6 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
       // This is for demos only, hard coding the analysis and the reports for now.  Remove this once the above is
       // implemented.
       jellyFishCommandProvider.run("analyze-inputs-outputs", getOptions());
-      commandProvider.run("console-report", getOptions());
+      commandProvider.run("html-report", getOptions());
    }
 }

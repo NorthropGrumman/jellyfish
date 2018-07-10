@@ -1,0 +1,28 @@
+package com.ngc.seaside.book.examples.ms
+
+import com.ngc.seaside.book.examples.ms.EmployeeQuery
+import com.ngc.seaside.book.examples.ms.Employee
+import com.ngc.seaside.book.examples.ms.Database
+
+model EmployeeService {
+  metadata {
+    "stereotypes" : ["service"]
+  }
+  
+  input {
+  	EmployeeQuery employeeQuery
+  }
+  
+  output {
+  	Employee employee
+  }
+  
+  scenario getEmployee {
+  	when receivingRequest employeeQuery
+  	then willRespond with employee
+  }
+  
+  parts {
+  	Database employeeDatabase
+  }
+}

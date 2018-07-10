@@ -4,5 +4,5 @@ verified.  Minimally, a component should produce some type of output that indica
 allows the component to be tested as well as inspected.  This applies to both components that use pub/sub messaging an
 well as components that use request/response to exchange messages.
 
-See http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs for more 
+See [Avoid components that have inputs but no outputs](http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs) for more 
 information.

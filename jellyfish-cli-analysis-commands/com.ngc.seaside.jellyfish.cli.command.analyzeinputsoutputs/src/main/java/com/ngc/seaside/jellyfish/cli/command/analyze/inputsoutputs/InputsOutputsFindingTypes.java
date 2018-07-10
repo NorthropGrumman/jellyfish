@@ -16,7 +16,7 @@ public enum InputsOutputsFindingTypes implements ISystemDescriptorFindingType {
     */
    INPUTS_WITH_NO_OUTPUTS("inputsWithNoOutputs",
                           "docs/inputsWithNoOutputs.md",
-                          ISystemDescriptorFindingType.Severity.ERROR);
+                          Severity.WARNING);
 
    private final String id;
    private final String description;

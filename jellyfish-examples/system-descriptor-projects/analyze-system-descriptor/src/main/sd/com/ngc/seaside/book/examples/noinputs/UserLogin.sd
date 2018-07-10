@@ -1,0 +1,6 @@
+package com.ngc.seaside.book.examples.noinputs
+
+data UserLogin {
+	string userId
+	string timestamp
+}

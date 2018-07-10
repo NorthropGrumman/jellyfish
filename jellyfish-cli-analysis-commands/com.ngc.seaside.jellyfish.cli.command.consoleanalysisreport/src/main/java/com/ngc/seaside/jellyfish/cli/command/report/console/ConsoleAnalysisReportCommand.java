@@ -162,7 +162,7 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
       sb.append("Jellyfish executed with the following parameters:").append(NEWLINE);
       commandOptions.getParameters().getAllParameters()
             .stream()
-            .map(p -> p.getName() + "=" + p.getValue())
+            .map(p -> "* " + p.getName() + " = " + p.getValue())
             .forEach(v -> sb.append(v).append(NEWLINE));
    }
 }

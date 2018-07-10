@@ -1,0 +1,8 @@
+package com.ngc.seaside.book.examples.budgets
+
+model FlightControls {
+  properties {
+  	string weight
+  	weight = "19kg"
+  }
+}

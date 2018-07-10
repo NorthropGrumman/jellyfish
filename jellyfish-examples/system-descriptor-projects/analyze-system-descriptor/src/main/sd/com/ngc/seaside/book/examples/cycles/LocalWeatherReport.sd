@@ -1,0 +1,9 @@
+package com.ngc.seaside.book.examples.cycles
+
+//import com.ngc.seaside.book.examples.cycles.ProjectedWeatherReport
+
+data LocalWeatherReport {
+	// Other weather related data.
+	// Remove the data structure to break the cycle.
+	//ProjectedWeatherReport weatherForecast
+}
