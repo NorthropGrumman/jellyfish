@@ -43,11 +43,32 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
     */
    public static final String NAME = "html-report";
 
+   /**
+    * The name of the argument that configures the name of the report.
+    */
    static final String REPORT_FILE_NAME_PARAMETER_NAME = "reportFileName";
 
+   /**
+    * The prefix of the template name for the report.
+    */
    static final String HTML_REPORT_TEMPLATE_PREFIX = "com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport";
 
+   /**
+    * The suffix of the template name for the report.
+    */
    static final String HTML_REPORT_TEMPLATE_SUFFIX = "report";
+
+   /**
+    * The number of lines to show that precede a finding.  IE, the last 3 lines before a finding in a file occurred will
+    * be shown when displaying the details for the finding.
+    */
+   private static final int PRECEDING_LINES_TO_SHOW = 3;
+
+   /**
+    * The number of lines to show that succeed a finding.  IE, the next 3 lines after a finding in a file occurred will
+    * be shown when displaying the details for the finding.
+    */
+   private static final int SUCCEEDING_LINES_TO_SHOW = 3;
 
    private ILogService logService;
 
@@ -262,19 +283,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
              + "<div class=\"source-snippet\">\n"
              + getLocationContents(location)
              + "</div>\n";
-
-//      return "<div class=\"source-location\">\n"
-//             + "<div class=\"position-information\">\n"
-//             + "<span class=\"file-name\">" + location.getPath() + "</span>\n"
-//             + "<span class=\"line-number\">line " + location.getLineNumber() + "</span>\n"
-//             + "<span class=\"col\">col " + location.getColumn() + "</span>\n"
-//             + getLocationContents(location)
-//             + "</div>\n"
-//             + "</div>\n";
    }
-
-   private static final int PRECEDING_LINES_TO_SHOW = 3;
-   private static final int SUCCEEDING_LINES_TO_SHOW = 3;
 
    private String getLocationContents(ISourceLocation location) {
       StringBuilder sb = new StringBuilder();
@@ -285,8 +294,8 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
          int line = location.getLineNumber() - 1;
 
          for (int i = Math.max(0, line - PRECEDING_LINES_TO_SHOW);
-              i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
-              i++) {
+                 i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
+                 i++) {
             if (i == line) {
                sb.append("<pre class=\"line offending-line\">")
                      .append(getOffendingLineContents(lines.get(i), location))
