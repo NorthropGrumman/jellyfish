@@ -1,0 +1,7 @@
+package com.ngc.seaside.book.examples.budgets
+
+data Budget {
+  string max
+  string min
+  string givenBy
+}

@@ -1,0 +1,5 @@
+package com.ngc.seaside.book.examples.cycles
+
+data ProjectedWeatherReport {
+	// Weather forecast data along the active route.
+}

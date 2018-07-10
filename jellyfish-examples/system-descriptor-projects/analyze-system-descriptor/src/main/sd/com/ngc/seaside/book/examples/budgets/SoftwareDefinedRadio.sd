@@ -1,0 +1,10 @@
+package com.ngc.seaside.book.examples.budgets
+
+model SoftwareDefinedRadio {
+  properties {
+  	string power
+  	string weight
+  	power = "40w"
+  	weight = "45g"
+  }
+}

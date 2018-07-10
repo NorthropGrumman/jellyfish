@@ -1,0 +1,27 @@
+package com.ngc.seaside.book.examples.cycles
+
+import com.ngc.seaside.book.examples.cycles.WeatherAlert
+import com.ngc.seaside.book.examples.cycles.LocalWeatherReport
+import com.ngc.seaside.book.examples.cycles.ActiveRoute
+
+model WeatherService {
+	input {
+		WeatherAlert weatherAlert
+		ActiveRoute activeRoute
+	}
+
+	output {
+		LocalWeatherReport localWeatherReport
+	}
+
+	scenario computeLocalWeatherReport1 {
+		when receiving weatherAlert
+		then willPublish localWeatherReport
+	}
+
+	scenario computeLocalWeatherReport2 {
+		when receiving activeRoute
+		then willPublish localWeatherReport
+	}
+
+}

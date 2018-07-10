@@ -1,0 +1,28 @@
+package com.ngc.seaside.book.examples.noinputs
+
+import com.ngc.seaside.book.examples.noinputs.UserLogin
+import com.ngc.seaside.book.examples.noinputs.UserLogout
+import com.ngc.seaside.book.examples.noinputs.AuditStoreStatus
+
+model AuditLogCorrect {
+	
+	input {
+		UserLogin userLogin
+		UserLogout userLogout
+	}
+	
+	output {
+		AuditStoreStatus storeStatus
+	}
+	
+	scenario recordLogin {
+		when receiving userLogin
+		// We are using willReceive instead of willStore since that keyword is not recognized.
+		then willPublish storeStatus
+	}
+	
+	scenario recordLogout {
+		when receiving userLogout
+		then willPublish storeStatus
+	}
+}

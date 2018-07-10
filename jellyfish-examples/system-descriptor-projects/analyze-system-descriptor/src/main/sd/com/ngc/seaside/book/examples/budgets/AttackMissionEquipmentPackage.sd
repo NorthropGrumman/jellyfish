@@ -1,0 +1,23 @@
+package com.ngc.seaside.book.examples.budgets
+
+import com.ngc.seaside.book.examples.budgets.FireControlRadar
+import com.ngc.seaside.book.examples.budgets.SoftwareDefinedRadio
+import com.ngc.seaside.book.examples.budgets.Budget
+
+model AttackMissionEquipmentPackage {  
+
+  parts {
+  	FireControlRadar fcr
+  	SoftwareDefinedRadio radio
+  }	
+	
+  properties {
+  	Budget power
+  	string weight
+  	
+  	power.max = "100kw"
+  	power.min = "0"
+  	power.givenBy = "power"
+ 
+  }
+}

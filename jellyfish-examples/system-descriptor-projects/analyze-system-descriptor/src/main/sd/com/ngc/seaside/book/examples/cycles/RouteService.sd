@@ -1,0 +1,33 @@
+package com.ngc.seaside.book.examples.cycles
+
+import com.ngc.seaside.book.examples.cycles.LocalTrafficReport
+import com.ngc.seaside.book.examples.cycles.LocalAccidentReport
+import com.ngc.seaside.book.examples.cycles.LocalWeatherReport
+import com.ngc.seaside.book.examples.cycles.ActiveRoute
+
+model RouteService {
+	input {
+		LocalTrafficReport localTraffic
+		LocalAccidentReport localAccident
+		LocalWeatherReport localWeather
+	}
+
+	output {
+		ActiveRoute activeRoute
+	}
+
+	scenario updateActiveRoute1 {
+		when receiving localTraffic
+		then willPublish activeRoute
+	}
+	
+	scenario updateActiveRoute2 {
+		when receiving localAccident
+		then willPublish activeRoute
+	}
+	
+	scenario updateActiveRoute3 {
+		when receiving localWeather
+		then willPublish activeRoute
+	}
+}
