@@ -4,7 +4,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class CucumberDto {
@@ -18,7 +18,7 @@ public class CucumberDto {
    private String className;
    private String transportTopicsClass;
    private Set<String> dependencies;
-   private Set<String> imports = new HashSet<String>();
+   private Set<String> imports = new LinkedHashSet<String>();
    private String configModule;
    private boolean isConfigGenerated;
 
