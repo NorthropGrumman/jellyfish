@@ -16,11 +16,7 @@ commandl ine interface that deal with model analysis and code generation directl
 1.  The **jellyfish-packaging** project contains the standard command line interface and gradle plugin that combines
 the api in jellyfish-cli with the implementations in jellyfish-cli-commands.
 
+Checkout https://pages.github.ms.northgrum.com/CEACIDE/jellyfish/ to learn more.
+
 # Downloads
 You can download the latest releases at https://github.ms.northgrum.com/CEACIDE/jellyfish/releases.
-
-# More Information
-You can find more information the SD language at
-http://10.207.42.137/confluence/display/SEAS/Modeling+with+the+System+Descriptor.  Information about
-the jellyfish-cli can be found at http://10.207.42.137/confluence/display/SEAS/Appendix+C+-+The+Jellyfish+Command+Line+Interface
-and http://10.207.42.137/confluence/display/SEAS/JellyFish+Implementation.

@@ -1,0 +1,8 @@
+{% assign safebase = '' %}
+{% assign depth = page.url | split: '/' | size | minus: 1 %}
+{% if    depth <= 1 %}{% assign safebase = '.' %}
+{% elsif depth == 2 %}{% assign safebase = '..' %}
+{% elsif depth == 3 %}{% assign safebase = '../..' %}
+{% elsif depth == 4 %}{% assign safebase = '../../..' %}
+{% elsif depth == 5 %}{% assign safebase = '../../../..' %}
+{% elsif depth == 6 %}{% assign safebase = '../../../../..' %}{% endif %}

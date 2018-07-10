@@ -1,0 +1,145 @@
+@import url("bootstrap-4.0.0/bootstrap.min.css");
+@import url("fontawesome-5.0.9/fontawesome-all.min.css");
+@import url("tango.css");
+
+/* Common rules */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: #FFFFFF;
+}
+
+h1 {
+  font-size: 36pt;
+}
+
+h2 {
+  font-size: 20pt;
+  margin-top: 1rem;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 12pt;
+  text-align: center;
+  background-color: #E3E4E5;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.github {
+  color: #E36B4A;
+}
+
+.center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-gold {
+  color: #FFFFFF;
+  background-color: #F37830;
+}
+
+.btn-gold:hover,
+.btn-gold:focus, 
+.btn-gold:active, 
+.btn-gold.active, 
+.btn-gold:active:focus,
+.open>.dropdown-toggle.btn-gold {
+  color: #fff;
+  background-color: #E46921;
+}
+
+.main.container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#header {
+  background-color: #FFFFFF;
+}
+
+#header .contents {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 14pt;
+}
+
+#header .jellyfish-nav  {
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#header .btn-link {
+  color: #324553;
+  font-weight: bold;
+  font-size: 14pt;
+  padding: 0;
+}
+
+#header #jellyfish-logo .btn-link {
+  font-size: 24pt;
+}
+
+#header .github .btn-link {
+  color: #E36B4A;
+  padding-left: 0.25rem;
+}
+
+#header #ceacide-logo {
+  background-repeat: no-repeat;
+  background-position-x: 18px;
+}
+
+#stripe {
+  background-color: #324553;
+  position: absolute;
+  width: 100%;
+  height: 245px;
+  z-index: -1;
+}
+
+#index #top-row {
+  height: 245px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#index #top-row .row:first-child .col {
+  margin-top: 62px;
+}
+
+#index #top-row h1 {
+  color: #FFFFFF;
+  font-size: 32pt;
+}
+
+#index #get-jellyfish {
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+#index .book-link {
+  max-width: 330px;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+#index #code-example {
+  border: 1px solid #E3E4E5;
+  padding: 4px;
+}
+
+pre .keyword,
+code .keyword {
+  color: #800F65;
+}
