@@ -1,10 +1,11 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-
-import java.util.Set;
 
 public class CucumberDto {
 
@@ -17,8 +18,10 @@ public class CucumberDto {
    private String className;
    private String transportTopicsClass;
    private Set<String> dependencies;
+   private Set<String> imports = new HashSet<String>();;
    private String configModule;
    private boolean isConfigGenerated;
+
 
    public CucumberDto(IBuildManagementService buildManagementService,
                       IJellyFishCommandOptions options) {
@@ -79,6 +82,16 @@ public class CucumberDto {
       this.dependencies = dependencies;
       return this;
    }
+   
+   public Set<String> getImports() {
+      return imports;
+   }
+
+   public CucumberDto setImports(Set<String> imports) {
+      this.imports = imports;
+      return this;
+   }
+
 
    public String getConfigModule() {
       return configModule;

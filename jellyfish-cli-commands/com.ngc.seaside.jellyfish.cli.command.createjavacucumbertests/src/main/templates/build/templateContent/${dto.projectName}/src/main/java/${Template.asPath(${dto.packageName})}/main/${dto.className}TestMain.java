@@ -1,43 +1,55 @@
-package ${dto.packageName}.main;
+package com.ngc.seaside.threateval.datps.tests.main;
 
-import ${dto.packageName}.steps.${dto.className}Steps;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+#set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.EventServiceModule"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.LogServiceModule"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.ResourceServiceModule"))
+#set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.ThreadServiceModule"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.cucumber.runner.api.CucumberRunnerBuilder"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.impl.faultloggingservice.module.LoggingFaultManagementServiceModule"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.api.ITelemetryService"))
+#set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule"))
+#set ($ignore = $dto.imports.add("${dto.packageName}.di.${dto.className}TestModule"))
+#set ($ignore = $dto.imports.add("${dto.packageName}.steps.${dto.className}Steps"))
+#set ($ignore = $dto.imports.add("${dto.configModulePackage}.${dto.configModuleType}"))
+#foreach ($i in $dto.imports)
+import ${i};
+#end
 
 /**
- * This application runs the {@link ${dto.className}Steps}.
+ * This application runs the {@link ${dto.packageName}.steps.${dto.className}Steps ${dto.className}Steps}.
  */
 public class ${dto.className}TestMain {
 
    public static final String APP_HOME_SYS_PROPERTY = "appHome";
 
    public static void main(String[] args) throws Throwable {
-      String appHome = System.getProperty(APP_HOME_SYS_PROPERTY);
-
-      if (args.length == 0) {
-         Path folder;
-         if (appHome != null && !appHome.trim().equals("")) {
-            folder = Paths.get(appHome, "resources");
-         } else {
-            folder = Paths.get("build", "runtime", "resources");
-            System.setProperty("NG_FW_HOME", Paths.get("build", "runtime").toAbsolutePath().toString());
-         }
-         if (folder != null) {
-            String featurePath = folder.toString();
-
-            String cucumberResultsDir = "build/test-results/cucumber/";
-
-            args = new String[] {
-              "--glue", ${dto.className}Steps.class.getPackage().getName(),
-              "--plugin", "pretty",
-              "--plugin", "html:" + cucumberResultsDir + "html",
-              "--plugin", "junit:" + cucumberResultsDir + "cucumber-results.xml",
-              "--plugin", "json:" + cucumberResultsDir + "cucumber-results.json",
-              featurePath };
-         }
-
+      int returnStatus;
+      try {
+         returnStatus = CucumberRunnerBuilder.withAppHomeFromSystemProperty(APP_HOME_SYS_PROPERTY, "build/runtime")
+            .useAppHomeForBlocsHome()
+            .setStepPackage(${dto.className}Steps.class.getPackage())
+            .setReportsDirectory("reports/cucumber")
+            .setFeaturePath("resources")
+            .enablePrettyConsoleOutput()
+            .enableHtmlReports()
+            .enableJsonReports()
+            .enableJunitReports()
+            .addModules(new LogServiceModule(),
+                        new ResourceServiceModule(),
+                        new ThreadServiceModule(),
+                        new EventServiceModule(),
+                        new LoggingFaultManagementServiceModule(),
+                        new JsonTelemetryServiceModule(),
+                        new LoggingFaultManagementServiceModule(),
+                        new ${dto.configModuleType}(),
+                        new ${dto.className}TestModule())
+            .addRequiredRemoteService(ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC)
+            .build()
+            .execute();
+      } catch(Throwable e) {
+         e.printStackTrace(System.err);
+         returnStatus = 1;
       }
-      cucumber.api.cli.Main.main(args);
+      System.exit(returnStatus);
    }
 }
