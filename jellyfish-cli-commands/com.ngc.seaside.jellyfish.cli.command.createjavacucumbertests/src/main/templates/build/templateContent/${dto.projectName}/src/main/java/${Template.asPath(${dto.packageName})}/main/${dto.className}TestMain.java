@@ -10,7 +10,9 @@ package com.ngc.seaside.threateval.datps.tests.main;
 #set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule"))
 #set ($ignore = $dto.imports.add("${dto.packageName}.di.${dto.className}TestModule"))
 #set ($ignore = $dto.imports.add("${dto.packageName}.steps.${dto.className}Steps"))
+#if (! $dto.isConfigGenerated())
 #set ($ignore = $dto.imports.add("${dto.configModulePackage}.${dto.configModuleType}"))
+#end
 #foreach ($i in $dto.imports)
 import ${i};
 #end
@@ -41,7 +43,9 @@ public class ${dto.className}TestMain {
                         new LoggingFaultManagementServiceModule(),
                         new JsonTelemetryServiceModule(),
                         new LoggingFaultManagementServiceModule(),
+#if (! $dto.isConfigGenerated())
                         new ${dto.configModuleType}(),
+#end
                         new ${dto.className}TestModule())
             .addRequiredRemoteService(ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC)
             .build()
