@@ -83,9 +83,9 @@ public class AnalyzeCommandTest {
          when(jellyFishCommandProvider.getCommand(analysis)).thenReturn(jellyFishCommand);
       }
       @SuppressWarnings({"unchecked"})
-      ICommand<ICommandOptions> command = mock(ICommand.class);
+      ICommand<ICommandOptions> basicCommand = mock(ICommand.class);
       for (String report : reports) {
-         when(commandProvider.getCommand(report)).thenReturn(command);
+         when(commandProvider.getCommand(report)).thenReturn(basicCommand);
       }
 
       command.run(commandOptions);
