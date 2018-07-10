@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.analyze;
 
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
@@ -7,6 +8,9 @@ import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * The top level analyze command.  This command uses the {@code analysis} and {@code reports} parameters to call
@@ -19,6 +23,12 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
     * The name of the command.
     */
    public static final String NAME = "analyze";
+
+   static final String ANALYSES_PARAMETER_NAME = "analyses";
+
+   static final String REPORTS_PARAMETER_NAME = "reports";
+
+   private static final String COMMAND_DELIMITER = ",";
 
    private IJellyFishCommandProvider jellyFishCommandProvider;
 
@@ -73,23 +83,49 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
 
    @Override
    protected IUsage createUsage() {
-      // TODO TH: This command should use 2 required parameters:
-      // 1) analysis: this is a comma separated list of analysis commands that should be executed.
-      // 2) reports: this is a comma separated list of report commands that should be executed after performing analysis
-      return new DefaultUsage("Run various types of analysis and generates reports.");
+      return new DefaultUsage(
+            "Run various types of analysis and generates reports.",
+            new DefaultParameter<>(ANALYSES_PARAMETER_NAME)
+                  .setDescription("Configures the analysis to execute.  The values are comma (,) separated.")
+                  .setRequired(true),
+            new DefaultParameter<>(REPORTS_PARAMETER_NAME)
+                  .setDescription("Configures the reports to generated after performing analysis.  The values are comma"
+                                  + " (,) separated.")
+                  .setRequired(true));
    }
 
    @Override
    protected void doRun() {
-      // TODO TH: This command should use the values of the analysis and reports parameters to figure out what to do.
-      // These parameters should be required.
-      // The command should first run the analysis and then run the reports.  Note the impl should use
-      // jellyFishCommandProvider.getCommand(command) != null and/or commandProvider.getCommand(command) != null
-      // to determine which provider the command is registered with.
+      // First, run the analyses.
+      runCommands(parseCommands(getOptions().getParameters().getParameter(ANALYSES_PARAMETER_NAME).getStringValue()));
+      // Next, run the reports.
+      runCommands(parseCommands(getOptions().getParameters().getParameter(REPORTS_PARAMETER_NAME).getStringValue()));
+   }
 
-      // This is for demos only, hard coding the analysis and the reports for now.  Remove this once the above is
-      // implemented.
-      jellyFishCommandProvider.run("analyze-inputs-outputs", getOptions());
-      commandProvider.run("html-report", getOptions());
+   @SuppressWarnings({"unchecked", "raw"})
+   private void runCommands(Collection<String> commands) {
+      for (String command : commands) {
+         ICommandProvider provider = getProviderForCommand(command);
+         // We don't need to check the required parameters because the command providers will do that.
+         provider.run(command, getOptions());
+      }
+   }
+
+   private ICommandProvider<?, ?, ?> getProviderForCommand(String command) {
+      // The command could either be a Jellyfish command or basic command that does not require a valid system
+      // descriptor.  Therefore, we check to see which provider actually manages the command.
+      if (jellyFishCommandProvider.getCommand(command) != null) {
+         return jellyFishCommandProvider;
+      } else if (commandProvider.getCommand(command) != null) {
+         return commandProvider;
+      } else {
+         throw new IllegalArgumentException(String.format(
+               "could not find a command named '%s'!  Run 'help' to see a list of analysis and reports.",
+               command));
+      }
+   }
+
+   private static Collection<String> parseCommands(String commaSeparatedValue) {
+      return Arrays.asList(commaSeparatedValue.split(COMMAND_DELIMITER));
    }
 }
