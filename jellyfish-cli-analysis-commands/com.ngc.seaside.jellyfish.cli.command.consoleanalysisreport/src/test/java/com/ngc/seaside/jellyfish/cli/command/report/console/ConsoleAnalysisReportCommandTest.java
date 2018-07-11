@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +42,7 @@ public class ConsoleAnalysisReportCommandTest {
    private IParameterCollection parameters;
 
    @Before
-   public void setup() {
+   public void setup() throws Throwable {
       logService = new PrintStreamLogService();
 
       command = new ConsoleAnalysisReportCommand();
@@ -87,11 +89,15 @@ public class ConsoleAnalysisReportCommandTest {
          ISystemDescriptorFindingType.Severity.INFO);
 
    private static SystemDescriptorFinding<ISystemDescriptorFindingType> newFinding(ISystemDescriptorFindingType type,
-                                                                                   String description) {
+                                                                                   String description)
+         throws URISyntaxException {
+      Path path = Paths.get(ConsoleAnalysisReportCommandTest.class.getClassLoader().getResource("example.sd").toURI());
+
       ISourceLocation location = mock(ISourceLocation.class);
-      when(location.getPath()).thenReturn(Paths.get("foo/bar/stuff.sd"));
-      when(location.getLineNumber()).thenReturn(10);
-      when(location.getColumn()).thenReturn(19);
+      when(location.getPath()).thenReturn(path);
+      when(location.getLineNumber()).thenReturn(3);
+      when(location.getColumn()).thenReturn(7);
+      when(location.getLength()).thenReturn(7);
       return type.createFinding(description, location, 1);
    }
 }
