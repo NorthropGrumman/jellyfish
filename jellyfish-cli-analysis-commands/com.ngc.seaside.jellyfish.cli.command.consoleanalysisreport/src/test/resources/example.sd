@@ -1,0 +1,5 @@
+package foo
+// This is a comment.
+model Testing {
+  // This is an example of a model
+}

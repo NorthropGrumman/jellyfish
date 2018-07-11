@@ -20,8 +20,11 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A report command that outputs all findings added to the {@link IAnalysisService} to the console via the log service.
@@ -34,6 +37,18 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
     * The name of the command.
     */
    public static final String NAME = "console-report";
+
+   /**
+    * The number of lines to show that precede a finding.  IE, the last 3 lines before a finding in a file occurred will
+    * be shown when displaying the details for the finding.
+    */
+   private static final int PRECEDING_LINES_TO_SHOW = 3;
+
+   /**
+    * The number of lines to show that succeed a finding.  IE, the next 3 lines after a finding in a file occurred will
+    * be shown when displaying the details for the finding.
+    */
+   private static final int SUCCEEDING_LINES_TO_SHOW = 3;
 
    private ILogService logService;
 
@@ -113,8 +128,8 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
       setLogService(null);
    }
 
-   private static void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
-                                  StringBuilder sb) {
+   private void logSummary(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
+                           StringBuilder sb) {
       sb.append("# Summary").append(NEWLINE);
       sb.append(findings.get(ISystemDescriptorFindingType.Severity.ERROR).size())
             .append(" ")
@@ -128,8 +143,8 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
             .append(NEWLINE);
    }
 
-   private static void logFindings(Collection<SystemDescriptorFinding<?>> findings,
-                                   StringBuilder sb) {
+   private void logFindings(Collection<SystemDescriptorFinding<?>> findings,
+                            StringBuilder sb) {
       // Group into types.
       Multimap<ISystemDescriptorFindingType, SystemDescriptorFinding<?>> sorted = LinkedListMultimap.create();
       findings.forEach(f -> sorted.put(f.getType(), f));
@@ -149,20 +164,62 @@ public class ConsoleAnalysisReportCommand implements ICommand<ICommandOptions> {
       }
    }
 
-   private static String getLocationString(ISourceLocation location) {
-      String s = "<location unknown>";
-      if (location != null) {
-         s = String.format("%s, line: %s, col: %s", location.getPath(), location.getLineNumber(), location.getColumn());
-      }
-      return s;
-   }
-
-   private static void logRuntimeInformation(StringBuilder sb, ICommandOptions commandOptions) {
+   private void logRuntimeInformation(StringBuilder sb, ICommandOptions commandOptions) {
       sb.append("# Runtime Information").append(NEWLINE);
       sb.append("Jellyfish executed with the following parameters:").append(NEWLINE);
       commandOptions.getParameters().getAllParameters()
             .stream()
             .map(p -> "* " + p.getName() + " = " + p.getValue())
             .forEach(v -> sb.append(v).append(NEWLINE));
+   }
+
+   private String getLocationString(ISourceLocation location) {
+      String s = "<location unknown>";
+      if (location != null) {
+         s = String.format("%s, line: %s, col: %s%n%s",
+                           location.getPath(),
+                           location.getLineNumber(),
+                           location.getColumn(),
+                           getLocationContents(location));
+      }
+      return s;
+   }
+
+   private String getLocationContents(ISourceLocation location) {
+      StringBuilder sb = new StringBuilder();
+      try {
+         List<String> lines = Files.readAllLines(location.getPath());
+         int line = location.getLineNumber() - 1;
+
+         for (int i = Math.max(0, line - PRECEDING_LINES_TO_SHOW);
+              i < Math.min(line + 1 + SUCCEEDING_LINES_TO_SHOW, lines.size());
+              i++) {
+            if (i == line) {
+               sb.append(lines.get(i))
+                     .append(NEWLINE)
+                     .append(getOffendingLineHighlight(location))
+                     .append(NEWLINE);
+            } else {
+               sb.append(lines.get(i)).append(NEWLINE);
+            }
+         }
+      } catch (IOException e) {
+         logService.error(getClass(), e, "Unable to read source from %s for finding location.", location.getPath());
+         sb = new StringBuilder("source not available");
+      }
+
+      return sb.toString();
+   }
+
+   private static String getOffendingLineHighlight(ISourceLocation location) {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < location.getColumn() + location.getLength() - 1; i++) {
+         if (i + 1 >= location.getColumn()) {
+            sb.append("^");
+         } else {
+            sb.append(" ");
+         }
+      }
+      return sb.toString();
    }
 }
