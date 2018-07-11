@@ -1,0 +1,23 @@
+package com.ngc.seaside.book.examples.noinputs
+
+import com.ngc.seaside.book.examples.noinputs.UserLogin
+import com.ngc.seaside.book.examples.noinputs.UserLogout
+
+model AuditLog {
+	
+	input {
+		UserLogin userLogin
+		UserLogout userLogout
+	}
+	
+	scenario recordLogin {
+		when receiving userLogin
+		// We are using willReceive instead of willStore since that keyword is not recognized.
+		then willReceive userLogin
+	}
+	
+	scenario recordLogout {
+		when receiving userLogout
+		then willReceive userLogout
+	}
+}

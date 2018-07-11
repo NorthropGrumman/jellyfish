@@ -1,0 +1,19 @@
+package com.ngc.seaside.book.examples.cycles
+
+import com.ngc.seaside.book.examples.cycles.TrafficAccident
+import com.ngc.seaside.book.examples.cycles.LocalAccidentReport
+
+model AccidentService {
+	input {
+		TrafficAccident trafficAccident
+	}
+
+	output {
+		LocalAccidentReport localAccidentReport
+	}
+	
+	scenario computeLocalAccidentReport {
+		when receiving trafficAccident
+		then willPublish localAccidentReport
+	}
+}

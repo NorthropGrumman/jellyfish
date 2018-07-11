@@ -1,6 +1,6 @@
 allprojects {
-    group = 'com.ngc.seaside'
-    version = '2.11.0-SNAPSHOT'
+   group = 'com.ngc.seaside'
+   version = '2.11.0-SNAPSHOT'
 
     ext {
         blocsPluginVersion = '0.5'
@@ -9,13 +9,14 @@ allprojects {
         xtextPluginVersion = '1.0.15'
 
         aetherVersion = '1.1.0'
-        blocsVersion = '2.2.0'
+        blocsVersion = '3.0.0'
         blocsDomainVersion = '2.3.1'
         bootstrapCommandsVersion = '1.2'
         commonsIOVersion = '2.5'
         commonsLangVersion = '2.6'
         commonsLang3Version = '3.5'
         emfVersion = '2.12.0'
+        flexmarkVersion = '0.34.2'
         glassfishJsonVersion = '1.1'
         guavaVersionForModelXtextImpl = '18.0'
         guavaVersionForStandardStepsImpl = '19.0'
@@ -32,8 +33,8 @@ allprojects {
         xtextVersion = '2.14.0'
         sonarqubeVersion = '6.7'
 
-        m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
-        dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
-        m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
-    }
+      m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
+      dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
+      m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
+   }
 }

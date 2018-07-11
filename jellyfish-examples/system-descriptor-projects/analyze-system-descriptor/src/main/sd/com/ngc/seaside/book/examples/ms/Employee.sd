@@ -1,0 +1,7 @@
+package com.ngc.seaside.book.examples.ms
+
+data Employee {
+	string id
+	string firstName
+	string lastName
+}

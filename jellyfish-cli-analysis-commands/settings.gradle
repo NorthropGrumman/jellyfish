@@ -1,7 +1,9 @@
 rootProject.name = 'jellyfish-cli-analysis-commands'
 
 include 'com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice'
+include 'com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice'
 project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name = 'jellyfish.service.analysis.impl.analysisservice'
+project(':com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice').name = 'jellyfish.service.analysis.impl.markdownreportingservice'
 
 include 'com.ngc.seaside.jellyfish.cli.command.analyze'
 project(':com.ngc.seaside.jellyfish.cli.command.analyze').name = 'jellyfish.cli.command.analyze'
@@ -11,3 +13,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.analyzeinputsoutputs').name = 'j
 
 include 'com.ngc.seaside.jellyfish.cli.command.consoleanalysisreport'
 project(':com.ngc.seaside.jellyfish.cli.command.consoleanalysisreport').name = 'jellyfish.cli.command.consoleanalysisreport'
+
+include 'com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport'
+project(':com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport').name = 'jellyfish.cli.command.htmlanalysisreport'

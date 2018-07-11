@@ -24,6 +24,7 @@ dependencies {
     implementation "com.ngc.seaside:jellyfish.service.impl.propertyservice:$version"
     implementation "com.ngc.seaside:jellyfish.service.impl.templateservice:$version"
     implementation "com.ngc.seaside:jellyfish.service.analysis.impl.analysisservice:$version"
+    implementation "com.ngc.seaside:jellyfish.service.analysis.impl.markdownreportingservice:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
     implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
@@ -111,13 +112,16 @@ dependencies {
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-genbuild@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavacucumbertestsconfig:$version:template-transportservicemodule@zip"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
    
-   implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
 
-   implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
+    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"
 
-   testImplementation "junit:junit:$junitVersion"
+    implementation "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.htmlanalysisreport:$version:template-report@zip"
+
+    testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }
 
