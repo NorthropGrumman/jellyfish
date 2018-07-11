@@ -41,3 +41,6 @@ contains various examples of both System Descriptor models and running the Jelly
 
 # Downloads
 You can download the latest releases at https://github.ms.northgrum.com/CEACIDE/jellyfish/releases.
+
+# More Info
+Learn more about the System Descriptor language and Jellyfish at https://pages.github.ms.northgrum.com/CEACIDE/jellyfish/.
