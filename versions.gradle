@@ -9,7 +9,7 @@ allprojects {
       xtextPluginVersion = '1.0.15'
 
       aetherVersion = '1.1.0'
-      blocsVersion = '2.2.0'
+      blocsVersion = '3.0.0'
       blocsDomainVersion = '2.3.1'
       bootstrapCommandsVersion = '1.2'
       commonsIOVersion = '2.5'
