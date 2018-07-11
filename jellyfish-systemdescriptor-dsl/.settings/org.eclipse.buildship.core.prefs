@@ -1,13 +1,7 @@
-auto.sync=false
-build.scans.enabled=false
 connection.arguments=
-connection.gradle.distribution=GRADLE_DISTRIBUTION(LOCAL_INSTALLATION(C\:\\dev\\gradle-4.8.1))
 connection.java.home=null
 connection.jvm.arguments=
 connection.project.dir=
 derived.resources=.gradle,build
 eclipse.preferences.version=1
-gradle.user.home=
-offline.mode=false
-override.workspace.settings=true
 project.path=\:
