@@ -24,6 +24,9 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
     */
    public static final String NAME = "analyze";
 
+   /**
+    *
+    */
    static final String ANALYSES_PARAMETER_NAME = "analyses";
 
    static final String REPORTS_PARAMETER_NAME = "reports";
