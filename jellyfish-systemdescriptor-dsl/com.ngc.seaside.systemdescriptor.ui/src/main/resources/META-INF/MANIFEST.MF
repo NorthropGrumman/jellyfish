@@ -16,6 +16,6 @@ Require-Bundle: org.eclipse.compare,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.xtext.ui.shared,
- org.eclipse.xtext.xbase.lib;bundle-version="2.14.0"
+ org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j
 Bundle-Activator: com.ngc.seaside.systemdescriptor.ui.internal.SystemdescriptorActivator
