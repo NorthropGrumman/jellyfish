@@ -4,7 +4,7 @@ allprojects {
 
     ext {
         blocsPluginVersion = '0.5'
-        seasidePluginsVersion = '2.15.0-SNAPSHOT'
+        seasidePluginsVersion = '2.15.0'
         sonarqubePluginVersion = '2.5'
         xtextPluginVersion = '1.0.15'
 
@@ -20,7 +20,7 @@ allprojects {
         guavaVersionForModelXtextImpl = '18.0'
         guavaVersionForStandardStepsImpl = '19.0'
         guavaVersion = '22.0'
-        guiceVersion = '4.2.0'
+        guiceVersion = '4.1.0'
         jaxbVersion = '2.3.0'
         junitVersion = '4.12'
         log4jVersion = '1.2.17'
