@@ -45,7 +45,7 @@ subprojects {
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.11.0-SNAPSHOT'
       junitVersion = '4.12'
-      mockitoVersion = '2.7.14'
+      mockitoVersion = '2.19.0'
       osgiVersion = '6.0.0'
       protobufVersion = '3.2.0'
       starfishVersion = '2.12.0'
