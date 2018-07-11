@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * The top level analyze command.  This command uses the {@code analysis} and {@code reports} parameters to call
+ * The top level analyze command.  This command uses the {@code analyses} and {@code reports} parameters to call
  * one or more analysis and reporting commands.  This command does little work itself.  It mostly delegates to other
  * commands.
  */
@@ -25,16 +25,29 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
    public static final String NAME = "analyze";
 
    /**
-    *
+    * The parameter that controls the analyses to run.
     */
    static final String ANALYSES_PARAMETER_NAME = "analyses";
 
+   /**
+    * The parameter that controls the reports to generate.
+    */
    static final String REPORTS_PARAMETER_NAME = "reports";
 
+   /**
+    * The delimiter that separates the analyses and reports commands.
+    */
    private static final String COMMAND_DELIMITER = ",";
 
+   /**
+    * Used to invoke commands which are Jellyfish commands.  Most analysis commands are Jellyfish commands.
+    */
    private IJellyFishCommandProvider jellyFishCommandProvider;
 
+   /**
+    * Used to invoke commands which are basic non-Jellyfish commands.  These commands don't require a valid system
+    * descriptor project to execute.  Most reports are basic commands.
+    */
    private ICommandProvider<ICommandOptions, ICommand<ICommandOptions>, ICommandOptions> commandProvider;
 
    /**
