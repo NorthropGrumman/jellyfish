@@ -27,7 +27,7 @@ allprojects {
       log4jVersion = '1.2.17'
       mavenVersion = '3.5.2'
       mockitoVersion = '2.19.0'
-      osgiVersion =  '6.0.0'
+      osgiVersion = '6.0.0'
       protobufVersion = '3.2.0'
       velocityVersion = '2.0'
       xtextVersion = '2.14.0'
