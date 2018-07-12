@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import javax.measure.Quantity;
 
@@ -74,6 +75,26 @@ public class BudgetResult<T extends Quantity<T>> {
       return below;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (!(o instanceof BudgetResult)) {
+         return false;
+      }
+      BudgetResult<?> that = (BudgetResult<?>) o;
+      return Objects.equals(this.budget, that.budget)
+               && Objects.equals(this.actual, that.actual);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(budget, actual);
+   }
+
+   @Override
+   public String toString() {
+      return "BudgetResult[budget=" + budget + ",actual=" + actual + "]";
+   }
+
    /**
     * Compares two quantities.
     * 
@@ -86,6 +107,6 @@ public class BudgetResult<T extends Quantity<T>> {
       if (q1 instanceof Comparable) {
          return ((Comparable) q1).compareTo(q2);
       }
-      return Long.compare(q1.subtract(q2).getValue().longValue(), 0);
+      return Double.compare(q1.subtract(q2).getValue().doubleValue(), 0);
    }
 }
