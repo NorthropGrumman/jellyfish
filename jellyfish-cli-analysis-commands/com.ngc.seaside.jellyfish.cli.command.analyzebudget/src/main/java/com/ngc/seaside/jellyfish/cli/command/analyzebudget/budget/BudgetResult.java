@@ -107,6 +107,7 @@ public class BudgetResult<T extends Quantity<T>> {
       if (q1 instanceof Comparable) {
          return ((Comparable) q1).compareTo(q2);
       }
-      return Double.compare(q1.subtract(q2).getValue().doubleValue(), 0);
+      return Double.compare(q1.to(q1.getUnit().getSystemUnit()).getValue().doubleValue(),
+               q2.to(q1.getUnit().getSystemUnit()).getValue().doubleValue());
    }
 }
