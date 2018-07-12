@@ -143,7 +143,7 @@ class ParsingUtils {
     * @param ctx parsing context
     * @return collection of parsed XtextResources
     */
-   private Collection<XtextResource> parseJar(Path jar, ParsingContext ctx) throws IOException {
+   public static Collection<XtextResource> parseJar(Path jar, ParsingContext ctx) throws IOException {
       Collection<XtextResource> resources = new LinkedHashSet<>();
       try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(jar))) {
          ZipEntry entry;

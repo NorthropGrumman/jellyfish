@@ -1,11 +1,14 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.source;
 
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 import org.eclipse.emf.common.util.URI;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public class XTextSourceLocation implements ISourceLocation {
@@ -95,6 +98,14 @@ public class XTextSourceLocation implements ISourceLocation {
          String fileString = uri.toFileString();
          if (fileString != null) {
             path = new File(fileString).toPath();
+         } else {
+            java.net.URI i;
+            try {
+               i = new java.net.URI(uri.devicePath());
+            } catch (URISyntaxException e) {
+               throw new ParsingException(e);
+            }
+            path = Paths.get(i);
          }
       }
       return path;

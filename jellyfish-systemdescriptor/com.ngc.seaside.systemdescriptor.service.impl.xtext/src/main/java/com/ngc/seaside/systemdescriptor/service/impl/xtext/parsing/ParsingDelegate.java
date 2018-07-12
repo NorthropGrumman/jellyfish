@@ -115,7 +115,15 @@ public class ParsingDelegate {
    private Collection<XtextResource> getResources(Collection<Path> paths, ParsingContext ctx) {
       Collection<XtextResource> resources = new ArrayList<>();
       for (Path path : paths) {
-         resources.add(ctx.resourceOf(path));
+         if (path.getFileName().toString().toLowerCase().endsWith(".zip")) {
+            try {
+               resources.addAll(ParsingUtils.parseJar(path, ctx));
+            } catch (IOException e) {
+               throw new ParsingException(e);
+            }
+         } else {
+            resources.add(ctx.resourceOf(path));
+         }
       }
       return resources;
    }
