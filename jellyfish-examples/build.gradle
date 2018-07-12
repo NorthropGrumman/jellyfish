@@ -74,9 +74,13 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
       startParameter.projectProperties['jellyfishCliVersion'] = version
 
       buildSystemDescriptorProjects.dependsOn it
+      if (name != 'buildSdThreat-eval-system-descriptor') {
+         project.afterEvaluate {
+            dependsOn project.tasks['buildSdThreat-eval-system-descriptor']
+         }
+      } 
    }
 }
-tasks['buildSdDependencies-system-descriptor'].dependsOn tasks['buildSdThreat-eval-system-descriptor']
 
 task('cleanRegressions', description: 'Cleans the build and generated folders for all regressions') {
    clean.dependsOn it

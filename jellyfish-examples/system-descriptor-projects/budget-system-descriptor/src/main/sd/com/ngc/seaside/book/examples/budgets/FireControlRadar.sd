@@ -1,0 +1,11 @@
+package com.ngc.seaside.book.examples.budgets
+
+model FireControlRadar {
+  properties {
+  	string power
+  	string weight
+  	power = "400 kW"
+  	
+  	weight = "140 kg"
+  }
+}
