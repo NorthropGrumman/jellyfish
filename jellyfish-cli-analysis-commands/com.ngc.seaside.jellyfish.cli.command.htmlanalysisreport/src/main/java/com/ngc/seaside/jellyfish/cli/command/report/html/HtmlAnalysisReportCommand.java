@@ -117,6 +117,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       addSummary(findings, dto);
       addErrors(findings, dto);
       addWarnings(findings, dto);
+      addInfo(findings, dto);
       addRuntimeInformation(commandOptions, dto);
 
       outputReport(commandOptions, dto);
@@ -212,6 +213,16 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
       section.append("<div class=\"warnings\">\n");
       section.append("<h1 id=\"warnings\">Warnings</h1>\n");
       appendFindings(findings.get(ISystemDescriptorFindingType.Severity.WARNING), section);
+      section.append("</div>\n");
+      dto.addContent(section.toString());
+   }
+
+   private void addInfo(Multimap<ISystemDescriptorFindingType.Severity, SystemDescriptorFinding<?>> findings,
+            HtmlReportDto dto) {
+      StringBuilder section = new StringBuilder();
+      section.append("<div class=\"info\">\n");
+      section.append("<h1 id=\"info\">Info</h1>\n");
+      appendFindings(findings.get(ISystemDescriptorFindingType.Severity.INFO), section);
       section.append("</div>\n");
       dto.addContent(section.toString());
    }
