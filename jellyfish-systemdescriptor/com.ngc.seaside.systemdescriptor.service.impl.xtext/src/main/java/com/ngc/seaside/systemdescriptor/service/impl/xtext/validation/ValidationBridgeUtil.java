@@ -9,6 +9,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnconvertableTypeException;
@@ -68,6 +69,9 @@ public class ValidationBridgeUtil {
       }
       if (object instanceof IProperty) {
          return doGetFeature((IProperty) object, xtext, method);
+      }
+      if (object instanceof IPropertyPrimitiveValue) {
+         return doGetFeature((IPropertyPrimitiveValue) object, xtext, method);
       }
       throw new UnconvertableTypeException(object);
    }
@@ -174,6 +178,21 @@ public class ValidationBridgeUtil {
       switch (method.getName()) {
          case "getName":
             return SystemDescriptorPackage.Literals.PROPERTY_FIELD_DECLARATION__NAME;
+         default:
+            throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
+      }
+   }
+
+   private static EStructuralFeature doGetFeature(IPropertyPrimitiveValue object, EObject xtext, Method method) {
+      switch (method.getName()) {
+         case "getBoolean":
+            return SystemDescriptorPackage.Literals.BOOLEAN_VALUE__VALUE;
+         case "getDecimal":
+            return SystemDescriptorPackage.Literals.DBL_VALUE__VALUE;
+         case "getInteger":
+            return SystemDescriptorPackage.Literals.INT_VALUE__VALUE;
+         case "getString":
+            return SystemDescriptorPackage.Literals.STRING_VALUE__VALUE;
          default:
             throw new IllegalValidationDeclarationException(illegalDeclaration(object, xtext, method));
       }
