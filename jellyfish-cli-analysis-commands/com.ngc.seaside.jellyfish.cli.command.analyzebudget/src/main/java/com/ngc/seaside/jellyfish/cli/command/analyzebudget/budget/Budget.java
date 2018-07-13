@@ -26,8 +26,13 @@ public class Budget<Q extends Quantity<Q>> {
    public Budget(Quantity<Q> minimum, Quantity<Q> maximum, String property, Object source) {
       Preconditions.checkNotNull(minimum, "minimum may not be null");
       Preconditions.checkNotNull(maximum, "maximum may not be null");
-      Preconditions.checkArgument(((Comparable) minimum).compareTo(maximum) <= 0, "minimum must be less than maximum");
       Preconditions.checkArgument(property != null && !property.isEmpty(), "property may not be null or empty");
+      if (!minimum.getUnit().isCompatible(maximum.getUnit())) {
+         throw new BudgetValidationException("min and max must use the same unit", null, source);
+      }
+      if (((Comparable) minimum).compareTo(maximum) > 0) {
+         throw new BudgetValidationException("minimum must be less that maximum", null, source);
+      }
       Preconditions.checkArgument(Objects.equals(minimum.getUnit(), maximum.getUnit()));
       this.minimum = minimum;
       this.maximum = maximum;
@@ -36,7 +41,7 @@ public class Budget<Q extends Quantity<Q>> {
    }
 
    public Unit<Q> getUnit() {
-      return minimum.getUnit();
+      return maximum.getUnit();
    }
 
    public Quantity<Q> getMinimum() {

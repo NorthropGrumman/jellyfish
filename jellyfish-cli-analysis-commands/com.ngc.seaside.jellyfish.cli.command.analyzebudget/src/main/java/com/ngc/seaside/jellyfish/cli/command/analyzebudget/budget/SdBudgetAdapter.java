@@ -93,7 +93,7 @@ public class SdBudgetAdapter {
       IPropertyPrimitiveValue primitive = property.getPrimitive();
       if (primitive.isSet()) {
          String value = property.getPrimitive().getString();
-         Quantity q = parse(model, value);
+         Quantity q = parse(model, primitive, value);
          return Optional.of(q);
       } else {
          return Optional.empty();
@@ -101,7 +101,7 @@ public class SdBudgetAdapter {
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   private Budget<?> getBudget(IModel model, IProperty property, Object source) {
+   Budget<?> getBudget(IModel model, IProperty property, Object source) {
       IPropertyDataValue value = property.getData();
       String minimum = getStringField(model, value, BUDGET_MINIMUM_FIELD_NAME);
       String maximum = getStringField(model, value, BUDGET_MAXIMUM_FIELD_NAME);
@@ -114,22 +114,22 @@ public class SdBudgetAdapter {
       boolean zeroMaximum = "0".equals(maximum);
 
       if (zeroMinimum && zeroMaximum) {
-         throw new IllegalStateException("Budget cannot have a 0 minimum and maximum");
+         throw new BudgetValidationException("Budget cannot have a 0 minimum and maximum", null, value);
       }
 
       if (!zeroMinimum) {
-         minimumQuantity = parse(model, minimum);
+         minimumQuantity = parse(model, value, minimum);
       }
       if (!zeroMaximum) {
-         maximumQuantity = parse(model, maximum);
+         maximumQuantity = parse(model, value, maximum);
       }
 
       if (zeroMinimum) {
-         minimumQuantity = maximumQuantity.multiply(0);
+         minimumQuantity = Quantities.getQuantity(0, maximumQuantity.getUnit());
       }
 
       if (zeroMaximum) {
-         maximumQuantity = minimumQuantity.multiply(0);
+         maximumQuantity = Quantities.getQuantity(0, minimumQuantity.getUnit());
       }
 
       return new Budget<>(minimumQuantity, maximumQuantity, givenBy, source);
@@ -142,20 +142,25 @@ public class SdBudgetAdapter {
       return value.getPrimitive(field).getString();
    }
 
-   private Quantity<?> parse(IModel model, String value) {
+   Quantity<?> parse(IModel model, Object source, String value) {
       ParsePosition position = new ParsePosition(0);
       Number number;
       try {
          number = DecimalFormat.getInstance().parse(value, position);
-      } catch (NumberFormatException e) {
-         throw new IllegalStateException(
-                  "Invalid value for budget property in model " + model.getFullyQualifiedName() + ": " + value, e);
-      }
-      if (number == null) {
-         throw new IllegalArgumentException("Number cannot be parsed");
+      } catch (Exception e) {
+         throw new BudgetValidationException(
+                  "Invalid value for budget property in model " + model.getFullyQualifiedName() + ": " + value, e,
+                  source, "field must start with a number");
       }
 
-      Unit<?> unit = unitFormat.parse(value.substring(position.getIndex()));
+      Unit<?> unit;
+      try {
+         unit = unitFormat.parse(value.substring(position.getIndex()));
+      } catch (Exception e) {
+         throw new BudgetValidationException(
+                  "Invalid unit for budget property in model " + model.getFullyQualifiedName() + ": " + value, e,
+                  source, "Invalid/Unknown unit");
+      }
       return Quantities.getQuantity(number, unit);
    }
 
@@ -166,7 +171,7 @@ public class SdBudgetAdapter {
     * @param propertyName property name
     * @return the source of the property
     */
-   private Object getSource(IModel model, String propertyName) {
+   Object getSource(IModel model, String propertyName) {
       IModel m = model;
       while (m != null) {
          IProperty property = m.getProperties().getByName(propertyName).orElse(null);
