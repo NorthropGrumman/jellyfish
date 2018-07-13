@@ -10,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedPackage;
@@ -24,10 +25,16 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataType;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitivePropertyFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Properties;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueAssignment;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyValueExpression;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Scenario;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.StringValue;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 import com.ngc.seaside.systemdescriptor.validation.SystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
@@ -161,6 +168,36 @@ public class ValidationDelegateTest {
             .getFields()
             .getByName(source.getName())
             .get();
+      verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
+   }
+
+   @Test
+   public void testDoesValidateProperty() throws Throwable {
+      PrimitivePropertyFieldDeclaration source = factory().createPrimitivePropertyFieldDeclaration();
+      source.setName("myProperty");
+      source.setType(PrimitiveDataType.STRING);
+      PropertyValueAssignment assignment = factory().createPropertyValueAssignment();
+      PropertyValueExpression expression = factory().createPropertyValueExpression();
+      expression.setDeclaration(source);
+      assignment.setExpression(expression);
+      StringValue value = factory().createStringValue();
+      value.setValue("some value");
+      assignment.setValue(value);
+      Model m = factory().createModel();
+      m.setName("MyModel");
+      Package p = factory().createPackage();
+      p.setName("foo.package");
+      p.setElement(m);
+      Properties properties = factory().createProperties();
+      properties.getDeclarations().add(source);
+      properties.getAssignments().add(assignment);
+      m.setProperties(properties);
+
+      delegate.addValidator(validator);
+      delegate.validate(source, helper);
+
+      IProperty toValidate =
+               descriptor.findModel(p.getName(), m.getName()).get().getProperties().getByName(source.getName()).get();
       verify(validator).validate(argThat(ctx -> toValidate.equals(ctx.getObject())));
    }
 

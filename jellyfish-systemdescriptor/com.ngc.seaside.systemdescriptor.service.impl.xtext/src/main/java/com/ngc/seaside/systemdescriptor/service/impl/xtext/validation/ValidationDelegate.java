@@ -13,6 +13,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
@@ -29,6 +30,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
@@ -293,6 +295,13 @@ public class ValidationDelegate implements IValidatorExtension {
                   helper);
             doValidation(ctx15);
             break;
+         case SystemDescriptorPackage.PROPERTY_FIELD_DECLARATION:
+         case SystemDescriptorPackage.PRIMITIVE_PROPERTY_FIELD_DECLARATION:
+         case SystemDescriptorPackage.REFERENCED_PROPERTY_FIELD_DECLARATION:
+            IValidationContext<IProperty> ctx16 =
+                     newContext(findProperty(descriptor, (PropertyFieldDeclaration) source), helper);
+            doValidation(ctx16);
+            break;
          default:
             // Do nothing, this is not a type we want to validate.
       }
@@ -390,6 +399,18 @@ public class ValidationDelegate implements IValidatorExtension {
             .filter(l -> EcoreUtil.equals(l.unwrap(), xtext))
             .findAny()
             .orElseThrow(() -> new IllegalStateException("failed to find the wrapper for link " + xtext));
+   }
+
+   private static IProperty findProperty(ISystemDescriptor descriptor, PropertyFieldDeclaration xtext) {
+      EObject parent = xtext.eContainer().eContainer();
+      String field = xtext.getName();
+      if (parent instanceof Model) {
+         String packageName = ((Package) parent.eContainer()).getName();
+         IModel model = descriptor.findModel(packageName, ((Model) parent).getName()).get();
+         return model.getProperties().getByName(field).get();
+      } else {
+         throw new IllegalStateException("TODO: find property inside parts/requires fields: " + xtext); 
+      }
    }
 
    @SuppressWarnings("unchecked")
