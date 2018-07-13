@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget;
 import com.google.common.base.Preconditions;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -20,24 +21,24 @@ public class Budget<Q extends Quantity<Q>> {
     * @param minimum budget minimum
     * @param maximum budget maximum
     * @param property budget property name
-    * @param source the source code reference to the budget, can be null
+    * @param srcFunction if an error occurs, this function will be used to convert one of the input parameters to its
+    *           error source. A null input should return the source of the budget itself.
     */
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public Budget(Quantity<Q> minimum, Quantity<Q> maximum, String property, Object source) {
+   public Budget(Quantity<Q> minimum, Quantity<Q> maximum, String property, Function<Object, Object> srcFunction) {
       Preconditions.checkNotNull(minimum, "minimum may not be null");
       Preconditions.checkNotNull(maximum, "maximum may not be null");
       Preconditions.checkArgument(property != null && !property.isEmpty(), "property may not be null or empty");
       if (!minimum.getUnit().isCompatible(maximum.getUnit())) {
-         throw new BudgetValidationException("min and max must use the same unit", null, source);
+         throw new BudgetValidationException("min and max must use the same unit", null, srcFunction.apply(minimum));
       }
       if (((Comparable) minimum).compareTo(maximum) > 0) {
-         throw new BudgetValidationException("minimum must be less that maximum", null, source);
+         throw new BudgetValidationException("minimum must be less that maximum", null, srcFunction.apply(maximum));
       }
-      Preconditions.checkArgument(Objects.equals(minimum.getUnit(), maximum.getUnit()));
       this.minimum = minimum;
       this.maximum = maximum;
       this.property = property;
-      this.source = source;
+      this.source = srcFunction.apply(null);
    }
 
    public Unit<Q> getUnit() {
@@ -55,7 +56,7 @@ public class Budget<Q extends Quantity<Q>> {
    public String getProperty() {
       return property;
    }
-   
+
    public Object getSource() {
       return source;
    }

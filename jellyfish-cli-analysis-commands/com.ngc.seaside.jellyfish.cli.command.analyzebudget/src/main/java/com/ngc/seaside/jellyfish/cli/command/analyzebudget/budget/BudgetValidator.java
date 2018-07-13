@@ -5,6 +5,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IPropertyPrimitiveValue;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
@@ -41,7 +42,8 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
          try {
             budget = adapter.getBudget(aggregatedModel, property, source);
          } catch (BudgetValidationException e) {
-            context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+            Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+            callOffendingError(errorSource);
             continue;
          }
          checkParts(context, model, budget);
@@ -53,7 +55,7 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
       IProperty property = aggregatedModel.getProperties().getByName(budget.getProperty()).orElse(null);
       if (property != null && property.getType() == DataTypes.STRING
                && property.getCardinality() == FieldCardinality.SINGLE && property.getPrimitive().isSet()) {
-         Object source = adapter.getSource(model, budget.getProperty());
+         Object source = adapter.getSource(model, budget.getProperty()).getPrimitive();
 
          String value = property.getPrimitive().getString();
          try {
@@ -62,7 +64,8 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
                throw new BudgetValidationException("Invalid unit. Expected " + budget.getUnit(), null, source);
             }
          } catch (BudgetValidationException e) {
-            context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+            Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+            callOffendingError(errorSource);
          }
       }
 
@@ -71,4 +74,12 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
       }
    }
 
+   private void callOffendingError(Object errorSource) {
+      if (errorSource instanceof IProperty) {
+         ((IProperty) errorSource).getName();
+      } else if (errorSource instanceof IPropertyPrimitiveValue) {
+         ((IPropertyPrimitiveValue) errorSource).getString();
+      }
+   }
+   
 }

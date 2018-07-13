@@ -14,11 +14,11 @@ import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.MetricPrefix;
 
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
+import java.math.BigInteger;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.measure.Quantity;
@@ -103,63 +103,88 @@ public class SdBudgetAdapter {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    Budget<?> getBudget(IModel model, IProperty property, Object source) {
       IPropertyDataValue value = property.getData();
-      String minimum = getStringField(model, value, BUDGET_MINIMUM_FIELD_NAME);
-      String maximum = getStringField(model, value, BUDGET_MAXIMUM_FIELD_NAME);
-      String givenBy = getStringField(model, value, BUDGET_GIVEN_BY_FIELD_NAME);
+      IPropertyPrimitiveValue minimumProperty = getPrimitiveField(model, value, BUDGET_MINIMUM_FIELD_NAME);
+      IPropertyPrimitiveValue maximumProperty = getPrimitiveField(model, value, BUDGET_MAXIMUM_FIELD_NAME);
+      IPropertyPrimitiveValue givenByProperty = getPrimitiveField(model, value, BUDGET_GIVEN_BY_FIELD_NAME);
+      String minimum = minimumProperty.getString();
+      String maximum = maximumProperty.getString();
+      String givenBy = givenByProperty.getString();
 
-      Quantity maximumQuantity = null;
-      Quantity minimumQuantity = null;
+      final Quantity maximumQuantity;
+      final Quantity minimumQuantity;
 
-      boolean zeroMinimum = "0".equals(minimum);
-      boolean zeroMaximum = "0".equals(maximum);
+      final boolean zeroMinimum = "0".equals(minimum);
+      final boolean zeroMaximum = "0".equals(maximum);
 
       if (zeroMinimum && zeroMaximum) {
          throw new BudgetValidationException("Budget cannot have a 0 minimum and maximum", null, source);
-      }
-
-      if (!zeroMinimum) {
-         minimumQuantity = parse(model, source, minimum);
-      }
-      if (!zeroMaximum) {
-         maximumQuantity = parse(model, source, maximum);
-      }
-
-      if (zeroMinimum) {
-         minimumQuantity = Quantities.getQuantity(0, maximumQuantity.getUnit());
-      }
-
-      if (zeroMaximum) {
+      } else if (!zeroMinimum && zeroMaximum) {
+         minimumQuantity = parse(model, minimumProperty, minimum);
          maximumQuantity = Quantities.getQuantity(0, minimumQuantity.getUnit());
+      } else if (!zeroMaximum && zeroMinimum) {
+         maximumQuantity = parse(model, maximumProperty, maximum);
+         minimumQuantity = Quantities.getQuantity(0, maximumQuantity.getUnit());
+      } else {
+         minimumQuantity = parse(model, minimumProperty, minimum);
+         maximumQuantity = parse(model, maximumProperty, maximum);
       }
 
-      return new Budget<>(minimumQuantity, maximumQuantity, givenBy, source);
+      Function<Object, Object> srcFunction = obj -> {
+         if (obj == minimumQuantity) {
+            return minimumProperty;
+         }
+         if (obj == maximumQuantity) {
+            return maximumProperty;
+         }
+         if (obj == givenBy) {
+            return givenByProperty;
+         }
+         return source;
+      };
+
+      return new Budget<>(minimumQuantity, maximumQuantity, givenBy, srcFunction);
    }
 
-   private String getStringField(IModel model, IPropertyDataValue value, String fieldName) {
+   private IPropertyPrimitiveValue getPrimitiveField(IModel model, IPropertyDataValue value, String fieldName) {
       IDataField field = value.getFieldByName(fieldName).orElseThrow(
                () -> new IllegalArgumentException("Model " + model.getFullyQualifiedName() + " missing " + fieldName));
 
-      return value.getPrimitive(field).getString();
+      return value.getPrimitive(field);
    }
 
    Quantity<?> parse(IModel model, Object source, String value) {
-      ParsePosition position = new ParsePosition(0);
+      String[] parts = value.trim().split("\\s+");
+      if (parts.length != 2) {
+         throw new BudgetValidationException(
+                  "Invalid value for budget property in model " + model.getFullyQualifiedName() + ": " + value, null,
+                  source, "field should be a number followed by a unit");
+      }
       Number number;
       try {
-         number = DecimalFormat.getInstance().parse(value, position);
-      } catch (Exception e) {
-         throw new BudgetValidationException(
-                  "Invalid value for budget property in model " + model.getFullyQualifiedName() + ": " + value, e,
-                  source, "field must start with a number");
+         number = new BigInteger(parts[0]);
+      } catch (NumberFormatException e) {
+         try {
+            number = Double.parseDouble(parts[0]);
+         } catch (NumberFormatException e2) {
+            throw new BudgetValidationException(
+                     "Invalid value for budget property in model " + model.getFullyQualifiedName() + ": " + value, e2,
+                     source, "field should start with a number");
+         }
       }
 
       Unit<?> unit;
       try {
-         unit = unitFormat.parse(value.substring(position.getIndex()));
+         unit = unitFormat.parse(parts[1]);
       } catch (Exception e) {
          throw new BudgetValidationException(
                   "Invalid unit for budget property in model " + model.getFullyQualifiedName() + ": " + value, e,
                   source, "Invalid/Unknown unit");
+      }
+
+      if (unit == null) {
+         throw new BudgetValidationException(
+                  "Invalid unit for budget property in model " + model.getFullyQualifiedName() + ": " + value, null,
+                  source, "field must start with a number and end with a unit");
       }
       return Quantities.getQuantity(number, unit);
    }
@@ -171,7 +196,7 @@ public class SdBudgetAdapter {
     * @param propertyName property name
     * @return the source of the property
     */
-   Object getSource(IModel model, String propertyName) {
+   IProperty getSource(IModel model, String propertyName) {
       IModel m = model;
       while (m != null) {
          IProperty property = m.getProperties().getByName(propertyName).orElse(null);
