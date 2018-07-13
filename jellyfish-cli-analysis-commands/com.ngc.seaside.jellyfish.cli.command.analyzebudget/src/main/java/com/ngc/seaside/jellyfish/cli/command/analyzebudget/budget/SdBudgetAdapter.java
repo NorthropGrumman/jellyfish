@@ -114,14 +114,14 @@ public class SdBudgetAdapter {
       boolean zeroMaximum = "0".equals(maximum);
 
       if (zeroMinimum && zeroMaximum) {
-         throw new BudgetValidationException("Budget cannot have a 0 minimum and maximum", null, value);
+         throw new BudgetValidationException("Budget cannot have a 0 minimum and maximum", null, source);
       }
 
       if (!zeroMinimum) {
-         minimumQuantity = parse(model, value, minimum);
+         minimumQuantity = parse(model, source, minimum);
       }
       if (!zeroMaximum) {
-         maximumQuantity = parse(model, value, maximum);
+         maximumQuantity = parse(model, source, maximum);
       }
 
       if (zeroMinimum) {
