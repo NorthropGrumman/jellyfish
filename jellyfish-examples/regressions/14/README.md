@@ -1,1 +1,1 @@
-This test references a model that contains multiple simple scenarios that are request/response.
+This test analyzes the budgets of a system descriptor project and outputs the results in html.
