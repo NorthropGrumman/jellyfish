@@ -64,8 +64,8 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
       Preconditions.checkArgument(
             offendingObject instanceof IUnwrappable
                   || offendingObject instanceof IUnwrappableCollection,
-            "cannot declare errors an object of type %s because that object does not wrap any XText types!",
-            object.getClass().getName());
+            "cannot declare errors on objects of type %s because that object does not wrap any XText types!",
+            offendingObject.getClass().getName());
 
       // Return a dynamic proxy of the wrapped object.  This allows us to "record" the methods the validator calls on
       // the object when declaring an issue.  Note the proxy will actually pass through to the wrapped object so the
