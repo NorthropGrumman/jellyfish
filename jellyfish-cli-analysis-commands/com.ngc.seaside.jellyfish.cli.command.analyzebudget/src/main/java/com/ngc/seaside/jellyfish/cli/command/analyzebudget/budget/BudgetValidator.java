@@ -12,7 +12,6 @@ import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import javax.inject.Inject;
-import javax.measure.Quantity;
 
 import static com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget.SdBudgetAdapter.BUDGET_QUALIFIED_NAME;
 
@@ -51,22 +50,11 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
    }
 
    private void checkParts(IValidationContext<IModel> context, IModel model, Budget<?> budget) {
-      IModel aggregatedModel = sdService.getAggregatedView(model);
-      IProperty property = aggregatedModel.getProperties().getByName(budget.getProperty()).orElse(null);
-      if (property != null && property.getType() == DataTypes.STRING
-               && property.getCardinality() == FieldCardinality.SINGLE && property.getPrimitive().isSet()) {
-         Object source = adapter.getSource(model, budget.getProperty()).getPrimitive();
-
-         String value = property.getPrimitive().getString();
-         try {
-            Quantity<?> quantity = adapter.parse(aggregatedModel, source, value);
-            if (!quantity.getUnit().isCompatible(budget.getUnit())) {
-               throw new BudgetValidationException("Invalid unit. Expected " + budget.getUnit(), null, source);
-            }
-         } catch (BudgetValidationException e) {
-            Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
-            callOffendingError(errorSource);
-         }
+      try {
+         adapter.getBudgetValue(model, budget);
+      } catch (BudgetValidationException e) {
+         Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+         callOffendingError(errorSource);
       }
 
       for (IModelReferenceField part : model.getParts()) {

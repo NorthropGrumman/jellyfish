@@ -88,12 +88,16 @@ public class SdBudgetAdapter {
          return Optional.empty();
       }
       if (property.getType() != DataTypes.STRING || property.getCardinality() != FieldCardinality.SINGLE) {
-         throw new IllegalStateException("Invalid budget property: " + property.getName());
+         throw new BudgetValidationException("Invalid budget property: " + property.getName(), null, property,
+                  "Expected a string value for the budget in model " + model.getFullyQualifiedName());
       }
       IPropertyPrimitiveValue primitive = property.getPrimitive();
       if (primitive.isSet()) {
          String value = property.getPrimitive().getString();
          Quantity q = parse(model, primitive, value);
+         if (!q.getUnit().isCompatible(budget.getUnit())) {
+            throw new BudgetValidationException("Invalid unit. Expected " + budget.getUnit(), null, primitive);
+         }
          return Optional.of(q);
       } else {
          return Optional.empty();
