@@ -1,5 +1,5 @@
 @import url("bootstrap-4.0.0/bootstrap.min.css");
-@import url("fontawesome-5.0.9/fontawesome-all.min.css");
+@import url("fontawesome-5.1.0/all.css");
 @import url("tango.css");
 
 /* Common rules */
@@ -150,7 +150,10 @@ code .keyword {
 /* Rules for books */
 .book-cover-page .chapter-link {
   font-weight: bold;
-
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: block;
+  width: 600px;
 }
 
 .book #book-nav #prev {
