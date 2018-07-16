@@ -7,7 +7,8 @@ next-page: modeling-data
 prev-title: Ch. 2 Installation and Setup
 prev-page: installation-and-setup
 ---
-{% include base.html %} Modeling with the System Descriptor (SD) language is simple: files are created inside a
+{% include base.html %}
+Modeling with the System Descriptor (SD) language is simple: files are created inside a
 directory which represents a project.  A project directory has the following structure:
 
 **The structure of an SD project**
