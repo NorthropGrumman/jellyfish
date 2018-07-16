@@ -11,8 +11,11 @@ dependencies {
     implementation "org.osgi:osgi.enterprise:$osgiVersion"
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+    implementation "javax.xml.bind:jaxb-api:$jaxbVersion"
+    runtime "org.glassfish.jaxb:jaxb-runtime:$jaxbVersion"
+    runtime "javax.activation:activation:1.1.1"
 
-	testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation project(':jellyfish.cli.command.testutils')
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"

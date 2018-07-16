@@ -4,7 +4,7 @@ allprojects {
 
    ext {
       blocsPluginVersion = '0.5'
-      seasidePluginsVersion = '2.12.0'
+      seasidePluginsVersion = '2.15.0'
       sonarqubePluginVersion = '2.5'
       xtextPluginVersion = '1.0.15'
 
@@ -22,14 +22,15 @@ allprojects {
       guavaVersionForStandardStepsImpl = '19.0'
       guavaVersion = '22.0'
       guiceVersion = '4.1.0'
+      jaxbVersion = '2.3.0'
       junitVersion = '4.12'
       log4jVersion = '1.2.17'
       mavenVersion = '3.5.2'
-      mockitoVersion = '2.7.14'
+      mockitoVersion = '2.19.0'
       osgiVersion = '6.0.0'
       protobufVersion = '3.2.0'
       velocityVersion = '2.0'
-      xtextVersion = '2.12.0'
+      xtextVersion = '2.14.0'
       sonarqubeVersion = '6.7'
 
       m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")

@@ -221,7 +221,7 @@ public class DefaultDependenciesConfiguration {
 
       config.addGroup()
             .versionPropertyName("mockitoVersion")
-            .version("2.7.14")
+            .version("2.19.0")
             .includes(artifact("mockito-core")
                             .groupId("org.mockito")
                             .scope(DependencyScope.TEST));
