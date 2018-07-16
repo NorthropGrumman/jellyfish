@@ -62,6 +62,12 @@ h3 {
   padding-right: 0;
 }
 
+pre .keyword,
+code .keyword {
+  color: #800F65;
+}
+
+/* Rules for the header */
 #header {
   background-color: #FFFFFF;
 }
@@ -98,6 +104,8 @@ h3 {
   background-repeat: no-repeat;
   background-position-x: 18px;
 }
+
+/* Index rules */
 
 #stripe {
   background-color: #324553;
@@ -139,7 +147,20 @@ h3 {
   padding: 4px;
 }
 
-pre .keyword,
-code .keyword {
-  color: #800F65;
+/* Rules for books */
+.book-cover-page .chapter-link {
+  font-weight: bold;
+
+}
+
+.book #book-nav #prev {
+  text-align: right;
+}
+
+.book #book-nav #toc {
+  text-align: center;
+}
+
+.book #book-nav #next {
+  text-align: left;
 }

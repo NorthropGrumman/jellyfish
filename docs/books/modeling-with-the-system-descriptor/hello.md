@@ -1,5 +1,7 @@
 ---
 title: BLoCS Apps and Architecture
+book-title: Modeling with the System Descriptor
+book-page: modeling-with-the-system-descriptor
 next-title: OSGi Primer 
 next-page: osgi-primer
 prev-title: Introduction
