@@ -1,32 +1,32 @@
 rootProject.name = 'com.test.model'
 
-include 'com.test.model.config'
-project(':com.test.model.config').name = 'model.config'
+include 'model.config'
+project(':model.config').projectDir = file('com.test.model.config')
 
-include 'com.test.model.distribution'
-project(':com.test.model.distribution').name = 'model.distribution'
+include 'model.distribution'
+project(':model.distribution').projectDir = file('com.test.model.distribution')
 
-include 'com.test.model.domain'
-project(':com.test.model.domain').name = 'model.domain'
+include 'model.domain'
+project(':model.domain').projectDir = file('com.test.model.domain')
 
-include 'com.test.model.impl'
-project(':com.test.model.impl').name = 'model.impl'
+include 'model.impl'
+project(':model.impl').projectDir = file('com.test.model.impl')
 
-include 'com.test.model.tests'
-project(':com.test.model.tests').name = 'model.tests'
+include 'model.tests'
+project(':model.tests').projectDir = file('com.test.model.tests')
 
-include 'generated-projects/com.test.model.base'
-project(':generated-projects/com.test.model.base').name = 'model.base'
+include 'model.base'
+project(':model.base').projectDir = file('generated-projects/com.test.model.base')
 
-include 'generated-projects/com.test.model.connector'
-project(':generated-projects/com.test.model.connector').name = 'model.connector'
+include 'model.connector'
+project(':model.connector').projectDir = file('generated-projects/com.test.model.connector')
 
-include 'generated-projects/com.test.model.events'
-project(':generated-projects/com.test.model.events').name = 'model.events'
+include 'model.events'
+project(':model.events').projectDir = file('generated-projects/com.test.model.events')
 
-include 'generated-projects/com.test.model.messages'
-project(':generated-projects/com.test.model.messages').name = 'model.messages'
+include 'model.messages'
+project(':model.messages').projectDir = file('generated-projects/com.test.model.messages')
 
-include 'generated-projects/com.test.model.pubsubbridge'
-project(':generated-projects/com.test.model.pubsubbridge').name = 'model.pubsubbridge'
+include 'model.pubsubbridge'
+project(':model.pubsubbridge').projectDir = file('generated-projects/com.test.model.pubsubbridge')
 

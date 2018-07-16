@@ -1,32 +1,32 @@
 rootProject.name = 'com.ngc.example.correlation.peanutbutterservice'
 
-include 'com.ngc.example.correlation.pbs.config'
-project(':com.ngc.example.correlation.pbs.config').name = 'pbs.config'
+include 'pbs.config'
+project(':pbs.config').projectDir = file('com.ngc.example.correlation.pbs.config')
 
-include 'com.ngc.example.correlation.pbs.distribution'
-project(':com.ngc.example.correlation.pbs.distribution').name = 'pbs.distribution'
+include 'pbs.distribution'
+project(':pbs.distribution').projectDir = file('com.ngc.example.correlation.pbs.distribution')
 
-include 'com.ngc.example.correlation.pbs.domain'
-project(':com.ngc.example.correlation.pbs.domain').name = 'pbs.domain'
+include 'pbs.domain'
+project(':pbs.domain').projectDir = file('com.ngc.example.correlation.pbs.domain')
 
-include 'com.ngc.example.correlation.pbs.impl'
-project(':com.ngc.example.correlation.pbs.impl').name = 'pbs.impl'
+include 'pbs.impl'
+project(':pbs.impl').projectDir = file('com.ngc.example.correlation.pbs.impl')
 
-include 'com.ngc.example.correlation.pbs.tests'
-project(':com.ngc.example.correlation.pbs.tests').name = 'pbs.tests'
+include 'pbs.tests'
+project(':pbs.tests').projectDir = file('com.ngc.example.correlation.pbs.tests')
 
-include 'generated-projects/com.ngc.example.correlation.pbs.base'
-project(':generated-projects/com.ngc.example.correlation.pbs.base').name = 'pbs.base'
+include 'pbs.base'
+project(':pbs.base').projectDir = file('generated-projects/com.ngc.example.correlation.pbs.base')
 
-include 'generated-projects/com.ngc.example.correlation.pbs.connector'
-project(':generated-projects/com.ngc.example.correlation.pbs.connector').name = 'pbs.connector'
+include 'pbs.connector'
+project(':pbs.connector').projectDir = file('generated-projects/com.ngc.example.correlation.pbs.connector')
 
-include 'generated-projects/com.ngc.example.correlation.pbs.events'
-project(':generated-projects/com.ngc.example.correlation.pbs.events').name = 'pbs.events'
+include 'pbs.events'
+project(':pbs.events').projectDir = file('generated-projects/com.ngc.example.correlation.pbs.events')
 
-include 'generated-projects/com.ngc.example.correlation.pbs.messages'
-project(':generated-projects/com.ngc.example.correlation.pbs.messages').name = 'pbs.messages'
+include 'pbs.messages'
+project(':pbs.messages').projectDir = file('generated-projects/com.ngc.example.correlation.pbs.messages')
 
-include 'generated-projects/com.ngc.example.correlation.pbs.pubsubbridge'
-project(':generated-projects/com.ngc.example.correlation.pbs.pubsubbridge').name = 'pbs.pubsubbridge'
+include 'pbs.pubsubbridge'
+project(':pbs.pubsubbridge').projectDir = file('generated-projects/com.ngc.example.correlation.pbs.pubsubbridge')
 

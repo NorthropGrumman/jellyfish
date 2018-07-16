@@ -243,7 +243,7 @@ public abstract class ${dto.abstractClass.name}
 
 #end
 #if ($dto.correlationRequestHandlingEnabled)
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void updateRequestWithCorrelation(Object correlationEventId) {
       IRequest request = Requests.getCurrentRequest();
       if (request instanceof IServiceRequest) {
@@ -254,7 +254,7 @@ public abstract class ${dto.abstractClass.name}
 
 #end
 #if (!$dto.correlationMethods.isEmpty() || $dto.correlationRequestHandlingEnabled)
-   @SuppressWarnings("rawtypes")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void clearCorrelationFromRequest() {
       IRequest request = Requests.getCurrentRequest();
       if (request instanceof IServiceRequest) {

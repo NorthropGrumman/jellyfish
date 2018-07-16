@@ -61,18 +61,20 @@ public class ${dto.subscriberClassName} implements IEventSubscriber<${dto.subscr
          Collection<${dto.publishDataType}> output = ${dto.serviceVarName}.${dto.scenarioMethod}(input);
          logService.info(getClass(), "ELK - Scenario: ${dto.scenarioMethod}; Input: %s; Output: %s;", input, output);
          output.forEach(o -> eventService.publish(o, ${dto.publishDataType}.TOPIC));
-      } catch(ServiceFaultException fault) {
+      } catch (ServiceFaultException fault) {
          faultManagementService.handleFault(fault);
       }
    }
 #end
 
+   @SuppressWarnings("unchecked")
    @Activate
    public void activate() {
       eventService.addSubscriber(this, ${dto.subscriberDataType}.TOPIC);
       logService.debug(getClass(), "Activated.");
    }
 
+   @SuppressWarnings("unchecked")
    @Deactivate
    public void deactivate() {
       eventService.removeSubscriber(this, ${dto.subscriberDataType}.TOPIC);

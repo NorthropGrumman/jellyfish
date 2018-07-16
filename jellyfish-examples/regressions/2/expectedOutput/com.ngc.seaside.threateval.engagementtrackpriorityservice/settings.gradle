@@ -1,35 +1,35 @@
 rootProject.name = 'com.ngc.seaside.threateval.engagementtrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.etps.distribution'
-project(':com.ngc.seaside.threateval.etps.distribution').name = 'etps.distribution'
+include 'etps.distribution'
+project(':etps.distribution').projectDir = file('com.ngc.seaside.threateval.etps.distribution')
 
-include 'com.ngc.seaside.threateval.etps.domain'
-project(':com.ngc.seaside.threateval.etps.domain').name = 'etps.domain'
+include 'etps.domain'
+project(':etps.domain').projectDir = file('com.ngc.seaside.threateval.etps.domain')
 
-include 'com.ngc.seaside.threateval.etps.impl'
-project(':com.ngc.seaside.threateval.etps.impl').name = 'etps.impl'
+include 'etps.impl'
+project(':etps.impl').projectDir = file('com.ngc.seaside.threateval.etps.impl')
 
-include 'com.ngc.seaside.threateval.etps.tests'
-project(':com.ngc.seaside.threateval.etps.tests').name = 'etps.tests'
+include 'etps.tests'
+project(':etps.tests').projectDir = file('com.ngc.seaside.threateval.etps.tests')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.base'
-project(':generated-projects/com.ngc.seaside.threateval.etps.base').name = 'etps.base'
+include 'etps.base'
+project(':etps.base').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.base')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.config'
-project(':generated-projects/com.ngc.seaside.threateval.etps.config').name = 'etps.config'
+include 'etps.config'
+project(':etps.config').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.config')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.connector'
-project(':generated-projects/com.ngc.seaside.threateval.etps.connector').name = 'etps.connector'
+include 'etps.connector'
+project(':etps.connector').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.connector')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.events'
-project(':generated-projects/com.ngc.seaside.threateval.etps.events').name = 'etps.events'
+include 'etps.events'
+project(':etps.events').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.events')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.messages'
-project(':generated-projects/com.ngc.seaside.threateval.etps.messages').name = 'etps.messages'
+include 'etps.messages'
+project(':etps.messages').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.messages')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.pubsubbridge'
-project(':generated-projects/com.ngc.seaside.threateval.etps.pubsubbridge').name = 'etps.pubsubbridge'
+include 'etps.pubsubbridge'
+project(':etps.pubsubbridge').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.pubsubbridge')
 
-include 'generated-projects/com.ngc.seaside.threateval.etps.testsconfig'
-project(':generated-projects/com.ngc.seaside.threateval.etps.testsconfig').name = 'etps.testsconfig'
+include 'etps.testsconfig'
+project(':etps.testsconfig').projectDir = file('generated-projects/com.ngc.seaside.threateval.etps.testsconfig')
 

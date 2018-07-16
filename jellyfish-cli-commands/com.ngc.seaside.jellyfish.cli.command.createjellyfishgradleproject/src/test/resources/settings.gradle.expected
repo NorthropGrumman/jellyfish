@@ -1,5 +1,4 @@
 rootProject.name = 'test-project-1'
 
-include 'project1'
-project(':project1').name = 'p1'
-
+include 'p1'
+project(':p1').projectDir = file('project1')

@@ -33,7 +33,7 @@ subprojects {
    if(!name.endsWith('.distribution')
        && !name.endsWith('.docker')) {
       apply plugin: 'com.ngc.seaside.parent'
-    }
+   }
 
    group = 'com.ngc.seaside.jellyfish.examples.project1'
    version = '1.0-SNAPSHOT'

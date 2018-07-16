@@ -1,35 +1,35 @@
 rootProject.name = 'com.ngc.seaside.threateval.classificationtrackpriorityservice'
 
-include 'com.ngc.seaside.threateval.ctps.distribution'
-project(':com.ngc.seaside.threateval.ctps.distribution').name = 'ctps.distribution'
+include 'ctps.distribution'
+project(':ctps.distribution').projectDir = file('com.ngc.seaside.threateval.ctps.distribution')
 
-include 'com.ngc.seaside.threateval.ctps.domain'
-project(':com.ngc.seaside.threateval.ctps.domain').name = 'ctps.domain'
+include 'ctps.domain'
+project(':ctps.domain').projectDir = file('com.ngc.seaside.threateval.ctps.domain')
 
-include 'com.ngc.seaside.threateval.ctps.impl'
-project(':com.ngc.seaside.threateval.ctps.impl').name = 'ctps.impl'
+include 'ctps.impl'
+project(':ctps.impl').projectDir = file('com.ngc.seaside.threateval.ctps.impl')
 
-include 'com.ngc.seaside.threateval.ctps.tests'
-project(':com.ngc.seaside.threateval.ctps.tests').name = 'ctps.tests'
+include 'ctps.tests'
+project(':ctps.tests').projectDir = file('com.ngc.seaside.threateval.ctps.tests')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.base'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.base').name = 'ctps.base'
+include 'ctps.base'
+project(':ctps.base').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.base')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.config'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.config').name = 'ctps.config'
+include 'ctps.config'
+project(':ctps.config').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.config')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.connector'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.connector').name = 'ctps.connector'
+include 'ctps.connector'
+project(':ctps.connector').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.connector')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.events'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.events').name = 'ctps.events'
+include 'ctps.events'
+project(':ctps.events').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.events')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.messages'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.messages').name = 'ctps.messages'
+include 'ctps.messages'
+project(':ctps.messages').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.messages')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.pubsubbridge'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.pubsubbridge').name = 'ctps.pubsubbridge'
+include 'ctps.pubsubbridge'
+project(':ctps.pubsubbridge').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.pubsubbridge')
 
-include 'generated-projects/com.ngc.seaside.threateval.ctps.testsconfig'
-project(':generated-projects/com.ngc.seaside.threateval.ctps.testsconfig').name = 'ctps.testsconfig'
+include 'ctps.testsconfig'
+project(':ctps.testsconfig').projectDir = file('generated-projects/com.ngc.seaside.threateval.ctps.testsconfig')
 
