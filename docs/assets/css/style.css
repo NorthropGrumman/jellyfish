@@ -185,6 +185,10 @@ code .keyword {
   width: 600px;
 }
 
+.book-cover-page .chapter-link .fa-bookmark {
+  margin-right: 6px;
+}
+
 .book #book-nav #prev {
   text-align: right;
 }
