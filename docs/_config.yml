@@ -1,10 +1,8 @@
 name: Unambiguous System Architecture
 baseurl: '/CEACIDE/jellyfish'
 ceacide_latest_release_endpoint: 'https://github.ms.northgrum.com/api/v3/repos/CEACIDE/jellyfish/releases/latest'
-
-# collections:
-#   books:
-#     output: true
+eclipse_linux_download_link: 'https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-photon-R-linux-gtk-x86_64.zip'
+eclipse_windows_download_link: 'https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-photon-R-win32-x86_64.zip'
 
 defaults:
   - scope:

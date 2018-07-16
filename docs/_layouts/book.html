@@ -2,6 +2,8 @@
 layout: default
 ---
 {% include base.html %}
+<div id="title-stripe" class="stripe"></div>
+
 <div class="main container book">
   <h1>{{ page.title }}</h1>
 
@@ -10,7 +12,7 @@ layout: default
   <div id="book-nav" class="row">
     <div id="prev" class="col-4">
       {% if page.prev-page %}
-      <a href="{{ safebase }}/wikis/{{ page.prev-page }}.html">
+      <a href="{{ safebase }}/books/{{ page.book-page }}/{{ page.prev-page }}.html">
         <i class="fas fa-angle-left"></i>
         {{ page.prev-title }}
       </a>
@@ -19,12 +21,12 @@ layout: default
     <div id="toc" class="col-4">
       <a href="{{ safebase }}/docs.html" class="jf-btn-inline">
         <i class="fas fa-book"></i>
-        <a href="">{{ page.book-title }}</a>
+        <a href="{{ safebase }}/{{ page.book-page }}.html">{{ page.book-title }}</a>
       </a>
     </div>
     <div id="next" class="col-4">
       {% if page.next-page %}
-      <a href="{{ safebase }}/wikis/{{ page.next-page }}.html">
+      <a href="{{ safebase }}/books/{{ page.book-page }}/{{ page.next-page }}.html">
         {{ page.next-title }}
         <i class="fas fa-angle-right"></i>
       </a>
