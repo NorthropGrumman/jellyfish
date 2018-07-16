@@ -1,4 +1,4 @@
---
+---
 layout: default
 ---
 {% include base.html %}
@@ -7,24 +7,24 @@ layout: default
 
   {{ content }}
 
-  <div id="wiki-nav" class="row">
+  <div id="book-nav" class="row">
     <div id="prev" class="col-5">
       {% if page.prev-page %}
-      <a href="{{ safebase }}/wikis/{{ page.prev-page }}.html" class="blocs-btn-inline">
+      <a href="{{ safebase }}/wikis/{{ page.prev-page }}.html" class="jf-btn-inline">
         <i class="fas fa-angle-left"></i>
         {{ page.prev-title }}
       </a>
       {% endif %}
     </div>
     <div id="toc" class="col-2">
-      <a href="{{ safebase }}/docs.html" class="blocs-btn-inline">
+      <a href="{{ safebase }}/docs.html" class="jf-btn-inline">
         <i class="fas fa-book"></i>
         Contents
       </a>
     </div>
     <div id="next" class="col-5">
       {% if page.next-page %}
-      <a href="{{ safebase }}/wikis/{{ page.next-page }}.html" class="blocs-btn-inline">
+      <a href="{{ safebase }}/wikis/{{ page.next-page }}.html" class="jf-btn-inline">
         {{ page.next-title }}
         <i class="fas fa-angle-right"></i>
       </a>
