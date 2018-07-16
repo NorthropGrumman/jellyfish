@@ -1,5 +1,5 @@
 ---
-title: Installation and Setup
+title: Ch. 2 Installation and Setup
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor
 next-title: Ch. 3 The Basics of Modeling
@@ -7,7 +7,8 @@ next-page: the-basics-of-modeling
 prev-title: Ch. 1 Introduction to the System Descriptor Language
 prev-page: introduction-to-the-system-descriptor-language
 ---
-{% include base.html %} Tooling for System Descriptor language is provided in the form of a custom Eclipse installation.
+{% include base.html %}
+Tooling for System Descriptor language is provided in the form of a custom Eclipse installation.
 Once installed, Eclipse can be used to create and edit SD models.  Two items must be downloaded to continue:
 1. the base Eclipse installation for either [Linux]({{ site.eclipse_linux_download_link }}) or [Windows]({{ site.eclipse_windows_download_link }})
 1. the [System Descriptor language update site]({{ safebase }}/index.html#get-jellyfish)
@@ -39,7 +40,7 @@ Note that the latest versions can be located on the
 
 ![setting up eclipse][setup1]
 
-# Creating an initial project
+# Creating an Initial Project
 Once Eclipse has a restarted an initial project can be created to make sure the installation was successful.  Make sure
 the Package Explorer window is visible and follow the steps below.  If for some reason Package Explorer isn't shown
 (or you accidentally close it) just select Window -> Show View -> Package Explorer in the menu.

@@ -1,5 +1,5 @@
 ---
-title: Introduction to the System Descriptor Language
+title: Ch. 1 Introduction to the System Descriptor Language
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor
 next-title: Ch. 2 Installation and Setup
@@ -19,7 +19,7 @@ structural and behavioral characteristics of a system and will more than likely 
 artifacts (requirements, logical and physical architectures, etc). An example model of a simple alarm clock is given
 below:
 
-**An example of a simple SD model**
+**An Example of a Simple SD Model**
 ```sd
 package my.first.model
  
@@ -42,7 +42,7 @@ model AlarmClock {
 The example above provides an introduction to the syntax of the language.  Each of the items in the model will be
 covered in later chapters.
 
-# Why model with the System Descriptor language?
+# Why Model with the System Descriptor Language?
 Ambiguity between the system engineering teams and software engineering teams is an unfortunate reality for most
 engineering efforts.  Ambiguity can lead to conflicts between these teams, reduce product quality, and profoundly
 increases cost. This ambiguity can be attributed to the different level of abstraction between those who specify the
