@@ -249,7 +249,7 @@ pipeline {
 				  jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish.sonarqube.plugin/build/libs/jellyfish.sonarqube.plugin-*.jar
-              build/site
+              build/site.zip
 				  build/dependencies-m2.zip
 				  build/dependencies.tsv
 				  build/deploy.sh
