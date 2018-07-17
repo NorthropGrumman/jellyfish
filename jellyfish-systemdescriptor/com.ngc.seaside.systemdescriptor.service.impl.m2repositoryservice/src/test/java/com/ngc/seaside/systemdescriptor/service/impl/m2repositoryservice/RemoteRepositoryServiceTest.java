@@ -1,5 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 
 import org.eclipse.aether.repository.RemoteRepository;
@@ -16,16 +17,22 @@ public class RemoteRepositoryServiceTest {
 
    private RepositoryService service;
 
+   private GradlePropertiesService propertiesService = new GradlePropertiesService();
+
    @Before
    public void setup() {
+      ILogService logService = new PrintStreamLogService();
+      propertiesService.setLogService(logService);
+
       service = new RepositoryService();
-      service.setLogService(new PrintStreamLogService());
-      service.activate();
+      service.setLogService(logService);
+      service.setPropertiesService(propertiesService);
    }
 
    @After
    public void cleanup() {
       service.deactivate();
+      propertiesService.deactivate();
    }
 
    @Test
@@ -33,7 +40,9 @@ public class RemoteRepositoryServiceTest {
       final String NEXUS1 = "http://nexus1";
       final String NEXUS2 = "http://nexus2";
       Optional<RemoteRepository> repo;
-      System.setProperty(RepositoryService.GRADLE_USER_HOME, "src/test/resources");
+      System.setProperty(GradlePropertiesService.GRADLE_USER_HOME, "src/test/resources");
+      propertiesService.activate();
+      service.activate();
       repo = service.findRemoteNexus();
       assertTrue(repo.isPresent());
       assertEquals(NEXUS1, repo.get().getUrl());
