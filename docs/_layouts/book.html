@@ -5,10 +5,11 @@ layout: default
 <div id="title-stripe" class="stripe"></div>
 
 <div class="main container book">
-  <h1>{{ page.title }}</h1>
+  <h1 class="text-nowrap">{{ page.title }}</h1>
 
   {{ content }}
 
+  <hr/>
   <div id="book-nav" class="row">
     <div id="prev" class="col-4">
       {% if page.prev-page %}
@@ -44,6 +45,16 @@ layout: default
     // This makes the precending <p> of a <pre> tag the title of the code example.  This will only select elements
     // that have a **bold** section.  This is how we mark titles for sub-sections in markdown.
     $('p:has(+ div.highlighter-rouge):has(strong)').addClass('code-title');
+
+    // Handle notes in books.
+    $('p:has(+ pre code.language-note-info):has(strong)')
+      .addClass('note-title note-title-info')
+      .prepend('<i class="fas fa-info-circle"></i> ');
+    $('p:has(+ pre code.language-note-warning):has(strong)')
+      .addClass('note-title note-title-warning')
+      .prepend('<i class="fas fa-times-circle"></i> ');
+    $('pre:has(code.language-note-info)').addClass('note note-info')
+    $('pre:has(code.language-note-warning)').addClass('note note-warning')
 
     // Highlight the SD code examples.  
     addClassesToSdLanguageExamples($('div.book'));
