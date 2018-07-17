@@ -20,7 +20,7 @@ artifacts (requirements, logical and physical architectures, etc). An example mo
 below:
 
 **An Example of a Simple SD Model**
-```sd
+```
 package my.first.model
  
 import my.first.model.Speaker

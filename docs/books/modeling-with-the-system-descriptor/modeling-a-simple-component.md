@@ -17,7 +17,7 @@ simple standalone system.  It contains all the components it needs to function. 
 outputs.  It will only consist of sub-components which will we model as _parts_.
 
 **AlarmClock.sd**
-```sd
+```
 package alarm
  
 import alarm.Clock
@@ -38,7 +38,7 @@ component for managing the alarms and a component for allowing the user control 
 components _Alarm_ and _AlarmController_, respectively.  These will be parts of the `AlarmClock`.
 
 **Adding new parts**
-```sd
+```
 package alarm
  
 import alarm.Clock
@@ -61,7 +61,7 @@ will also handle notifying the user of an alarm.  As a result, our first cut of 
 this:
 
 **Alarm.sd**
-```sd
+```
 package alarm
  
 model Alarm {
@@ -80,7 +80,7 @@ well as triggering an alarm.  Will create these two data types as shown below.  
 acknowledge and deactivate an alarm while `AlarmStatus` is used to notify that an alarm has been triggered.
 
 **AlarmAcknowledgement.sd**
-```sd
+```
 package alarm
  
 data AlarmAcknowledgement {
@@ -90,7 +90,7 @@ data AlarmAcknowledgement {
 ```
 
 **AlarmStatus.sd**
-```sd
+```
 package alarm
  
 data AlarmStatus {
@@ -104,7 +104,7 @@ acknowledged alarms as input.  It will produce alarms as outputs.  We can now ad
 scenarios.
 
 **Updating Alarm.sd**
-```sd
+```
 package alarm
  
 import alarm.AlarmStatus
@@ -152,7 +152,7 @@ The `AlarmController` will output alarm times and alarm acknowledgements as conf
 receive alarm status that indicate an alarm has been triggered or deactivated.  We model this as follows:
 
 **AlarmController.sd**
-```sd
+```
 package alarm
  
 import alarm.ZonedTime
@@ -199,7 +199,7 @@ component.  It this case, that is the user.  We don't define how this interactio
 We now have three components of our alarm clock.  Recall our `AlarmClock` model looks like this:
 
 **AlarmClock.sd**
-```sd
+```
 package alarm
  
 import alarm.Clock
@@ -221,7 +221,7 @@ inputs and outputs from one part to another.  For example, we can connect the `c
 to the `currentTime` input of the `alarm` part.
 
 **Adding links**
-```sd
+```
 package alarm
  
 import alarm.Alarm
@@ -252,7 +252,7 @@ We can now connect the outputs of the controller to the inputs of the alarm.  We
 alarm to the inputs of the controller:
 
 **Adding links**
-```sd
+```
 package alarm
  
 import alarm.Alarm

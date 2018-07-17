@@ -12,7 +12,7 @@ Modeling with the System Descriptor (SD) language is simple: files are created i
 directory which represents a project.  A project directory has the following structure:
 
 **The structure of an SD project**
-```sd
+```
 - project directory
   - src
     - main
@@ -39,7 +39,7 @@ these files share a common structure:
 * the declaration of an element, which is ether a **model**, **data type**, or **enumeration** (2)
 
 **An Example Model (AlarmClock.sd)**
-```sd
+```
 // (1)
 package myfirstmodel
 
@@ -59,7 +59,7 @@ with the '`.`' character.  A file should list all of its packages, including sub
 `AlarmClock` model could be moved to the package `my.first.model`:
 
 **Using nested packages**
-```sd
+```
 package my.first.model
   
 model AlarmClock {
@@ -86,7 +86,7 @@ The SD language had 3 primitive types of elements:
 Models are denoted with the `model` keyword.  Data types used the data keyword as show below.
 
 **An example data type**
-```sd
+```
 package my.first.datatype
   
 data DateTime {
@@ -96,7 +96,7 @@ data DateTime {
 Likewise, enumerations use the `enum` keyword.  Enumerations may only contain values:
 
 **An example enumeration**
-```sd
+```
 package my.first.datatype
   
 enum TimeZone {
@@ -110,7 +110,7 @@ enum TimeZone {
 Finally, single line comments start with `//` and multiline comments use `/* */`.  Comments can occur anywhere.
 
 **Using comments**
-```sd
+```
 package my.first.datatype
  
 // This is a single line comment.

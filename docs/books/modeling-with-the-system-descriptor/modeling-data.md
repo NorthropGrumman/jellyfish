@@ -39,7 +39,7 @@ data types that represent a moment in time as well as a date.
 Eclipse will open the file Time.sd for editing.  Its contents should look something like this:
 
 **Time.sd**
-```sd
+```
 package alarm
  
 data Time {
@@ -50,7 +50,7 @@ Data types consists of _fields_.  Fields contain a type and a unique name.  We'l
 to the time structure.  These fields will have a type of integer which is denoted with the `int` keyword:
 
 **Time.sd**
-```sd
+```
 package alarm
  
 data Time {
@@ -71,7 +71,7 @@ The `many` keyword can also be used to declare that a field has multiple values 
 `many` keyword appears before the type:
 
 **The many keyword**
-```sd
+```
 package examples
  
 data Vector {
@@ -94,7 +94,7 @@ previously, the `enum` keyword can be used to represent this construct.  Create 
 1. Select **Finish**
 
 **TimeZone.sd**
-```sd
+```
 package alarm
  
 enum TimeZone {
@@ -135,7 +135,7 @@ All metadata is represented as [JSON](http://www.ecma-international.org/publicat
 allows for objects to be defined as key/value pairs.
 
 **Example JSON**
-```sd
+```
 {
   "greeting": "hello world"
 }
@@ -146,7 +146,7 @@ must be surrounded in double quotes.  Strings used as values must also be surrou
 or arrays are surrounded with square brackets ('[', ']') with commas separating elements in the array.
 
 **Example JSON Array**
-```sd
+```
 {
   "greetings": ["hello world", "hola", "konchiwa"]
 }
@@ -155,7 +155,7 @@ or arrays are surrounded with square brackets ('[', ']') with commas separating 
 Finally, JSON objects may contain nested objects or arrays of objects:
 
 **Example of nested JSON objects**
-```sd
+```
 {
   "greetings": [{
       "language": "English",
@@ -175,7 +175,7 @@ Data types declare metadata using the `metadata` keyword after declaring the dat
 description to the `Time` data type:
 
 **Time.sd**
-```sd
+```
 package alarm
  
 data Time {
@@ -193,7 +193,7 @@ Modelers are free to define metadata however they please.  Some metadata have st
 validation details.  This type of metadata is applied directly to fields as shown below:
 
 **Time.sd**
-```sd
+```
 package alarm
  
 data Time {
@@ -240,7 +240,7 @@ they are extending.  The base type must be imported.  Data types can extend at m
 extend other types or be extended.
 
 **Data inheritance**
-```sd
+```
 package example
  
 import example.B
@@ -255,7 +255,7 @@ data type, `ZonedTime` that extends `Time` and uses composition to declare a new
 `TimeZone`.
 
 **Data composition with inheritance**
-```sd
+```
 package alarm
  
 import alarm.Time

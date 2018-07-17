@@ -62,7 +62,7 @@ A new project should appear in the project explorer.
 Its contents should look something similar to this:
 
 **MyModel.sd**
-```sd
+```
 package com.ngc.mysdproject
  
 model MyModel {

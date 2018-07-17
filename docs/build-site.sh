@@ -7,5 +7,5 @@ rvm use 2.5.1
 bundle install
 mkdir -p ../build
 bundle exec jekyll build --destination ../build/site
-cd ../build/site
-zip -r site.zip .
+cd ../build
+zip -r site.zip site
