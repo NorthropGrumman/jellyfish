@@ -32,7 +32,7 @@ pipeline {
    stages {
       // Prepare for a release if necessary.
 
-      stage("Prepare For Release") {
+      stage('Prepare For Release') {
          when {
             expression { env.BRANCH_NAME == 'master' && params.performRelease }
          }
@@ -108,6 +108,15 @@ pipeline {
          steps {
             dir('jellyfish-examples') {
                sh '../gradlew clean build --parallel -S --continue'
+            }
+         }
+      }
+
+      stage('Docs') {
+         steps {
+            dir('docs') {
+               sh 'chmod a+x build-site.sh'
+               sh './build-site.sh'
             }
          }
       }
@@ -240,6 +249,7 @@ pipeline {
 				  jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish.sonarqube.plugin/build/libs/jellyfish.sonarqube.plugin-*.jar
+              build/site
 				  build/dependencies-m2.zip
 				  build/dependencies.tsv
 				  build/deploy.sh

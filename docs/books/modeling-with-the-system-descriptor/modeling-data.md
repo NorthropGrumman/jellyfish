@@ -189,7 +189,8 @@ data Time {
 }
 ```
 
-Modelers are free to define metadata however they please.  Some metadata have standard support, such as for specifying validation details.  This type of metadata is applied directly to fields as shown below:
+Modelers are free to define metadata however they please.  Some metadata have standard support, such as for specifying
+validation details.  This type of metadata is applied directly to fields as shown below:
 
 **Time.sd**
 ```sd
