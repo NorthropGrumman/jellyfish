@@ -85,6 +85,17 @@ code .keyword {
   color: #800F65;
 }
 
+/* Made SD code examples look decent. */
+div.highlighter-rouge span.p,
+div.highlighter-rouge span.k {
+  color: #000000;
+  font-weight: normal;
+}
+
+div.highlighter-rouge code span.sd-keyword {
+  color: #800F65;
+}
+
 #title-stripe {
   height: 65px;
 }
