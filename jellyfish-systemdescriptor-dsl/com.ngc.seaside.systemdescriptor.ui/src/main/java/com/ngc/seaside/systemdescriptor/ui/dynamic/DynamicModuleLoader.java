@@ -84,7 +84,8 @@ public class DynamicModuleLoader {
          while (line != null) {
             try {
                // Create a new instance of the module and add it to the list.
-               modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).getConstructor().newInstance());
+               modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).getConstructor()
+                        .newInstance());
                LOGGER.debug(String.format(
                      "Including module %s from bundle %s in Guice configuration.",
                      line,
