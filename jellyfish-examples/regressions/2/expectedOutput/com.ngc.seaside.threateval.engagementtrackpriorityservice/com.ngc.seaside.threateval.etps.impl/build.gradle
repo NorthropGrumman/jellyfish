@@ -1,14 +1,14 @@
 
 dependencies {
-   compile project(':etps.events')
-   compile project(':etps.base')
+   implementation project(':etps.events')
+   implementation project(':etps.base')
 
-   compile "com.ngc.seaside:service.api:$starfishVersion"
-   compile "com.ngc.blocs:service.api:$blocsCoreVersion"
-   compile "org.osgi:osgi.core:$osgiVersion"
-   compile "org.osgi:osgi.enterprise:$osgiVersion"
-   compile "com.google.guava:guava:$guavaVersion"
+   implementation "com.ngc.seaside:service.api:$starfishVersion"
+   implementation "com.ngc.blocs:service.api:$blocsCoreVersion"
+   implementation "org.osgi:osgi.core:$osgiVersion"
+   implementation "org.osgi:osgi.enterprise:$osgiVersion"
+   implementation "com.google.guava:guava:$guavaVersion"
 
-   testCompile "junit:junit:$junitVersion"
-   testCompile "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
 }

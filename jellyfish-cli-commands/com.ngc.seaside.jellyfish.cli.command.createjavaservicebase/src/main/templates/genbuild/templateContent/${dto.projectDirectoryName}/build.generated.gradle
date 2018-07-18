@@ -8,15 +8,13 @@ configurations {
 
 dependencies {
     #foreach ($project in  $dto.projectDependencies)
-    compile project(':${project}')
+    api project(':${project}')
     #end
 
-    compile "${build.getFormattedDependency('com.ngc.seaside:service.api')}"
-    compile "${build.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
-    compile "${build.getFormattedDependency('com.ngc.blocs:service.api')}"
-    compile "${build.getFormattedDependency('org.osgi:osgi.core')}"
-    compile "${build.getFormattedDependency('org.osgi:osgi.enterprise')}"
-    compile "${build.getFormattedDependency('com.google.guava:guava')}"
+    api "${build.getFormattedDependency('com.ngc.seaside:service.api')}"
+    api "${build.getFormattedDependency('com.ngc.seaside:service.transport.api')}"
+    api "${build.getFormattedDependency('com.ngc.blocs:service.api')}"
+    implementation "${build.getFormattedDependency('com.google.guava:guava')}"
 
     defaultBundles "${build.getFormattedDependency('com.ngc.seaside:service.fault.impl.faultloggingservice')}"
     defaultBundles "${build.getFormattedDependency('com.ngc.seaside:service.correlation.impl.correlationservice')}"

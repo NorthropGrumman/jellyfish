@@ -1,32 +1,32 @@
 rootProject.name = 'com.ngc.seaside.jellyfish.examples.project1.model'
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.config'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.config').name = 'model.config'
+include 'model.config'
+project(':model.config').projectDir = file('com.ngc.seaside.jellyfish.examples.project1.model.config')
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.distribution'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.distribution').name = 'model.distribution'
+include 'model.distribution'
+project(':model.distribution').projectDir = file('com.ngc.seaside.jellyfish.examples.project1.model.distribution')
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.domain'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.domain').name = 'model.domain'
+include 'model.domain'
+project(':model.domain').projectDir = file('com.ngc.seaside.jellyfish.examples.project1.model.domain')
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.impl'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.impl').name = 'model.impl'
+include 'model.impl'
+project(':model.impl').projectDir = file('com.ngc.seaside.jellyfish.examples.project1.model.impl')
 
-include 'com.ngc.seaside.jellyfish.examples.project1.model.tests'
-project(':com.ngc.seaside.jellyfish.examples.project1.model.tests').name = 'model.tests'
+include 'model.tests'
+project(':model.tests').projectDir = file('com.ngc.seaside.jellyfish.examples.project1.model.tests')
 
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.base'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.base').name = 'model.base'
+include 'model.base'
+project(':model.base').projectDir = file('generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.base')
 
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.connector'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.connector').name = 'model.connector'
+include 'model.connector'
+project(':model.connector').projectDir = file('generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.connector')
 
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events').name = 'model.events'
+include 'model.events'
+project(':model.events').projectDir = file('generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.events')
 
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages').name = 'model.messages'
+include 'model.messages'
+project(':model.messages').projectDir = file('generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.messages')
 
-include 'generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.pubsubbridge'
-project(':generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.pubsubbridge').name = 'model.pubsubbridge'
+include 'model.pubsubbridge'
+project(':model.pubsubbridge').projectDir = file('generated-projects/com.ngc.seaside.jellyfish.examples.project1.model.pubsubbridge')
 

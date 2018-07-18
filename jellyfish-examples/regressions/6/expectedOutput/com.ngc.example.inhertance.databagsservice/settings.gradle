@@ -1,32 +1,32 @@
 rootProject.name = 'com.ngc.example.inhertance.databagsservice'
 
-include 'com.ngc.example.inhertance.databagsservice.config'
-project(':com.ngc.example.inhertance.databagsservice.config').name = 'databagsservice.config'
+include 'databagsservice.config'
+project(':databagsservice.config').projectDir = file('com.ngc.example.inhertance.databagsservice.config')
 
-include 'com.ngc.example.inhertance.databagsservice.distribution'
-project(':com.ngc.example.inhertance.databagsservice.distribution').name = 'databagsservice.distribution'
+include 'databagsservice.distribution'
+project(':databagsservice.distribution').projectDir = file('com.ngc.example.inhertance.databagsservice.distribution')
 
-include 'com.ngc.example.inhertance.databagsservice.domain'
-project(':com.ngc.example.inhertance.databagsservice.domain').name = 'databagsservice.domain'
+include 'databagsservice.domain'
+project(':databagsservice.domain').projectDir = file('com.ngc.example.inhertance.databagsservice.domain')
 
-include 'com.ngc.example.inhertance.databagsservice.impl'
-project(':com.ngc.example.inhertance.databagsservice.impl').name = 'databagsservice.impl'
+include 'databagsservice.impl'
+project(':databagsservice.impl').projectDir = file('com.ngc.example.inhertance.databagsservice.impl')
 
-include 'com.ngc.example.inhertance.databagsservice.tests'
-project(':com.ngc.example.inhertance.databagsservice.tests').name = 'databagsservice.tests'
+include 'databagsservice.tests'
+project(':databagsservice.tests').projectDir = file('com.ngc.example.inhertance.databagsservice.tests')
 
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.base'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.base').name = 'databagsservice.base'
+include 'databagsservice.base'
+project(':databagsservice.base').projectDir = file('generated-projects/com.ngc.example.inhertance.databagsservice.base')
 
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.connector'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.connector').name = 'databagsservice.connector'
+include 'databagsservice.connector'
+project(':databagsservice.connector').projectDir = file('generated-projects/com.ngc.example.inhertance.databagsservice.connector')
 
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.events'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.events').name = 'databagsservice.events'
+include 'databagsservice.events'
+project(':databagsservice.events').projectDir = file('generated-projects/com.ngc.example.inhertance.databagsservice.events')
 
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.messages'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.messages').name = 'databagsservice.messages'
+include 'databagsservice.messages'
+project(':databagsservice.messages').projectDir = file('generated-projects/com.ngc.example.inhertance.databagsservice.messages')
 
-include 'generated-projects/com.ngc.example.inhertance.databagsservice.pubsubbridge'
-project(':generated-projects/com.ngc.example.inhertance.databagsservice.pubsubbridge').name = 'databagsservice.pubsubbridge'
+include 'databagsservice.pubsubbridge'
+project(':databagsservice.pubsubbridge').projectDir = file('generated-projects/com.ngc.example.inhertance.databagsservice.pubsubbridge')
 

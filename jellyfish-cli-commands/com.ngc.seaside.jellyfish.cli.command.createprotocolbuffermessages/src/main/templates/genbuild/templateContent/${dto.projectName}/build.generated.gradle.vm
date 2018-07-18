@@ -2,7 +2,7 @@
 apply plugin: 'com.google.protobuf'
 
 dependencies {
-   compile "${build.getFormattedDependency('com.google.protobuf:protobuf-java')}"
+   api "${build.getFormattedDependency('com.google.protobuf:protobuf-java')}"
 }
 
 protobuf {
