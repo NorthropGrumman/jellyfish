@@ -16,3 +16,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.consoleanalysisreport').name = '
 
 include 'com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport'
 project(':com.ngc.seaside.jellyfish.cli.command.htmlanalysisreport').name = 'jellyfish.cli.command.htmlanalysisreport'
+
+include 'com.ngc.seaside.jellyfish.cli.command.analyzebudget'
+project(':com.ngc.seaside.jellyfish.cli.command.analyzebudget').name = 'jellyfish.cli.command.analyzebudget'

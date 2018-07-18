@@ -13,15 +13,19 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.model.link.WrappedReferenceLink;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BasePartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Data;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.DataModel;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.DeclarationDefinition;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.InputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
@@ -29,7 +33,9 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.OutputDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.PrimitiveDataFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.PropertyFieldDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.ReferencedDataModelFieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedPartDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedRequireDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RequireDeclaration;
@@ -293,6 +299,13 @@ public class ValidationDelegate implements IValidatorExtension {
                   helper);
             doValidation(ctx15);
             break;
+         case SystemDescriptorPackage.PROPERTY_FIELD_DECLARATION:
+         case SystemDescriptorPackage.PRIMITIVE_PROPERTY_FIELD_DECLARATION:
+         case SystemDescriptorPackage.REFERENCED_PROPERTY_FIELD_DECLARATION:
+            IValidationContext<IProperty> ctx16 =
+                     newContext(findProperty(descriptor, (PropertyFieldDeclaration) source), helper);
+            doValidation(ctx16);
+            break;
          default:
             // Do nothing, this is not a type we want to validate.
       }
@@ -390,6 +403,53 @@ public class ValidationDelegate implements IValidatorExtension {
             .filter(l -> EcoreUtil.equals(l.unwrap(), xtext))
             .findAny()
             .orElseThrow(() -> new IllegalStateException("failed to find the wrapper for link " + xtext));
+   }
+
+   private static IProperty findProperty(ISystemDescriptor descriptor, PropertyFieldDeclaration xtext) {
+      EObject parent = xtext.eContainer().eContainer();
+      String property = xtext.getName();
+      if (parent instanceof Model) {
+         String packageName = ((Package) parent.eContainer()).getName();
+         IModel model = descriptor.findModel(packageName, ((Model) parent).getName()).get();
+         return model.getProperties().getByName(property).get();
+      } else if (parent instanceof DeclarationDefinition) {
+         parent = parent.eContainer();
+
+         if (!(parent instanceof FieldDeclaration || parent instanceof LinkDeclaration)) {
+            throw new IllegalStateException("failed to find property for " + xtext);
+         }
+         if (parent instanceof FieldDeclaration
+                  && !(parent instanceof PartDeclaration || parent instanceof RequireDeclaration)) {
+            throw new IllegalStateException(
+                     "Properties are currently only supported for parts, links and requires declarations: " + xtext);
+         }
+         String packageName = ((Package) parent.eContainer().eContainer().eContainer()).getName();
+         String modelName = ((Model) parent.eContainer().eContainer()).getName();
+         IModel model = descriptor.findModel(packageName, modelName).get();
+         if (parent instanceof LinkDeclaration) {
+            LinkDeclaration link = (LinkDeclaration) parent;
+            if (parent instanceof RefinedLinkNameDeclaration) {
+               return model.getLinkByName(((RefinedLinkNameDeclaration) parent).getName()).get().getProperties()
+                        .getByName(property).get();
+            } else {
+               IModelLink<?> modelLink = model.getLinks()
+                        .stream()
+                        .filter(WrappedReferenceLink.class::isInstance)
+                        .map(WrappedReferenceLink.class::cast)
+                        .filter(wrapped -> wrapped.unwrap().equals(link))
+                        .findAny().orElseThrow(() -> new IllegalStateException(
+                                 "failed to find link " + link + " containing property " + xtext));
+               return modelLink.getProperties().getByName(property).get();
+            }
+         }
+         String fieldName = ((FieldDeclaration) parent).getName();
+         if (parent instanceof PartDeclaration) {
+            return model.getParts().getByName(fieldName).get().getProperties().getByName(property).get();
+         } else if (parent instanceof RequireDeclaration) {
+            return model.getRequiredModels().getByName(fieldName).get().getProperties().getByName(property).get();
+         }
+      }
+      throw new IllegalStateException("failed to find property for " + xtext);
    }
 
    @SuppressWarnings("unchecked")

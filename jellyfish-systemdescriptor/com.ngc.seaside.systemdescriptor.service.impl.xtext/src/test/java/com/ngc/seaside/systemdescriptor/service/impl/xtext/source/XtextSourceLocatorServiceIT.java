@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +28,7 @@ public class XtextSourceLocatorServiceIT {
 
    private static ISourceLocatorService service;
    private static ISystemDescriptor sd;
+   private static ISystemDescriptor zippedSd;
 
    @BeforeClass
    public static void setup() {
@@ -35,9 +37,19 @@ public class XtextSourceLocatorServiceIT {
       service = InjectorTestFactory.getSharedInstance().getInstance(ISourceLocatorService.class);
       ISystemDescriptorService sdService =
                InjectorTestFactory.getSharedInstance().getInstance(ISystemDescriptorService.class);
-      IParsingResult result = sdService.parseProject(Paths.get("build", "resources", "test", "valid-project"));
+      IParsingResult result = sdService.parseProject(Paths.get("src", "test", "resources", "valid-project"));
       assertTrue("did not parse project!", result.isSuccessful());
       sd = result.getSystemDescriptor();
+      result = sdService
+               .parseFiles(Collections.singleton(Paths.get("src", "test", "resources", "valid-zipped-project.zip")));
+      assertTrue("did not parse project!", result.isSuccessful());
+      zippedSd = result.getSystemDescriptor();
+   }
+
+   @Test
+   public void testZippedData() {
+      IData data = zippedSd.findData("com.Test").get();
+      testLocation(data, "Test.sd", 3, 6, 4);
    }
 
    @Test

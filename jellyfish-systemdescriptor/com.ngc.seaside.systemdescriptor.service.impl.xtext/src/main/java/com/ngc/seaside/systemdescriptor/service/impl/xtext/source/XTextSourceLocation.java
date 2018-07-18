@@ -1,11 +1,18 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.source;
 
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 import org.eclipse.emf.common.util.URI;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Objects;
 
 public class XTextSourceLocation implements ISourceLocation {
@@ -95,6 +102,34 @@ public class XTextSourceLocation implements ISourceLocation {
          String fileString = uri.toFileString();
          if (fileString != null) {
             path = new File(fileString).toPath();
+         } else {
+            String devicePath = uri.devicePath();
+            String filePath;
+            int index = devicePath.toLowerCase().indexOf(".zip!");
+            if (index >= 0) {
+               index += 4;
+               filePath = devicePath.substring(index + 1);
+               devicePath = "jar:" + devicePath.substring(0, index);
+            } else {
+               throw new ParsingException("Unable to get path for " + uri);
+            }
+            java.net.URI i;
+            try {
+               i = new java.net.URI(devicePath);
+            } catch (URISyntaxException e) {
+               throw new ParsingException(e);
+            }
+            FileSystem fileSystem;
+            try {
+               fileSystem = FileSystems.getFileSystem(i);
+            } catch (FileSystemNotFoundException e) {
+               try {
+                  fileSystem = FileSystems.newFileSystem(i, Collections.emptyMap());
+               } catch (IOException e2) {
+                  throw new ParsingException(e);
+               }
+            }
+            path = fileSystem.getPath(filePath);
          }
       }
       return path;

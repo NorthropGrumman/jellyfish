@@ -9,6 +9,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.Unconvertable
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.eclipse.emf.ecore.EObject;
 
 import java.lang.reflect.Method;
@@ -64,15 +65,15 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
       Preconditions.checkArgument(
             offendingObject instanceof IUnwrappable
                   || offendingObject instanceof IUnwrappableCollection,
-            "cannot declare errors an object of type %s because that object does not wrap any XText types!",
-            object.getClass().getName());
+            "cannot declare errors on objects of type %s because that object does not wrap any XText types!",
+            offendingObject.getClass().getName());
 
       // Return a dynamic proxy of the wrapped object.  This allows us to "record" the methods the validator calls on
       // the object when declaring an issue.  Note the proxy will actually pass through to the wrapped object so the
       // actual call will complete as normal.  In this way, this is really a method interceptor.
       // Safe because this is a proxy object.
       return (S) Proxy.newProxyInstance(offendingObject.getClass().getClassLoader(),
-                                        offendingObject.getClass().getInterfaces(),
+                                        ClassUtils.getAllInterfaces(offendingObject.getClass()).toArray(new Class[0]),
                                         (p, m, a) -> interceptMethodCall(offendingObject, p, m, a, severity, message));
    }
 

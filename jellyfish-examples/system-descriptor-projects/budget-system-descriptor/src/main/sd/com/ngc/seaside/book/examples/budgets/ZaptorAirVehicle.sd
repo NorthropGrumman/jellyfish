@@ -1,0 +1,26 @@
+package com.ngc.seaside.book.examples.budgets
+
+import com.ngc.seaside.systemdescriptor.budget.Budget
+import com.ngc.seaside.book.examples.budgets.Engine
+import com.ngc.seaside.book.examples.budgets.Generator
+import com.ngc.seaside.book.examples.budgets.MissionComputer
+import com.ngc.seaside.book.examples.budgets.AttackMissionEquipmentPackage
+import com.ngc.seaside.book.examples.budgets.FlightControls
+
+model ZaptorAirVehicle {
+	
+	parts {
+		Engine engine
+		Generator generator
+		MissionComputer missionComputer
+		FlightControls flightControls
+		AttackMissionEquipmentPackage mep
+	}
+	
+	properties {
+		Budget weight
+		weight.max = "2500 kg"
+		weight.min = "0"
+		weight.givenBy = "weight"
+	}
+}

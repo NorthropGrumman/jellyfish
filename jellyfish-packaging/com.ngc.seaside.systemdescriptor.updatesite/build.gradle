@@ -55,6 +55,7 @@ dependencies {
    customPlugins "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
    customPlugins "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    customPlugins "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
+   customPlugins "com.ngc.seaside:jellyfish.cli.command.analyzebudget:$version"
 
    customPlugins "com.ngc.seaside:systemdescriptor.model.api:$version"
    customPlugins "com.ngc.seaside:systemdescriptor.service.api:$version"

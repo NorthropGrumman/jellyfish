@@ -8,6 +8,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
@@ -41,6 +42,8 @@ public class AbstractSystemDescriptorValidator implements ISystemDescriptorValid
          validateStep((IValidationContext<IScenarioStep>) context);
       } else if (o instanceof IEnumeration) {
          validateEnumeration((IValidationContext<IEnumeration>) context);
+      } else if (o instanceof IProperty) {
+         validateProperty((IValidationContext<IProperty>) context);
       }
    }
 
@@ -102,5 +105,11 @@ public class AbstractSystemDescriptorValidator implements ISystemDescriptorValid
     * Invoked to validate an {@code IPackage}.  Default implementation does nothing.
     */
    protected void validatePackage(IValidationContext<IPackage> context) {
+   }
+
+   /**
+    * Invoked to validate an {@code IProperty}.  Default implementation does nothing.
+    */
+   protected void validateProperty(IValidationContext<IProperty> context) {
    }
 }

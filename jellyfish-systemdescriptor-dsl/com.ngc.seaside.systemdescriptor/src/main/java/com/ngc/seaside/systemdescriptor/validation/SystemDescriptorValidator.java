@@ -86,4 +86,11 @@ public class SystemDescriptorValidator extends AbstractSystemDescriptorValidator
    public void info(String message, EObject source, EStructuralFeature feature) {
       super.info(message, source, feature);
    }
+
+   @Override
+   protected void checkIsFromCurrentlyCheckedResource(EObject object) {
+      // This was overriden so that the budget property validator could declare errors on
+      // properties of models that were parts of the original model being validated.
+   }
+
 }
