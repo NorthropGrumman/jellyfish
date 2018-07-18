@@ -38,7 +38,7 @@ class SystemDescriptorValidatorTest {
 	MockedValidator additionalValidator
 
 	@Before
-	def public void setup() {
+	def void setup() {
 		additionalValidator = new MockedValidator()
 		validator.addValidatorExtension(additionalValidator)
 	}
@@ -113,7 +113,7 @@ class SystemDescriptorValidatorTest {
 	}
 	
 	@After
-	def public void teardown() {
+	def void teardown() {
 		if(additionalValidator !== null) {
 			validator.removeValidatorExtension(additionalValidator)
 		}
@@ -121,9 +121,9 @@ class SystemDescriptorValidatorTest {
 
 	private static class MockedValidator implements IValidatorExtension {
 
-		private final Collection<EObject> validatedObjects = new ArrayList()
-		private String errorWhenFieldNamed = null;
-		private String warnWhenFieldNamed = null;
+		final Collection<EObject> validatedObjects = new ArrayList()
+		String errorWhenFieldNamed = null;
+		String warnWhenFieldNamed = null;
 
 		override validate(EObject source, ValidationHelper helper) {
 			validatedObjects.add(source);

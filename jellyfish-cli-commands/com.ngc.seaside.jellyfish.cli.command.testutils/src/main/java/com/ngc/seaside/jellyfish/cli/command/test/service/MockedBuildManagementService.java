@@ -6,7 +6,6 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
-import java.nio.file.Path;
 import java.util.Collection;
 
 public class MockedBuildManagementService implements IBuildManagementService {

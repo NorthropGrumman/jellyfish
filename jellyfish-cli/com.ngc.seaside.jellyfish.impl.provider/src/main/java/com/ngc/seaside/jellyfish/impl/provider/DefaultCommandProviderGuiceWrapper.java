@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Wraps the default command provider for use with Guice.
  */
 @Singleton
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class DefaultCommandProviderGuiceWrapper implements ICommandProvider<
       ICommandOptions,
       ICommand<ICommandOptions>,
@@ -88,9 +88,12 @@ public class DefaultCommandProviderGuiceWrapper implements ICommandProvider<
       delegate.removeCommand(command);
    }
 
+   @SuppressWarnings("unchecked")
    private void injectCommandsIfNeeded() {
       if (areCommandsInjected.compareAndSet(false, true)) {
-         commandProxies.forEach(delegate::addCommand);
+         for (ICommand proxy : commandProxies) {
+            delegate.addCommand(proxy);
+         }
       }
    }
 }

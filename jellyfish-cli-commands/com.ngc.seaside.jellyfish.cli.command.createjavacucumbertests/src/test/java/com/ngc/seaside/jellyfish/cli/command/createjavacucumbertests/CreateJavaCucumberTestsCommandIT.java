@@ -107,7 +107,6 @@ public class CreateJavaCucumberTestsCommandIT {
       command.activate();
    }
 
-   @SuppressWarnings("unchecked")
    private void setupModel(Path inputDirectory, String pkg, String name) {
       when(systemDescriptor.findModel(pkg + '.' + name)).thenReturn(Optional.of(model));
       when(model.getName()).thenReturn(name);
@@ -128,7 +127,6 @@ public class CreateJavaCucumberTestsCommandIT {
       when(packageService.getCucumberTestsPackageName(any(), eq(model)))
             .thenReturn(pkg + "." + name.toLowerCase() + ".tests");
 
-      @SuppressWarnings("rawtypes")
       EnumDto mockEnum = mock(EnumDto.class);
       when(generationService.getTransportTopicsDescription(any(), eq(model))).thenReturn(mockEnum);
       when(mockEnum.getFullyQualifiedName())

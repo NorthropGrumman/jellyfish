@@ -3,7 +3,6 @@ package com.ngc.seaside.jellyfish.service.analysis.impl.markdown;
 import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;

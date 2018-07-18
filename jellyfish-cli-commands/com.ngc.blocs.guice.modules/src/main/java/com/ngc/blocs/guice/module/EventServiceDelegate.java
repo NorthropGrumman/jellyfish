@@ -46,9 +46,10 @@ public class EventServiceDelegate implements IEventService {
       return delegate.addSubscriber(obj);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <T> boolean addSubscriber(IEventSubscriber<T> subscriber, IEventTopic<? extends T> topic,
-            @SuppressWarnings("unchecked") IEventTopic<? extends T>... optionalTopics) {
+            IEventTopic<? extends T>... optionalTopics) {
       return delegate.addSubscriber(subscriber, topic, optionalTopics);
    }
 
@@ -62,9 +63,10 @@ public class EventServiceDelegate implements IEventService {
       return delegate.removeSubscriber(obj);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <T> boolean removeSubscriber(IEventSubscriber<T> subscriber, IEventTopic<? extends T> topic,
-            @SuppressWarnings("unchecked") IEventTopic<? extends T>... optionalTopics) {
+            IEventTopic<? extends T>... optionalTopics) {
       return delegate.removeSubscriber(subscriber, topic, optionalTopics);
    }
 

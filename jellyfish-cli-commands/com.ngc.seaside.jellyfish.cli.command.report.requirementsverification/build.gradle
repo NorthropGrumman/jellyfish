@@ -12,8 +12,8 @@ dependencies {
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    compileOnly "org.osgi:osgi.core:$osgiVersion"
+    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
 
     testImplementation "junit:junit:$junitVersion"
@@ -23,4 +23,5 @@ dependencies {
     testImplementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
     testImplementation project(':jellyfish.service.requirements.impl.requirementsservice')
     testImplementation project(':jellyfish.service.feature.impl.featureservice')
+    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

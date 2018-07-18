@@ -81,6 +81,7 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
     * @param parameters optional parameters to include in the result
     * @return a {@code IJellyFishCommandOptions} with additional parameters.
     */
+   @SuppressWarnings("rawtypes")
    public static IJellyFishCommandOptions mergeWith(IJellyFishCommandOptions options,
                                                     IParameter parameter,
                                                     IParameter... parameters) {
@@ -105,6 +106,7 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
     * @param parameters additional parameters to include in the result
     * @return a {@code IJellyFishCommandOptions} with additional parameters.
     */
+   @SuppressWarnings("rawtypes")
    public static IJellyFishCommandOptions mergeWith(IJellyFishCommandOptions options,
                                                     Collection<IParameter> parameters) {
       if (options == null) {
@@ -130,6 +132,7 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
       return mergedOptions;
    }
 
+   @SuppressWarnings("rawtypes")
    private static boolean doesContainParameterNamed(String name, Collection<IParameter> parameters) {
       return parameters.stream().noneMatch(p -> p.getName().equals(name));
    }

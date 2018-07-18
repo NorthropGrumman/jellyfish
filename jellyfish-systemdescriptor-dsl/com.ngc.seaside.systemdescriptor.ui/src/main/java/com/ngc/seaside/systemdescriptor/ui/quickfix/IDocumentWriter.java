@@ -2,13 +2,7 @@ package com.ngc.seaside.systemdescriptor.ui.quickfix;
 
 import com.google.inject.ImplementedBy;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentRewriteSession;
-import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension4;
-import org.eclipse.text.undo.DocumentUndoManagerRegistry;
-import org.eclipse.text.undo.IDocumentUndoManager;
 
 /**
  * Interface for making changes to an {@link IDocument}.

@@ -90,7 +90,7 @@ public class PropertiesTest {
       assertEquals(value, optional.get());
    }
 
-   @SuppressWarnings({"unchecked"})
+   @SuppressWarnings({"unchecked", "rawtypes"})
    @Test
    public void testValidManyCaseDirectlyFromProperty() {
       /*
@@ -128,7 +128,7 @@ public class PropertiesTest {
       assertEquals(new ArrayList<>(values), new ArrayList<>(intValues));
    }
 
-   @SuppressWarnings({"unchecked"})
+   @SuppressWarnings({"unchecked", "rawtypes"})
    @Test
    public void testValidManyCase() {
       /*

@@ -182,7 +182,7 @@ public class SystemDescriptorFormatter implements IFormatter2 {
          if (f != null) {
             // Necessary to avoid NPEs due to how AbstractFormatter2 is
             // setup.
-            f.initalize(request);
+            f.initialize(request);
             try {
                f.format(object, document);
             } finally {

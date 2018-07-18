@@ -8,8 +8,8 @@ dependencies {
     
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    compileOnly "org.osgi:osgi.core:$osgiVersion"
+    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
@@ -17,4 +17,5 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
+    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

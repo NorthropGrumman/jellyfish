@@ -29,8 +29,8 @@ dependencies {
     implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
     implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
     implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    compileOnly "org.osgi:osgi.core:$osgiVersion"
+    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
@@ -124,6 +124,7 @@ dependencies {
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
 
 /**

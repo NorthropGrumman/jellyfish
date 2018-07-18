@@ -23,7 +23,7 @@ class SystemDescriptorStandaloneSetup extends SystemDescriptorStandaloneSetupGen
 	 * (this should almost always be true)
 	 * @return the resulting Injector
 	 */
-	def public Injector createInjector(Collection<Module> modules, boolean includeDefault) {
+	def Injector createInjector(Collection<Module> modules, boolean includeDefault) {
 		Preconditions.checkNotNull(modules, "modules may not be null!")
 		if (includeDefault) {
 			modules.add(new SystemDescriptorRuntimeModule())
@@ -39,7 +39,7 @@ class SystemDescriptorStandaloneSetup extends SystemDescriptorStandaloneSetupGen
 	 * (this should almost always be true)
 	 * @return the resulting Injector
 	 */
-	def public Injector createInjectorAndDoEMFRegistration(Collection<Module> modules, boolean includeDefault) {
+	def Injector createInjectorAndDoEMFRegistration(Collection<Module> modules, boolean includeDefault) {
 		TerminalsStandaloneSetup.doSetup()
 		val injector = createInjector(modules, includeDefault);
 		register(injector)

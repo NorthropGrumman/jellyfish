@@ -12,7 +12,6 @@ import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.
 import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration.currentJellyfishVersion;
 import static com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration.propertyNamed;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class DependenciesConfigurationTest {
 

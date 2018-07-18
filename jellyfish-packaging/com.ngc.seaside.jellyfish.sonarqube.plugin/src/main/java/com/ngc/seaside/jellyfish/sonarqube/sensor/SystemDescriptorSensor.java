@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
-import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxErrorRule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;

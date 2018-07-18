@@ -8,8 +8,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 /**
  * Wrapper for the analyze command.
@@ -21,7 +19,7 @@ public class AnalyzeCommandGuiceWrapper implements IJellyFishCommand {
    /**
     * Creates a new wrapper.
     */
-   @SuppressWarnings({"unchecked"})
+   @SuppressWarnings({"unchecked", "rawtypes"})
    @Inject
    public AnalyzeCommandGuiceWrapper(ILogService logService,
                                      IJellyFishCommandProvider jellyFishCommandProvider,

@@ -20,6 +20,7 @@ public interface IPropertyValues<T> extends Collection<T> {
    /**
     * An immutable instance of {@code IPropertyValues} that is empty and not set.
     */
+   @SuppressWarnings("rawtypes")
    IPropertyValues EMPTY_VALUES = new PropertiesUtil.SimplePropertyValues() {
       @Override
       public boolean isSet() {

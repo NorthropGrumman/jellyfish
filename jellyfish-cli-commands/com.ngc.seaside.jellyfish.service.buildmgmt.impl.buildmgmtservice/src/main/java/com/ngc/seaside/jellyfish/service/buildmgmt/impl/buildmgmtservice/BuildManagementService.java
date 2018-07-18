@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +47,8 @@ public class BuildManagementService implements IBuildManagementService {
     * The registered artifacts.
     */
    private final Set<DependenciesConfiguration.Artifact> registeredArtifacts =
-         Collections.synchronizedSet(new TreeSet<>(Comparator.comparing(d -> d.getGroupId() + d.getArtifactId())));
+            Collections.synchronizedSet(new TreeSet<>(Comparator
+                     .comparing((DependenciesConfiguration.Artifact d) -> d.getGroupId() + d.getArtifactId())));
 
    /**
     * The registered projects.
