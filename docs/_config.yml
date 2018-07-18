@@ -3,17 +3,16 @@ baseurl: '/CEACIDE/jellyfish'
 ceacide_latest_release_endpoint: 'https://github.ms.northgrum.com/api/v3/repos/CEACIDE/jellyfish/releases/latest'
 eclipse_linux_download_link: 'https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-photon-R-linux-gtk-x86_64.zip'
 eclipse_windows_download_link: 'https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/eclipse-dsl-photon-R-win32-x86_64.zip'
+safe: true
 
 defaults:
-  - scope:
-      path: 'books/*'
-      type: 'pages'
-    values:
-      layout: 'book'
-
   - scope:
       path: '' # all files in the project
     values:
       layout: 'default'
 
-markdown: kramdown
+  - scope:
+      path: 'books'
+      type: 'pages'
+    values:
+      layout: 'book'
