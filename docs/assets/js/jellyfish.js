@@ -20,7 +20,8 @@ var sdKeywords = [
       'given',
       'when',
       'then',
-      'properties'];
+      'properties',
+      'many'];
 
 function addClassesToSdLanguageExamples(rootElement) {
   // Only include code blocks that have no language specified.  This means they are
