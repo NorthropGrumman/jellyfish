@@ -213,3 +213,107 @@ something like this:
 | 1 | 9999.347 | 123444.5 | 33.71943 | 19.43223 | 13.03871 | 73.78143 | 28.03295 | 70.35227 | 44.99680078
 | 2 | 3194442 | -3194442 | 4487380 | 99.12156 | 52.96208 | 84.78288 | 5.413042 | 39.38792 | 81.13938798
 | 3 | 3194442 | -3194442 | -4487380 | 93.89776 | 28.81023 | 78.46608 | 38.39385 | 89.20086 | 68.58333996
+
+We can use a Background step to reference the CSV file when the tests for the feature file are executed.  The
+`DefendedAreaTrackPriorityService.calculateTrackPriority.feature` would look something like this:
+
+**DefendedAreaTrackPriorityService.calculateTrackPriority.feature**
+```plaintext
+Feature: DefendedAreaTrackPriorityService calculateTrackPriority
+ 
+  Background:
+    Given a csv file "com.ngc.seaside.threateval.DefendedAreaSystemTrackData.csv" of SystemTrack objects
+    And an absolute tolerance of 0.01
+ 
+  Scenario Outline: Defended Area Priority list.
+    Compute the priority by multiplying the priority calculated from the state vector/kinematics
+    to with the impactProbability of the impact assessment.
+ 
+    Given a SystemTrack object
+    And the identifier is <id>
+    And the StateVector of the SystemTrack object is retrieved
+    And an ImpactAssessment object
+    And the identifier is <id>
+    And the impactProbability is 1.0
+    When the SystemTrack object is received by the service
+    And the ImpactAssessment object is received by the service
+    Then the service should respond with a TrackPriority object
+    And the trackId should be <id>
+    And the priority should be <priority>
+    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+ 
+    Examples:
+      | id | priority |
+      |  0 |     0.50 |
+      |  1 |     0.25 |
+      |  2 |     1.00 |
+      |  3 |     0.75 |
+```
+
+The background step references the CSV file. Using the fully qualified name with the package.  The remaining tests can
+now reference tracks by using only the track ID which is also used to index the CSV data.  This makes it easier to
+initialize data into structures without having to include all this detail in the tests.  The remaining steps for the
+test closely follow the steps from the `EngagementTrackPriorityService`.  Once again, we can expand this test with
+additional cases:
+
+**DefendedAreaTrackPriorityService.calculateTrackPriority.feature**
+```plaintext
+Feature: DefendedAreaTrackPriorityService calculateTrackPriority
+ 
+  Background:
+    Given a csv file "com.ngc.seaside.threateval.DefendedAreaSystemTrackData.csv" of SystemTrack objects
+    And an absolute tolerance of 0.01
+ 
+  Scenario Outline: Defended Area Priority list.
+    Compute the priority by multiplying the priority calculated from the state vector/kinematics
+    to with the impactProbability of the impact assessment.
+ 
+    Given a SystemTrack object
+    And the identifier is <id>
+    And the StateVector of the SystemTrack object is retrieved
+    And an ImpactAssessment object
+    And the identifier is <id>
+    And the impactProbability is 1.0
+    When the SystemTrack object is received by the service
+    And the ImpactAssessment object is received by the service
+    Then the service should respond with a TrackPriority object
+    And the trackId should be <id>
+    And the priority should be <priority>
+    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+ 
+    Examples:
+      | id | priority |
+      |  0 |     0.50 |
+      |  1 |     0.25 |
+      |  2 |     1.00 |
+      |  3 |     0.75 |
+ 
+ 
+  Scenario Outline: Defended Area Priority list with variable impact probability.
+ 
+    Given a SystemTrack object
+    And the identifier is <id>
+    And the StateVector of the SystemTrack object is retrieved
+    And an ImpactAssessment object
+    And the identifier is <id>
+    And the impactProbability is <impactProbability>
+    When the SystemTrack object is received by the service
+    And the ImpactAssessment object is received by the service
+    Then the service should respond with a TrackPriority object
+    And the trackId should be <id>
+    And the priority should be <priority>
+    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+ 
+    Examples:
+      | id | impactProbability | priority |
+      |  0 |               1.0 |     0.50 |
+      |  1 |               0.5 |    0.125 |
+      |  2 |              0.25 |     0.25 |
+      |  3 |              0.75 |    .5625 |
+```
+
+# Conclusion
+We have only created features files for two services but the remaining feature files are created in the same way.  Note
+that a feature files for the `ThreatEvaluation` system itself can also be created.  These feature files are used to test
+perform automated tests with all the integrated components together.  Data that is needed for the test can be stored in
+files external to the feature files and referenced within a test step.
