@@ -1,5 +1,5 @@
 @import url("bootstrap-4.0.0/bootstrap.min.css");
-@import url("fontawesome-5.0.9/fontawesome-all.min.css");
+@import url("fontawesome-5.1.0/all.css");
 @import url("tango.css");
 
 /* Common rules */
@@ -24,12 +24,19 @@ h2 {
 }
 
 h3 {
-  font-weight: bold;
-  font-size: 12pt;
-  text-align: center;
-  background-color: #E3E4E5;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  font-size: 16pt;
+}
+
+code {
+  color: #0B559F;
+  font-size: 95%;
+}
+
+.stripe {
+  background-color: #324553;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
 }
 
 .github {
@@ -62,6 +69,33 @@ h3 {
   padding-right: 0;
 }
 
+.main.container > h1:first-child {
+  color: #FFFFFF;
+  background-color: #324553;
+  height: 65px;
+}
+
+pre .keyword,
+code .keyword {
+  color: #800F65;
+}
+
+/* Made SD code examples look decent. */
+div.highlighter-rouge span.p,
+div.highlighter-rouge span.k {
+  color: #000000;
+  font-weight: normal;
+}
+
+div.highlighter-rouge code span.sd-keyword {
+  color: #800F65;
+}
+
+#title-stripe {
+  height: 65px;
+}
+
+/* Rules for the header */
 #header {
   background-color: #FFFFFF;
 }
@@ -99,7 +133,8 @@ h3 {
   background-position-x: 18px;
 }
 
-#stripe {
+/* Index rules */
+#main-stripe {
   background-color: #324553;
   position: absolute;
   width: 100%;
@@ -139,7 +174,97 @@ h3 {
   padding: 4px;
 }
 
-pre .keyword,
-code .keyword {
-  color: #800F65;
+#index h3 {
+  font-weight: bold;
+  font-size: 12pt;
+  text-align: center;
+  background-color: #E3E4E5;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+/* Rules for books */
+#books .book-link {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: block;
+  width: 550px;
+}
+
+#books .book-link h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.book-cover-page .chapter-link {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: block;
+  width: 600px;
+}
+
+.book-cover-page .chapter-link .fa-bookmark {
+  margin-right: 6px;
+}
+
+.book #book-nav #prev {
+  text-align: right;
+}
+
+.book #book-nav #toc {
+  text-align: center;
+}
+
+.book #book-nav #next {
+  text-align: left;
+}
+
+.book pre {
+  border: 4px solid #E3E4E5;
+  border-radius: 0 0 10px 10px;
+  padding: 0.5rem;
+}
+
+.book img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.book pre.note code {
+  white-space: normal;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+.book .code-title,
+.book .note-title {
+  margin-bottom: 0;
+  background-color: #E3E4E5;
+  border: 1px solid #E3E4E5;
+  border-radius: 10px 10px 0 0;
+  padding: 0.25rem 0.5rem 0 0.5rem;
+}
+
+.book .note-title-info {
+  color: #004085;
+  background-color: #BEE5EB;
+  border-color: #BEE5EB;
+}
+
+.book pre.note-info {
+  color: #004085;
+  background-color: #D1ECF1;
+  border-color: #BEE5EB;
+}
+
+.book .note-title-warning {
+  color: #721c24;
+  background-color: #F5C6CB;
+  border-color: #F5C6CB;
+}
+
+.book pre.note-warning {
+  color: #721c24;
+  background-color: #F8D7DA;
+  border-color: #F5C6CB;
 }

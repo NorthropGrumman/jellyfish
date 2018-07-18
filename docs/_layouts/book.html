@@ -1,0 +1,62 @@
+---
+layout: default
+---
+{% include base.html %}
+<div id="title-stripe" class="stripe"></div>
+
+<div class="main container book">
+  <h1 class="text-nowrap">{{ page.title }}</h1>
+
+  {{ content }}
+
+  <hr/>
+  <div id="book-nav" class="row">
+    <div id="prev" class="col-4">
+      {% if page.prev-page %}
+      <a href="{{ safebase }}/books/{{ page.book-page }}/{{ page.prev-page }}.html">
+        <i class="fas fa-angle-left"></i>
+        {{ page.prev-title }}
+      </a>
+      {% endif %}
+    </div>
+    <div id="toc" class="col-4">
+      <a href="{{ safebase }}/docs.html" class="jf-btn-inline">
+        <i class="fas fa-book"></i>
+        <a href="{{ safebase }}/{{ page.book-page }}.html">{{ page.book-title }}</a>
+      </a>
+    </div>
+    <div id="next" class="col-4">
+      {% if page.next-page %}
+      <a href="{{ safebase }}/books/{{ page.book-page }}/{{ page.next-page }}.html">
+        {{ page.next-title }}
+        <i class="fas fa-angle-right"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // Make the tables have decent formatting.
+    $('table').addClass('table table-sm table-bordered');
+    $('table thead').addClass('thead-dark');
+    
+    // This makes the precending <p> of a <pre> tag the title of the code example.  This will only select elements
+    // that have a **bold** section.  This is how we mark titles for sub-sections in markdown.
+    $('p:has(+ div.highlighter-rouge):has(strong)').addClass('code-title');
+
+    // Handle notes in books.
+    $('p:has(+ pre code.language-note-info):has(strong)')
+      .addClass('note-title note-title-info')
+      .prepend('<i class="fas fa-info-circle"></i> ');
+    $('p:has(+ pre code.language-note-warning):has(strong)')
+      .addClass('note-title note-title-warning')
+      .prepend('<i class="fas fa-times-circle"></i> ');
+    $('pre:has(code.language-note-info)').addClass('note note-info')
+    $('pre:has(code.language-note-warning)').addClass('note note-warning')
+
+    // Highlight the SD code examples.  
+    addClassesToSdLanguageExamples($('div.book'));
+  })
+</script>
