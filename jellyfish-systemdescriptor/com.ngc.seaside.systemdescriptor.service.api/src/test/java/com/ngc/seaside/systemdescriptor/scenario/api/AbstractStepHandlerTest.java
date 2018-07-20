@@ -43,13 +43,13 @@ public class AbstractStepHandlerTest {
    @Test
    public void testDoesRegisterVerbs() {
       assertEquals("did not store past tense!",
-                   handler.PAST.getVerb(),
+                   TestableStepHandler.PAST.getVerb(),
                    handler.getVerbs().get(VerbTense.PAST_TENSE).getVerb());
       assertEquals("did not store present tense!",
-                   handler.PRESENT.getVerb(),
+                   TestableStepHandler.PRESENT.getVerb(),
                    handler.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb());
       assertEquals("did not store future tense!",
-                   handler.FUTURE.getVerb(),
+                   TestableStepHandler.FUTURE.getVerb(),
                    handler.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb());
    }
 
@@ -66,9 +66,9 @@ public class AbstractStepHandlerTest {
    @Test
    public void testOnlyValidateStepIfStepUsesCorrectVerb() {
       when(step.getKeyword())
-            .thenReturn(handler.PAST.getVerb())
-            .thenReturn(handler.PRESENT.getVerb())
-            .thenReturn(handler.FUTURE.getVerb())
+            .thenReturn(TestableStepHandler.PAST.getVerb())
+            .thenReturn(TestableStepHandler.PRESENT.getVerb())
+            .thenReturn(TestableStepHandler.FUTURE.getVerb())
             .thenReturn("somethingElse");
 
       handler.validateStep(validationContext);

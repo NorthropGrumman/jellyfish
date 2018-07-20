@@ -9,12 +9,13 @@ dependencies {
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    compileOnly "org.osgi:osgi.core:$osgiVersion"
+    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
     runtimeOnly project(':jellyfish.cli.command.help')
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

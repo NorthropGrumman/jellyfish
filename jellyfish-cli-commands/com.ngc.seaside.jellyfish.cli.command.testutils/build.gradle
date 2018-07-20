@@ -11,6 +11,8 @@ dependencies {
    implementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
    implementation "org.mockito:mockito-core:$mockitoVersion"
    implementation "junit:junit:$junitVersion"
+   compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
    runtimeOnly "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
+   testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

@@ -56,6 +56,7 @@ public class HelpCommandGuiceWrapper implements ICommand<ICommandOptions> {
       delegate.run(commandOptions);
    }
 
+   @SuppressWarnings("rawtypes")
    private void injectCommandsIfNeeded() {
       if (areCommandsInjected.compareAndSet(false, true)) {
          TypeLiteral<Set<IJellyFishCommand>> jfCommandsType = new TypeLiteral<Set<IJellyFishCommand>>() {

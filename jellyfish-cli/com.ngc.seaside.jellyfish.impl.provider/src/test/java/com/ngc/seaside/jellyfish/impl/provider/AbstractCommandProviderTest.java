@@ -6,7 +6,6 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.junit.Before;

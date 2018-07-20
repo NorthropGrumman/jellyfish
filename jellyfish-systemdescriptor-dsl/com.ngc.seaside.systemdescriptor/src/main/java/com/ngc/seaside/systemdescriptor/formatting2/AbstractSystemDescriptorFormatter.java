@@ -21,7 +21,7 @@ public class AbstractSystemDescriptorFormatter extends AbstractFormatter2 {
    }
 
    @Override
-   public void initalize(FormatterRequest request) {
+   public void initialize(FormatterRequest request) {
       // Increase visibility of this method.
       super.initialize(request);
    }

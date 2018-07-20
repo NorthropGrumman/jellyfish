@@ -1,9 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import com.google.common.io.LineProcessor;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
@@ -11,9 +7,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
-import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,11 +15,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This class provides the implementation of the validate command.

@@ -118,7 +118,7 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
       runCommands(parseCommands(getOptions().getParameters().getParameter(REPORTS_PARAMETER_NAME).getStringValue()));
    }
 
-   @SuppressWarnings({"unchecked", "raw"})
+   @SuppressWarnings({"unchecked", "rawtypes"})
    private void runCommands(Collection<String> commands) {
       for (String command : commands) {
          ICommandProvider provider = getProviderForCommand(command);

@@ -119,6 +119,7 @@ public class ProxyingValidationContext<T> implements IValidationContext<T> {
       return method.invoke(originalObject, args);
    }
 
+   @SuppressWarnings("rawtypes")
    private static Collection<? extends EObject> getEObjects(Object o) {
       if (o instanceof IUnwrappable) {
          return Collections.singletonList(((IUnwrappable) o).unwrap());

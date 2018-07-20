@@ -1,15 +1,10 @@
 package com.ngc.seaside.systemdescriptor.ui.quickfix.imports;
 
 import com.google.inject.ImplementedBy;
-import com.google.inject.Inject;
-
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
 
-import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.ITextRegion;
-import org.eclipse.xtext.util.TextRegion;
 
 /**
  * Interface for determining the text location of regions for imports in a package.

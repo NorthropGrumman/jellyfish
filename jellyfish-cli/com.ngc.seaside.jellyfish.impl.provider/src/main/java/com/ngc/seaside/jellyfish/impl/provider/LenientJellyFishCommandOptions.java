@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 
 public class LenientJellyFishCommandOptions extends DefaultJellyFishCommandOptions {
 

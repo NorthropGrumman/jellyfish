@@ -278,7 +278,6 @@ public interface IProperties extends INamedChildCollection<IProperties, IPropert
     * @param fieldNames   the optional names of the fields in the nested type
     * @return the values of the property which may not bet set
     */
-   @SuppressWarnings({"unchecked"})
    default IPropertyValues<IPropertyValue> resolveValues(String propertyName, String... fieldNames) {
       return PropertiesUtil.resolveValues(this,
                                           p -> true,

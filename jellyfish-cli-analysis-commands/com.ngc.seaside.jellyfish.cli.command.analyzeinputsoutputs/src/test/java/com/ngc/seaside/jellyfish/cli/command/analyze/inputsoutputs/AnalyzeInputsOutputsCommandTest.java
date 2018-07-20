@@ -56,7 +56,6 @@ public class AnalyzeInputsOutputsCommandTest {
 
       command.analyzeModel(model);
 
-      @SuppressWarnings({"unchecked"})
       ArgumentCaptor<SystemDescriptorFinding<?>> captor = ArgumentCaptor.forClass(SystemDescriptorFinding.class);
       verify(analysisService).addFinding(captor.capture());
       assertNotNull("message not set!",

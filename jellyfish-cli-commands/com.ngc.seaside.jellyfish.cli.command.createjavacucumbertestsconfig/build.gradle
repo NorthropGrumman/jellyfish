@@ -9,8 +9,8 @@ dependencies {
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "com.ngc.blocs:service.api:$blocsVersion"
-   implementation "org.osgi:osgi.core:$osgiVersion"
-   implementation "org.osgi:osgi.enterprise:$osgiVersion"
+   compileOnly "org.osgi:osgi.core:$osgiVersion"
+   compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
    implementation "commons-io:commons-io:$commonsIOVersion"
    implementation "commons-lang:commons-lang:$commonsLangVersion"
    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
@@ -20,4 +20,5 @@ dependencies {
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

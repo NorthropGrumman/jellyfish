@@ -6,5 +6,5 @@ dependencies {
    implementation "com.ngc.blocs:service.thread.impl.common.threadservice:$blocsVersion"
    implementation "com.ngc.blocs:service.event.impl.common.eventservice:$blocsVersion"
    implementation "com.ngc.blocs:service.notification.impl.common.notificationservice:$blocsVersion"
+   compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
-

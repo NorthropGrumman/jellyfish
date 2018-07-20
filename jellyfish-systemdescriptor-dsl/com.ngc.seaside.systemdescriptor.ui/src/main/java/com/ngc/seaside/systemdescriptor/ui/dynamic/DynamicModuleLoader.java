@@ -11,6 +11,7 @@ import org.osgi.framework.BundleException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,12 +84,15 @@ public class DynamicModuleLoader {
          while (line != null) {
             try {
                // Create a new instance of the module and add it to the list.
-               modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).newInstance());
+               modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).getConstructor()
+                        .newInstance());
                LOGGER.debug(String.format(
                      "Including module %s from bundle %s in Guice configuration.",
                      line,
                      bundle.getSymbolicName()));
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException
+                     | InvocationTargetException | IllegalArgumentException | NoSuchMethodException
+                     | SecurityException e) {
                LOGGER.error(String.format(
                      "Failed to include module %s from bundle %s in Guice configuration due to exception.",
                      line,

@@ -5,8 +5,6 @@ dependencies {
    api "com.ngc.blocs:api:$blocsVersion"
    api "com.ngc.blocs:service.api:$blocsVersion"
 
-   implementation "org.osgi:osgi.core:$osgiVersion"
-   implementation "org.osgi:osgi.enterprise:$osgiVersion"
    implementation "com.google.guava:guava:$guavaVersion"
    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
    implementation "commons-io:commons-io:$commonsIOVersion"

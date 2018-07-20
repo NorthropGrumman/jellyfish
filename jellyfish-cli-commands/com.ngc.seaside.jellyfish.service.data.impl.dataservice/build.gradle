@@ -4,9 +4,10 @@ dependencies {
     implementation "com.ngc.blocs:service.api:$blocsVersion"
 
     implementation "com.google.inject:guice:$guiceVersion"
-    implementation "org.osgi:osgi.core:$osgiVersion"
-    implementation "org.osgi:osgi.enterprise:$osgiVersion"
+    compileOnly "org.osgi:osgi.core:$osgiVersion"
+    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
