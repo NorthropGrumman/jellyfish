@@ -61,7 +61,7 @@ pipeline {
                sh '../gradlew clean ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
-        }
+         }
       }
 
       stage('Build jellyfish-cli') {
@@ -74,26 +74,20 @@ pipeline {
       }
 
       stage('Build jellyfish commands') {
-         parallel {
-            stage('Build jellyfish-cli-commands') {
-               steps {
-                  dir('jellyfish-cli-commands') {
-                     sh '../gradlew clean ci --parallel'
-                     junit '**/build/test-results/test/*.xml'
-                  }
+         stage('Build jellyfish-cli-commands') {
+            steps {
+               dir('jellyfish-cli-commands') {
+                  sh '../gradlew clean ci --parallel'
+                  junit '**/build/test-results/test/*.xml'
                }
-            }
-            stage('Build jellyfish-cli-analysis-commands') {
-               steps {
-                  dir('jellyfish-cli-analysis-commands') {
-                     sh '../gradlew clean ci --parallel'
-                     junit '**/build/test-results/test/*.xml'
-                  }
+               dir('jellyfish-cli-analysis-commands') {
+                  sh '../gradlew clean ci --parallel'
+                  junit '**/build/test-results/test/*.xml'
                }
             }
          }
       }
-      
+
 
       stage('Build jellyfish-packaging') {
          steps {
@@ -138,7 +132,7 @@ pipeline {
             dir('jellyfish-cli-commands') {
                sh '../gradlew populateM2repo'
             }
-			dir('jellyfish-cli-analysis-commands') {
+            dir('jellyfish-cli-analysis-commands') {
                sh '../gradlew populateM2repo'
             }
             dir('jellyfish-packaging') {
@@ -201,7 +195,7 @@ pipeline {
                dir('jellyfish-cli-commands') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
-			   dir('jellyfish-cli-analysis-commands') {
+               dir('jellyfish-cli-analysis-commands') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-packaging') {
