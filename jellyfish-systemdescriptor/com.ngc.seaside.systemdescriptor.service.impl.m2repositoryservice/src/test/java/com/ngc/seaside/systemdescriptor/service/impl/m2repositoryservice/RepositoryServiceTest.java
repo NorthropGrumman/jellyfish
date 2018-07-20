@@ -1,10 +1,13 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,9 +16,10 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RepositoryServiceTest {
 
    private Path repository = Paths.get("src", "test", "resources", "repository");
@@ -24,10 +28,16 @@ public class RepositoryServiceTest {
 
    @Before
    public void setup() {
+      ILogService logService = new PrintStreamLogService();
+      GradlePropertiesService propertiesService = new GradlePropertiesService();
+      propertiesService.setLogService(logService);
+      propertiesService.activate();
+
       service = spy(RepositoryService.class);
       service.setLogService(new PrintStreamLogService());
-      when(service.findMavenLocal()).thenReturn(Optional.of(repository));
-      when(service.findRemoteNexus()).thenReturn(Optional.empty());
+      service.setPropertiesService(propertiesService);
+      doReturn(Optional.of(repository)).when(service).findMavenLocal();
+      doReturn(Optional.empty()).when(service).findRemoteNexus();
       service.activate();
    }
 

@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
@@ -41,7 +40,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +48,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -62,8 +59,9 @@ import java.util.stream.Collectors;
 @Component(service = IRepositoryService.class)
 public class RepositoryService implements IRepositoryService {
 
-   static final String GRADLE_USER_HOME = "GRADLE_USER_HOME";
    static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
+   static final String SYSTEM_PROPERTY_PREFIX = "systemProp.";
+   private static final String TRUST_STORE_PROPERTY = "javax.net.ssl.trustStore";
 
    // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
    private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
@@ -77,12 +75,12 @@ public class RepositoryService implements IRepositoryService {
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
    private static final String USER_HOME_PROPERTY_NAME = "user.home";
-   private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
    private ILogService logService;
    private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
    private RepositorySystem repositorySystem;
    private RepositorySystemSession session;
+   private GradlePropertiesService propertiesService;
 
    @Override
    public Path getArtifact(String identifier) {
@@ -141,7 +139,6 @@ public class RepositoryService implements IRepositoryService {
                                  && Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId())
                                  && Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier())
                                  && Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
-
                })
                .peek(artifactResult -> {
                   if (artifactResult.isMissing() || !artifactResult.isResolved()) {
@@ -199,6 +196,11 @@ public class RepositoryService implements IRepositoryService {
          throw new RepositoryServiceException("Unable to find any local or remote repositories");
       }
 
+      Optional<String> trustStore = propertiesService.getProperty(SYSTEM_PROPERTY_PREFIX + TRUST_STORE_PROPERTY);
+      if (trustStore.isPresent() && System.getProperty(TRUST_STORE_PROPERTY) == null) {
+         System.setProperty(TRUST_STORE_PROPERTY, trustStore.get());
+      }
+
       this.session = session;
 
       logService.trace(getClass(), "activated");
@@ -212,87 +214,48 @@ public class RepositoryService implements IRepositoryService {
       logService.trace(getClass(), "deactivated");
    }
 
-   /**
-    * Sets log service.
-    */
-   @Reference(unbind = "removeLogService")
+   @Reference
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
-   /**
-    * Remove log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
+   @Reference
+   public void setPropertiesService(GradlePropertiesService ref) {
+      this.propertiesService = ref;
+   }
+
+   public void removePropertiesService(GradlePropertiesService ref) {
+      setPropertiesService(null);
+   }
+
    /**
     * Returns a remote repository to Nexus. This repository is found using the variable {@value #NEXUS_CONSOLIDATED}
-    * with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These
-    * variables are
-    * determined using the rules in the following order:
-    * <ol>
-    * <li>From {@link System#getProperty(String)}</li>
-    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the current working directory</li>
-    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located from the property {@value #GRADLE_USER_HOME}
-    * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the {@value #USER_HOME_PROPERTY_NAME}/.gradle</li>
-    * <li>From {@link System#getenv(String)}</li>
-    * </ol>
+    * with optionally {@value #NEXUS_USERNAME} and {@value #NEXUS_PASSWORD}. These variables are resolved using
+    * {@link GradlePropertiesService#getProperty(String)}.
     *
     * @return the remote repository to Nexus, or {@link Optional#empty()} if it cannot be determined
     */
    Optional<RemoteRepository> findRemoteNexus() {
-      Properties properties = new Properties();
-      String gradleUserHome = System.getProperty(GRADLE_USER_HOME, System.getenv(GRADLE_USER_HOME));
-      Path gradlePropertiesFile = null;
-      if (gradleUserHome == null) {
-         String userHome = System.getProperty(USER_HOME_PROPERTY_NAME);
-         if (userHome != null) {
-            gradlePropertiesFile = Paths.get(userHome, ".gradle", GRADLE_PROPERTIES_FILENAME);
-         }
-      } else {
-         gradlePropertiesFile = Paths.get(gradleUserHome, GRADLE_PROPERTIES_FILENAME);
-      }
-      if (gradlePropertiesFile != null && Files.isRegularFile(gradlePropertiesFile)) {
-         try {
-            properties.load(Files.newBufferedReader(gradlePropertiesFile));
-         } catch (IOException e) {
-            logService.warn(RepositoryService.class,
-                            "Unable to load " + gradlePropertiesFile + ": " + e.getMessage());
-         }
-      }
-      Path cwdPropertiesFile = Paths.get(GRADLE_PROPERTIES_FILENAME);
-      if (Files.isRegularFile(cwdPropertiesFile)) {
-         try {
-            properties.load(Files.newBufferedReader(cwdPropertiesFile));
-         } catch (IOException e) {
-            logService.warn(RepositoryService.class, "Unable to load " + cwdPropertiesFile + ": " + e.getMessage());
-         }
-      }
+      Optional<String> nexusConsolidated = propertiesService.getProperty(NEXUS_CONSOLIDATED);
+      Optional<String> nexusUsername = propertiesService.getProperty(NEXUS_USERNAME);
+      Optional<String> nexusPassword = propertiesService.getProperty(NEXUS_PASSWORD);
 
-      String nexusConsolidated = System.getProperty(NEXUS_CONSOLIDATED,
-                                                    properties.getProperty(NEXUS_CONSOLIDATED,
-                                                                           System.getenv(NEXUS_CONSOLIDATED)));
-      String nexusUsername = System.getProperty(NEXUS_USERNAME,
-                                                properties.getProperty(NEXUS_USERNAME, System.getenv(NEXUS_USERNAME)));
-      String nexusPassword = System.getProperty(NEXUS_PASSWORD,
-                                                properties.getProperty(NEXUS_PASSWORD, System.getenv(NEXUS_PASSWORD)));
-
-      if (nexusConsolidated == null) {
-         logService.warn(RepositoryService.class,
-                         "Unable to find " + NEXUS_CONSOLIDATED
-                               + " from system properties, " + GRADLE_PROPERTIES_FILENAME
-                               + ", or system environment variables");
+      if (!nexusConsolidated.isPresent()) {
+         logService.warn(RepositoryService.class, "Unable to find value for " + NEXUS_CONSOLIDATED);
          return Optional.empty();
       }
 
-      RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated);
-      if (nexusUsername != null && nexusPassword != null) {
-         builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername)
-                                         .addPassword(nexusPassword)
-                                         .build());
+      RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated.get());
+      if (nexusUsername.isPresent() && nexusPassword.isPresent()) {
+         builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername.get())
+                  .addPassword(nexusPassword.get())
+                  .build());
       }
+
       return Optional.of(builder.build());
    }
 

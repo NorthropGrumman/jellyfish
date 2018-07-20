@@ -18,8 +18,9 @@ public class RepositoryServiceGuiceWrapper implements IRepositoryService {
    private final RepositoryService delegate = new RepositoryService();
 
    @Inject
-   public RepositoryServiceGuiceWrapper(ILogService logService) {
+   public RepositoryServiceGuiceWrapper(ILogService logService, GradlePropertiesService propertiesService) {
       delegate.setLogService(logService);
+      delegate.setPropertiesService(propertiesService);
       delegate.activate();
    }
 
