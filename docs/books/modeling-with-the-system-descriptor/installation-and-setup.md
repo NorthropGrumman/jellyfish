@@ -86,6 +86,16 @@ C:/java/jdk1.8.xxx/bin/javaw.exe
 --add-modules=ALL-SYSTEM
 ```
 
+## Cleaning the Project
+Sometimes, Eclipse will show errors in files even if the files are syntacticallyd valid.  This is expecially true when
+importing other types of data types.  When this happens,
+1. Select **Project** -> **Clean**.
+1. Select **Clean all projects**.
+1. Clock **Clean**.
+1. After cleaning, right click a project in the Package Explorer and select **Refresh**.
+
+This should remove the errors.  If all else fails, restart Eclipse.
+
 # Creating an Initial Project
 Once Eclipse has a restarted an initial project can be created to make sure the installation was successful.  Make sure
 the Package Explorer window is visible and follow the steps below.  If for some reason Package Explorer isn't shown

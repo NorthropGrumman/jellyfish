@@ -58,14 +58,13 @@ the `src/test/gherkin` directory within the package/directory structure of `com.
 name of the file is `EngagementTrackPriorityService.calculateTrackPriority.feature`.
 
 **EngagementTrackPriorityService.calculateTrackPriority.feature**
-```plaintext
+```gherkin
 Feature: EngagementTrackPriorityService calculateTrackPriority
  
   Background:
     Given an absolute tolerance of 0.01
          
-  Scenario Outline: Priority tests.
-    The track priority should be calculated as:
+  Scenario Outline: Priority tests. The track priority should be calculated as
     priority = 1.0 - probabilityOfKill
  
     Given a TrackEngagementStatus object
@@ -74,7 +73,7 @@ Feature: EngagementTrackPriorityService calculateTrackPriority
     And the probabilityOfKill is <probability>
     When the TrackEngagementStatus object is received by the service
     Then the service should respond with a TrackPriority object
-    And the trackId should be <id>
+    And the trackId should be <id> 
     And the sourceId should be "service:com.ngc.seaside.archipelago.threat.EngagementTrackPriorityService"
     And the priority should be <priority>
  
@@ -90,14 +89,14 @@ The first test scenario is a scenario output that sets up some input and defines
 scenario that tests for invalid input data to define how the service handles invalid inputs:
 
 **EngagementTrackPriorityService.calculateTrackPriority.feature**
-```
+```gherkin
 Feature: EngagementTrackPriorityService calculateTrackPriority
  
   Background:
     Given an absolute tolerance of 0.01
          
   Scenario Outline: Priority tests.
-    The track priority should be calculated as:
+    The track priority should be calculated as
     priority = 1.0 - probabilityOfKill
  
     Given a TrackEngagementStatus object
@@ -218,7 +217,7 @@ We can use a Background step to reference the CSV file when the tests for the fe
 `DefendedAreaTrackPriorityService.calculateTrackPriority.feature` would look something like this:
 
 **DefendedAreaTrackPriorityService.calculateTrackPriority.feature**
-```plaintext
+```gherkin
 Feature: DefendedAreaTrackPriorityService calculateTrackPriority
  
   Background:
@@ -257,7 +256,7 @@ test closely follow the steps from the `EngagementTrackPriorityService`.  Once a
 additional cases:
 
 **DefendedAreaTrackPriorityService.calculateTrackPriority.feature**
-```plaintext
+```gherkin
 Feature: DefendedAreaTrackPriorityService calculateTrackPriority
  
   Background:
