@@ -12,6 +12,8 @@ pipeline {
       // don't want to remove a snapshot another build are just installed but that other build isn't finish yet (ie,
       // the build needs to reference the snapshot).  This happens if a pipeline has multiple invocations of Gradle.
       lock resource: 'mavenLocal'
+      buildDiscarder(logRotator(numToKeepStr: '15'))
+      timeout(time: 60, unit: 'MINUTES')
    }
 
    parameters {
@@ -148,27 +150,25 @@ pipeline {
          }
       }
 
-      stage("Nexus Lifecycle") {
+      stage('Nexus Lifecycle') {
          when {
             expression { params.nexusLifecycle }
          }
          steps {
             // Evaluate the items for security, license, and other issues via Nexus Lifecycle.
-            script {
-               def policyEvaluationResult = nexusPolicyEvaluation(
-                     failBuildOnNetworkError: false,
-                     iqApplication: 'noalert',
-                     iqStage: 'build',
-                     jobCredentialsId: 'NexusLifecycle'
-               )
-               currentBuild.result = 'SUCCESS'
-            }
-            withCredentials([usernamePassword(credentialsId: 'NexusLifecycle', passwordVariable: 'iqPassword',
-                                              usernameVariable: 'iqUsername')]) {
-               sh 'chmod +x downloadNexusLifecycleReport.sh'
-               sh 'mkdir -p build'
-               sh "curl ${BUILD_URL}consoleText >> build/jenkinsPipeline.log"
-               sh "./downloadNexusLifecycleReport.sh build/jenkinsPipeline.log build/ \$iqUsername \$iqPassword"
+            withCredentials([usernamePassword(credentialsId: 'ngc-nexus-lifecycle-pipelines',
+                                              passwordVariable: 'lifecyclePassword',
+                                              usernameVariable: 'lifecycleUsername')]) {
+               script {
+                  def policyEvaluationResult = nexusPolicyEvaluation(
+                        failBuildOnNetworkError: false,
+                        iqApplication: 'jellyfish',
+                        iqStage: 'build',
+                        jobCredentialsId: 'ngc-nexus-lifecycle-pipelines'
+                  )
+                  sh 'mkdir -p build'
+                  sh "curl -s -S -L -k -u \"\$lifecycleUsername:\$lifecyclePassword\" '${policyEvaluationResult.applicationCompositionReportUrl}/pdf' > build/Nexus-Lifecycle-Report.pdf"
+               }
             }
          }
       }
