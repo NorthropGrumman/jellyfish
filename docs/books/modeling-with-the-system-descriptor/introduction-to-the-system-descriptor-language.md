@@ -9,7 +9,7 @@ next-page: installation-and-setup
 
 The System Descriptor (SD) is a Architecture-as-Code construct modeled after the DevOps Infrastructure-as-Code paradigm
 that streamlines flow from Development to Operations.  The System Descriptor streamlines flow from System Engineering to
-Development.  The System Descriptor is a collection of machine and human readable plain-text files that will enable new
+Development.  The System Descriptor is a collection of machine and human readable plain-text files that enables new
 constructs for maintaining vertical (i.e., its top-down structure) and horizontal (i.e., how components interact with
 one another) traceability, architecture and design quality assessment, and automation of system acceptance test. This is
 all to increase predictability and reduce risk within a small-batch Agile program execution environments.
