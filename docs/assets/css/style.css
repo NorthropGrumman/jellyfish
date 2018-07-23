@@ -32,6 +32,11 @@ code {
   font-size: 95%;
 }
 
+blockquote {
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
+
 .stripe {
   background-color: #324553;
   position: absolute;
@@ -89,6 +94,12 @@ div.highlighter-rouge span.k {
 
 div.highlighter-rouge code span.sd-keyword {
   color: #800F65;
+}
+
+/* For Gherkin.*/
+div.highlighter-rouge span.nf {
+  color: #204a87;
+  font-weight: bold;
 }
 
 #title-stripe {
