@@ -2,6 +2,7 @@ package com.ngc.seaside.systemdescriptor.model.impl.basic.model.link;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
@@ -9,6 +10,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.properties.Proper
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Implements the IModelLink interface.  Maintains the source of the link and the target of the link.
@@ -56,6 +58,12 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    }
 
    @Override
+   public void traverseLinkSourceExpression(Consumer<IModelReferenceField> linkVisitor) {
+      // These methods aren't supported for the basic impl.
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
    public T getTarget() {
       return target;
    }
@@ -64,6 +72,12 @@ public class ModelLink<T extends IReferenceField> implements IModelLink<T> {
    public IModelLink<T> setTarget(T target) {
       this.target = target;
       return this;
+   }
+
+   @Override
+   public void traverseLinkTargetExpression(Consumer<IModelReferenceField> linkVisitor) {
+      // These methods aren't supported for the basic impl.
+      throw new UnsupportedOperationException("not implemented");
    }
 
    @Override

@@ -2,11 +2,13 @@ package com.ngc.seaside.systemdescriptor.model.impl.view;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class AggregatedLinkView<T extends IReferenceField> implements IModelLink<T> {
 
@@ -66,6 +68,11 @@ public class AggregatedLinkView<T extends IReferenceField> implements IModelLink
    }
 
    @Override
+   public void traverseLinkSourceExpression(Consumer<IModelReferenceField> linkVisitor) {
+      wrapped.traverseLinkSourceExpression(linkVisitor);
+   }
+
+   @Override
    public T getTarget() {
       return target;
    }
@@ -75,6 +82,11 @@ public class AggregatedLinkView<T extends IReferenceField> implements IModelLink
       wrapped.setTarget(target);
       this.target = doGetTarget();
       return this;
+   }
+
+   @Override
+   public void traverseLinkTargetExpression(Consumer<IModelReferenceField> linkVisitor) {
+      wrapped.traverseLinkTargetExpression(linkVisitor);
    }
 
    @Override

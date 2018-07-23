@@ -8,9 +8,11 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -164,5 +166,59 @@ public class SystemDescriptors {
       traverseRefinementHierarchy(a, hierarchyOfA::add);
       traverseRefinementHierarchy(b, hierarchyOfB::add);
       return !Sets.intersection(hierarchyOfA, hierarchyOfB).isEmpty();
+   }
+
+   /**
+    * Gets the part or requirement field that is referenced in the source of the link.  If the link's source does not
+    * reference a part or requirement field of the model that contains the link, the optional is empty.  Use {@link
+    * #isPart(IModelReferenceField)} and {@link #isRequired(IModelReferenceField)} to determine if the returned field is
+    * a part or requirement.
+    *
+    * @param link the link whose referenced source field should be returned
+    * @return the field that is referenced in the source of the link or an empty optional if the link's source does not
+    * reference a field
+    */
+   public static Optional<IModelReferenceField> getReferencedFieldOfLinkSource(IModelLink<?> link) {
+      if (link == null) {
+         throw new NullPointerException("link may not be null!");
+      }
+      RecordingLinkConsumer consumer = new RecordingLinkConsumer();
+      link.traverseLinkSourceExpression(consumer);
+      return Optional.ofNullable(consumer.field);
+   }
+
+   /**
+    * Gets the part or requirement field that is referenced in the target of the link.  If the link's target does not
+    * reference a part or requirement field of the model that contains the link, the optional is empty.  Use {@link
+    * #isPart(IModelReferenceField)} and {@link #isRequired(IModelReferenceField)} to determine if the returned field is
+    * a part or requirement.
+    *
+    * @param link the link whose referenced target field should be returned
+    * @return the field that is referenced in the target of the link or an empty optional if the link's target does not
+    * reference a field
+    */
+   public static Optional<IModelReferenceField> getReferencedFieldOfLinkTarget(IModelLink<?> link) {
+      if (link == null) {
+         throw new NullPointerException("link may not be null!");
+      }
+      RecordingLinkConsumer consumer = new RecordingLinkConsumer();
+      link.traverseLinkTargetExpression(consumer);
+      return Optional.ofNullable(consumer.field);
+   }
+
+   /**
+    * Records the field field the consumer is invoked with.
+    */
+   private static class RecordingLinkConsumer implements Consumer<IModelReferenceField> {
+
+      /**
+       * The first field the consumer was invoked with or {@code null} if the consumer was not invoked.
+       */
+      IModelReferenceField field;
+
+      @Override
+      public void accept(IModelReferenceField field) {
+         this.field = this.field == null ? field : this.field;
+      }
    }
 }
