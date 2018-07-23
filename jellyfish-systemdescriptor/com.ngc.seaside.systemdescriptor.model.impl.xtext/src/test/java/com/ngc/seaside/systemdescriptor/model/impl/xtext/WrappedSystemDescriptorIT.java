@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
@@ -54,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.json.JsonObject;
@@ -63,6 +65,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WrappedSystemDescriptorIT {
@@ -344,6 +350,19 @@ public class WrappedSystemDescriptorIT {
       assertEquals("link target not correct!",
                    wrapped.findModel("clocks.models", "Alarm").get().getInputs().getByName("alarmTimes").get(),
                    dataLink.getTarget());
+
+      Consumer<IModelReferenceField> linkVisitor = mock(Consumer.class);
+      dataLink.traverseLinkSourceExpression(linkVisitor);
+      verify(linkVisitor, never()).accept(any());
+      assertFalse("source field of link should not be present!",
+                  SystemDescriptors.getReferencedFieldOfLinkSource(dataLink).isPresent());
+
+      linkVisitor = mock(Consumer.class);
+      dataLink.traverseLinkTargetExpression(linkVisitor);
+      verify(linkVisitor).accept(model.get().getParts().getByName("alarm").get());
+      assertEquals("target field of link returned by SystemDescriptors.getReferencedFieldOfLinkSource() is wrong!",
+                   model.get().getParts().getByName("alarm").get(),
+                   SystemDescriptors.getReferencedFieldOfLinkTarget(dataLink).get());
    }
 
    @Test

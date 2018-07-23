@@ -4,20 +4,27 @@ import com.google.common.base.Preconditions;
 
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperties;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.declaration.WrappedDeclarationDefinition;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.XtextObjectNotFoundException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.store.IWrapperResolver;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.BaseLinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.FieldReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkDeclaration;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableExpression;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.LinkableReference;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.Model;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.RefinedLinkNameDeclaration;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorPackage;
+import com.ngc.seaside.systemdescriptor.utils.SdUtils;
 
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -25,6 +32,7 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public abstract class WrappedReferenceLink<T extends IReferenceField> extends AbstractWrappedXtext<LinkDeclaration>
       implements IModelLink<T> {
@@ -70,6 +78,22 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
    @Override
    public IModelLink<T> setRefinedLink(IModelLink<T> refinedLink) {
       throw new UnsupportedOperationException("refined link cannot be changed!");
+   }
+
+   @Override
+   public void traverseLinkSourceExpression(Consumer<IModelReferenceField> linkVisitor) {
+      Preconditions.checkNotNull(linkVisitor, "linkVisitor may not be null!");
+      Preconditions.checkArgument(!getRefinedLink().isPresent(), "refined links do not have expressions!");
+      // Safe because of the getRefinedLinkedCheck above.
+      doLinkTraverse(((BaseLinkDeclaration) wrapped).getSource(), linkVisitor);
+   }
+
+   @Override
+   public void traverseLinkTargetExpression(Consumer<IModelReferenceField> linkVisitor) {
+      Preconditions.checkNotNull(linkVisitor, "linkVisitor may not be null!");
+      Preconditions.checkArgument(!getRefinedLink().isPresent(), "refined links do not have expressions!");
+      // Safe because of the getRefinedLinkedCheck above.
+      doLinkTraverse(((BaseLinkDeclaration) wrapped).getTarget(), linkVisitor);
    }
 
    @SuppressWarnings({"unchecked"})
@@ -132,6 +156,53 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
       return refinedLink;
    }
 
+   private void doLinkTraverse(LinkableReference start, Consumer<IModelReferenceField> linkVisitor) {
+      LinkableReference ref = start;
+
+      // Ignore sources that are not expressions.
+      if (ref.eClass().getClassifierID() == SystemDescriptorPackage.LINKABLE_EXPRESSION) {
+         while (ref != null) {
+            switch (ref.eClass().getClassifierID()) {
+               case SystemDescriptorPackage.FIELD_REFERENCE:
+                  // If this is a field reference, there are no more expressions and we are done.
+                  IModelReferenceField field = getFieldOf(((FieldReference) ref).getFieldDeclaration());
+                  linkVisitor.accept(field);
+                  ref = null;
+                  break;
+               case SystemDescriptorPackage.LINKABLE_EXPRESSION:
+                  // Otherwise, this is an expression that may be pointing to another model.
+                  // We don't care about the last tail, which is the tail of the first reference.
+                  if (ref != start) {
+                     field = getFieldOf(((FieldReference) ref).getFieldDeclaration());
+                     linkVisitor.accept(field);
+                  }
+                  ref = ((LinkableExpression) ref).getRef();
+                  break;
+               default:
+                  throw new UnrecognizedXtextTypeException(ref);
+            }
+         }
+      }
+   }
+
+   private IModelReferenceField getFieldOf(FieldDeclaration declaration) {
+      // Only models can have field declarations.
+      IModel parent = resolver.getWrapperFor(SdUtils.getContainingModel(declaration));
+      // Get the wrapper for the field.  Note that a model may not have duplicate field names.  Therefore, the
+      // declaration is either for a part or requirement.
+      Optional<IModelReferenceField> field = parent.getParts() == null
+                                             ? Optional.empty()
+                                             : parent.getParts().getByName(declaration.getName());
+      if (!field.isPresent()) {
+         field = parent.getOutputs() == null ? Optional.empty()
+                                             : parent.getRequiredModels().getByName(declaration.getName());
+      }
+      return field.orElseThrow(() -> new IllegalArgumentException(String.format(
+            "could not find part or requirement field named %s in model %s!",
+            declaration.getName(),
+            parent)));
+   }
+
    private static LinkDeclaration findXtextBaseLinkDeclarationForRefinedLink(Model xtext,
                                                                              RefinedLinkDeclaration refinedLink) {
       String sourcePath = getPathOfSource(refinedLink);
@@ -140,7 +211,7 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
       if (xtext.getLinks() != null) {
          for (LinkDeclaration link : xtext.getLinks().getDeclarations()) {
             if (Objects.equals(sourcePath, getPathOfSource(link))
-                      && Objects.equals(targetPath, getPathOfTarget(link))) {
+                   && Objects.equals(targetPath, getPathOfTarget(link))) {
                return link;
             }
          }
