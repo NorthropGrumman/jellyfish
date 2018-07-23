@@ -74,7 +74,7 @@ Feature: EngagementTrackPriorityService calculateTrackPriority
     When the TrackEngagementStatus object is received by the service
     Then the service should respond with a TrackPriority object
     And the trackId should be <id> 
-    And the sourceId should be "service:com.ngc.seaside.archipelago.threat.EngagementTrackPriorityService"
+    And the sourceId should be "service-com.ngc.seaside.archipelago.threat.EngagementTrackPriorityService"
     And the priority should be <priority>
  
     Examples:
@@ -106,7 +106,7 @@ Feature: EngagementTrackPriorityService calculateTrackPriority
     When the TrackEngagementStatus object is received by the service
     Then the service should respond with a TrackPriority object
     And the trackId should be <id>
-    And the sourceId should be "service:com.ngc.seaside.archipelago.threat.EngagementTrackPriorityService"
+    And the sourceId should be "service-com.ngc.seaside.archipelago.threat.EngagementTrackPriorityService"
     And the priority should be <priority>
  
     Examples:
@@ -239,7 +239,7 @@ Feature: DefendedAreaTrackPriorityService calculateTrackPriority
     Then the service should respond with a TrackPriority object
     And the trackId should be <id>
     And the priority should be <priority>
-    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+    And the sourceId should be "service-com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
  
     Examples:
       | id | priority |
@@ -278,7 +278,7 @@ Feature: DefendedAreaTrackPriorityService calculateTrackPriority
     Then the service should respond with a TrackPriority object
     And the trackId should be <id>
     And the priority should be <priority>
-    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+    And the sourceId should be "service-com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
  
     Examples:
       | id | priority |
@@ -301,7 +301,7 @@ Feature: DefendedAreaTrackPriorityService calculateTrackPriority
     Then the service should respond with a TrackPriority object
     And the trackId should be <id>
     And the priority should be <priority>
-    And the sourceId should be "service:com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
+    And the sourceId should be "service-com.ngc.seaside.threateval.DefendedAreaTrackPriorityService"
  
     Examples:
       | id | impactProbability | priority |
