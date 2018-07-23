@@ -19,6 +19,7 @@ model, as opposed to its behavior.
 | model | Declares an object of model type.  A model is a type of object that contains various attributes and metadata.
 | data | Declares an object of a data type.
 | enum | Declares an enumeration type; an enumeration contain simple string constant values and can be referenced in order data objects.
+| extends | Declares a data type extends another data type.
 | input | Field of a model, declares the data the component receives.
 | output | Field of a model, declares the data the component may produce.
 | requires | Field of a model, indicates the current model _requires_ access to the referenced model.
