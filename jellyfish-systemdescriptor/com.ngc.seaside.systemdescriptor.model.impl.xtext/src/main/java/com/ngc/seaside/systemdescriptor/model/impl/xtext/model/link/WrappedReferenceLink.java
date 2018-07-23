@@ -211,7 +211,7 @@ public abstract class WrappedReferenceLink<T extends IReferenceField> extends Ab
       if (xtext.getLinks() != null) {
          for (LinkDeclaration link : xtext.getLinks().getDeclarations()) {
             if (Objects.equals(sourcePath, getPathOfSource(link))
-                && Objects.equals(targetPath, getPathOfTarget(link))) {
+                   && Objects.equals(targetPath, getPathOfTarget(link))) {
                return link;
             }
          }

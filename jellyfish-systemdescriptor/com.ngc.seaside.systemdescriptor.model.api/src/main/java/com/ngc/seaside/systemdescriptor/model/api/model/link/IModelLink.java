@@ -73,8 +73,7 @@ public interface IModelLink<T extends IReferenceField> {
     * The consumer would be invoked for the field {@code timer} since {@code timer} is a field referenced in the source
     * of the link.
     *
-    * </p>
-    *
+    * <p>
     * This operation is useful to determine which part(s) a link may reference in a model.  For convenience, {@link
     * com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors#getReferencedFieldOfLinkSource(IModelLink)} is
     * provided to get the field referenced in a link's source directly. This operation is not supported if this
@@ -107,8 +106,7 @@ public interface IModelLink<T extends IReferenceField> {
     * The consumer would be invoked for the field {@code display} since {@code display} is a field referenced in the
     * target of the link.
     *
-    * </p>
-    *
+    * <p>
     * This operation is useful to determine which part(s) a link may reference in a model.  For convenience, {@link
     * com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors#getReferencedFieldOfLinkTarget(IModelLink)} is
     * provided to get the field referenced in a link's source directly. This operation is not supported if this
