@@ -4,6 +4,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
+import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
@@ -12,13 +13,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +58,7 @@ public class SystemDescriptorsTest {
    private IDataField dataField;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(parent.getInputs()).thenReturn(dataChildren);
       when(parent.getOutputs()).thenReturn(dataChildren);
 
@@ -65,7 +71,7 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsInput() throws Throwable {
+   public void testDoesDetermineIfFieldIsInput() {
       when(dataRefField.getParent()).thenReturn(parent);
       when(dataChildren.contains(dataRefField))
             .thenReturn(true)
@@ -78,14 +84,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsNotInput() throws Throwable {
+   public void testDoesDetermineIfFieldIsNotInput() {
       when(dataRefField.getParent()).thenReturn(null);
       assertFalse("should not be input!",
                   SystemDescriptors.isInput(dataRefField));
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsOutput() throws Throwable {
+   public void testDoesDetermineIfFieldIsOutput() {
       when(dataRefField.getParent()).thenReturn(parent);
       when(dataChildren.contains(dataRefField))
             .thenReturn(true)
@@ -98,14 +104,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsNotOutput() throws Throwable {
+   public void testDoesDetermineIfFieldIsNotOutput() {
       when(dataRefField.getParent()).thenReturn(null);
       assertFalse("should not be output!",
                   SystemDescriptors.isOutput(dataRefField));
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsPart() throws Throwable {
+   public void testDoesDetermineIfFieldIsPart() {
       when(modelField.getParent()).thenReturn(parent);
       when(modelChildren.contains(modelField))
             .thenReturn(true)
@@ -118,14 +124,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsNotPart() throws Throwable {
+   public void testDoesDetermineIfFieldIsNotPart() {
       when(modelField.getParent()).thenReturn(null);
       assertFalse("should not be part!",
                   SystemDescriptors.isPart(modelField));
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsRequired() throws Throwable {
+   public void testDoesDetermineIfFieldIsRequired() {
       when(modelField.getParent()).thenReturn(parent);
       when(modelChildren.contains(modelField))
             .thenReturn(true)
@@ -138,14 +144,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfFieldIsNotRequired() throws Throwable {
+   public void testDoesDetermineIfFieldIsNotRequired() {
       when(modelField.getParent()).thenReturn(null);
       assertFalse("should not be requirement!",
                   SystemDescriptors.isRequired(modelField));
    }
 
    @Test
-   public void testDoesDetermineIfStepIsGiven() throws Throwable {
+   public void testDoesDetermineIfStepIsGiven() {
       when(step.getParent()).thenReturn(scenario);
 
       steps.add(step);
@@ -157,14 +163,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfStepIsNotGiven() throws Throwable {
+   public void testDoesDetermineIfStepIsNotGiven() {
       when(step.getParent()).thenReturn(null);
       assertFalse("should not be given step!",
                   SystemDescriptors.isGivenStep(step));
    }
 
    @Test
-   public void testDoesDetermineIfStepIsWhen() throws Throwable {
+   public void testDoesDetermineIfStepIsWhen() {
       when(step.getParent()).thenReturn(scenario);
 
       steps.add(step);
@@ -176,14 +182,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfStepIsNotWhen() throws Throwable {
+   public void testDoesDetermineIfStepIsNotWhen() {
       when(step.getParent()).thenReturn(null);
       assertFalse("should not be when step!",
                   SystemDescriptors.isWhenStep(step));
    }
 
    @Test
-   public void testDoesDetermineIfStepIsThen() throws Throwable {
+   public void testDoesDetermineIfStepIsThen() {
       when(step.getParent()).thenReturn(scenario);
 
       steps.add(step);
@@ -195,14 +201,14 @@ public class SystemDescriptorsTest {
    }
 
    @Test
-   public void testDoesDetermineIfStepIsNotThen() throws Throwable {
+   public void testDoesDetermineIfStepIsNotThen() {
       when(step.getParent()).thenReturn(null);
       assertFalse("should not be then step!",
                   SystemDescriptors.isThenStep(step));
    }
 
    @Test
-   public void testDoesDetermineIfDataFieldIsForPrimitiveType() throws Throwable {
+   public void testDoesDetermineIfDataFieldIsForPrimitiveType() {
       when(dataField.getType())
             .thenReturn(DataTypes.INT)
             .thenReturn(DataTypes.DATA)
@@ -235,5 +241,34 @@ public class SystemDescriptorsTest {
                   SystemDescriptors.areModelsRelated(c, a));
       assertTrue("a model should be related to itself!",
                  SystemDescriptors.areModelsRelated(a, a));
+   }
+
+   @SuppressWarnings({"unchecked"})
+   @Test
+   public void testDoesGetSourceAndTargetFieldsOfLinks() {
+      IModelReferenceField sourceField = mock(IModelReferenceField.class);
+      IModelReferenceField targetField = mock(IModelReferenceField.class);
+      IModelLink<IDataReferenceField> link = mock(IModelLink.class);
+
+      assertFalse("source field of link should not be present!",
+                  SystemDescriptors.getReferencedFieldOfLinkSource(link).isPresent());
+      assertFalse("target field of link should not be present!",
+                  SystemDescriptors.getReferencedFieldOfLinkTarget(link).isPresent());
+
+      doAnswer((Answer<Object>) invocationOnMock -> {
+         ((Consumer<IModelReferenceField>) invocationOnMock.getArgument(0)).accept(sourceField);
+         return null;
+      }).when(link).traverseLinkSourceExpression(any());
+      doAnswer((Answer<Object>) invocationOnMock -> {
+         ((Consumer<IModelReferenceField>) invocationOnMock.getArgument(0)).accept(targetField);
+         return null;
+      }).when(link).traverseLinkTargetExpression(any());
+
+      assertEquals("source field not correct",
+                   sourceField,
+                   SystemDescriptors.getReferencedFieldOfLinkSource(link).get());
+      assertEquals("target field not correct!",
+                   targetField,
+                   SystemDescriptors.getReferencedFieldOfLinkTarget(link).get());
    }
 }
