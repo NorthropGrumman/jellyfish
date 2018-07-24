@@ -15,7 +15,7 @@ dependencies {
     runtime "org.glassfish.jaxb:jaxb-runtime:$jaxbVersion"
     runtime "javax.activation:activation:1.1.1"
 
-    testImplementation project(':jellyfish.cli.command.testutils')
+    testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:$version"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
