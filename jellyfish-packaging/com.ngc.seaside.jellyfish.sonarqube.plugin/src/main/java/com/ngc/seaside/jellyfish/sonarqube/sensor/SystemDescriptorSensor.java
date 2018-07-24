@@ -3,7 +3,7 @@ package com.ngc.seaside.jellyfish.sonarqube.sensor;
 import com.google.inject.Guice;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
-import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxErrorRule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
@@ -122,7 +122,7 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private static ISystemDescriptorService getServiceInstance() {
-      return Guice.createInjector(new JellyfishPluginModule())
+      return Guice.createInjector(new JellyfishSonarqubePluginModule())
             .getInstance(ISystemDescriptorService.class);
    }
 }

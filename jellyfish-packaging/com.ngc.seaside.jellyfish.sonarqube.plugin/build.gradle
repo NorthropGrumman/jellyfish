@@ -4,6 +4,8 @@ dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
    // Use the old compile scope because the sonar-packaging plugin
    // will only embed dependencies that are under the compile scope.
+   compile project(':jellyfish')
+   compile "com.ngc.seaside:guice.modules:$version"
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
@@ -15,11 +17,11 @@ dependencies {
    // Make sure this has a scope of provided.
    provided "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
 
-   testImplementation "junit:junit:$junitVersion"
-   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
    // Include the SLF4J logging adapter so we can see logs during test execution.
-   testImplementation "ch.qos.logback:logback-core:1.1.7"
-   testImplementation "ch.qos.logback:logback-classic:1.1.7"
+   testCompile "ch.qos.logback:logback-core:1.1.7"
+   testCompile "ch.qos.logback:logback-classic:1.1.7"
 }
 
 sonarPackaging {
