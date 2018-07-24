@@ -26,7 +26,7 @@ dependencies {
 
 sonarPackaging {
    pluginKey = 'systemdescriptor'
-   pluginName = 'System Descriptor'
+   pluginName = 'SonarSystemDescriptor'
    pluginClass = 'com.ngc.seaside.jellyfish.sonarqube.JellyfishPlugin'
    pluginDescription = 'Adds support for scanning System Descriptor projects.'
    pluginUrl = ''
