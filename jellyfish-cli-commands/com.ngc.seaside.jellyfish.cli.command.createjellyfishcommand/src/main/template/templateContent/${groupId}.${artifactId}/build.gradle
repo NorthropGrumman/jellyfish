@@ -15,11 +15,7 @@ dependencies {
    implementation "commons-io:commons-io:${D}commonsIOVersion"
    implementation "commons-lang:commons-lang:${D}commonsLangVersion"
 
-#if (${withCliCommands} == "true")
-   testImplementation project(':jellyfish.cli.command.testutils')
-#else
    testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:${D}jellyfishVersion"
-#end
    testImplementation "junit:junit:${D}junitVersion"
    testImplementation "org.mockito:mockito-core:${D}mockitoVersion"
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"

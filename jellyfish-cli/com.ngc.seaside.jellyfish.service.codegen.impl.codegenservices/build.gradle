@@ -1,5 +1,5 @@
 dependencies {
-   api "com.ngc.seaside:jellyfish.service.api:$version"
+   api project(':jellyfish.service.api')
 
    implementation "com.ngc.blocs:service.api:$blocsVersion"
 

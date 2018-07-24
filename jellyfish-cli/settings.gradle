@@ -17,3 +17,48 @@ project(':com.ngc.seaside.jellyfish.service.api').name = 'jellyfish.service.api'
 
 include 'com.ngc.seaside.jellyfish.utilities'
 project(':com.ngc.seaside.jellyfish.utilities').name = 'jellyfish.utilities'
+
+include 'com.ngc.seaside.jellyfish.cli.command.testutils'
+project(':com.ngc.seaside.jellyfish.cli.command.testutils').name = 'jellyfish.cli.command.testutils'
+
+include 'com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices'
+project(':com.ngc.seaside.jellyfish.service.codegen.impl.codegenservices').name = 'jellyfish.service.codegen.impl.codegenservices'
+
+include 'com.ngc.seaside.jellyfish.service.name.impl.namingservices'
+project(':com.ngc.seaside.jellyfish.service.name.impl.namingservices').name = 'jellyfish.service.name.impl.namingservices'
+
+include 'com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice'
+project(':com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice').name = 'jellyfish.service.scenario.impl.scenarioservice'
+
+include 'com.ngc.seaside.jellyfish.service.data.impl.dataservice'
+project(':com.ngc.seaside.jellyfish.service.data.impl.dataservice').name = 'jellyfish.service.data.impl.dataservice'
+
+include 'com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice'
+project(':com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice').name = 'jellyfish.service.config.impl.transportconfigurationservice'
+
+include 'com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice'
+project(':com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice').name = 'jellyfish.service.requirements.impl.requirementsservice'
+
+include 'com.ngc.seaside.jellyfish.service.feature.impl.featureservice'
+project(':com.ngc.seaside.jellyfish.service.feature.impl.featureservice').name = 'jellyfish.service.feature.impl.featureservice'
+
+include 'com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice'
+project(':com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice').name = 'jellyfish.service.buildmgmt.impl.buildmgmtservice'
+
+include 'com.ngc.seaside.jellyfish.service.impl.parameterservice'
+project(':com.ngc.seaside.jellyfish.service.impl.parameterservice').name = 'jellyfish.service.impl.parameterservice'
+
+include 'com.ngc.seaside.jellyfish.service.impl.promptuserservice'
+project(':com.ngc.seaside.jellyfish.service.impl.promptuserservice').name = 'jellyfish.service.impl.promptuserservice'
+
+include 'com.ngc.seaside.jellyfish.service.impl.propertyservice'
+project(':com.ngc.seaside.jellyfish.service.impl.propertyservice').name = 'jellyfish.service.impl.propertyservice'
+
+include 'com.ngc.seaside.jellyfish.service.impl.templateservice'
+project(':com.ngc.seaside.jellyfish.service.impl.templateservice').name = 'jellyfish.service.impl.templateservice'
+
+include 'com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice'
+project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name = 'jellyfish.service.analysis.impl.analysisservice'
+
+include 'com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice'
+project(':com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice').name = 'jellyfish.service.analysis.impl.markdownreportingservice'

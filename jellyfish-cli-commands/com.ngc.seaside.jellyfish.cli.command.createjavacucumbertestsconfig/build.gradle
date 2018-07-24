@@ -15,7 +15,7 @@ dependencies {
    implementation "commons-lang:commons-lang:$commonsLangVersion"
    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-   testImplementation project(':jellyfish.cli.command.testutils')
+   testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:$version"
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
