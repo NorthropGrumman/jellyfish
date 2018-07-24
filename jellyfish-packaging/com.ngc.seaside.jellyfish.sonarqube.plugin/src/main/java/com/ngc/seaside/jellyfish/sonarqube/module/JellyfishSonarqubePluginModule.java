@@ -33,8 +33,6 @@ public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
 
    @Override
    protected Collection<Module> configureModulesFromClasspath(Collection<Module> modules) {
-      //Thread.currentThread().getContextClassLoader();
-
       try (BufferedReader br = new BufferedReader(
             new InputStreamReader(
                   JellyfishSonarqubePluginModule.class.getClassLoader().getResourceAsStream("guice-modules")))) {
