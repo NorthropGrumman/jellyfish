@@ -56,7 +56,7 @@ Descriptor scenario steps, these steps must start with either the `given`, `when
 example of a scenario pulled directly from the Cucumber documentation:
 
 **Gherkin Scenarios**
-```plaintext
+```gherkin
 Scenario: feeding a small suckler cow
  Given the cow weighs 450 kg
  When we calculate the feeding requirements
@@ -67,7 +67,7 @@ Scenario: feeding a small suckler cow
 It is also possible to create _scenario outlines_.  These scenarios uses tables to describe variables and values:
 
 **Scenario Outlines**
-```plaintext
+```gherkin
 Scenario Outline: feeding a suckler cow
   Given the cow weighs <weight> kg
   When we calculate the feeding requirements
@@ -135,7 +135,7 @@ Feature files always start with the `Feature` keyword.  What follows is a descri
 scenario.
 
 **Alarm.deactivateAlarm.feature**
-```plaintext
+```gherkin
 Feature: Alarm deactivateAlarm
   The alarm should be deactivated when the alarm component receives an
   alarm acknowledgement message.
@@ -146,7 +146,7 @@ The remaining lines are steps that form the scenario itself.  Our first scenario
 deactivating an active alarm that has been acknowledged.
 
 **Alarm.deactivateAlarm.feature**
-```plaintext
+```gherkin
 Feature: Alarm deactivateAlarm
   The alarm should be deactivated when the alarm component receives an
   alarm acknowledgement message.
@@ -154,14 +154,14 @@ Feature: Alarm deactivateAlarm
    
   Scenario: Deactivate an acknowledged an alarm.
     Given the alarm has published an AlarmStatus message
-      and the alarmId field is 1
-      and the active field is true
+      And the alarmId field is 1
+      And the active field is true
     When the alarm receives an AlarmAcknowledgement message
-      and the alarmId field is 1
-      and the alarmAcknowledged field is true
+      And the alarmId field is 1
+      And the alarmAcknowledged field is true
     Then the alarm will publish an AlarmStatus message
-      and the alarmId field will be 1
-      and the active field will be false
+      And the alarmId field will be 1
+      And the active field will be false
 ```
 
 This scenario has a `given` steps, `when` steps, and `then` steps.  The given steps set up the component to publish an
@@ -179,7 +179,7 @@ The scenarios should also cover the off nominal scenarios:
 The complete feature file is given below:
 
 **Alarm.deactivateAlarm.feature**
-```plaintext
+```gherkin
 Feature: Alarm deactivateAlarm
   The alarm should be deactivated when the alarm component receives an
   alarm acknowledgement message.
@@ -187,52 +187,52 @@ Feature: Alarm deactivateAlarm
    
   Scenario: Deactivate an acknowledged an alarm.
     Given the alarm has published an AlarmStatus message
-      and the alarmId field is 1
-      and the active field is true
+      And the alarmId field is 1
+      And the active field is true
     When the alarm receives an AlarmAcknowledgement message
-      and the alarmId field is 1
-      and the alarmAcknowledged field is true
+      And the alarmId field is 1
+      And the alarmAcknowledged field is true
     Then the alarm will publish an AlarmStatus message
-      and the alarmId field will be 1
-      and the active field will be false
+      And the alarmId field will be 1
+      And the active field will be false
    
    
   Scenario: Do not deactivate an alarm if the acknowledgement is false.
     Given the alarm has published an AlarmStatus message
-      and the alarmId field is 2
-      and the active field is true
+      And the alarmId field is 2
+      And the active field is true
     When the alarm receives an AlarmAcknowledgement message
-      and the alarmId field is 2
-      and the alarmAcknowledged field is false
+      And the alarmId field is 2
+      And the alarmAcknowledged field is false
     Then the alarm will publish an AlarmStatus message
-      and the alarmId field will be 2
-      and the active field will be true
+      And the alarmId field will be 2
+      And the active field will be true
    
    
   Scenario: Deactivate an alarm if an acknowledgement is received for an unknown
     alarm.
     When the alarm receives an AlarmAcknowledgement message
-      and the alarmId field is 3
-      and the alarmAcknowledged field is true
+      And the alarmId field is 3
+      And the alarmAcknowledged field is true
     Then the alarm will publish an AlarmStatus message
-      and the alarmId field will be 3
-      and the active field will be false
+      And the alarmId field will be 3
+      And the active field will be false
        
        
   Scenario: Do not reactivate a previously acknowledged alarm.
     Given the alarm has published an AlarmStatus message
-      and the alarmId field is 4
-      and the active field is true
-      and the alarm has received an AlarmAcknowledgement message
-      and the alarmId field is 4
-      and the alarmAcknowledged field is true
-      and the alarm has published an AlarmStatus message
+      And the alarmId field is 4
+      And the active field is true
+      And the alarm has received an AlarmAcknowledgement message
+      And the alarmId field is 4
+      And the alarmAcknowledged field is true
+      And the alarm has published an AlarmStatus message
     When the alarm receives an AlarmAcknowledgement message
-      and the alarmId field is 4
-      and the alarmAcknowledged field is false 
+      And the alarmId field is 4
+      And the alarmAcknowledged field is false 
     Then the alarm will publish an AlarmStatus message
-      and the alarmId field will be 4
-      and the active field will be false
+      And the alarmId field will be 4
+      And the active field will be false
 ```
 
 **Cucumber Language Support**

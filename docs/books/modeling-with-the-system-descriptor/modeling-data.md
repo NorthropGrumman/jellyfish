@@ -135,7 +135,7 @@ All metadata is represented as [JSON](http://www.ecma-international.org/publicat
 allows for objects to be defined as key/value pairs.
 
 **Example JSON**
-```
+```javascript
 {
   "greeting": "hello world"
 }
@@ -146,7 +146,7 @@ must be surrounded in double quotes.  Strings used as values must also be surrou
 or arrays are surrounded with square brackets ('[', ']') with commas separating elements in the array.
 
 **Example JSON Array**
-```
+```javascript
 {
   "greetings": ["hello world", "hola", "konchiwa"]
 }
@@ -155,7 +155,7 @@ or arrays are surrounded with square brackets ('[', ']') with commas separating 
 Finally, JSON objects may contain nested objects or arrays of objects:
 
 **Example of nested JSON objects**
-```
+```javascript
 {
   "greetings": [{
       "language": "English",
@@ -235,9 +235,9 @@ semantics for tooling that may reference the model to generate additional artifa
 # Data Composition and Inheritance
 Data types can extend other data types to form a "is a" relationship.  When data type `A` extends another data type `B`,
 `A` inherits all the fields declared in `B`.  `B` is referred to as the base type.  The syntax for this example is given
-below. Data types declare they extend other data types by using the `:` character followed by the name of the data type
-they are extending.  The base type must be imported.  Data types can extend at most one data type.  Enumeration can not
-extend other types or be extended.
+below. Data types declare they extend other data types by using the `extends` keyword followed by the name of the data
+type they are extending.  The base type must be imported.  Data types can extend at most one data type.  Enumeration can
+not extend other types or be extended.
 
 **Data inheritance**
 ```
@@ -245,7 +245,7 @@ package example
  
 import example.B
  
-import A : B {
+import A extends B {
   ...
 }
 ```
@@ -261,7 +261,7 @@ package alarm
 import alarm.Time
 import alarm.TimeZone
  
-data ZonedTime : Time {
+data ZonedTime extends Time {
     TimeZone timeZone
 }
 ```

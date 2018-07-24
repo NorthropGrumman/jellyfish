@@ -1,8 +1,8 @@
 dependencies {
-    api "com.ngc.seaside:jellyfish.service.api:$version"
+    api project(':jellyfish.service.api')
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "com.vladsch.flexmark:flexmark-all:$flexmarkVersion"
+
     implementation "com.google.inject:guice:$guiceVersion"
     compileOnly "org.osgi:osgi.core:$osgiVersion"
     compileOnly "org.osgi:osgi.enterprise:$osgiVersion"

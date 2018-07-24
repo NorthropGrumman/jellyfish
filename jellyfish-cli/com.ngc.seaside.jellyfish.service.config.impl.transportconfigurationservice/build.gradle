@@ -1,5 +1,5 @@
 dependencies {
-    api "com.ngc.seaside:jellyfish.service.api:$version"
+    api project(':jellyfish.service.api')
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
 
@@ -9,6 +9,7 @@ dependencies {
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
+    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
     testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

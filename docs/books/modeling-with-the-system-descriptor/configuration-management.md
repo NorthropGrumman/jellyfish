@@ -151,12 +151,20 @@ contains the model project.  This example will perform a release of `Archipelago
    be updated to 1.1.1-SNAPSHOT and committed to Git.
 1. Finally, the Git tag and changes need to be pushed with `git push --tags ; git push`.
 
-**Automatic Releases**
-```note-info
+## Automatic Releases
 Gradle plugins also exists which make it possible to do automatic releases from tools like Jenkins.  This makes it 
-possible to create an _deployment pipeline_ for modeling projects.  Building such a pipeline is addressed in more
-advanced topics.
+possible to create an _deployment pipeline_ for modeling projects.  It's good to know the details for performing a 
+release, but releases should eventually be automated.  After applying the `com.ngc.seaside.jellyfish.system-descriptor`,
+it's possibly to do these steps automatically with the command:
+
+**Automatic releases using Gradle**
 ```
+gradle release
+```
+
+This will automatically remove the `SNAPSHOT` qualifier, create the neccessary commits and tags, automatically increment
+the version number for the next iteration, and push these commits and tags to a remote Git repository.  The `release`
+task will perform a minor release which means the minor version number will be incremented to the next snapshot.
 
 # Conclusion
 * Use semantic versions rules to make versioning of a project meaningful.  Do not mix arbitrary "marketing" versions
