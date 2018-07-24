@@ -9,6 +9,9 @@ import com.ngc.seaside.jellyfish.sonarqube.JellyfishPlugin;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 
 /**
@@ -24,7 +27,27 @@ public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
       modules.removeIf(m -> m.getClass() == LogServiceModule.class);
       modules.add(new SonarqubeLogServiceModule());
       // TODO TH: remove this
-      modules.forEach(m -> LOGGER.info("!@!@ Will include module {} {}", m.getClass().getName(), m));
+      modules.forEach(m -> LOGGER.info(">>> Will include module {} {}", m.getClass().getName(), m));
+      return modules;
+   }
+
+   @Override
+   protected Collection<Module> configureModulesFromClasspath(Collection<Module> modules) {
+      //Thread.currentThread().getContextClassLoader();
+
+      try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(
+                  JellyfishSonarqubePluginModule.class.getClassLoader().getResourceAsStream("guice-modules")))) {
+
+         String line = br.readLine();
+         while (line != null) {
+            modules.add((Module) JellyfishSonarqubePluginModule.class.getClassLoader().loadClass(line).newInstance());
+            line = br.readLine();
+         }
+      } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+         e.printStackTrace();
+      }
+
       return modules;
    }
 }
