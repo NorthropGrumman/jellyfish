@@ -53,12 +53,12 @@ public class SystemDescriptorSensorIT {
       sensor.describe(descriptor);
       assertEquals(
             "the sensor should be available for only one language!",
-            descriptor.languages().size(), 1
+            1, descriptor.languages().size()
       );
       assertEquals(
             "the language should be: " + SystemDescriptorLanguage.KEY,
-            descriptor.languages().toArray()[0],
-            SystemDescriptorLanguage.KEY
+            SystemDescriptorLanguage.KEY,
+            descriptor.languages().toArray()[0]
       );
    }
 
@@ -67,8 +67,8 @@ public class SystemDescriptorSensorIT {
       sensor.describe(descriptor);
       assertEquals(
             "the file type for input files should be: " + Type.MAIN,
-            descriptor.type(),
-            Type.MAIN
+            Type.MAIN,
+            descriptor.type()
       );
    }
 
