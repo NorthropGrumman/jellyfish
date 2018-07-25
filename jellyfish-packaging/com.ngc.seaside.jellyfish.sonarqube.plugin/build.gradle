@@ -48,42 +48,40 @@ def mainGuiceModulesFile = {
    return resource
 }.call()
 
-tasks.create('buildModuleDependencyFiles').doLast {
-   def destinationDir = "${rootProject.buildDir.absolutePath}/dependencies"
+tasks.create('buildModuleDependencyFile').doLast {
+   def destinationDir = "${project.buildDir.absolutePath}/dependencies"
+   def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
+   def filenameToExtract = 'META-INF/services/com.google.inject.Module'
    def modules = new HashSet<String>()
 
-   (configurations.compile + configurations.testCompile).files.forEach { file ->
-      def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
-
+   configurations.compile.files.forEach { file ->
       if (file.absolutePath.endsWith('.jar')) {
-         def output = new ByteArrayOutputStream()
-         project.exec {
+         def result = project.exec {
             workingDir destinationDir
-            commandLine 'unzip', '-o', '-d', tmpDir, file.absolutePath
-            standardOutput = output
+            commandLine 'unzip', '-l', file.absolutePath, filenameToExtract
+            standardOutput = new ByteArrayOutputStream()
+            ignoreExitValue = true
          }
 
-         def module = output.toString().split('\n').find { line ->
-            line.contains('com.google.inject.Module')
-         }
+         if (result.exitValue == 0) {
+            project.exec {
+               workingDir destinationDir
+               commandLine 'unzip', '-o', '-d', tmpDir, file.absolutePath, filenameToExtract
+               standardOutput = new ByteArrayOutputStream()
+            }
 
-         if (module != null) {
-            def moduleFile = project.file("${tmpDir}/META-INF/services/com.google.inject.Module")
+            def moduleFile = project.file("${tmpDir}/${filenameToExtract}")
             modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
          }
       }
-
-      project.delete(tmpDir)
    }
 
    mainGuiceModulesFile.write(modules.join('\n'))
-
-   project.delete(destinationDir)
 }
 
-tasks.create('cleanModuleDependencyFiles').doLast {
+tasks.create('cleanModuleDependencyFile').doLast {
    project.delete(mainGuiceModulesFile)
 }
 
-tasks.findByName('compileJava').dependsOn('buildModuleDependencyFiles')
-tasks.findByName('clean').dependsOn('cleanModuleDependencyFiles')
+tasks.findByName('compileJava').dependsOn('buildModuleDependencyFile')
+tasks.findByName('clean').dependsOn('cleanModuleDependencyFile')
