@@ -45,9 +45,8 @@ def mainGuiceModulesFile = {
    def resource = project.file("${project.projectDir.absolutePath}/src/main/resources/guice-modules")
    resource.parentFile.mkdir()
    resource.createNewFile()
-   resource.write('')
    return resource
-}
+}.call()
 
 tasks.create('buildModuleDependencyFiles').doLast {
    def destinationDir = "${rootProject.buildDir.absolutePath}/dependencies"
