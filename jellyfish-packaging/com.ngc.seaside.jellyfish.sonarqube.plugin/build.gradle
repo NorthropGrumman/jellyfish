@@ -1,5 +1,13 @@
 apply plugin: "com.iadams.sonar-packaging"
 
+repositories {
+   mavenLocal()
+
+   maven {
+      url nexusConsolidated
+   }
+}
+
 dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
    // Use the old compile scope because the sonar-packaging plugin
@@ -32,3 +40,53 @@ sonarPackaging {
    pluginUrl = ''
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
+
+def getGuiceModulesFilename = {
+   def resource = project.file("${project.projectDir.absolutePath}/src/${it}/resources/guice-modules")
+   resource.parentFile.mkdir()
+   resource.createNewFile()
+   resource.write('')
+   return resource
+}
+
+tasks.create('buildModuleDependencyFiles').doLast {
+   def destinationDir = "${rootProject.buildDir.absolutePath}/dependencies"
+   def modules = new HashSet<String>()
+
+   (configurations.compile + configurations.testCompile).files.forEach { file ->
+      def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
+
+      if (file.absolutePath.endsWith('.jar')) {
+         def output = new ByteArrayOutputStream()
+         project.exec {
+            workingDir destinationDir
+            commandLine 'unzip', '-o', '-d', tmpDir, file.absolutePath
+            standardOutput = output
+         }
+
+         def module = output.toString().split('\n').find { line ->
+            line.contains('com.google.inject.Module')
+         }
+
+         if (module != null) {
+            def moduleFile = project.file("${tmpDir}/META-INF/services/com.google.inject.Module")
+            modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
+         }
+      }
+
+      project.delete(tmpDir)
+   }
+
+   def fileContents = modules.join('\n')
+   getGuiceModulesFilename('main').write(fileContents)
+   getGuiceModulesFilename('test').write(fileContents)
+
+   project.delete(destinationDir)
+}
+
+tasks.create('cleanModuleDependencyFiles').doLast {
+   project.delete(getGuiceModulesFilename('main'), getGuiceModulesFilename('test'))
+}
+
+tasks.findByName('compileJava').dependsOn('buildModuleDependencyFiles')
+tasks.findByName('clean').dependsOn('cleanModuleDependencyFiles')
