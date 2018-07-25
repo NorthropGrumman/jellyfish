@@ -56,21 +56,16 @@ tasks.create('buildModuleDependencyFile').doLast {
 
    configurations.compile.files.forEach { file ->
       if (file.absolutePath.endsWith('.jar')) {
-         def result = project.exec {
-            workingDir destinationDir
-            commandLine 'unzip', '-l', file.absolutePath, filenameToExtract
-            standardOutput = new ByteArrayOutputStream()
-            ignoreExitValue = true
+         project.copy {
+            from(zipTree(file.absolutePath)) {
+               include "**/${filenameToExtract}"
+               includeEmptyDirs = false
+            }
+            into tmpDir
          }
 
-         if (result.exitValue == 0) {
-            project.exec {
-               workingDir destinationDir
-               commandLine 'unzip', '-o', '-d', tmpDir, file.absolutePath, filenameToExtract
-               standardOutput = new ByteArrayOutputStream()
-            }
-
-            def moduleFile = project.file("${tmpDir}/${filenameToExtract}")
+         def moduleFile = project.file("${tmpDir}/${filenameToExtract}")
+         if (moduleFile.exists()) {
             modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
          }
       }
