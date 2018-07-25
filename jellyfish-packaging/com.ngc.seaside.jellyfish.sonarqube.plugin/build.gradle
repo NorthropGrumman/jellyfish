@@ -41,8 +41,8 @@ sonarPackaging {
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
 
-def getGuiceModulesFilename = {
-   def resource = project.file("${project.projectDir.absolutePath}/src/${it}/resources/guice-modules")
+def mainGuiceModulesFile = {
+   def resource = project.file("${project.projectDir.absolutePath}/src/main/resources/guice-modules")
    resource.parentFile.mkdir()
    resource.createNewFile()
    resource.write('')
@@ -77,15 +77,13 @@ tasks.create('buildModuleDependencyFiles').doLast {
       project.delete(tmpDir)
    }
 
-   def fileContents = modules.join('\n')
-   getGuiceModulesFilename('main').write(fileContents)
-   getGuiceModulesFilename('test').write(fileContents)
+   mainGuiceModulesFile.write(modules.join('\n'))
 
    project.delete(destinationDir)
 }
 
 tasks.create('cleanModuleDependencyFiles').doLast {
-   project.delete(getGuiceModulesFilename('main'), getGuiceModulesFilename('test'))
+   project.delete(mainGuiceModulesFile)
 }
 
 tasks.findByName('compileJava').dependsOn('buildModuleDependencyFiles')
