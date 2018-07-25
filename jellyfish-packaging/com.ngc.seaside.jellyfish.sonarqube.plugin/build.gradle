@@ -56,7 +56,6 @@ tasks.create('buildModuleDependencyFile').doLast {
    def modules = new HashSet<String>()
 
    configurations.compile.files.forEach { file ->
-      println "checking file: ${file.absolutePath}"
       if (file.path.endsWith('.jar') && project.file(file.path).exists()) {
          project.copy {
             from(zipTree(file.path)) {
@@ -70,9 +69,6 @@ tasks.create('buildModuleDependencyFile').doLast {
          if (moduleFile.exists()) {
             modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
          }
-      } else {
-         println "${file.path} a jar? ${file.path.endsWith('jar')}"
-         println "${file.path} exists? ${project.file(file.path).exists()}"
       }
    }
 
