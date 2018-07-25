@@ -57,7 +57,7 @@ tasks.create('buildModuleDependencyFile').doLast {
    configurations.compile.files.forEach { file ->
       if (file.absolutePath.endsWith('.jar')) {
          project.copy {
-            from(zipTree(file.absolutePath)) {
+            from(zipTree(file.path)) {
                include "**/${filenameToExtract}"
                includeEmptyDirs = false
             }
