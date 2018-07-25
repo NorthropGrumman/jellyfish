@@ -69,11 +69,7 @@ tasks.create('buildModuleDependencyFiles').doLast {
 
          if (module != null) {
             def moduleFile = project.file("${tmpDir}/META-INF/services/com.google.inject.Module")
-            modules.addAll(
-                  moduleFile.readLines().stream()
-                        .filter { line -> !line.contains('XTextSystemDescriptorServiceModule') }
-                        .map { line -> line.trim() }
-                        .collect())
+            modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
          }
       }
 

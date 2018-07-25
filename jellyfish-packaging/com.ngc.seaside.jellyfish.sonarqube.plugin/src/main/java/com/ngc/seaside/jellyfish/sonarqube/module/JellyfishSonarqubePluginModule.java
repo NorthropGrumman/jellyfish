@@ -4,10 +4,7 @@ import com.google.inject.Module;
 
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.seaside.jellyfish.DefaultJellyfishModule;
-import com.ngc.seaside.jellyfish.sonarqube.JellyfishPlugin;
-
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,15 +16,10 @@ import java.util.Collection;
  */
 public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
 
-   // TODO TH: Remove this
-   private static final Logger LOGGER = Loggers.get(JellyfishPlugin.class);
-
    @Override
    public Collection<Module> filterAllModules(Collection<Module> modules) {
       modules.removeIf(m -> m.getClass() == LogServiceModule.class);
       modules.add(new SonarqubeLogServiceModule());
-      // TODO TH: remove this
-      modules.forEach(m -> LOGGER.info(">>> Will include module {} {}", m.getClass().getName(), m));
       return modules;
    }
 
@@ -39,7 +31,10 @@ public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
 
          String line = br.readLine();
          while (line != null) {
-            modules.add((Module) JellyfishSonarqubePluginModule.class.getClassLoader().loadClass(line).newInstance());
+            Module m = (Module) JellyfishSonarqubePluginModule.class.getClassLoader().loadClass(line).newInstance();
+            if (m.getClass() != XTextSystemDescriptorServiceModule.class) {
+               modules.add(m);
+            }
             line = br.readLine();
          }
       } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
