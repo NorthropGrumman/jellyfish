@@ -69,6 +69,7 @@ tasks.create('buildModuleDependencyFile').doLast {
       from(guiceModulesFile.path)
    }
 
+   println "guice-modules path is:\n${guiceModulesFile.path}\n"
    println "project test classpath is:"
    project.test.classpath.forEach { println it }
 }
