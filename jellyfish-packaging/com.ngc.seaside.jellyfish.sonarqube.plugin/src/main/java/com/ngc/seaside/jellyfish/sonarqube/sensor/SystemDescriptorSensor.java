@@ -118,9 +118,4 @@ public class SystemDescriptorSensor implements Sensor {
             return SyntaxWarningRule.KEY;
       }
    }
-
-   private static ISystemDescriptorService getServiceInstance() {
-      return Guice.createInjector(new JellyfishSonarqubePluginModule())
-            .getInstance(ISystemDescriptorService.class);
-   }
 }
