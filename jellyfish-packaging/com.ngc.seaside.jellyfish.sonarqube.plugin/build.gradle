@@ -68,6 +68,9 @@ tasks.create('buildModuleDependencyFile').doLast {
    project.jar {
       from(guiceModulesFile.path)
    }
+
+   println "project test classpath is:"
+   project.test.classpath.forEach { println it }
 }
 
 tasks.findByName('compileJava').dependsOn('buildModuleDependencyFile')
