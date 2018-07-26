@@ -1,4 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
+import com.ngc.seaside.gradle.util.Versions
 
 // This prevents errors due to how the org.xtext.xtend
 // autoguesses the version of Xtend to use.  It guess
@@ -83,6 +84,11 @@ jar {
    }
    // Include 'plugin.xml'
    from('.', { include('plugin.xml') })
+}
+
+task copyDependencies(type: Copy) {
+   from configurations.compile
+   into { "$buildDir/dependencies" }
 }
 
 tasks.getByName('generateXtext').dependsOn(unzipEclipse)
