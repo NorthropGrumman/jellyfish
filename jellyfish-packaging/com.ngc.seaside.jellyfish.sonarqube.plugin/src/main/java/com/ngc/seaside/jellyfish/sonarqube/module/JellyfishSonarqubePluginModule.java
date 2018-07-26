@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.sonarqube.module;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Module;
 
 import com.ngc.blocs.guice.module.LogServiceModule;
@@ -8,6 +9,7 @@ import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDes
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
@@ -25,10 +27,10 @@ public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
 
    @Override
    protected Collection<Module> configureModulesFromClasspath(Collection<Module> modules) {
-      try (BufferedReader br = new BufferedReader(
-            new InputStreamReader(
-                  JellyfishSonarqubePluginModule.class.getClassLoader().getResourceAsStream("guice-modules")))) {
-
+      InputStream is = JellyfishSonarqubePluginModule.class.getClassLoader().getResourceAsStream("guice-modules");
+      Preconditions.checkState(is != null,
+                               "failed to load file guice-modules from classpath!");
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
          String line = br.readLine();
          while (line != null) {
             Module m = (Module) JellyfishSonarqubePluginModule.class.getClassLoader().loadClass(line).newInstance();
