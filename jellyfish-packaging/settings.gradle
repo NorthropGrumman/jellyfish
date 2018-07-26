@@ -1,8 +1,5 @@
 rootProject.name = 'jellyfish-packaging'
 
-include 'com.ngc.seaside.systemdescriptor.feature'
-project(':com.ngc.seaside.systemdescriptor.feature').name = 'systemdescriptor.feature'
-
 include 'com.ngc.seaside.systemdescriptor.updatesite'
 project(':com.ngc.seaside.systemdescriptor.updatesite').name = 'systemdescriptor.updatesite'
 

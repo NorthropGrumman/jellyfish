@@ -1,159 +1,96 @@
-import com.ngc.seaside.gradle.plugins.eclipse.updatesite.SeasideEclipseUpdateSitePlugin
-import com.ngc.seaside.gradle.util.Versions
-
-import java.nio.file.Paths
-
 apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.ngc.seaside.ci'
 apply plugin: 'com.ngc.seaside.eclipse.updatesite'
+apply plugin: 'com.ngc.seaside.eclipse.p2'
 
-eclipseUpdateSite {
-   linuxEclipseVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
-   windowsEclipseVersion = 'eclipse-dsl-photon-R-win32-x86_64'
-   linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxEclipseVersion}.zip"
-   windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsEclipseVersion}.zip"
+eclipseDistribution {
+   linuxVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
+   windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
+   linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
+   windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
+
+   configurations {
+      // Exclude transitive dependencies that are already bundled with eclipse
+      plugin {
+         pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
+            exclude module: it.name.substring(0, it.name.indexOf('_'))
+         }
+      }
+   }
 }
 
-configurations {
-   // Only add Guava to this configuration.
-   // We do this because we have to rename the JAR to match
-   // the format demanded by the update site:
-   // <bundleId>_<version>.jar
-   guava {
-      transitive = false
+eclipseUpdateSite {
+   
+   def sdFeature = feature {
+      id = 'com.ngc.seaside.systemdescriptor.feature'
+      label = 'JellyFish SystemDescriptor DSL'
+      version = project.version
+      providerName = 'Northrop Grumman Corporation'
+      description {
+         url = 'http://www.systemdescriptor.seaside.ngc.com/description'
+         text = 'This is the JellyFish System Descriptor Domain Specific Language Eclipse plugin.'
+      }
+      copyright {
+         url = 'http://www.systemdescriptor.seaside.ngc.com/copyright'
+         text = project.resources.text.fromFile(project.file('src/main/resources/license.txt')).asString()
+      }
+      license {
+         url = 'http://www.systemdescriptor.seaside.ngc.com/license'
+         text = copyright.text
+      }
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor'
+         version = '0.0.0'
+         unpack = false
+      }
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor.ui'
+         version = '0.0.0'
+         unpack = false
+      }
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor.ide'
+         version = '0.0.0'
+         unpack = false
+      }
    }
 
-   // Only add Guava for the *.model.impl.xtext project to this configuration.
-   // We do this because we have to rename the JAR to match
-   // the format demanded by the update site:
-   // <bundleId>_<version>.jar
-   guavaForModelXtextImpl {
-      transitive = false
+   def sdCategory = category {
+      name = 'system_descriptor_category_id'
+      label = 'System Descriptor Plugin'
+      description = 'Eclipse Plugin for the Seaside System Descriptor'
+      feature sdFeature
    }
+   
+   def externalUpdateSites = [
+      'https://cucumber.io/cucumber-eclipse/update-site',                 // Cucumber
+      'https://nodeclipse.github.io/updates/markdown',                    // Markdown editor
+      'https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite'  // Markdown git viewer
+   ]
 
-   // Only add Guava for the *.scenario.impl.standardsteps project to this configuration.
-   // We do this because we have to rename the JAR to match
-   // the format demanded by the update site:
-   // <bundleId>_<version>.jar
-   guavaForStandardStepsImpl {
-      transitive = false
-   }
-
-   // Only add guice multibindings for this configuration.
-   // We do this because we have to rename the JAR to match
-   // the format demanded by the update site:
-   // <bundleId>_<version>.jar
-   multibindings {
-      transitive = false
+   externalUpdateSites.each {
+      p2.remoteRepository(it) {
+         // Include all the external site plugins
+         plugins { p ->
+            dependencies {
+               plugin p.dependency
+            }
+         }
+         // Include all the external site features
+         features { externalFeature ->
+            eclipseUpdateSite.feature externalFeature
+            sdCategory.feature externalFeature
+         }
+      }
    }
 }
 
 dependencies {
-   features project(path: ':systemdescriptor.feature', configuration: 'feature')
+   plugin "com.ngc.seaside:systemdescriptor:$version"
+   plugin "com.ngc.seaside:systemdescriptor.ide:$version"
+   plugin "com.ngc.seaside:systemdescriptor.ui:$version"
 
-   customPlugins "com.ngc.seaside:systemdescriptor.model.impl.xtext:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
-   customPlugins "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
-   customPlugins "com.ngc.seaside:jellyfish.cli.command.analyzebudget:$version"
-
-   customPlugins "com.ngc.seaside:systemdescriptor.model.api:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.service.api:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
-
-   customPlugins "com.ngc.seaside:systemdescriptor:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.ide:$version"
-   customPlugins "com.ngc.seaside:systemdescriptor.ui:$version"
-
-   customPlugins "com.ngc.blocs:api:$blocsVersion"
-   customPlugins "com.ngc.blocs:service.api:$blocsVersion"
-   customPlugins "org.glassfish:javax.json:$glassfishJsonVersion"
-
-   eclipsePlugins name: 'org.antlr.runtime_3.2.0.v201101311130'
-   eclipsePlugins name: 'org.apache.commons.logging_1.1.1.v201101211721'
-   eclipsePlugins name: 'org.eclipse.emf.codegen_2.13.0.v20180319-0813'
-   eclipsePlugins name: 'org.eclipse.emf.common_2.14.0.v20180527-1134'
-   eclipsePlugins name: 'org.eclipse.emf.mwe.utils_1.3.21.201705291011'
-   eclipsePlugins name: 'org.eclipse.emf.mwe2.language.ui_2.9.1.201705291011'
-   eclipsePlugins name: 'org.eclipse.emf.mwe2.language_2.9.1.201705291011'
-   eclipsePlugins name: 'org.eclipse.emf.mwe2.launch_2.9.1.201705291011'
-   eclipsePlugins name: 'org.eclipse.emf.mwe2.lib_2.9.1.201705291011'
-   eclipsePlugins name: 'org.eclipse.emf.mwe2.runtime_2.9.1.201705291011'
-   eclipsePlugins name: 'org.eclipse.xtend.lib_2.14.0.v20180522-1629'
-   eclipsePlugins name: 'org.eclipse.xtext.builder_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.common.types.ui_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.common.types_2.14.0.v20180522-1833'
-   eclipsePlugins name: 'org.eclipse.xtext.ecore_2.14.0.v20180522-1833'
-   eclipsePlugins name: 'org.eclipse.xtext.generator_2.14.0.v20180522-1833'
-   eclipsePlugins name: 'org.eclipse.xtext.ide_2.14.0.v20180522-1821'
-   eclipsePlugins name: 'org.eclipse.xtext.ui.codetemplates.ui_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.ui.codetemplates_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.ui.ecore_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.ui.shared_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.ui_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.util_2.14.0.v20180522-1821'
-   eclipsePlugins name: 'org.eclipse.xtext.xbase.lib_2.14.0.v20180522-1629'
-   eclipsePlugins name: 'org.eclipse.xtext.xbase.ui_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext.xbase_2.14.0.v20180522-1833'
-   eclipsePlugins name: 'org.eclipse.xtext.xtext.ui_2.14.0.v20180523-0437'
-   eclipsePlugins name: 'org.eclipse.xtext_2.14.0.v20180522-1821'
-   eclipsePlugins name: 'org.objectweb.asm_6.1.1.v20180414-0329'
-
-   guava "com.google.guava:guava:$guavaVersion"
-   guavaForModelXtextImpl "com.google.guava:guava:$guavaVersionForModelXtextImpl"
-   guavaForStandardStepsImpl "com.google.guava:guava:$guavaVersionForStandardStepsImpl"
-   multibindings "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
+   plugin "com.ngc.seaside:jellyfish.cli.command.analyzebudget:$version"
+   plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
 }
-
-task copyMultibings(type: Copy) {
-   from configurations.multibindings {
-      rename { String name ->
-         def artifacts = configurations.multibindings.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         // The bundle name is all messed up for multibindings.  Just hardcode the name.
-         "com.google.inject.multibindings_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
-}
-
-task copyGuava(type: Copy) {
-   from configurations.guava {
-      rename { String name ->
-         def artifacts = configurations.guava.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         // And guava is messed up too...  At least according to Eclipse.
-         "com.google.guava_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
-}
-
-task copyGuavaForModelXtextImpl(type: Copy) {
-   from configurations.guavaForModelXtextImpl {
-      rename { String name ->
-         def artifacts = configurations.guavaForModelXtextImpl.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         "com.google.guava_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
-}
-
-task copyGuavaForStandardStepsImpl(type: Copy) {
-   from configurations.guavaForStandardStepsImpl {
-      rename { String name ->
-         def artifacts = configurations.guavaForStandardStepsImpl.resolvedConfiguration.resolvedArtifacts
-         def artifact = artifacts.find { it.file.name == name }
-         def osgiVersion = Versions.makeOsgiCompliantVersion("${artifact.moduleVersion.id.version}")
-         "com.google.guava_${osgiVersion}.${artifact.extension}"
-      }
-   }
-   into Paths.get(project.buildDir.absolutePath, "updatesite", "plugins")
-}
-
-tasks.getByName(SeasideEclipseUpdateSitePlugin.ECLIPSE_CREATE_METADATA_TASK_NAME)
-     .dependsOn(copyMultibings, copyGuava, copyGuavaForModelXtextImpl, copyGuavaForStandardStepsImpl)
