@@ -1,5 +1,0 @@
-com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.RepositoryServiceGuiceModule
-com.ngc.seaside.jellyfish.cli.command.validate.ValidateCommandGuiceModule
-com.ngc.seaside.jellyfish.impl.provider.JellyfishCommandProviderGuiceModule
-com.ngc.seaside.jellyfish.service.impl.parameterservice.ParameterServiceGuiceModule
-com.ngc.seaside.jellyfish.cli.command.help.HelpCommandGuiceModule

@@ -35,17 +35,14 @@ sonarPackaging {
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
 
-def mainGuiceModulesFile = {
-   def resource = project.file("${project.projectDir.absolutePath}/src/main/resources/guice-modules")
-   resource.parentFile.mkdir()
-   resource.createNewFile()
-   return resource
-}.call()
-
 tasks.create('buildModuleDependencyFile').doLast {
    def destinationDir = "${project.buildDir.absolutePath}/dependencies"
    def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
    def filenameToExtract = 'META-INF/services/com.google.inject.Module'
+
+   def guiceModulesFile = project.file("${project.buildDir.absolutePath}/resources/main/guice-modules")
+   guiceModulesFile.parentFile.mkdirs()
+   guiceModulesFile.createNewFile()
 
    def modules = new HashSet<String>()
 
@@ -66,12 +63,11 @@ tasks.create('buildModuleDependencyFile').doLast {
       }
    }
 
-   mainGuiceModulesFile.write(modules.join('\n'))
-}
+   guiceModulesFile.write(modules.join('\n'))
 
-tasks.create('cleanModuleDependencyFile').doLast {
-   project.delete(mainGuiceModulesFile)
+   project.jar {
+      from(guiceModulesFile.path)
+   }
 }
 
 tasks.findByName('compileJava').dependsOn('buildModuleDependencyFile')
-tasks.findByName('clean').dependsOn('cleanModuleDependencyFile')
