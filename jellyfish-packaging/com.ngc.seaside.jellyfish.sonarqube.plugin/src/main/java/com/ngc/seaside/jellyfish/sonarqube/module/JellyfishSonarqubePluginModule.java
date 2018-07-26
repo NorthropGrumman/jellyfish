@@ -38,7 +38,7 @@ public class JellyfishSonarqubePluginModule extends DefaultJellyfishModule {
             line = br.readLine();
          }
       } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-         e.printStackTrace();
+         throw new RuntimeException("failed to create instance of a required Guice module!", e);
       }
 
       return modules;
