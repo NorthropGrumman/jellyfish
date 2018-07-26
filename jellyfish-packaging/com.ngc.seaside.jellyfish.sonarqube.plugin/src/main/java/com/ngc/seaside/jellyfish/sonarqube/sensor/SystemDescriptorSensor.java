@@ -114,8 +114,6 @@ public class SystemDescriptorSensor implements Sensor {
    private RuleKey createRuleKey(Severity errorType) {
       switch (errorType) {
          case WARNING:
-         case ERROR:
-            // Intentionally fall through.
          default:
             return SyntaxWarningRule.KEY;
       }
