@@ -6,6 +6,7 @@ dependencies {
    // Use the old compile scope because the sonar-packaging plugin
    // will only embed dependencies that are under the compile scope.
    compile project(':jellyfish')
+   compile "com.ngc.seaside:jellyfish.api:$version"
    compile "com.ngc.seaside:guice.modules:$version"
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"

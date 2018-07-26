@@ -1,15 +1,13 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
-import com.google.inject.Guice;
-
 import com.ngc.seaside.jellyfish.Jellyfish;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
@@ -50,7 +48,8 @@ public class SystemDescriptorSensor implements Sensor {
 
    @Override
    public void execute(SensorContext c) {
-      LOGGER.debug("Beginning scan of project {}.", c.fileSystem().baseDir().toPath());
+      Path baseDir = c.fileSystem().baseDir().toPath();
+      LOGGER.debug("Beginning scan of project {}.", baseDir);
       // Use c.config().getStringArray() for multivalues.
       // See https://github.com/SonarSource/sonarqube/blob/master/sonar-plugin-api/src/main/java/org/
       // sonar/api/config/Configuration.java
@@ -69,7 +68,7 @@ public class SystemDescriptorSensor implements Sensor {
 
       // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
       Collection<String> commandLineArgs = new ArrayList<>();
-      commandLineArgs.add("inputDir=" + c.fileSystem().baseDir().toPath().toString());
+      commandLineArgs.add(formatCommandLineArg(CommonParameters.INPUT_DIRECTORY.getName(), baseDir.toString()));
 
       IJellyfishExecution result = Jellyfish
             .getService()
@@ -117,5 +116,9 @@ public class SystemDescriptorSensor implements Sensor {
          default:
             return SyntaxWarningRule.KEY;
       }
+   }
+
+   private String formatCommandLineArg(String parameterName, String parameterValue) {
+      return String.format("%s=%s", parameterName, parameterValue);
    }
 }
