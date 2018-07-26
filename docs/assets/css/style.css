@@ -194,6 +194,17 @@ div.highlighter-rouge span.nf {
   padding-bottom: 2px;
 }
 
+#intro-wrapper {
+  margin: auto;
+  width: 500px;
+}
+
+#intro {
+  text-align: center;
+  font-size: 24pt;
+  padding: 25px;
+}
+
 /* Rules for books */
 #books .book-link {
   margin-bottom: 0.5rem;
