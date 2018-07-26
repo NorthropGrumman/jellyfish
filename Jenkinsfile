@@ -13,7 +13,6 @@ pipeline {
       // the build needs to reference the snapshot).  This happens if a pipeline has multiple invocations of Gradle.
       lock resource: 'mavenLocal'
       buildDiscarder(logRotator(numToKeepStr: '15'))
-      timeout(time: 60, unit: 'MINUTES')
    }
 
    parameters {
