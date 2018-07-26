@@ -58,7 +58,7 @@ public class SystemDescriptorSensorIT {
       assertEquals(
             "the language should be: " + SystemDescriptorLanguage.KEY,
             SystemDescriptorLanguage.KEY,
-            descriptor.languages().toArray()[0]
+            descriptor.languages().iterator().next()
       );
    }
 
