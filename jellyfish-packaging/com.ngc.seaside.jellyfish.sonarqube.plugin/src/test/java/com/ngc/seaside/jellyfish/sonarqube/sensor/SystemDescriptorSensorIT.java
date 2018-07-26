@@ -3,7 +3,6 @@ package com.ngc.seaside.jellyfish.sonarqube.sensor;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
@@ -83,21 +82,6 @@ public class SystemDescriptorSensorIT {
 
       assertTrue(
             "a valid project should not have issues!",
-            context.allIssues().isEmpty()
-      );
-   }
-
-   @Ignore("For now we don't care about syntax errors")
-   @Test
-   public void doesFailWithInvalidProject() throws IOException {
-      projectPath = BASE_DIR.resolve("invalid-project1");
-      context = SensorContextTester.create(projectPath.toFile());
-      addProjectInputFiles(context.fileSystem(), projectPath);
-
-      sensor.execute(context);
-
-      assertFalse(
-            "an invalid file should have issues!",
             context.allIssues().isEmpty()
       );
    }
