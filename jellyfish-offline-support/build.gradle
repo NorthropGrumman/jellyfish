@@ -1,0 +1,40 @@
+buildscript {
+   ext {
+      versionsFile = file('../versions.gradle')
+   }
+   apply from: versionsFile, to: project
+
+   repositories {
+      mavenLocal()
+
+      maven {
+         url nexusConsolidated
+      }
+   }
+
+   dependencies {
+      classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+      classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+   }
+}
+
+apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.ngc.seaside.ci'
+
+configurations {
+   extra
+}
+
+// These are extra dependencies we need that don't show up for some reason in the other projects.
+dependencies {
+   extra "log4j:log4j-osgi:$log4jVersion"
+   extra "com.google.protobuf:protoc:$protobufVersion:linux-x86_64@exe"
+}
+
+seasideCi {
+   forceResolutionOf('extra')
+
+   m2OutputDirectory = m2directory
+   dependencyInfoReportFile = dependenciesReportFile
+   deploymentScriptFile = m2DeploymentScriptFile
+}

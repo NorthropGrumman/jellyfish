@@ -127,28 +127,18 @@ pipeline {
             expression { params.offlineSupport }
          }
          steps {
-            dir('jellyfish-systemdescriptor-dsl') {
-               sh '../gradlew populateM2repo'
-            }
-            dir('jellyfish-systemdescriptor') {
-               sh '../gradlew populateM2repo'
-            }
-            dir('jellyfish-cli') {
-               sh '../gradlew populateM2repo'
-            }
-            dir('jellyfish-cli-commands') {
-               sh '../gradlew populateM2repo'
-            }
-            dir('jellyfish-cli-analysis-commands') {
-               sh '../gradlew populateM2repo'
-            }
-            dir('jellyfish-packaging') {
-               sh '../gradlew populateM2repo'
-            }
             dir('jellyfish-examples') {
-               // Just collect the dependencies for a single generated service since the dependencies are always
-               // the same.
+               // By running this for a generated service, we get all the dependencies.  The only exception is the
+               // transport providers.  We need to run an audit task for each different type of deployment model
+               // so we get all the possible transport providers.  Regression 1 gets us the multicast provider.
                sh '../gradlew audit1'
+               // We need to run audit12 since it uses a deployment model which requires ZeroMQ.  If we don't do this
+               // we don't get the ZeroMQ dependencies.
+               sh '../gradlew audit12'
+            }
+            dir('jellyfish-offline-support') {
+               // Finally, we may need some extra dependencies.
+               sh '../gradlew populateM2repo'
             }
             dir('build') {
                // Collect the m2 repository files inside a single ZIP.
