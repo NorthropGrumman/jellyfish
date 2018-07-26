@@ -1,12 +1,5 @@
-apply plugin: "com.iadams.sonar-packaging"
-
-repositories {
-   mavenLocal()
-
-   maven {
-      url nexusConsolidated
-   }
-}
+apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.iadams.sonar-packaging'
 
 dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
