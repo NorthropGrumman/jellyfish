@@ -1,14 +1,13 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
-import com.google.inject.Guice;
-
+import com.ngc.seaside.jellyfish.Jellyfish;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
-import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishPluginModule;
-import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxErrorRule;
+import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
@@ -26,6 +25,9 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * The plugin component that is responsible for parsing System Descriptor files and reporting errors and warnings to
@@ -35,16 +37,6 @@ import java.nio.file.Path;
 public class SystemDescriptorSensor implements Sensor {
 
    private static final Logger LOGGER = Loggers.get(SystemDescriptorSensor.class);
-
-   private final ISystemDescriptorService systemDescriptorService;
-
-   /**
-    * Creates a new sesnor.
-    */
-   public SystemDescriptorSensor() {
-      // Create a single instance of the system descriptor service and reuse it for all modules in the project.
-      systemDescriptorService = getServiceInstance();
-   }
 
    @Override
    public void describe(SensorDescriptor d) {
@@ -56,7 +48,8 @@ public class SystemDescriptorSensor implements Sensor {
 
    @Override
    public void execute(SensorContext c) {
-      LOGGER.debug("Beginning scan of project {}.", c.fileSystem().baseDir().toPath());
+      Path baseDir = c.fileSystem().baseDir().toPath();
+      LOGGER.debug("Beginning scan of project {}.", baseDir);
       // Use c.config().getStringArray() for multivalues.
       // See https://github.com/SonarSource/sonarqube/blob/master/sonar-plugin-api/src/main/java/org/
       // sonar/api/config/Configuration.java
@@ -74,7 +67,14 @@ public class SystemDescriptorSensor implements Sensor {
       // c.config().get(SystemDescriptorProperties.HELLO_WORLD).orElse("NOT SET"));
 
       // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
-      IParsingResult r = systemDescriptorService.parseProject(c.fileSystem().baseDir().toPath());
+      Collection<String> commandLineArgs = new ArrayList<>();
+      commandLineArgs.add(formatCommandLineArg(CommonParameters.INPUT_DIRECTORY.getName(), baseDir.toString()));
+
+      IJellyfishExecution result = Jellyfish
+            .getService()
+            .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
+
+      IParsingResult r = result.getParsingResult();
 
       for (IParsingIssue i : r.getIssues()) {
          saveIssue(c, i);
@@ -113,16 +113,12 @@ public class SystemDescriptorSensor implements Sensor {
    private RuleKey createRuleKey(Severity errorType) {
       switch (errorType) {
          case WARNING:
-            return SyntaxWarningRule.KEY;
-         case ERROR:
-            // Intentionally fall through.
          default:
-            return SyntaxErrorRule.KEY;
+            return SyntaxWarningRule.KEY;
       }
    }
 
-   private static ISystemDescriptorService getServiceInstance() {
-      return Guice.createInjector(new JellyfishPluginModule())
-            .getInstance(ISystemDescriptorService.class);
+   private String formatCommandLineArg(String parameterName, String parameterValue) {
+      return String.format("%s=%s", parameterName, parameterValue);
    }
 }

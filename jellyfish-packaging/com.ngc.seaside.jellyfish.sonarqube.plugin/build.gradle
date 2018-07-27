@@ -1,9 +1,13 @@
-apply plugin: "com.iadams.sonar-packaging"
+apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.iadams.sonar-packaging'
 
 dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
    // Use the old compile scope because the sonar-packaging plugin
    // will only embed dependencies that are under the compile scope.
+   compile project(':jellyfish')
+   compile "com.ngc.seaside:jellyfish.api:$version"
+   compile "com.ngc.seaside:guice.modules:$version"
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
@@ -15,18 +19,57 @@ dependencies {
    // Make sure this has a scope of provided.
    provided "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
 
-   testImplementation "junit:junit:$junitVersion"
-   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testCompile "junit:junit:$junitVersion"
+   testCompile "org.mockito:mockito-core:$mockitoVersion"
    // Include the SLF4J logging adapter so we can see logs during test execution.
-   testImplementation "ch.qos.logback:logback-core:1.1.7"
-   testImplementation "ch.qos.logback:logback-classic:1.1.7"
+   testCompile "ch.qos.logback:logback-core:1.1.7"
+   testCompile "ch.qos.logback:logback-classic:1.1.7"
 }
 
 sonarPackaging {
    pluginKey = 'systemdescriptor'
-   pluginName = 'System Descriptor'
+   pluginName = 'SonarSystemDescriptor'
    pluginClass = 'com.ngc.seaside.jellyfish.sonarqube.JellyfishPlugin'
    pluginDescription = 'Adds support for scanning System Descriptor projects.'
    pluginUrl = ''
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
+
+tasks.create('buildModuleDependencyFile').doLast {
+   def destinationDir = "${project.buildDir.absolutePath}/dependencies"
+   def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
+   def filenameToExtract = 'META-INF/services/com.google.inject.Module'
+
+   def guiceModulesFile = project.file("${project.buildDir.absolutePath}/resources/main/guice-modules")
+   guiceModulesFile.parentFile.mkdirs()
+   guiceModulesFile.createNewFile()
+
+   def modules = new HashSet<String>()
+
+   configurations.compile.files.forEach { file ->
+      if (file.path.endsWith('.jar') && project.file(file.path).exists()) {
+         project.copy {
+            from(zipTree(file.path)) {
+               include "**/${filenameToExtract}"
+               includeEmptyDirs = false
+            }
+            into tmpDir
+         }
+
+         def moduleFile = project.file("${tmpDir}/${filenameToExtract}")
+         if (moduleFile.exists()) {
+            modules.addAll(moduleFile.readLines().stream().map { line -> line.trim() }.collect())
+         }
+      }
+   }
+
+   guiceModulesFile.write(modules.join('\n'))
+
+   project.jar {
+      from(guiceModulesFile.path)
+   }
+}
+
+jar.dependsOn(buildModuleDependencyFile)
+test.dependsOn(buildModuleDependencyFile)
+buildModuleDependencyFile.shouldRunAfter(processResources)

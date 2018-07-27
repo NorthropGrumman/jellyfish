@@ -38,7 +38,6 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
    static {
       Set<AbstractRule> rules = new TreeSet<>();
       // Add rules here.
-      rules.add(new SyntaxErrorRule());
       rules.add(new SyntaxWarningRule());
       DEFAULT_RULES = Collections.unmodifiableSet(rules);
    }

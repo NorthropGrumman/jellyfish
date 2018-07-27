@@ -53,12 +53,12 @@ public class SystemDescriptorSensorIT {
       sensor.describe(descriptor);
       assertEquals(
             "the sensor should be available for only one language!",
-            descriptor.languages().size(), 1
+            1, descriptor.languages().size()
       );
       assertEquals(
             "the language should be: " + SystemDescriptorLanguage.KEY,
-            descriptor.languages().toArray()[0],
-            SystemDescriptorLanguage.KEY
+            SystemDescriptorLanguage.KEY,
+            descriptor.languages().iterator().next()
       );
    }
 
@@ -67,8 +67,8 @@ public class SystemDescriptorSensorIT {
       sensor.describe(descriptor);
       assertEquals(
             "the file type for input files should be: " + Type.MAIN,
-            descriptor.type(),
-            Type.MAIN
+            Type.MAIN,
+            descriptor.type()
       );
    }
 
@@ -82,20 +82,6 @@ public class SystemDescriptorSensorIT {
 
       assertTrue(
             "a valid project should not have issues!",
-            context.allIssues().isEmpty()
-      );
-   }
-
-   @Test
-   public void doesFailWithInvalidProject() throws IOException {
-      projectPath = BASE_DIR.resolve("invalid-project1");
-      context = SensorContextTester.create(projectPath.toFile());
-      addProjectInputFiles(context.fileSystem(), projectPath);
-
-      sensor.execute(context);
-
-      assertFalse(
-            "an invalid file should have issues!",
             context.allIssues().isEmpty()
       );
    }
