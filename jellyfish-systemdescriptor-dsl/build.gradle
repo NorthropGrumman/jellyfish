@@ -1,7 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
-import java.nio.file.Paths
-
 buildscript {
     ext {
         versionsFile = file('../versions.gradle')
@@ -153,17 +149,13 @@ subprojects {
     }
 }
 
-ext {
-    linuxEclipseVersion = "eclipse-dsl-photon-R-linux-gtk-x86_64"
-    windowsEclipseVersion = "eclipse-dsl-photon-R-win32-x86_64"
-    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxEclipseVersion}.zip"
-    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsEclipseVersion}.zip"
-
-    // We do this because the UI project needs to reference dependencies in the Eclipse plugins directory.
-    eclipseVersion = OperatingSystem.current().isLinux() ? linuxEclipseVersion : windowsEclipseVersion
-
-    // This is the default cache location when the update site plugin needs to download Eclipse.
-    cacheDirectory = Paths.get(gradle.gradleUserHomeDir.absolutePath, "caches", "eclipse")
-
-    eclipsePluginsDirectory = "$cacheDirectory/$eclipseVersion/plugins"
+project(':systemdescriptor.ui') {
+    apply plugin: 'com.ngc.seaside.eclipse.base'
+    eclipseDistribution {
+       linuxVersion = "eclipse-dsl-photon-R-linux-gtk-x86_64"
+       windowsVersion = "eclipse-dsl-photon-R-win32-x86_64"
+       linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
+       windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
+       enablePluginsRepository()
+    }
 }

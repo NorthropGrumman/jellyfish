@@ -234,7 +234,7 @@ pipeline {
             // Create a ZIP that has everything.
             sh 'mkdir -p build'
             sh '''zip -j -r build/jellyfish-all.zip
-				  jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite/build/com.ngc.seaside.systemdescriptor.updatesite-*.zip
+				  jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite/build/updatesite/com.ngc.seaside.systemdescriptor.updatesite-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish/build/distributions/jellyfish-*.zip
 				  jellyfish-packaging/com.ngc.seaside.jellyfish.sonarqube.plugin/build/libs/jellyfish.sonarqube.plugin-*.jar
               build/site.zip
