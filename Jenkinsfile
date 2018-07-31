@@ -102,7 +102,7 @@ pipeline {
                withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
                                                  passwordVariable: 'nexusPassword',
                                                  usernameVariable: 'nexusUsername')]) {
-                  sh "..\gradlew :jellyfish.cli.gradle.plugins:test -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
+                  sh "../gradlew :jellyfish.cli.gradle.plugins:test -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
                }
             }
          }
