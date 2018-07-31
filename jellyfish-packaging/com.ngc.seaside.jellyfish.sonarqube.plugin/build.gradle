@@ -12,6 +12,7 @@ dependencies {
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+   compile "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
 
    compile "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
    compile "com.ngc.blocs:service.api:$blocsVersion"
