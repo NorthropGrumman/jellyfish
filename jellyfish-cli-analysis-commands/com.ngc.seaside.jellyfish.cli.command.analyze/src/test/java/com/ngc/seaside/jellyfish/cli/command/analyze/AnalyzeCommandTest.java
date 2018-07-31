@@ -62,9 +62,9 @@ public class AnalyzeCommandTest {
                        .getRequiredParameters()
                        .stream()
                        .anyMatch(p -> p.getName().equals(AnalyzeCommand.ANALYSES_PARAMETER_NAME)));
-      assertTrue("failed to register required parameter '" + AnalyzeCommand.REPORTS_PARAMETER_NAME + "'",
+      assertTrue("failed to register parameter '" + AnalyzeCommand.REPORTS_PARAMETER_NAME + "'",
                  command.getUsage()
-                       .getRequiredParameters()
+                       .getAllParameters()
                        .stream()
                        .anyMatch(p -> p.getName().equals(AnalyzeCommand.REPORTS_PARAMETER_NAME)));
    }
