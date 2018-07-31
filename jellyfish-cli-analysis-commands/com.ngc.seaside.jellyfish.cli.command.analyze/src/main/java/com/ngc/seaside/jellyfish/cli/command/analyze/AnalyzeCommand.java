@@ -27,7 +27,7 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
    /**
     * The parameter that controls the analyses to run.
     */
-   static final String ANALYSES_PARAMETER_NAME = "analyses";
+   public static final String ANALYSES_PARAMETER_NAME = "analyses";
 
    /**
     * The parameter that controls the reports to generate.
