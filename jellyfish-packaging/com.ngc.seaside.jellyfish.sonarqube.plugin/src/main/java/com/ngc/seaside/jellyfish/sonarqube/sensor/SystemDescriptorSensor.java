@@ -32,12 +32,9 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,7 +60,7 @@ public class SystemDescriptorSensor implements Sensor {
       Path baseDir = c.fileSystem().baseDir().toPath();
       LOGGER.debug("Beginning scan of project {}.", baseDir);
 
-      Collection<String> commandLineArgs = getCommandLineArgs(c);
+      Map<String, String> commandLineArgs = getCommandLineArgs(c);
 
       executeValidation(c, commandLineArgs);
       executeAnalyses(c, commandLineArgs);
@@ -71,11 +68,9 @@ public class SystemDescriptorSensor implements Sensor {
       LOGGER.debug("Scan complete.");
    }
 
-   private Collection<String> getCommandLineArgs(SensorContext c) {
+   private Map<String, String> getCommandLineArgs(SensorContext c) {
       Configuration config = c.config();
       Path baseDir = c.fileSystem().baseDir().toPath();
-
-      Collection<String> commandLineArgs = new ArrayList<>();
 
       Map<String, String> args = new LinkedHashMap<>();
 
@@ -93,19 +88,15 @@ public class SystemDescriptorSensor implements Sensor {
          args.put(keyValue[0], keyValue[1]);
       }
       String[] analysisCommands = config.getStringArray(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY);
-      String analysisCommandString = Stream.of(analysisCommands).collect(Collectors.joining(","));
-      args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, analysisCommandString);
-
-      for (Entry<String, String> entry : args.entrySet()) {
-         String key = entry.getKey();
-         String value = entry.getValue();
-         commandLineArgs.add(formatCommandLineArg(key, value));
+      if (analysisCommands.length > 0) {
+         String analysisCommandString = Stream.of(analysisCommands).collect(Collectors.joining(","));
+         args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, analysisCommandString);
       }
 
-      return commandLineArgs;
+      return args;
    }
 
-   private void executeValidation(SensorContext c, Collection<String> commandLineArgs) {
+   private void executeValidation(SensorContext c, Map<String, String> commandLineArgs) {
       IJellyfishExecution result = Jellyfish
                .getService()
                .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
@@ -117,7 +108,10 @@ public class SystemDescriptorSensor implements Sensor {
       }
    }
 
-   private void executeAnalyses(SensorContext c, Collection<String> commandLineArgs) {
+   private void executeAnalyses(SensorContext c, Map<String, String> commandLineArgs) {
+      if (!commandLineArgs.containsKey(AnalyzeCommand.ANALYSES_PARAMETER_NAME)) {
+         return;
+      }
       IJellyfishExecution result = Jellyfish.getService().run(AnalyzeCommand.NAME, commandLineArgs,
                Collections.singleton(new JellyfishSonarqubePluginModule()));
       Injector injector = result.getInjector();
@@ -138,16 +132,16 @@ public class SystemDescriptorSensor implements Sensor {
       ISourceLocation sourceLocation = parsingIssue.getLocation();
       InputFile f = getInputFileFromRealFile(c, sourceLocation.getPath());
       NewIssueLocation location = issue.newLocation()
-            .on(f)
-            .at(f.selectLine(sourceLocation.getLineNumber()))
-            .message(parsingIssue.getMessage());
+               .on(f)
+               .at(f.selectLine(sourceLocation.getLineNumber()))
+               .message(parsingIssue.getMessage());
       issue.at(location);
    }
 
    private InputFile getInputFileFromRealFile(SensorContext c, Path offendingFile) {
       FilePredicate p = c.fileSystem()
-            .predicates()
-            .hasFilename(offendingFile.getFileName().toString());
+               .predicates()
+               .hasFilename(offendingFile.getFileName().toString());
       return c.fileSystem().inputFile(p);
    }
 
@@ -163,7 +157,4 @@ public class SystemDescriptorSensor implements Sensor {
       }
    }
 
-   private String formatCommandLineArg(String parameterName, String parameterValue) {
-      return String.format("%s=%s", parameterName, parameterValue);
-   }
 }
