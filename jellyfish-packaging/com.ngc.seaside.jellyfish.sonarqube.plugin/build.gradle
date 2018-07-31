@@ -7,6 +7,7 @@ dependencies {
    // will only embed dependencies that are under the compile scope.
    compile project(':jellyfish')
    compile "com.ngc.seaside:jellyfish.api:$version"
+   compile "com.ngc.seaside:jellyfish.service.api:$version"
    compile "com.ngc.seaside:guice.modules:$version"
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
@@ -35,6 +36,10 @@ sonarPackaging {
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
 
+// Build a file that lists all the modules to use when running Jellyfish.  We do this because classpath scanning
+// for all instances of com.google.inject.Module declared via a ServiceLoader doesn't work within Sonarqube because
+// Sonarqube uses classloader isolation to keep plugins separate.  Instead, we build the list of all modules at
+// build time and just load it at runtime.
 tasks.create('buildModuleDependencyFile').doLast {
    def destinationDir = "${project.buildDir.absolutePath}/dependencies"
    def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath

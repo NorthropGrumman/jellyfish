@@ -1,5 +1,7 @@
 package com.ngc.seaside.jellyfish.sonarqube.rule;
 
+import com.google.inject.Singleton;
+
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 
 import org.sonar.api.rule.RuleKey;
@@ -14,6 +16,7 @@ import java.util.TreeSet;
 /**
  * Creates a new repository with the key {@link #REPOSITORY_KEY} and adds all the default SD rules to it.
  */
+@Singleton
 public class SystemDescriptorRulesDefinition implements RulesDefinition {
 
    /**
@@ -33,6 +36,7 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
    /**
     * Contains all the default rules in the repository configured by this definition.
     */
+   // TODO TH: remove this field.
    private static final Set<AbstractRule> DEFAULT_RULES;
 
    static {
@@ -56,11 +60,18 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
     *
     * @return the default rules that will be configured in the repository
     */
-   public static Set<AbstractRule> getDefaultRules() {
-      return DEFAULT_RULES;
+   public Set<AbstractRule> getRules() {
+      // TODO TH: implement this, this is just temporary.
+      return Collections.emptySet();
    }
 
    private void addRules(NewRepository repository) {
+      // Create an instance of Jellyfish and just run the help command.  Get all the impls of
+      // ISystemDescriptorFindingType.
       DEFAULT_RULES.forEach(r -> r.addRuleToRepository(repository));
    }
+
+//   private static class FindingTypeHolder {
+//      private final Set<IFindingType>
+//   }
 }
