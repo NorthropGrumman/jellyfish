@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class PasswordHidingWriter extends PrintWriter {
 
-   private static final Pattern PASSWORD_PATTERN = Pattern.compile("(password\\s*?=?)\\s*\\S+",
-      Pattern.CASE_INSENSITIVE);
+   private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("(password\\s*?=?)\\s*\\S+", Pattern.CASE_INSENSITIVE);
 
    public PasswordHidingWriter(OutputStream out) {
       super(out);
