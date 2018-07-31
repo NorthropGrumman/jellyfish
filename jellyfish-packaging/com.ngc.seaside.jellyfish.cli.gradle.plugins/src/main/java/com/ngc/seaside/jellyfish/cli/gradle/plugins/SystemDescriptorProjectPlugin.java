@@ -230,7 +230,7 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       Configuration sd = project.getConfigurations().getByName(SD_CONFIGURATION_NAME);
       Jar sdJar = (Jar) project.getTasks().getByName(SD_JAR_TASK_NAME);
       Jar testJar = (Jar) project.getTasks().getByName(TEST_JAR_TASK_NAME);
-      Node dependenciesNode = xml.asNode().appendNode("dependency");
+      Node dependenciesNode = xml.asNode().appendNode("dependencies");
       sd.getDependencies().forEach(dependency -> {
          Node sdNode = dependenciesNode.appendNode("dependency");
          sdNode.appendNode("groupId", dependency.getGroup());
@@ -251,7 +251,7 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
    private void configureExtension(Project project) {
       ExtensionContainer extensions = project.getExtensions();
       SystemDescriptorAnalysisExtension analysisExtension = extensions.create(
-               SystemDescriptorAnalysisExtension.EXTENSION_NAME, SystemDescriptorAnalysisExtension.class, project);
+               SystemDescriptorAnalysisExtension.EXTENSION_NAME, SystemDescriptorAnalysisExtension.class);
       project.getPlugins().withType(SonarQubePlugin.class, plugin -> {
          SonarQubeExtension sonarqubeExtension =
                   (SonarQubeExtension) extensions.getByName(SonarQubeExtension.SONARQUBE_EXTENSION_NAME);

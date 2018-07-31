@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'java-gradle-plugin'
 
 configurations {
     commandTemplate
@@ -22,6 +23,10 @@ dependencies {
     implementation "com.google.inject:guice:$guiceVersion"
 
     commandTemplate project(path: ':jellyfish', configuration: 'commandTemplate')
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "com.ngc.seaside:gradle.plugins.testutils:$seasidePluginsVersion"
 }
 
 // Include the command templates in the JAR.
@@ -45,3 +50,8 @@ task copyCommandTemplate(type: Copy) {
 }
 
 jar.dependsOn(copyCommandTemplate)
+
+test.systemProperty 'nexusConsolidated', nexusConsolidated
+test.systemProperty 'nexusSnapshots', nexusSnapshots
+test.systemProperty 'nexusUsername', nexusUsername
+test.systemProperty 'nexusPassword', nexusPassword
