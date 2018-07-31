@@ -72,7 +72,9 @@ public class SystemDescriptorSensor implements Sensor {
 
       IJellyfishExecution result = Jellyfish
             .getService()
-            .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
+            .run("validate",
+                 commandLineArgs,
+                 Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
 
       IParsingResult r = result.getParsingResult();
 
