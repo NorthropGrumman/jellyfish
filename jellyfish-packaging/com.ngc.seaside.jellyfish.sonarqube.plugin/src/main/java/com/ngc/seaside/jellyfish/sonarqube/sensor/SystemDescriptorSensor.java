@@ -1,10 +1,16 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
+import com.google.inject.Injector;
 import com.ngc.seaside.jellyfish.Jellyfish;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.cli.command.analyze.AnalyzeCommand;
+import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
+import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
@@ -20,6 +26,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -28,10 +35,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The plugin component that is responsible for parsing System Descriptor files and reporting errors and warnings to
- * Sonarqube.  This component is scoped per project so each project gets its own instance.
+ * Sonarqube. This component is scoped per project so each project gets its own instance.
  */
 @InstantiationStrategy(InstantiationStrategy.PER_PROJECT)
 public class SystemDescriptorSensor implements Sensor {
@@ -50,37 +62,70 @@ public class SystemDescriptorSensor implements Sensor {
    public void execute(SensorContext c) {
       Path baseDir = c.fileSystem().baseDir().toPath();
       LOGGER.debug("Beginning scan of project {}.", baseDir);
-      // Use c.config().getStringArray() for multivalues.
-      // See https://github.com/SonarSource/sonarqube/blob/master/sonar-plugin-api/src/main/java/org/
-      // sonar/api/config/Configuration.java
-      // For info about how to escape , in values.  IE
-      // "one,\"two,three\",\" four \""
-      // yields
-      // ["one", "two,three", " four "]
-      // We'll use this to configure which analysis to run via the project's build.gradle file which contains the
-      // settings.
 
-      // Use c.config().get(SystemDescriptorProperties.HELLO_WORLD) to get properties set in the build.gradle file
-      // of a project being scanned.
+      Collection<String> commandLineArgs = getCommandLineArgs(c);
 
-      // LOGGER.debug("Value of property is {}.",
-      // c.config().get(SystemDescriptorProperties.HELLO_WORLD).orElse("NOT SET"));
+      executeValidation(c, commandLineArgs);
+      executeAnalyses(c, commandLineArgs);
 
-      // Note the baseDir value will point to the base directory of Gradle project when scanning a project with Gradle.
+      LOGGER.debug("Scan complete.");
+   }
+
+   private Collection<String> getCommandLineArgs(SensorContext c) {
+      Configuration config = c.config();
+      Path baseDir = c.fileSystem().baseDir().toPath();
+
       Collection<String> commandLineArgs = new ArrayList<>();
-      commandLineArgs.add(formatCommandLineArg(CommonParameters.INPUT_DIRECTORY.getName(), baseDir.toString()));
 
+      Map<String, String> args = new LinkedHashMap<>();
+
+      args.put(CommonParameters.INPUT_DIRECTORY.getName(), baseDir.toString());
+      config.get("sonar.projectBaseDir").ifPresent(name -> args.put(CommonParameters.INPUT_DIRECTORY.getName(), name));
+      config.get("sonar.projectName").ifPresent(name -> args.put(CommonParameters.ARTIFACT_ID.getName(), name));
+
+      String[] argString = config.getStringArray(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY);
+      for (String arg : argString) {
+         String[] keyValue = arg.split("=");
+         if (keyValue.length != 2) {
+            throw new IllegalArgumentException("Invalid argument for "
+                     + SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY + ": " + arg);
+         }
+         args.put(keyValue[0], keyValue[1]);
+      }
+      String[] analysisCommands = config.getStringArray(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY);
+      String analysisCommandString = Stream.of(analysisCommands).collect(Collectors.joining(","));
+      args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, analysisCommandString);
+
+      for (Entry<String, String> entry : args.entrySet()) {
+         String key = entry.getKey();
+         String value = entry.getValue();
+         commandLineArgs.add(formatCommandLineArg(key, value));
+      }
+
+      return commandLineArgs;
+   }
+
+   private void executeValidation(SensorContext c, Collection<String> commandLineArgs) {
       IJellyfishExecution result = Jellyfish
-            .getService()
-            .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
+               .getService()
+               .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
 
       IParsingResult r = result.getParsingResult();
 
       for (IParsingIssue i : r.getIssues()) {
          saveIssue(c, i);
       }
+   }
 
-      LOGGER.debug("Scan complete.");
+   private void executeAnalyses(SensorContext c, Collection<String> commandLineArgs) {
+      IJellyfishExecution result = Jellyfish.getService().run(AnalyzeCommand.NAME, commandLineArgs,
+               Collections.singleton(new JellyfishSonarqubePluginModule()));
+      Injector injector = result.getInjector();
+      IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
+
+      for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> find : analysisService.getFindings()) {
+         // TODO convert to sonarqube issue
+      }
    }
 
    private void saveIssue(SensorContext c, IParsingIssue i) {
