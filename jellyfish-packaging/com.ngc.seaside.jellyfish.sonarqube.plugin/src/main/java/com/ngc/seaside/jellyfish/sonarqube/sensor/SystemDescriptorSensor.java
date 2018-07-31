@@ -98,8 +98,10 @@ public class SystemDescriptorSensor implements Sensor {
 
    private void executeValidation(SensorContext c, Map<String, String> commandLineArgs) {
       IJellyfishExecution result = Jellyfish
-               .getService()
-               .run("validate", commandLineArgs, Collections.singleton(new JellyfishSonarqubePluginModule()));
+            .getService()
+            .run("validate",
+                 commandLineArgs,
+                 Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
 
       IParsingResult r = result.getParsingResult();
 
@@ -113,7 +115,7 @@ public class SystemDescriptorSensor implements Sensor {
          return;
       }
       IJellyfishExecution result = Jellyfish.getService().run(AnalyzeCommand.NAME, commandLineArgs,
-               Collections.singleton(new JellyfishSonarqubePluginModule()));
+               Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
       Injector injector = result.getInjector();
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 

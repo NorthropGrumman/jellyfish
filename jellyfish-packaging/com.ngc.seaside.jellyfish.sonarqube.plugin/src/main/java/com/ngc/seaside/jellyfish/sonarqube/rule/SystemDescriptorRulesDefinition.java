@@ -1,9 +1,14 @@
 package com.ngc.seaside.jellyfish.sonarqube.rule;
 
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.ngc.seaside.jellyfish.Jellyfish;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
+import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -11,11 +16,14 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
- * Creates a new repository with the key {@link #REPOSITORY_KEY} and adds all the default SD rules to it.
+ * Creates a new repository with the key {@link #REPOSITORY_KEY} and adds all the default System Descritpor rules to it.
+ * Rules configured via Jellyfish are also included.
  */
 @Singleton
 public class SystemDescriptorRulesDefinition implements RulesDefinition {
@@ -35,23 +43,28 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
    private static final Logger LOGGER = Loggers.get(SystemDescriptorRulesDefinition.class);
 
    /**
-    * Contains all the default rules in the repository configured by this definition.
+    * Contains a mapping from finding types to the rule key for the adapter for the finding type.
     */
-   // TODO TH: remove this field.
-   private static final Set<AbstractRule> DEFAULT_RULES;
+   private final Map<ISystemDescriptorFindingType, RuleKey> ruleKeys = new HashMap<>();
 
-   static {
-      Set<AbstractRule> rules = new TreeSet<>();
-      // Add rules here.
-      rules.add(new SyntaxWarningRule());
-      DEFAULT_RULES = Collections.unmodifiableSet(rules);
+   /**
+    * Contains all rules added to the repository.  This includes all rules manually configured as well as rules that
+    * were discovered as implementations of {@link ISystemDescriptorFindingType}.
+    */
+   private final Set<AbstractRule> rules = new HashSet<>();
+
+   /**
+    * Creates a new {@code SystemDescriptorRulesDefinition}.
+    */
+   public SystemDescriptorRulesDefinition() {
+      findRules();
    }
 
    @Override
    public void define(Context context) {
       NewRepository repository = context.createRepository(REPOSITORY_KEY, SystemDescriptorLanguage.KEY)
             .setName(REPOSITORY_NAME);
-      addRules(repository);
+      getRules().forEach(r -> r.addRuleToRepository(repository));
       repository.done();
       LOGGER.info("Successfully installed System Descriptor rules in repository named {}.", REPOSITORY_NAME);
    }
@@ -62,21 +75,76 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
     * @return the default rules that will be configured in the repository
     */
    public Set<AbstractRule> getRules() {
-      // TODO TH: implement this, this is just temporary.
-      return Collections.emptySet();
+      return Collections.unmodifiableSet(rules);
    }
 
+   /**
+    * Gets the rule key for the given finding type.
+    *
+    * @param findingType the finding type to get the rule key for
+    * @return the rule key
+    * @throws IllegalArgumentException if no rule key could be found for the finding type
+    */
    public RuleKey getRuleKey(ISystemDescriptorFindingType findingType) {
-      throw new UnsupportedOperationException("implement me!");
+      Preconditions.checkNotNull(findingType, "findingType may not be null!");
+      RuleKey key = ruleKeys.get(findingType);
+      Preconditions.checkArgument(key != null,
+                                  "findingType not declared in a Guice module!  Make sure %s is declared with a"
+                                  + " multibinder in a Guice module!",
+                                  findingType);
+      return key;
    }
 
-   private void addRules(NewRepository repository) {
-      // Create an instance of Jellyfish and just run the help command.  Get all the impls of
-      // ISystemDescriptorFindingType.
-      DEFAULT_RULES.forEach(r -> r.addRuleToRepository(repository));
+   /**
+    * Finds all the rules that are manually registered as well as the rules that are registered at runtime.
+    */
+   private void findRules() {
+      // Add any manually configured rules here.
+      rules.add(new SyntaxWarningRule());
+
+      // Just run the help command with no arguments because we don't actually want to run Jellyfish.  We just want
+      // to get the injector so we can find all the implementations of ISystemDescriptorFindingType.  Create the
+      // Jellyfish execution service using a module that is configured to suppress logging.  If we use normal logging
+      // the output of the help command shows up the Sonarqube server logs which is weird.
+      IJellyfishExecution result = Jellyfish
+            .getService()
+            .run("help",
+                 Collections.emptyList(),
+                 Collections.singleton(JellyfishSonarqubePluginModule.withSuppressedLogging()));
+      // Get all the finding types and adapt them to Sonarqube rules.
+      result.getInjector()
+            // Get impls by asking Guice for an instance of FindingTypeHolder which requires all the finding types
+            .getInstance(FindingTypeHolder.class)
+            .findingTypes
+            .stream()
+            // Adapt the finding types to rules.
+            .map(FindingTypeRuleAdapter::new)
+               .forEach(rule -> {  // Weird indent for Checkstyle.
+                  // Add the rule to the complete set which includes the manual rules.
+                  rules.add(rule);
+                  // Add a mapping from finding type to rule key.
+                  ruleKeys.put(rule.getFindingType(), rule.getKey());
+               });
    }
 
-//   private static class FindingTypeHolder {
-//      private final Set<IFindingType>
-//   }
+   /**
+    * A value holder used with an Injector get all instances of {@code ISystemDescriptorFindingType} injected.
+    */
+   static class FindingTypeHolder {
+
+      /**
+       * The finding types as provided by the Injector.
+       */
+      private final Set<ISystemDescriptorFindingType> findingTypes;
+
+      /**
+       * Used by Guice to inject all the finding types.
+       *
+       * @param findingTypes the finding types to register as Sonarqube rules.
+       */
+      @Inject
+      FindingTypeHolder(Set<ISystemDescriptorFindingType> findingTypes) {
+         this.findingTypes = findingTypes;
+      }
+   }
 }

@@ -21,6 +21,8 @@ dependencies {
    // Make sure this has a scope of provided.
    provided "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
 
+   // This is only used for an IT to make sure all finding are registered correctly.
+   testCompile "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    // Include the SLF4J logging adapter so we can see logs during test execution.

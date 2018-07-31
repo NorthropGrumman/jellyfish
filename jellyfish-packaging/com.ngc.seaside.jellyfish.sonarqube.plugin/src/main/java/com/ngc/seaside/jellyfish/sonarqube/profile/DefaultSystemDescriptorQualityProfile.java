@@ -19,6 +19,9 @@ public class DefaultSystemDescriptorQualityProfile implements BuiltInQualityProf
 
    private static final Logger LOGGER = Loggers.get(DefaultSystemDescriptorQualityProfile.class);
 
+   /**
+    * Contains all rules used by the System Descriptor language.
+    */
    private final SystemDescriptorRulesDefinition rules;
 
    public DefaultSystemDescriptorQualityProfile(SystemDescriptorRulesDefinition rules) {

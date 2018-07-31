@@ -1,6 +1,7 @@
 package com.ngc.seaside.jellyfish.sonarqube.profile;
 
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.rule.AbstractRule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SystemDescriptorRulesDefinition;
 
 import org.junit.Before;
@@ -9,8 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
 
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,15 +41,18 @@ public class DefaultSystemDescriptorQualityProfileTest {
       profile = new DefaultSystemDescriptorQualityProfile(rules);
    }
 
-   @Ignore("Work for SEA18-510 should get this test to pass again")
    @Test
    public void testDoesConfigureProfile() {
+      RuleKey key = RuleKey.of("repo", "key");
+      AbstractRule rule = mock(AbstractRule.class);
+      when(rule.getKey()).thenReturn(key);
+      when(rules.getRules()).thenReturn(Collections.singleton(rule));
+
       profile.define(context);
 
-      // TODO TH: get this test to pass
-//      SystemDescriptorRulesDefinition.getDefaultRules()
-//            .forEach(r -> verify(newProfileInstance).activateRule(r.getKey().repository(),
-//                                                                  r.getKey().rule()));
+      rules.getRules()
+            .forEach(r -> verify(newProfileInstance).activateRule(r.getKey().repository(),
+                                                                  r.getKey().rule()));
       verify(newProfileInstance).setDefault(true);
       verify(newProfileInstance).done();
    }
