@@ -98,8 +98,19 @@ pipeline {
       stage('Build jellyfish-packaging') {
          steps {
             dir('jellyfish-packaging') {
-               sh '../gradlew clean ci --parallel'
-               junit '**/build/test-results/test/*.xml'
+               sh '../gradlew clean ci -x :jellyfish.cli.gradle.plugins:test --parallel'
+               withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
+                                                 passwordVariable: 'nexusPassword',
+                                                 usernameVariable: 'nexusUsername')]) {
+                  sh "..\gradlew :jellyfish.cli.gradle.plugins:test -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword"
+               }
+            }
+         }
+         post {
+            always {
+               dir('jellyfish-packaging') {
+                  junit '**/build/test-results/test/*.xml'
+               }
             }
          }
       }
