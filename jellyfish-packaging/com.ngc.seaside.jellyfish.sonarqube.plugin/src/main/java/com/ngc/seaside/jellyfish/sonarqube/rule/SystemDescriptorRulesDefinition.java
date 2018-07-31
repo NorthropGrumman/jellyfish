@@ -2,6 +2,7 @@ package com.ngc.seaside.jellyfish.sonarqube.rule;
 
 import com.google.inject.Singleton;
 
+import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 
 import org.sonar.api.rule.RuleKey;
@@ -63,6 +64,10 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
    public Set<AbstractRule> getRules() {
       // TODO TH: implement this, this is just temporary.
       return Collections.emptySet();
+   }
+
+   public RuleKey getRuleKey(ISystemDescriptorFindingType findingType) {
+      throw new UnsupportedOperationException("implement me!");
    }
 
    private void addRules(NewRepository repository) {
