@@ -5,6 +5,7 @@ import com.ngc.seaside.gradle.plugins.release.SeasideReleaseRootProjectPlugin;
 import com.ngc.seaside.gradle.plugins.repository.SeasideRepositoryPlugin;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 
 import groovy.util.Node;
 
@@ -261,8 +262,8 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
                         .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(","));
 
                properties.property("sonar.sources", project.file("src/main/sd"));
-               properties.property("sonar.jellyfish.cli.analysis", commands);
-               properties.property("sonar.jellyfish.cli.extraArguments", args);
+               properties.property(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, commands);
+               properties.property(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY, args);
             }
             project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME).dependsOn(VALIDATE_TASK_NAME);
          });
