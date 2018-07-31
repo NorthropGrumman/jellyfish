@@ -6,6 +6,7 @@ import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 
@@ -106,8 +107,7 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
                   .setRequired(true),
             new DefaultParameter<>(REPORTS_PARAMETER_NAME)
                   .setDescription("Configures the reports to generated after performing analysis.  The values are comma"
-                                  + " (,) separated.")
-                  .setRequired(true));
+                                  + " (,) separated."));
    }
 
    @Override
@@ -115,7 +115,10 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
       // First, run the analyses.
       runCommands(parseCommands(getOptions().getParameters().getParameter(ANALYSES_PARAMETER_NAME).getStringValue()));
       // Next, run the reports.
-      runCommands(parseCommands(getOptions().getParameters().getParameter(REPORTS_PARAMETER_NAME).getStringValue()));
+      IParameter<?> reports = getOptions().getParameters().getParameter(REPORTS_PARAMETER_NAME);
+      if (reports != null) {
+         runCommands(parseCommands(reports.getStringValue()));
+      }
    }
 
    @SuppressWarnings({"unchecked", "rawtypes"})
