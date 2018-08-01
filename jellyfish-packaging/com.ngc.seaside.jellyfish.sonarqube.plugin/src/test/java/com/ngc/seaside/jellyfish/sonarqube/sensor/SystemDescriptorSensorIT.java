@@ -87,7 +87,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesReportWarningsAsFindings() throws IOException {
+   public void doesReportWarningsAsIssues() throws IOException {
       projectPath = BASE_DIR.resolve("valid-project-with-warnings");
       context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
@@ -95,8 +95,13 @@ public class SystemDescriptorSensorIT {
       sensor.execute(context);
 
       assertFalse(
-            "a project with only warnings should have issues!",
+            "a project with warnings should have issues!",
             context.allIssues().isEmpty()
+      );
+      assertEquals(
+            "a project with warnings should generate a syntax warning rule!",
+            SyntaxWarningRule.KEY,
+            context.allIssues().iterator().next().ruleKey()
       );
    }
 
