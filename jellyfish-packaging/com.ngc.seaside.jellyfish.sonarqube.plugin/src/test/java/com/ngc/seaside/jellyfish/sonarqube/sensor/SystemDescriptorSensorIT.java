@@ -1,6 +1,9 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
+import com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs.InputsOutputsFindingTypes;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
+import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -102,6 +105,26 @@ public class SystemDescriptorSensorIT {
             "a project with warnings should generate a syntax warning rule!",
             SyntaxWarningRule.KEY,
             context.allIssues().iterator().next().ruleKey()
+      );
+   }
+
+   @Test
+   public void doesReportAnalysisFindingsAsIssues() throws IOException {
+      projectPath = BASE_DIR.resolve("valid-project-with-analysis-issues");
+      context = SensorContextTester.create(projectPath.toFile());
+      context.settings().appendProperty(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, "analyze-inputs-outputs");
+      addProjectInputFiles(context.fileSystem(), projectPath);
+
+      sensor.execute(context);
+
+      assertFalse(
+            "a project with analysis findings should have issues!",
+            context.allIssues().isEmpty()
+      );
+      assertEquals(
+            "a project with analysis findings should use an analysis rule (in this case, inputs with no outputs)!",
+            InputsOutputsFindingTypes.INPUTS_WITH_NO_OUTPUTS.getId(),
+            context.allIssues().iterator().next().ruleKey().rule()
       );
    }
 
