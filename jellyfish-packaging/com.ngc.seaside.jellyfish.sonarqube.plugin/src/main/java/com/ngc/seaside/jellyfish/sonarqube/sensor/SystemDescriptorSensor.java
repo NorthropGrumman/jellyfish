@@ -1,6 +1,8 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
+
 import com.ngc.seaside.jellyfish.Jellyfish;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.cli.command.analyze.AnalyzeCommand;
@@ -12,6 +14,7 @@ import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
+import com.ngc.seaside.jellyfish.sonarqube.rule.SystemDescriptorRulesDefinition;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
@@ -47,6 +50,14 @@ public class SystemDescriptorSensor implements Sensor {
 
    private static final Logger LOGGER = Loggers.get(SystemDescriptorSensor.class);
 
+   private final SystemDescriptorRulesDefinition rules;
+
+   private SensorContext context;
+
+   public SystemDescriptorSensor() {
+      this.rules = new SystemDescriptorRulesDefinition();
+   }
+
    @Override
    public void describe(SensorDescriptor d) {
       // The naming conventions appear to use the classname as the sensor name.
@@ -57,20 +68,23 @@ public class SystemDescriptorSensor implements Sensor {
 
    @Override
    public void execute(SensorContext c) {
+      Preconditions.checkNotNull(c, "cannot use null sensor context!");
+      this.context = c;
+
       Path baseDir = c.fileSystem().baseDir().toPath();
       LOGGER.debug("Beginning scan of project {}.", baseDir);
 
-      Map<String, String> commandLineArgs = getCommandLineArgs(c);
+      Map<String, String> commandLineArgs = getCommandLineArgs();
 
-      executeValidation(c, commandLineArgs);
-      executeAnalyses(c, commandLineArgs);
+      executeValidation(commandLineArgs);
+      executeAnalyses(commandLineArgs);
 
       LOGGER.debug("Scan complete.");
    }
 
-   private Map<String, String> getCommandLineArgs(SensorContext c) {
-      Configuration config = c.config();
-      Path baseDir = c.fileSystem().baseDir().toPath();
+   private Map<String, String> getCommandLineArgs() {
+      Configuration config = context.config();
+      Path baseDir = context.fileSystem().baseDir().toPath();
 
       Map<String, String> args = new LinkedHashMap<>();
 
@@ -96,7 +110,7 @@ public class SystemDescriptorSensor implements Sensor {
       return args;
    }
 
-   private void executeValidation(SensorContext c, Map<String, String> commandLineArgs) {
+   private void executeValidation(Map<String, String> commandLineArgs) {
       IJellyfishExecution result = Jellyfish
             .getService()
             .run("validate",
@@ -106,11 +120,11 @@ public class SystemDescriptorSensor implements Sensor {
       IParsingResult r = result.getParsingResult();
 
       for (IParsingIssue i : r.getIssues()) {
-         saveIssue(c, i);
+         saveSonarqubeIssue(i);
       }
    }
 
-   private void executeAnalyses(SensorContext c, Map<String, String> commandLineArgs) {
+   private void executeAnalyses(Map<String, String> commandLineArgs) {
       if (!commandLineArgs.containsKey(AnalyzeCommand.ANALYSES_PARAMETER_NAME)) {
          return;
       }
@@ -119,44 +133,58 @@ public class SystemDescriptorSensor implements Sensor {
       Injector injector = result.getInjector();
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 
-      for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> find : analysisService.getFindings()) {
-         // TODO convert to sonarqube issue
+      for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> f : analysisService.getFindings()) {
+         convertSystemDescriptorFindingToSonarqubeIssue(f);
       }
    }
 
-   private void saveIssue(SensorContext c, IParsingIssue i) {
-      NewIssue newIssue = getNewIssue(c, i.getSeverity());
-      setIssueLocation(c, i, newIssue);
+   private void saveSonarqubeIssue(IParsingIssue i) {
+      NewIssue newIssue = getNewIssue(i.getSeverity());
+      setIssueLocation(i.getLocation(), i.getMessage(), newIssue);
       newIssue.save();
    }
 
-   private void setIssueLocation(SensorContext c, IParsingIssue parsingIssue, NewIssue issue) {
-      ISourceLocation sourceLocation = parsingIssue.getLocation();
-      InputFile f = getInputFileFromRealFile(c, sourceLocation.getPath());
-      NewIssueLocation location = issue.newLocation()
-               .on(f)
-               .at(f.selectLine(sourceLocation.getLineNumber()))
-               .message(parsingIssue.getMessage());
-      issue.at(location);
+   private NewIssue getNewIssue(Severity issueType) {
+      return context.newIssue().forRule(createRuleKey(issueType));
    }
 
-   private InputFile getInputFileFromRealFile(SensorContext c, Path offendingFile) {
-      FilePredicate p = c.fileSystem()
-               .predicates()
-               .hasFilename(offendingFile.getFileName().toString());
-      return c.fileSystem().inputFile(p);
-   }
-
-   private NewIssue getNewIssue(SensorContext c, Severity errorType) {
-      return c.newIssue().forRule(createRuleKey(errorType));
-   }
-
-   private RuleKey createRuleKey(Severity errorType) {
-      switch (errorType) {
+   private RuleKey createRuleKey(Severity issueType) {
+      switch (issueType) {
          case WARNING:
          default:
             return SyntaxWarningRule.KEY;
       }
    }
 
+   private void setIssueLocation(ISourceLocation sourceLocation, String message, NewIssue issue) {
+      InputFile f = getInputFileFromRealFile(sourceLocation.getPath());
+      NewIssueLocation location = issue.newLocation()
+            .on(f)
+            .at(f.selectLine(sourceLocation.getLineNumber()))
+            .message(message);
+      issue.at(location);
+   }
+
+   private InputFile getInputFileFromRealFile(Path offendingFile) {
+      FilePredicate p = context.fileSystem()
+            .predicates()
+            .hasFilename(offendingFile.getFileName().toString());
+      return context.fileSystem().inputFile(p);
+   }
+
+   private void convertSystemDescriptorFindingToSonarqubeIssue(SystemDescriptorFinding finding) {
+      Preconditions.checkState(finding.getLocation().isPresent(), "could not retrieve SD source location!");
+
+      NewIssue newIssue = getNewIssue(finding.getType());
+      setIssueLocation((ISourceLocation) finding.getLocation().get(), finding.getMessage(), newIssue);
+      newIssue.save();
+   }
+
+   private NewIssue getNewIssue(ISystemDescriptorFindingType findingType) {
+      return context.newIssue().forRule(createRuleKey(findingType));
+   }
+
+   private RuleKey createRuleKey(ISystemDescriptorFindingType findingType) {
+      return rules.getRuleKey(findingType);
+   }
 }
