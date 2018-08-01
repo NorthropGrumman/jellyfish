@@ -265,8 +265,8 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
                properties.property(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, commands);
                properties.property(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY, args);
             }
-            project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME).dependsOn(VALIDATE_TASK_NAME);
          });
+         project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME).dependsOn(VALIDATE_TASK_NAME);
       });
    }
 }
