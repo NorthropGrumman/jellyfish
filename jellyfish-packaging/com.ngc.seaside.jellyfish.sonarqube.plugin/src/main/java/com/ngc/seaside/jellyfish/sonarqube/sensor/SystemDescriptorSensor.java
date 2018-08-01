@@ -96,8 +96,11 @@ public class SystemDescriptorSensor implements Sensor {
       for (String arg : argString) {
          String[] keyValue = arg.split("=");
          if (keyValue.length != 2) {
-            throw new IllegalArgumentException("Invalid argument for "
-                     + SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY + ": " + arg);
+            throw new IllegalArgumentException(
+                  String.format(
+                        "Invalid argument for %s: %s",
+                        SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY,
+                        arg));
          }
          args.put(keyValue[0], keyValue[1]);
       }
@@ -128,8 +131,11 @@ public class SystemDescriptorSensor implements Sensor {
       if (!commandLineArgs.containsKey(AnalyzeCommand.ANALYSES_PARAMETER_NAME)) {
          return;
       }
-      IJellyfishExecution result = Jellyfish.getService().run(AnalyzeCommand.NAME, commandLineArgs,
-               Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
+
+      IJellyfishExecution result = Jellyfish.getService().run(
+            AnalyzeCommand.NAME,
+            commandLineArgs,
+            Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
       Injector injector = result.getInjector();
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 
@@ -142,18 +148,6 @@ public class SystemDescriptorSensor implements Sensor {
       NewIssue newIssue = getNewIssue(i.getSeverity());
       setIssueLocation(i.getLocation(), i.getMessage(), newIssue);
       newIssue.save();
-   }
-
-   private NewIssue getNewIssue(Severity issueType) {
-      return context.newIssue().forRule(createRuleKey(issueType));
-   }
-
-   private RuleKey createRuleKey(Severity issueType) {
-      switch (issueType) {
-         case WARNING:
-         default:
-            return SyntaxWarningRule.KEY;
-      }
    }
 
    private void setIssueLocation(ISourceLocation sourceLocation, String message, NewIssue issue) {
@@ -180,8 +174,20 @@ public class SystemDescriptorSensor implements Sensor {
       newIssue.save();
    }
 
+   private NewIssue getNewIssue(Severity issueType) {
+      return context.newIssue().forRule(createRuleKey(issueType));
+   }
+
    private NewIssue getNewIssue(ISystemDescriptorFindingType findingType) {
       return context.newIssue().forRule(createRuleKey(findingType));
+   }
+
+   private RuleKey createRuleKey(Severity issueType) {
+      switch (issueType) {
+         case WARNING:
+         default:
+            return SyntaxWarningRule.KEY;
+      }
    }
 
    private RuleKey createRuleKey(ISystemDescriptorFindingType findingType) {
