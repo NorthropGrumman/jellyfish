@@ -76,7 +76,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesParseValidProject() throws IOException {
+   public void doesParseValidProject() {
       projectPath = BASE_DIR.resolve("valid-project");
       context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
@@ -90,7 +90,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesReportWarningsAsIssues() throws IOException {
+   public void doesReportWarningsAsIssues() {
       projectPath = BASE_DIR.resolve("valid-project-with-warnings");
       context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
@@ -109,7 +109,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesReportAnalysisFindingsAsIssues() throws IOException {
+   public void doesReportAnalysisFindingsAsIssues() {
       projectPath = BASE_DIR.resolve("valid-project-with-analysis-issues");
       context = SensorContextTester.create(projectPath.toFile());
       context.settings().appendProperty(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, "analyze-inputs-outputs");
@@ -128,12 +128,16 @@ public class SystemDescriptorSensorIT {
       );
    }
 
-   private void addProjectInputFiles(DefaultFileSystem fs, Path path) throws IOException {
-      Files.walk(path)
-            .filter(p -> p.toFile().isFile())
-            .filter(p -> p.toString().endsWith(".sd"))
-            .map(this::createTestInputFile)
-            .forEach(fs::add);
+   private void addProjectInputFiles(DefaultFileSystem fs, Path path) {
+      try {
+         Files.walk(path)
+               .filter(p -> p.toFile().isFile())
+               .filter(p -> p.toString().endsWith(".sd"))
+               .map(this::createTestInputFile)
+               .forEach(fs::add);
+      } catch (IOException e) {
+         throw new RuntimeException("an error occurred while searching for system descriptor files!", e);
+      }
    }
 
    private DefaultInputFile createTestInputFile(Path file) {
@@ -147,8 +151,7 @@ public class SystemDescriptorSensorIT {
       try {
          return new String(Files.readAllBytes(file));
       } catch (IOException e) {
-         System.out.println("couldn't read file contents: " + file.toString());
-         return "";
+         throw new RuntimeException("couldn't read file contents: " + file.toString(), e);
       }
    }
 }
