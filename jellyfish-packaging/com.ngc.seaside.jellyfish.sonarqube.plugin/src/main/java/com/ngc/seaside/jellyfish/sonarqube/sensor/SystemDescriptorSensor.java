@@ -92,22 +92,40 @@ public class SystemDescriptorSensor implements Sensor {
       config.get("sonar.projectBaseDir").ifPresent(name -> args.put(CommonParameters.INPUT_DIRECTORY.getName(), name));
       config.get("sonar.projectName").ifPresent(name -> args.put(CommonParameters.ARTIFACT_ID.getName(), name));
 
-      String[] argString = config.getStringArray(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY);
-      for (String arg : argString) {
-         String[] keyValue = arg.split("=");
-         if (keyValue.length != 2) {
-            throw new IllegalArgumentException(
-                  String.format(
-                        "Invalid argument for %s: %s",
-                        SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY,
-                        arg));
-         }
-         args.put(keyValue[0], keyValue[1]);
-      }
+      args.putAll(getAnalysisArgs());
+      args.putAll(getExtraCliArgs());
+
+      return args;
+   }
+
+   private Map<String, String> getAnalysisArgs() {
+      Configuration config = context.config();
+      Map<String, String> args = new LinkedHashMap<>();
+
       String[] analysisCommands = config.getStringArray(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY);
       if (analysisCommands.length > 0) {
          String analysisCommandString = Stream.of(analysisCommands).collect(Collectors.joining(","));
          args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, analysisCommandString);
+      }
+
+      return args;
+   }
+
+   private Map<String, String> getExtraCliArgs() {
+      Configuration config = context.config();
+      Map<String, String> args = new LinkedHashMap<>();
+
+      String[] argString = config.getStringArray(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY);
+      for (String arg : argString) {
+         String[] keyValue = arg.split("=");
+
+         if (keyValue.length != 2) {
+            throw new IllegalArgumentException("Invalid argument for "
+                                               + SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY
+                                               + ": " + arg);
+         }
+
+         args.put(keyValue[0], keyValue[1]);
       }
 
       return args;
