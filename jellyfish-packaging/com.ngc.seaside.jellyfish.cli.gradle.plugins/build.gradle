@@ -22,6 +22,10 @@ dependencies {
     implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "com.google.inject:guice:$guiceVersion"
 
+    // This dependency is needed when applying the sonarqube plugin to a System Descriptor project
+    // since it is only provided in the :jellyfish.sonarqube.plugin project
+    runtimeOnly "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
+
     commandTemplate project(path: ':jellyfish', configuration: 'commandTemplate')
 
     testImplementation "junit:junit:$junitVersion"
