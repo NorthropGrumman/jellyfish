@@ -92,8 +92,8 @@ public class SystemDescriptorSensor implements Sensor {
       config.get("sonar.projectBaseDir").ifPresent(name -> args.put(CommonParameters.INPUT_DIRECTORY.getName(), name));
       config.get("sonar.projectName").ifPresent(name -> args.put(CommonParameters.ARTIFACT_ID.getName(), name));
 
-      args.putAll(getAnalysisArgs());
       args.putAll(getExtraCliArgs());
+      args.putAll(getAnalysisArgs());
 
       return args;
    }
