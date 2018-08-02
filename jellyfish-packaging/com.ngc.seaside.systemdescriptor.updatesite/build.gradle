@@ -9,11 +9,15 @@ eclipseDistribution {
    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
 
-   configurations {
-      // Exclude transitive dependencies that are already bundled with eclipse
-      plugin {
-         pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
-            exclude module: it.name.substring(0, it.name.indexOf('_'))
+   unzipEclipse.doLast {
+      configurations {
+         // Exclude transitive dependencies that are already bundled with eclipse
+         plugin {
+            pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
+               if (!it.name.startsWith('com.google.inject')) {
+                  exclude module: it.name.substring(0, it.name.indexOf('_'))
+               }
+            }
          }
       }
    }
