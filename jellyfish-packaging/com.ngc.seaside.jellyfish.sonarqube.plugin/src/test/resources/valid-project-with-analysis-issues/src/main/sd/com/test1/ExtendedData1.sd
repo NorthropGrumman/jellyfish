@@ -1,0 +1,5 @@
+package com.test1
+
+data ExtendedData1 extends com.test1.Data1 {
+	int field2
+}

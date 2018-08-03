@@ -1,0 +1,9 @@
+
+plugins {
+   id 'com.ngc.seaside.jellyfish.system-descriptor'
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
+
+group = 'com.ngc.seaside.publishsd.test'
+version = '1.2.3-SNAPSHOT'

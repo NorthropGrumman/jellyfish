@@ -1,6 +1,9 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
+import com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs.InputsOutputsFindingTypes;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
+import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
+import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +76,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesParseValidProject() throws IOException {
+   public void doesParseValidProject() {
       projectPath = BASE_DIR.resolve("valid-project");
       context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
@@ -87,7 +90,7 @@ public class SystemDescriptorSensorIT {
    }
 
    @Test
-   public void doesReportWarningsAsFindings() throws IOException {
+   public void doesReportWarningsAsIssues() {
       projectPath = BASE_DIR.resolve("valid-project-with-warnings");
       context = SensorContextTester.create(projectPath.toFile());
       addProjectInputFiles(context.fileSystem(), projectPath);
@@ -95,17 +98,46 @@ public class SystemDescriptorSensorIT {
       sensor.execute(context);
 
       assertFalse(
-            "a project with only warnings should have issues!",
+            "a project with warnings should have issues!",
             context.allIssues().isEmpty()
+      );
+      assertEquals(
+            "a project with warnings should generate a syntax warning rule!",
+            SyntaxWarningRule.KEY,
+            context.allIssues().iterator().next().ruleKey()
       );
    }
 
-   private void addProjectInputFiles(DefaultFileSystem fs, Path path) throws IOException {
-      Files.walk(path)
-            .filter(p -> p.toFile().isFile())
-            .filter(p -> p.toString().endsWith(".sd"))
-            .map(this::createTestInputFile)
-            .forEach(fs::add);
+   @Test
+   public void doesReportAnalysisFindingsAsIssues() {
+      projectPath = BASE_DIR.resolve("valid-project-with-analysis-issues");
+      context = SensorContextTester.create(projectPath.toFile());
+      context.settings().appendProperty(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, "analyze-inputs-outputs");
+      addProjectInputFiles(context.fileSystem(), projectPath);
+
+      sensor.execute(context);
+
+      assertFalse(
+            "a project with analysis findings should have issues!",
+            context.allIssues().isEmpty()
+      );
+      assertEquals(
+            "a project with analysis findings should use an analysis rule (in this case, inputs with no outputs)!",
+            InputsOutputsFindingTypes.INPUTS_WITH_NO_OUTPUTS.getId(),
+            context.allIssues().iterator().next().ruleKey().rule()
+      );
+   }
+
+   private void addProjectInputFiles(DefaultFileSystem fs, Path path) {
+      try {
+         Files.walk(path)
+               .filter(p -> p.toFile().isFile())
+               .filter(p -> p.toString().endsWith(".sd"))
+               .map(this::createTestInputFile)
+               .forEach(fs::add);
+      } catch (IOException e) {
+         throw new RuntimeException("an error occurred while searching for system descriptor files!", e);
+      }
    }
 
    private DefaultInputFile createTestInputFile(Path file) {
@@ -119,8 +151,7 @@ public class SystemDescriptorSensorIT {
       try {
          return new String(Files.readAllBytes(file));
       } catch (IOException e) {
-         System.out.println("couldn't read file contents: " + file.toString());
-         return "";
+         throw new RuntimeException("couldn't read file contents: " + file.toString(), e);
       }
    }
 }

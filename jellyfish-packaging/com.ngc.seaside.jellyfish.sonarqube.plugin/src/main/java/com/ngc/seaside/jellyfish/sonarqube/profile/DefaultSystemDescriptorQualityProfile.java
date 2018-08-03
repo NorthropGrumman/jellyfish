@@ -19,19 +19,29 @@ public class DefaultSystemDescriptorQualityProfile implements BuiltInQualityProf
 
    private static final Logger LOGGER = Loggers.get(DefaultSystemDescriptorQualityProfile.class);
 
+   /**
+    * Contains all rules used by the System Descriptor language.
+    */
+   private final SystemDescriptorRulesDefinition rules;
+
+   public DefaultSystemDescriptorQualityProfile(SystemDescriptorRulesDefinition rules) {
+      this.rules = rules;
+   }
+
    @Override
    public void define(Context context) {
       NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(NAME, SystemDescriptorLanguage.KEY);
       profile.setDefault(true);
       addRules(profile);
       profile.done();
+
       LOGGER.info("Successfully installed default SD quality profile named {}.", NAME);
    }
 
    private void addRules(NewBuiltInQualityProfile profile) {
       // Add all the rules in the default repository.  Note that we can only add rules that are in the repository,
       // so if you manually add a rule key, make sure that the rule is associated with some repository.
-      SystemDescriptorRulesDefinition.getDefaultRules().forEach(r -> profile.activateRule(r.getKey().repository(),
-                                                                                          r.getKey().rule()));
+      rules.getRules().forEach(r -> profile.activateRule(r.getKey().repository(),
+                                                         r.getKey().rule()));
    }
 }

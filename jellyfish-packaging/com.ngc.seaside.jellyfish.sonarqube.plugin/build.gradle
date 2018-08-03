@@ -7,10 +7,12 @@ dependencies {
    // will only embed dependencies that are under the compile scope.
    compile project(':jellyfish')
    compile "com.ngc.seaside:jellyfish.api:$version"
+   compile "com.ngc.seaside:jellyfish.service.api:$version"
    compile "com.ngc.seaside:guice.modules:$version"
    compile "com.ngc.seaside:systemdescriptor.model.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.api:$version"
    compile "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+   compile "com.ngc.seaside:jellyfish.cli.command.analyze:$version"
 
    compile "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
    compile "com.ngc.blocs:service.api:$blocsVersion"
@@ -19,6 +21,8 @@ dependencies {
    // Make sure this has a scope of provided.
    provided "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
 
+   // This is only used for an IT to make sure all findings are registered correctly.
+   testCompile "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
    testCompile "junit:junit:$junitVersion"
    testCompile "org.mockito:mockito-core:$mockitoVersion"
    // Include the SLF4J logging adapter so we can see logs during test execution.
@@ -35,6 +39,10 @@ sonarPackaging {
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
 }
 
+// Build a file that lists all the modules to use when running Jellyfish.  We do this because classpath scanning
+// for all instances of com.google.inject.Module declared via a ServiceLoader doesn't work within Sonarqube because
+// Sonarqube uses classloader isolation to keep plugins separate.  Instead, we build the list of all modules at
+// build time and just load it at runtime.
 tasks.create('buildModuleDependencyFile').doLast {
    def destinationDir = "${project.buildDir.absolutePath}/dependencies"
    def tmpDir = project.mkdir("${destinationDir}/tmp").absolutePath
