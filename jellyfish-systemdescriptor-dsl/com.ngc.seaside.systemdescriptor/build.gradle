@@ -89,19 +89,3 @@ cleanEclipseClasspath.enabled=false
 tasks.getByName('javadoc') { doc ->
     options.tags = ['model', 'generated', 'ordered']
 }
-
-jar {
-   manifest {
-      from('META-INF/MANIFEST.MF') {
-         // Replace the version with the version from the gradle build.
-         eachEntry {
-            if(getKey().equals('Bundle-Version')) {
-               setValue(Versions.makeOsgiCompliantVersion("$version"))
-            }
-         }
-      }
-   }
-   
-   // Include 'plugin.xml'
-   from('.', { include('plugin.xml') }) 
-}
