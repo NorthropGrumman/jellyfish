@@ -10,7 +10,7 @@ gen/
 # Eclipse files
 .classpath
 .project
-.settings/
+jellyfish-systemdescriptor-dsl/.settings/
 .recommenders/
 
 # Intellij files
