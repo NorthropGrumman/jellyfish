@@ -14,10 +14,5 @@ buildscript {
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
 
-dependencies {
-   sd 'com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:1.0.0-SNAPSHOT'
-}
-
-
 group = 'com.ngc.seaside.jellyfish.examples'
 version = '1.0.0-SNAPSHOT'
