@@ -79,8 +79,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // linking has not yet completed and proxy objects are set in the
          // data model.
          String fieldName = SdUtils.getRawSource(
-            exp.getPathSegments().get(i),
-            SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
+                     exp.getPathSegments().get(i),
+                     SystemDescriptorPackage.Literals.PROPERTY_VALUE_EXPRESSION_PATH_SEGMENT__FIELD_DECLARATION);
 
          // Get the field with that name. Then filter for fields that have a
          // complex data type (ie, not a primitive).
@@ -214,8 +214,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          // has properties declared in the source. This seems to be an XText issue
          // since the definition object should definitely not be null.
          if (currentLink != null
-            && currentLink.getDefinition() != null
-            && currentLink.getDefinition().getProperties() != null) {
+                     && currentLink.getDefinition() != null
+                     && currentLink.getDefinition().getProperties() != null) {
             propertyDeclarations.addAll(currentLink.getDefinition().getProperties().getDeclarations());
          }
       });
@@ -240,8 +240,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
                                            .findFirst()
                                            .orElse(null);
             if (currentPart != null
-               && currentPart.getDefinition() != null
-               && currentPart.getDefinition().getProperties() != null) {
+                        && currentPart.getDefinition() != null
+                        && currentPart.getDefinition().getProperties() != null) {
                propertyDeclarations.addAll(currentPart.getDefinition().getProperties().getDeclarations());
             }
          }
@@ -273,8 +273,8 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
                                                      .findFirst()
                                                      .orElse(null);
             if (currentRequirement != null
-               && currentRequirement.getDefinition() != null
-               && currentRequirement.getDefinition().getProperties() != null) {
+                        && currentRequirement.getDefinition() != null
+                        && currentRequirement.getDefinition().getProperties() != null) {
                propertyDeclarations.addAll(currentRequirement.getDefinition().getProperties().getDeclarations());
             }
          }
@@ -368,9 +368,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
       }
 
       Preconditions.checkState(
-         declaration instanceof ReferencedPropertyFieldDeclaration,
-         "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
-            + "  Otherwise, why would the declaration need scoping help?");
+                  declaration instanceof ReferencedPropertyFieldDeclaration,
+                  "expected the declaration to be an instance of ReferencedPropertyFieldDeclaration!"
+                     + "  Otherwise, why would the declaration need scoping help?");
       ReferencedPropertyFieldDeclaration referencedDeclaration = (ReferencedPropertyFieldDeclaration) declaration;
 
       // More proxy checking.
@@ -378,9 +378,9 @@ public class SystemDescriptorScopeProvider extends AbstractDeclarativeScopeProvi
          return null;
       }
       Preconditions.checkState(
-         referencedDeclaration.getDataModel() instanceof Data,
-         "expected the declaration to have a data model of data instead of an enumeration!"
-            + "  Otherwise, you can't have a complex expression!");
+                  referencedDeclaration.getDataModel() instanceof Data,
+                  "expected the declaration to have a data model of data instead of an enumeration!"
+                     + "  Otherwise, you can't have a complex expression!");
       return (Data) referencedDeclaration.getDataModel();
    }
 
