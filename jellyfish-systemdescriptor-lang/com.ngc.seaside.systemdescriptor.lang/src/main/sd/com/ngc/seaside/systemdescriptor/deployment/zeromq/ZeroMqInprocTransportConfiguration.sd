@@ -1,0 +1,19 @@
+package com.ngc.seaside.systemdescriptor.deployment.zeromq
+
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ZeroMqConfigurationBase
+
+data ZeroMqInprocTransportConfiguration extends ZeroMqConfigurationBase {
+	metadata {
+		"description" : "Defines the configuration for a link that should use ZeroMQ's in memory transport mechanism.",
+		"target": "link"
+	}
+
+	string addressName {
+		metadata {
+			"description": "The unique name of the memory buffer to use to exchange messages.",
+			"validation": {
+				"maxLength": 256
+			}
+		}
+	}
+}

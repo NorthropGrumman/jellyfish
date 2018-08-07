@@ -1,0 +1,4 @@
+rootProject.name = 'jellyfish-systemdescriptor-lang'
+
+include 'com.ngc.seaside.systemdescriptor.lang'
+project(':com.ngc.seaside.systemdescriptor.lang').name = 'systemdescriptor.lang'
