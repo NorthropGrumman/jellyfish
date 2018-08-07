@@ -115,6 +115,14 @@ pipeline {
          }
       }
 
+      stage('Build jellyfish-systemdescriptor-lang') {
+         steps {
+            dir('jellyfish-systemdescriptor-lang') {
+               sh '../gradlew clean ci --parallel'
+            }
+         }
+      }
+
       stage('Test jellyfish') {
          steps {
             dir('jellyfish-examples') {
@@ -204,6 +212,9 @@ pipeline {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-packaging') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+               dir('jellyfish-systemdescriptor-lang') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
             }
