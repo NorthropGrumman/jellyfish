@@ -1,2 +1,2 @@
-model
-!src/**/model/**
+model/
+!**/src/**/model/
