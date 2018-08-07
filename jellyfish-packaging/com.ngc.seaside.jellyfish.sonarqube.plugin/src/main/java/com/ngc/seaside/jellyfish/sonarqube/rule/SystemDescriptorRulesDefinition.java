@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.ngc.seaside.jellyfish.Jellyfish;
+import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
@@ -120,6 +121,7 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
             // Adapt the finding types to rules.
             .map(FindingTypeRuleAdapter::new)
                .forEach(rule -> {  // Weird indent for Checkstyle.
+                  rule.setReportingOutputService(result.getInjector().getInstance(IReportingOutputService.class));
                   // Add the rule to the complete set which includes the manual rules.
                   rules.add(rule);
                   // Add a mapping from finding type to rule key.
