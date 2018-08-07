@@ -30,7 +30,7 @@ public class SystemDescriptorProjectPluginFT {
    }
 
    @Test
-   public void runsGradleBuildWithSuccess() throws Throwable {
+   public void runsGradleBuildWithSuccess() {
       assumePropertyExists("nexusSnapshots");
       assumePropertyExists("nexusUsername");
       assumePropertyExists("nexusPassword");

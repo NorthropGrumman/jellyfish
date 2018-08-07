@@ -7,3 +7,9 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
 
 group = 'com.ngc.seaside.publishsd.test'
 version = '1.2.3-SNAPSHOT'
+
+sdLang {
+   // Disable this for test.  We need to do this because the artifact for the language has not been built or installed
+   // by the time this test is run.
+   includeDefaultLanguageDependencies = false
+}
