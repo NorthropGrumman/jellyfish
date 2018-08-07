@@ -1,0 +1,13 @@
+package com.ngc.seaside.systemdescriptor.deployment
+
+data NetworkAddress {
+	metadata {
+		"description" : "Represents a remote network address."
+	}
+	
+	string address {
+		metadata {
+			"description": "The network address.  This value can be an IPv4 formatted address, an IPv6 formatted address, or a hostname."
+		}
+	}
+}

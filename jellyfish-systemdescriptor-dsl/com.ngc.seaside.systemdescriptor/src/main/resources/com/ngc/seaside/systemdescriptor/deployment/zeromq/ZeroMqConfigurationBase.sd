@@ -1,0 +1,16 @@
+package com.ngc.seaside.systemdescriptor.deployment.zeromq
+
+import com.ngc.seaside.systemdescriptor.deployment.zeromq.ConnectionType
+
+data ZeroMqConfigurationBase {
+  	metadata {
+		"description" : "A base data type for the different ZeroMQ configuration options.  This type should not be used directly.  Use one of the other configuration types instead.",
+		"extension-only": true
+	}
+  
+  ConnectionType connectionType {
+  	metadata {
+  		"description": "Defines how the source and target connect to one another and identifies which is the client and which is the server."
+  	}
+  }
+}
