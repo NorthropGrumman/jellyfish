@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 /**
  * The plugin component that is responsible for parsing System Descriptor files and reporting errors and warnings to
  * Sonarqube. This component is scoped per project so each project gets its own instance.
@@ -59,7 +61,7 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    @Override
-   public void describe(SensorDescriptor d) {
+   public void describe(@Nonnull SensorDescriptor d) {
       // The naming conventions appear to use the classname as the sensor name.
       d.name(getClass().getSimpleName());
       d.onlyOnLanguage(SystemDescriptorLanguage.KEY);
@@ -67,7 +69,7 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    @Override
-   public void execute(SensorContext c) {
+   public void execute(@Nonnull SensorContext c) {
       Preconditions.checkNotNull(c, "cannot use null sensor context!");
       this.context = c;
 
@@ -132,13 +134,7 @@ public class SystemDescriptorSensor implements Sensor {
    }
 
    private void executeValidation(Map<String, String> commandLineArgs) {
-      IJellyfishExecution result = Jellyfish
-            .getService()
-            .run("validate",
-                 commandLineArgs,
-                 Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
-
-      IParsingResult r = result.getParsingResult();
+      IParsingResult r = runJellyfishCommand("validate", commandLineArgs).getParsingResult();
 
       for (IParsingIssue i : r.getIssues()) {
          saveSonarqubeIssue(i);
@@ -150,16 +146,20 @@ public class SystemDescriptorSensor implements Sensor {
          return;
       }
 
-      IJellyfishExecution result = Jellyfish.getService().run(
-            AnalyzeCommand.NAME,
-            commandLineArgs,
-            Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
-      Injector injector = result.getInjector();
+      Injector injector = runJellyfishCommand(AnalyzeCommand.NAME, commandLineArgs).getInjector();
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 
       for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> f : analysisService.getFindings()) {
          convertSystemDescriptorFindingToSonarqubeIssue(f);
       }
+   }
+
+   private IJellyfishExecution runJellyfishCommand(String commandName, Map<String, String> commandLineArgs) {
+      return Jellyfish
+            .getService()
+            .run(commandName,
+                 commandLineArgs,
+                 Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
    }
 
    private void saveSonarqubeIssue(IParsingIssue i) {
