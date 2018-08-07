@@ -47,7 +47,9 @@ public class ${dto.className}TestMain {
                         new ${dto.configModuleType}(),
 #end
                         new ${dto.className}TestModule())
-            .addRequiredRemoteService(ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC)
+#foreach ($remoteService in $dto.remoteServices)
+            .addRequiredRemoteService($remoteService)
+#end
             .build()
             .execute();
       } catch(Throwable e) {

@@ -42,6 +42,11 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
    public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
+   public static final String SYSTEM_PROPERTY = CommonParameters.SYSTEM.getName();
+
+   static final String SERVICE_TEMPLATE_SUFFIX = "service";
+   static final String SYSTEM_TEMPLATE_SUFFIX = "system";
+
    static final String CREATE_SERVICE_DOMAIN_PROPERTY = "createServiceDomain";
 
    private static final String NAME = "create-java-distribution";
@@ -93,7 +98,10 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
       dto.setProjectDependencies(projectDependencies);
 
       parameters.addParameter(new DefaultParameter<>("dto", dto));
-      unpackDefaultTemplate(parameters, outputDirectory, clean);
+
+      boolean system = CommonParameters.evaluateBooleanParameter(parameters, CommonParameters.SYSTEM.getName(), false);
+      String suffix = system ? SYSTEM_TEMPLATE_SUFFIX : SERVICE_TEMPLATE_SUFFIX;
+      unpackSuffixedTemplate(suffix, parameters, outputDirectory, clean);
       registerProject(info);
    }
 
@@ -160,6 +168,7 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
                               CommonParameters.ARTIFACT_ID,
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
+                              CommonParameters.SYSTEM,
                               CommonParameters.CLEAN
       );
    }

@@ -3,11 +3,11 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.CompletenessDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.EventDto;
@@ -36,7 +36,6 @@ import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -84,6 +83,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    @Override
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
+      boolean system = CommonParameters.evaluateBooleanParameter(options.getParameters(),
+               CommonParameters.SYSTEM.getName(), false);
+
       Set<String> projectDependencies = Collections.singleton(
             projectService.getEventsProjectName(options, model).getArtifactId());
       ClassDto interfaceDto = generateService.getServiceInterfaceDescription(options, model);
@@ -92,19 +94,32 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       BaseServiceDto dto = new BaseServiceDto();
       dto.setProjectDirectoryName(projectService.getBaseServiceProjectName(options, model).getDirectoryName());
-      dto.setProjectDependencies(projectDependencies);
-      dto.setAbstractClass(abstractClassDto);
-      dto.setInterface(interfaceDto);
-      dto.setExportedPackages(new LinkedHashSet<>(
-            Arrays.asList(packageService.getServiceInterfacePackageName(options, model) + ".*",
-                          packageService.getServiceBaseImplementationPackageName(options, model) + ".*",
-                          packageService.getTransportTopicsPackageName(options, model) + ".*")));
+
+      Set<String> exportedPackages = new LinkedHashSet<>();
+      if (!system) {
+         dto.setProjectDependencies(projectDependencies);
+         dto.setAbstractClass(abstractClassDto);
+         dto.setInterface(interfaceDto);
+         exportedPackages.add(packageService.getServiceInterfacePackageName(options, model) + ".*");
+         exportedPackages.add(packageService.getServiceBaseImplementationPackageName(options, model) + ".*");
+         dto.addModuleDependency("api", "com.ngc.seaside:service.api");
+         dto.addModuleDependency("api", "com.ngc.blocs:service.api");
+         dto.addModuleDependency("implementation", "com.google.guava:guava");
+         dto.addModuleDependency("defaultBundles", "com.ngc.seaside:service.fault.impl.faultloggingservice");
+         dto.addModuleDependency("defaultBundles", "com.ngc.seaside:service.correlation.impl.correlationservice");
+      }
+      dto.addModuleDependency("api", "com.ngc.seaside:service.transport.api");
+      exportedPackages.add(packageService.getTransportTopicsPackageName(options, model) + ".*");
+      dto.setExportedPackages(exportedPackages);
       dto.setModel(model);
       dto.setTopicsEnum(topicsDto);
+      dto.setSystem(system);
 
-      computePubSubFlows(options, model, dto);
-      computeReqResFlows(options, model, dto);
-      computeFinalCorrelationSettings(dto);
+      if (!system) {
+         computePubSubFlows(options, model, dto);
+         computeReqResFlows(options, model, dto);
+         computeFinalCorrelationSettings(dto);
+      }
 
       return dto;
    }
@@ -141,7 +156,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
          if (trigger.isPresent()) {
             dto.getTriggerRegistrationMethods().add(trigger.get());
          }
-         
+
          Optional<CorrelationDto> correlation = getCorrelationMethod(scenario, flow, dto, options);
          if (correlation.isPresent()) {
             dto.getCorrelationMethods().add(correlation.get());
@@ -149,7 +164,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             outputs.addAll(flow.getOutputs());
             continue;
          }
-         
+
          Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
          if (pubSub.isPresent()) {
             dto.getBasicPubSubMethods().add(pubSub.get());
@@ -227,7 +242,6 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       return Optional.of(reqRes);
    }
-
 
    private void setReceiveMethods(BaseServiceDto dto, IJellyFishCommandOptions options,
                                   Collection<IDataReferenceField> inputs) {
@@ -373,7 +387,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       correlation.setServiceTryMethod("try" + StringUtils.capitalize(scenario.getName()));
       correlation.setServiceTriggerRegister("register" + StringUtils.capitalize(scenario.getName()) + "Trigger");
       correlation.setServiceFromStatus(scenario.getName() + "FromStatus");
-      
+
       correlation.setInputLogFormat(
             IntStream.range(0, flow.getInputs().size())
                   .mapToObj(i -> "%s")
@@ -463,13 +477,12 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       trigger.setInputOutputCorrelations(
                getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
 
-
       trigger.setInputs(flow.getInputs()
                               .stream()
                               .map(field -> getInputDto(field, dto, options))
                               .map(input -> input.setCorrelationMethod(trigger.getCorrelationMethod()))
                               .collect(Collectors.toList()));
-      
+
       trigger.setOutput(getPublishDto(flow.getOutputs().iterator().next(), dto, options));
 
       trigger.setEventProducers(description.getCompletenessExpressions()
@@ -629,7 +642,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       output.setFinalizedType(output.getType());
       dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       output.setFieldName(field.getName());
-      
+
       return output;
    }
 
@@ -673,8 +686,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    private void computeFinalCorrelationSettings(BaseServiceDto dto) {
       dto.setCorrelationRequestHandlingEnabled(dto.getBasicPubSubMethods()
-                                                     .stream()
-                                                     .anyMatch(BasicPubSubDto::isCorrelating));
+                                                      .stream()
+                                                      .anyMatch(BasicPubSubDto::isCorrelating));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
                                               || dto.isCorrelationRequestHandlingEnabled());
       if (dto.isCorrelationRequestHandlingEnabled()) {

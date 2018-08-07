@@ -8,7 +8,6 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.pl
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transporttopic.rest.RestConfigurationDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryConfiguration;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -35,7 +34,7 @@ public class RestTelemetryTopicPlugin implements ITransportTopicConfigurationPlu
    @Override
    public Set<ITransportTopicConfigurationDto<RestConfigurationDto>>
             getTopicConfigurations(ConfigurationContext context) {
-      if (isSystemModel(context.getModel())) {
+      if (context.isSystemModel()) {
          return Collections.emptySet();
       }
 
@@ -61,10 +60,6 @@ public class RestTelemetryTopicPlugin implements ITransportTopicConfigurationPlu
                new DefaultTransportTopicConfigurationDto<>(dto);
       configDto.addTransportTopic(TELEMETRY_TOPIC_TYPE, TELEMETRY_TOPIC_VALUE);
       return configDto;
-   }
-
-   static boolean isSystemModel(IModel model) {
-      return !model.getParts().isEmpty();
    }
 
    @Override

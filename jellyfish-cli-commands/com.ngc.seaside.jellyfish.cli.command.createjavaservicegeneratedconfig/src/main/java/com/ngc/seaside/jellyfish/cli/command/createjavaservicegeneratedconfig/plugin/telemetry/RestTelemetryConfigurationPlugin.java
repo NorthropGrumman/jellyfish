@@ -30,8 +30,7 @@ public class RestTelemetryConfigurationPlugin
 
    @Override
    public Optional<RestTelemetryTemplateDto> getConfigurationDto(ConfigurationContext context) {
-      if (RestTelemetryTopicPlugin.isSystemModel(context.getModel())
-               || context.getConfigurationType() != ConfigurationType.SERVICE) {
+      if (context.isSystemModel() || context.getConfigurationType() != ConfigurationType.SERVICE) {
          return Optional.empty();
       }
       boolean hasTelemetry = service.getConfigurations(context.getOptions(), context.getModel())

@@ -10,21 +10,26 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Optional;
 
-import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +44,7 @@ public class CreateJellyFishGradleProjectCommandIT {
    @Mock
    private ILogService logService;
 
-   @Mock
+   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
    private IJellyFishCommandOptions options;
 
    private ITemplateService templateService;
@@ -108,18 +113,16 @@ public class CreateJellyFishGradleProjectCommandIT {
       collection.addParameter(new DefaultParameter<>(CreateJellyFishGradleProjectCommand.OUTPUT_DIR_PROPERTY,
                                                      outputDirectory.toString()));
       when(options.getParameters()).thenReturn(collection);
+      IModel mockedModel = mock(IModel.class);
+      when(options.getSystemDescriptor().findModel(model)).thenReturn(Optional.of(mockedModel));
 
       command.run(options);
 
-      assertFileLinesEquals(
-            "settings.gradle not correct!",
-            Paths.get("src", "test", "resources", "settings.gradle.expected"),
-            outputDirectory.toPath().resolve(projectName).resolve("settings.gradle"));
-
-      assertFileLinesEquals(
-            "build.gradle not correct!",
-            Paths.get("src", "test", "resources", "build.gradle.expected"),
-            outputDirectory.toPath().resolve(projectName).resolve("build.gradle"));
+      Path project = outputDirectory.toPath().resolve(projectName);
+      Path build = project.resolve("build.gradle");
+      Path settings = project.resolve("settings.gradle");
+      assertTrue(Files.isRegularFile(build));
+      assertTrue(Files.isRegularFile(settings));
    }
 
    private static IBuildDependency newDependency(String groupId,

@@ -1,0 +1,6 @@
+ext {
+    command = 'create-java-cucumber-tests-config'
+    args = [system : true]
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

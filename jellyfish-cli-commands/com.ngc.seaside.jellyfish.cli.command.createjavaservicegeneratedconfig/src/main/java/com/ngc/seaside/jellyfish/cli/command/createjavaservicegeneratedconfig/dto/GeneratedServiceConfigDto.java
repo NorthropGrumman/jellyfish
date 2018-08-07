@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.dto;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -15,6 +16,7 @@ public class GeneratedServiceConfigDto {
 
    private String projectDirectoryName;
    private String baseProjectName;
+   private boolean system;
 
    private Set<String> compileDependencies = new LinkedHashSet<>();
    private Set<String> defaultBundles = new LinkedHashSet<>();
@@ -29,6 +31,8 @@ public class GeneratedServiceConfigDto {
                                     IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
+      this.system = CommonParameters.evaluateBooleanParameter(options.getParameters(),
+               CommonParameters.SYSTEM.getName(), false);
    }
 
    public String getBaseProjectName() {
@@ -65,6 +69,10 @@ public class GeneratedServiceConfigDto {
    public GeneratedServiceConfigDto addDefaultBundles(Collection<String> bundles) {
       this.defaultBundles.addAll(bundles);
       return this;
+   }
+
+   public boolean isSystem() {
+      return system;
    }
 
    /**

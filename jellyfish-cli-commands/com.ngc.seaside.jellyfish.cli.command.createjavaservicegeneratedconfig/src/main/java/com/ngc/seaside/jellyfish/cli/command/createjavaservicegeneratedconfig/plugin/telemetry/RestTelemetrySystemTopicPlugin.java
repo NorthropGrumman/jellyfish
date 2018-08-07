@@ -40,7 +40,7 @@ public class RestTelemetrySystemTopicPlugin implements ITransportTopicConfigurat
    public Set<ITransportTopicConfigurationDto<RestConfigurationDto>>
             getTopicConfigurations(ConfigurationContext context) {
       IModel model = context.getModel();
-      if (!RestTelemetryTopicPlugin.isSystemModel(model) || context.getConfigurationType() != ConfigurationType.TEST) {
+      if (!context.isSystemModel() || context.getConfigurationType() != ConfigurationType.TEST) {
          return Collections.emptySet();
       }
       String topicsType =

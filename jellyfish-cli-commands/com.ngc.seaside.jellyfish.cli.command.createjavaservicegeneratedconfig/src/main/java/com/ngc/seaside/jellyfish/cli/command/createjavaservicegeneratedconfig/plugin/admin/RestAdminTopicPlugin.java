@@ -8,7 +8,6 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.pl
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transporttopic.rest.RestConfigurationDto;
 import com.ngc.seaside.jellyfish.service.config.api.IAdministrationConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.admin.RestAdministrationConfiguration;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +37,7 @@ public class RestAdminTopicPlugin implements ITransportTopicConfigurationPlugin<
    @Override
    public Set<ITransportTopicConfigurationDto<RestConfigurationDto>>
             getTopicConfigurations(ConfigurationContext context) {
-      if (isSystemModel(context.getModel())) {
+      if (context.isSystemModel()) {
          return Collections.emptySet();
       }
 
@@ -69,10 +68,6 @@ public class RestAdminTopicPlugin implements ITransportTopicConfigurationPlugin<
                new DefaultTransportTopicConfigurationDto<>(restartDto);
       restartConfigDto.addTransportTopic(ADMIN_TOPIC_TYPE, RESTART_TOPIC_VALUE);
       return Arrays.asList(shutdownConfigDto, restartConfigDto);
-   }
-
-   static boolean isSystemModel(IModel model) {
-      return !model.getParts().isEmpty();
    }
 
    @Override

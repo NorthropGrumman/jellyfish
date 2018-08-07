@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -16,6 +17,7 @@ public class GradleProjectDto {
    private String systemDescriptorGav;
    private String modelName;
    private String deploymentModelName;
+   private List<ModelPartDto> modelParts = new ArrayList<>();
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
    private Collection<IProjectInformation> projects = new ArrayList<>();
@@ -98,8 +100,36 @@ public class GradleProjectDto {
    }
 
    public GradleProjectDto setProjects(
-         Collection<IProjectInformation> projects) {
+            Collection<IProjectInformation> projects) {
       this.projects = projects;
       return this;
+   }
+
+   public Collection<ModelPartDto> getModelParts() {
+      return modelParts;
+   }
+
+   public GradleProjectDto addModelPart(String model, String distribution) {
+      modelParts.add(new ModelPartDto(model, distribution));
+      return this;
+   }
+
+   public static final class ModelPartDto {
+
+      private final String model;
+      private final String distribution;
+
+      public ModelPartDto(String model, String distribution) {
+         this.model = model;
+         this.distribution = distribution;
+      }
+
+      public String getModel() {
+         return model;
+      }
+
+      public String getDistribution() {
+         return distribution;
+      }
    }
 }

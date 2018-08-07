@@ -1,0 +1,6 @@
+ext {
+    command = '${gradleJellyfishCommand}'
+    args = [service : true]
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

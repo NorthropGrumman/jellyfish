@@ -7,6 +7,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDataDto;
 import com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages.dto.MessagesDto;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -57,7 +58,10 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
 
       // The template does not need to reference this dependency.  However, we do this so the dependency for the
       // protobuf plugin is registered.
-      buildManagementService.registerDependency(getOptions(), "com.google.protobuf", "protobuf-gradle-plugin");
+      buildManagementService.registerDependency(getOptions(), CommonDependencies.PROTOBUF_GRADLE_PLUGIN.getGropuId(),
+               CommonDependencies.PROTOBUF_GRADLE_PLUGIN.getArtifactId());
+      buildManagementService.registerDependency(getOptions(), CommonDependencies.PROTOBUF_JAVA.getGropuId(),
+               CommonDependencies.PROTOBUF_JAVA.getArtifactId());
       registerProject(projectInfo);
    }
 
