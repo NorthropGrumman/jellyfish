@@ -118,7 +118,8 @@ pipeline {
       stage('Build jellyfish-systemdescriptor-lang') {
          steps {
             dir('jellyfish-systemdescriptor-lang') {
-               sh '../gradlew clean ci --parallel'
+               // No "ci" task for SD projects.
+               sh '../gradlew clean build install --parallel'
             }
          }
       }
