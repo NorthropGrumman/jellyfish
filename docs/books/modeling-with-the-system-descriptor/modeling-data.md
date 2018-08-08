@@ -245,7 +245,7 @@ package example
  
 import example.B
  
-import A extends B {
+data A extends B {
   ...
 }
 ```
