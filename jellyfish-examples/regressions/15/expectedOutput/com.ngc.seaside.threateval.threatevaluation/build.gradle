@@ -21,10 +21,19 @@ buildscript {
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived-root'
 
+ext {
+   logger.error "Not implemented: you need specify the versions for the distributions of this system's parts"
+   // TODO: Add versions for these distributions
+   // defendedAreaTrackPriorityServiceDistributionVersion = '1.2.3'
+   // classificationTrackPriorityServiceDistributionVersion = '1.2.3'
+   // engagementTrackPriorityServiceDistributionVersion = '1.2.3'
+   // trackPriorityServiceDistributionVersion = '1.2.3'
+}
 systemDescriptor {
    project = 'com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:1.0.0-SNAPSHOT'
    model = 'com.ngc.seaside.threateval.ThreatEvaluation'
    deploymentModel = 'com.ngc.seaside.threateval.deployment.DemoThreatEvalDeployment'
+   /* TODO: Uncomment this block when the versions have been set
    part {
       model = 'com.ngc.seaside.threateval.DefendedAreaTrackPriorityService'
       distribution = "com.ngc.seaside.threateval:datps.distribution:$defendedAreaTrackPriorityServiceDistributionVersion@zip"
@@ -41,6 +50,7 @@ systemDescriptor {
       model = 'com.ngc.seaside.threateval.TrackPriorityService'
       distribution = "com.ngc.seaside.threateval:tps.distribution:$trackPriorityServiceDistributionVersion@zip"
    }
+   */
 }
 
 subprojects {

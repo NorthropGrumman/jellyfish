@@ -82,7 +82,7 @@ public class GradleProjectDto {
    }
 
    public GradleProjectDto setBuildScriptDependencies(
-         Collection<IBuildDependency> buildScriptDependencies) {
+            Collection<IBuildDependency> buildScriptDependencies) {
       this.buildScriptDependencies = buildScriptDependencies;
       return this;
    }
@@ -119,8 +119,8 @@ public class GradleProjectDto {
       return modelParts;
    }
 
-   public GradleProjectDto addModelPart(String model, String distribution) {
-      modelParts.add(new ModelPartDto(model, distribution));
+   public GradleProjectDto addModelPart(String model, String distribution, String distributionVersion) {
+      modelParts.add(new ModelPartDto(model, distribution, distributionVersion));
       return this;
    }
 
@@ -128,10 +128,19 @@ public class GradleProjectDto {
 
       private final String model;
       private final String distribution;
+      private final String distributionVersion;
 
-      public ModelPartDto(String model, String distribution) {
+      /**
+       * Constructor.
+       * 
+       * @param model model
+       * @param distribution distribution
+       * @param distributionVersion distribution version
+       */
+      public ModelPartDto(String model, String distribution, String distributionVersion) {
          this.model = model;
          this.distribution = distribution;
+         this.distributionVersion = distributionVersion;
       }
 
       public String getModel() {
@@ -140,6 +149,10 @@ public class GradleProjectDto {
 
       public String getDistribution() {
          return distribution;
+      }
+
+      public String getDistributionVersion() {
+         return distributionVersion;
       }
    }
 }

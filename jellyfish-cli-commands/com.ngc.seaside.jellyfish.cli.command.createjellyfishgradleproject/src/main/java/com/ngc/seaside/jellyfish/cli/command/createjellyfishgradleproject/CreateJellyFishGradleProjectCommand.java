@@ -159,7 +159,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             String name = partModel.getFullyQualifiedName();
             String distributionGav = project.getGroupId() + ":" + project.getArtifactId() + ":$"
                      + project.getVersionPropertyName() + "@zip";
-            dto.addModelPart(name, distributionGav);
+            dto.addModelPart(name, distributionGav, project.getVersionPropertyName());
          }
       }
    }
