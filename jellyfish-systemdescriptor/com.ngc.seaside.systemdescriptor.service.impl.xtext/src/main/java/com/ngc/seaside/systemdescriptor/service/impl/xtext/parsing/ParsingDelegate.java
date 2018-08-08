@@ -130,7 +130,8 @@ public class ParsingDelegate {
 
    private XTextParsingResult getResult(ParsingContext context, Collection<XtextResource> resources) {
       XTextParsingResult result = new XTextParsingResult();
-
+      result.setMainSourcesRoot(context.getMain());
+      result.setTestSourcesRoot(context.getTest());
       // This loop is important.  Up until this point, we have not actually loaded any resources.  We have waited until
       // all the resources are registered with the resource set.  This ensures that cross references will be resolved
       // correctly.  Calling getResource(uri, true) will force the loading of that resource.

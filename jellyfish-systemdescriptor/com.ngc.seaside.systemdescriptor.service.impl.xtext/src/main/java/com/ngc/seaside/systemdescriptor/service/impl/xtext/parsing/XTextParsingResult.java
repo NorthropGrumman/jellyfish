@@ -7,6 +7,7 @@ import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import org.eclipse.xtext.validation.Issue;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +19,8 @@ public class XTextParsingResult implements IParsingResult {
 
    private final Collection<IParsingIssue> issues;
    private final Collection<IParsingIssue> unmodifiableIssues;
+   private Path main;
+   private Path test;
 
    private ISystemDescriptor systemDescriptor;
 
@@ -41,6 +44,16 @@ public class XTextParsingResult implements IParsingResult {
       return unmodifiableIssues;
    }
 
+   @Override
+   public Path getMainSourcesRoot() {
+      return main;
+   }
+
+   @Override
+   public Path getTestSourcesRoot() {
+      return test;
+   }
+
    /**
     * Adds issues to this return.
     */
@@ -56,6 +69,16 @@ public class XTextParsingResult implements IParsingResult {
     */
    XTextParsingResult setSystemDescriptor(ISystemDescriptor systemDescriptor) {
       this.systemDescriptor = systemDescriptor;
+      return this;
+   }
+
+   XTextParsingResult setMainSourcesRoot(Path root) {
+      this.main = root;
+      return this;
+   }
+
+   XTextParsingResult setTestSourcesRoot(Path root) {
+      this.test = root;
       return this;
    }
 }
