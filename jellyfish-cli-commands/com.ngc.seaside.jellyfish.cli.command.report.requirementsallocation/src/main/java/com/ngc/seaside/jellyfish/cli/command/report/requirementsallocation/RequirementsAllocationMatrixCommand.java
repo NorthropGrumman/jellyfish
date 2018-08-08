@@ -151,7 +151,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
    private Path getAbsoluteOutputPath(String output, IJellyFishCommandOptions commandOptions) {
       Path path = Paths.get(output);
       if (!path.isAbsolute()) {
-         path = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(output).toAbsolutePath();
+         path = Paths.get(output);
       }
       return path;
    }
@@ -226,8 +226,7 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
                                     "Format of the output. The possible values are default and csv. Default: default.")
                                     .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                    "File where the output is sent. This file path may be a relative path relative to "
-                                    + "the SD project directory. Default: stdout.")
+                                    "File where the output is sent.")
                                     .setRequired(false),
                               new DefaultParameter(SCOPE_PROPERTY).setDescription(
                                     "Keyword scope (metadata, input, output, etc..). "
