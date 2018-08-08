@@ -11,6 +11,8 @@ import org.eclipse.xtext.resource.XtextResource;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -243,8 +245,20 @@ class ParsingUtils {
             
             URI mainUri = URI.create("jar:file:" + mainJar.toUri().getPath());
             URI testUri = URI.create("jar:file:" + testJar.toUri().getPath());
-            ctx.setMain(FileSystems.newFileSystem(mainUri, Collections.emptyMap()).getPath("/"));
-            ctx.setTest(FileSystems.newFileSystem(testUri, Collections.emptyMap()).getPath("/"));
+            FileSystem mainFs = null;
+            try {
+               mainFs = FileSystems.getFileSystem(mainUri);
+            } catch (FileSystemNotFoundException e) {
+               mainFs = FileSystems.newFileSystem(mainUri, Collections.singletonMap("create", true));
+            }
+            FileSystem testFs = null;
+            try {
+               testFs = FileSystems.getFileSystem(testUri);
+            } catch (FileSystemNotFoundException e) {
+               testFs = FileSystems.newFileSystem(testUri, Collections.singletonMap("create", true));
+            }
+            ctx.setMain(mainFs.getPath("/"));
+            ctx.setTest(testFs.getPath("/"));
          }
          for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
             resources.addAll(parseJar(path, ctx));
