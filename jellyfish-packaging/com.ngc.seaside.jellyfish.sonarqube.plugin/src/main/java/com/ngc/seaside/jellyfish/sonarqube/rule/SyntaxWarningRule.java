@@ -26,7 +26,7 @@ public class SyntaxWarningRule extends AbstractRule {
    @Override
    protected void configure(RulesDefinition.NewRule rule) {
       rule.setName("System Descriptor Syntax Warning")
-            .setHtmlDescription("Used when a syntax warning is raised for an SD file.")
+            .setHtmlDescription("<h2>Used when a syntax warning is raised for an SD file.<h2>")
             .setStatus(RuleStatus.READY)
             .setType(RuleType.CODE_SMELL)
             .setSeverity(Severity.MINOR);

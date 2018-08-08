@@ -1,5 +1,8 @@
 package com.ngc.seaside.jellyfish.sonarqube.rule;
 
+import com.google.common.base.Preconditions;
+
+import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 
 import org.sonar.api.rule.RuleKey;
@@ -17,6 +20,8 @@ public class FindingTypeRuleAdapter extends AbstractRule {
     * The finding type that is being adapted.
     */
    private final ISystemDescriptorFindingType findingType;
+
+   private IReportingOutputService reportingOutputService;
 
    /**
     * Creates a new adapter for the given finding type.
@@ -37,11 +42,19 @@ public class FindingTypeRuleAdapter extends AbstractRule {
       return findingType;
    }
 
+   public void setReportingOutputService(IReportingOutputService reportingOutputService) {
+      Preconditions.checkNotNull(reportingOutputService, "reportingOutputService may not be null!");
+      this.reportingOutputService = reportingOutputService;
+   }
+
    @Override
    protected void configure(RulesDefinition.NewRule rule) {
+      Preconditions.checkNotNull(reportingOutputService,
+                                 "reportingOutputService is null! Did you call setReportingOutputService()?");
+
       // Do the actual mapping between the Jellyfish API and Sonarqube here.
       rule.setName(findingType.getId())
-            .setHtmlDescription(findingType.getDescription()) // TODO TH: use markdown service to convert to HTML
+            .setHtmlDescription(reportingOutputService.convert(findingType.getDescription()))
             .setSeverity(convert(findingType.getSeverity()))
             // Make all Jellyfish rules ready.
             .setStatus(RuleStatus.READY)
