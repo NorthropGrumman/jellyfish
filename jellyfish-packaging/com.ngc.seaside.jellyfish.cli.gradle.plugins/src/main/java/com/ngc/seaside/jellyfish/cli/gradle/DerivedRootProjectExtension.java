@@ -94,7 +94,7 @@ public class DerivedRootProjectExtension {
    /**
     * Sets the system descriptor deployment model name.
     * 
-    * @param model system descriptor deployment model name
+    * @param deploymentModel system descriptor deployment model name
     * @return this
     */
    public DerivedRootProjectExtension setDeploymentModel(String deploymentModel) {

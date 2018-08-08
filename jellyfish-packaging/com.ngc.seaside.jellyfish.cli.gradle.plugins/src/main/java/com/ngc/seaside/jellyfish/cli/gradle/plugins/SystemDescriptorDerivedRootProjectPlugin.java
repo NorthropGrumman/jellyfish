@@ -30,7 +30,6 @@ import java.io.File;
  *    project = 'com.ngc.seaside.threateval:threatevaluation.descriptor:2.7.0'
  * }
  * </pre>
- * 
  * This plugin adds the task {@value #CLEAN_GEN_TASK_NAME} for completely cleaning generated projects.
  */
 public class SystemDescriptorDerivedRootProjectPlugin extends AbstractProjectPlugin {
