@@ -1,39 +1,39 @@
 package com.ngc.seaside.jellyfish.service.feature.api;
 
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
-import java.nio.file.Path;
 import java.util.Collection;
-import java.util.NavigableMap;
 
 /**
  * Service for dealing with feature files.
- * @author bperkins
  */
 public interface IFeatureService {
-   
+
    /**
-    * Gets a map of all the features for the given system descriptor path and model
-    * @param sdPath the path to the system descriptor
+    * Returns all of the feature files associated with the given model.
+    * 
+    * @param options jellyfish command options
     * @param model the model
-    * @return a map of the feature information keyed by the absolute path to each feature file
+    * @return a collection of feature file information
     */
-   NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IModel model);
+   Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IModel model);
 
    /**
-    * Gets a map of all the features for the given scenario.
-    * @param sdPath the path to the system descriptor
+    * Returns all of the feature files associated with the given scenario.
+    * 
+    * @param options jellyfish command options
     * @param scenario the scenario to get the features for
-    * @return a map of the feature information for the given scenario keyed by the absolute path to each feature file
+    * @return a collection of feature file information
     */
-   NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario);
+   Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IScenario scenario);
 
    /**
-    * Gets a map of all the features for the given system descriptor path and a collection of models
-    * @param sdPath the path to the system descriptor
-    * @param models the collection of models
-    * @return map of the feature information keyed by the absolute path to each feature file
+    * Returns all of the feature files for the system descriptor.
+    * 
+    * @param options jellyfish command options
+    * @return a collection of feature file information
     */
-   NavigableMap<Path, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models);
+   Collection<IFeatureInformation> getAllFeatures(IJellyFishCommandOptions options);
 }

@@ -1,134 +1,67 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.apache.commons.lang.ArrayUtils.INDEX_NOT_FOUND;
+import java.util.Optional;
 
 public class FeatureInformation implements IFeatureInformation {
 
-   private String fileName;
-   private String fullyQualifiedName;
-   private String name;
-   private Path absolutePath;
-   private Path relativePath;
+   private final Path path;
+   private final IModel model;
+   private final IScenario scenario;
 
    /**
-    * Constructor
-    * @param absolutePath for feature information
-    * @param relativePath for feature information
+    * Constructor.
+    * 
+    * @param path path to feature file
+    * @param model model, may be null
+    * @param scenario scenario, may be null
     */
-   public FeatureInformation(Path absolutePath, Path relativePath) {
-      fullyQualifiedName = substringBetween(absolutePath.getFileName().toString(), "", ".feature");
-      fileName = fullyQualifiedName.concat(".feature");
-      this.name = substringBetween(absolutePath.getFileName().toString(), ".", ".");
-      this.setAbsolutePath(absolutePath);
-      this.setRelativePath(relativePath);
+   public FeatureInformation(Path path, IModel model, IScenario scenario) {
+      Preconditions.checkNotNull(path, "path cannot be null");
+      Preconditions.checkArgument(Files.isRegularFile(path), "Path " + path + " does not exist");
+      Preconditions.checkArgument(path.getFileName().toString().endsWith(".feature"),
+               "File " + path + " is not a feature file");
+      this.path = path;
+      this.model = model;
+      this.scenario = scenario;
    }
 
    @Override
-   public String getFileName() {
-      return fileName;
-   }
-
-   /**
-    * Set the file name of feature file
-    *
-    * @param fileName the file name
-    * @return the feature information
-    */
-   public FeatureInformation setFileName(String fileName) {
-      this.fileName = fileName;
-      return this;
+   public Path getPath() {
+      return path;
    }
 
    @Override
    public String getFullyQualifiedName() {
-      return fullyQualifiedName;
-   }
-
-   /**
-    * Set the fully qualified name
-    *
-    * @param fullyQualifiedName the fully qualified name
-    * @return the feature information
-    */
-   public FeatureInformation setFullyQualifiedName(String fullyQualifiedName) {
-      this.fullyQualifiedName = fullyQualifiedName;
-      return this;
-   }
-
-   @Override
-   public String getName() {
-      return name;
-   }
-
-   /**
-    * Set the name of this feature
-    *
-    * @param name the name
-    * @return the feature information
-    */
-   public FeatureInformation setName(String name) {
-      this.name = name;
-      return this;
-   }
-
-   @Override
-   public Path getAbsolutePath() {
-      return absolutePath;
-   }
-
-   /**
-    * Sets the absolute path
-    *
-    * @param absolutePath the absolute path
-    */
-   public void setAbsolutePath(Path absolutePath) {
-      this.absolutePath = absolutePath;
-   }
-
-   @Override
-   public Path getRelativePath() {
-      return relativePath;
-   }
-
-   /**
-    * Sets the relative path
-    */
-   public void setRelativePath(Path relativePath) {
-      this.relativePath = relativePath;
-   }
-
-   /**
-    * <p>Gets the String that is nested in between two Strings. Only the first match is returned.</p>
-    * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An
-    * empty ("") open and close returns an empty string.</p>
-    *
-    * @param str   the String containing the substring, may be null
-    * @param open  the String before the substring, may be null
-    * @param close the String after the substring, may be null
-    * @return the substring, {@code null} if no match
-    */
-   private static String substringBetween(final String str, final String open, final String close) {
-      if (str == null || open == null || close == null) {
-         return null;
+      String name = getScenario()
+               .map(scenario -> scenario.getParent().getFullyQualifiedName() + "." + scenario.getName() + ".feature")
+               .orElse(null);
+      if (name != null) {
+         return name;
       }
-      final int start = str.indexOf(open);
-      if (start != INDEX_NOT_FOUND) {
-         final int end = str.indexOf(close, start + open.length());
-         if (end != INDEX_NOT_FOUND) {
-            return str.substring(start + open.length(), end);
-         }
-      }
-      return null;
+      return getPath().toAbsolutePath().toString();
    }
 
+   @Override
+   public Optional<IModel> getModel() {
+      return Optional.ofNullable(model);
+   }
+
+   @Override
+   public Optional<IScenario> getScenario() {
+      return Optional.ofNullable(scenario);
+   }
 
    @Override
    public String toString() {
-      return "FeatureInformation [fileName=" + fileName + ", fullyQualifiedName=" + fullyQualifiedName + ", name="
-            + name + ", absolutePath=" + absolutePath.toString() + ", relativePath=" + relativePath.toString() + "]";
+      return "Feature[path=" + path + ",model=" + getModel().map(IModel::getFullyQualifiedName).orElse("null")
+               + ",scenario=" + getScenario().map(IScenario::getName).orElse("null") + "]";
    }
+
 }

@@ -1,12 +1,9 @@
 package com.ngc.seaside.jellyfish.service.execution.api;
 
 import com.google.inject.Injector;
-
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-
-import java.nio.file.Path;
 
 /**
  * The results of a service execution of Jellyfish.
@@ -58,12 +55,4 @@ public interface IJellyfishExecution {
       return getOptions().getSystemDescriptor();
    }
 
-   /**
-    * Gets the path to the system descriptor project.
-    *
-    * @return the path to the system descriptor project
-    */
-   default Path getSystemDescriptorProjectPath() {
-      return getOptions().getSystemDescriptorProjectPath();
-   }
 }
