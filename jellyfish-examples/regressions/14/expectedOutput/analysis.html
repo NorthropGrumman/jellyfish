@@ -12,7 +12,7 @@
 <div class="summary">
 <h1 id="summary">Summary</h1>
 <p><i class="error fas fa-times"></i><a href="#errors"> 0 errors</a></p>
-<p><i class="warning fas fa-exclamation-triangle"></i><a href="#warnings"> 1 warnings</a></p>
+<p><i class="warning fas fa-exclamation-triangle"></i><a href="#warnings"> 2 warnings</a></p>
 </div>
 
 <div class="errors">
@@ -47,6 +47,36 @@ the system architecture to ensure that all budget constraints are met.</p>
 </div>
 </div>
 </div>
+<div class="finding-type">
+<h2>Feature files should be associated with a model and scenario</h2>
+<p>Feature files, typically located in src/test/gherkin of a system descriptor project, should be associated with a model
+and a scenario, and vice versa. This means that the folder path of the feature file relative to src/test/gherkin
+correspond with a model's package name. The name of the feature file should have the format
+<code>&lt;model-name&gt;.&lt;scenario-name&gt;.feature</code>.</p>
+<p>For example, consider a model with package <code>com.ngc.example</code>, a name of <code>ExampleModel</code>, and scenario <code>doSomething</code>.
+There should be a feature file with the path <code>src/test/gherkin/com/ngc/example/ExampleModel.doSomething.feature</code>.</p>
+<div class="finding">
+<div class="source-location">
+<i class="warning fas fa-exclamation-triangle"></i> <span class="file-name">/com/ngc/seaside/book/examples/budgets/ZaptorAirVehicle.sd</span>
+<span class="line-number">line 11</span>
+<span class="col">col 11</span>
+</div>
+<div class="source-snippet">
+<div class="source-code language-sd">
+<pre class="line">import com.ngc.seaside.book.examples.budgets.FlightControls</pre>
+<pre class="line"></pre>
+<pre class="line">model ZaptorAirVehicle {</pre>
+<pre class="line offending-line">	scenario <span class="offending">scenarioMissingFeature</span> {</pre>
+<pre class="line">		when completing within 10 seconds</pre>
+<pre class="line">		then willBeCompleted within 10 seconds</pre>
+<pre class="line">	}</pre>
+</div>
+</div>
+<div class="finding-details">
+<p>Scenario scenarioMissingFeature in model com.ngc.seaside.book.examples.budgets.ZaptorAirVehicle does not have a feature file.</p>
+</div>
+</div>
+</div>
 </div>
 
 <div class="info">
@@ -58,18 +88,18 @@ the system architecture to ensure that all budget constraints are met.</p>
 <div class="finding">
 <div class="source-location">
 <span class="file-name">/com/ngc/seaside/book/examples/budgets/ZaptorAirVehicle.sd</span>
-<span class="line-number">line 21</span>
+<span class="line-number">line 30</span>
 <span class="col">col 10</span>
 </div>
 <div class="source-snippet">
 <div class="source-code language-sd">
 <pre class="line">	}</pre>
-<pre class="line">	</pre>
+<pre class="line"></pre>
 <pre class="line">	properties {</pre>
 <pre class="line offending-line">		Budget <span class="offending">weight</span></pre>
+<pre class="line"></pre>
 <pre class="line">		weight.max = "2500 kg"</pre>
 <pre class="line">		weight.min = "0"</pre>
-<pre class="line">		weight.givenBy = "weight"</pre>
 </div>
 </div>
 <div class="finding-details">
@@ -83,9 +113,9 @@ the system architecture to ensure that all budget constraints are met.</p>
 <h1>Runtime Information</h1>
 <p>Jellyfish executed with the following parameters:
 <ul>
-<li>analyses = analyze-budget</li>
+<li>analyses = analyze-budget,analyze-features</li>
 <li>reports = html-report</li>
-<li>reportName = budget</li>
+<li>reportName = analysis</li>
 <li>outputDirectory = C:\ceacide\jellyfish\jellyfish-examples\regressions\14/generatedOutput</li>
 <li>model = com.ngc.seaside.book.examples.budgets.ZaptorAirVehicle</li>
 <li>clean = true</li>
