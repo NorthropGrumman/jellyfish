@@ -1,5 +1,8 @@
 ext {
     command = 'create-java-service-base'
+#if ($dto.isSystem())
+    args = [system : true]
+#end
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

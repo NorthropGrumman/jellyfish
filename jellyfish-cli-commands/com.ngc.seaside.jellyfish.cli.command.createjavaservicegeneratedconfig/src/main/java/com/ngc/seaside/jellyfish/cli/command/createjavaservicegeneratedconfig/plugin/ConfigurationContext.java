@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -96,10 +97,14 @@ public class ConfigurationContext {
    public ConfigurationType getConfigurationType() {
       return type;
    }
-   
+
    public ConfigurationContext setConfigurationType(ConfigurationType type) {
       this.type = type;
       return this;
    }
-   
+
+   public boolean isSystemModel() {
+      return CommonParameters.evaluateBooleanParameter(options.getParameters(), CommonParameters.SYSTEM.getName(),
+               false);
+   }
 }

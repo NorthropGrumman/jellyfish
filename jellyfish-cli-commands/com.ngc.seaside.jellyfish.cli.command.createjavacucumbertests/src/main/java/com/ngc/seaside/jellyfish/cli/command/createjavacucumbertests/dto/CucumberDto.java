@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -19,13 +20,27 @@ public class CucumberDto {
    private String transportTopicsClass;
    private Set<String> dependencies;
    private Set<String> imports = new LinkedHashSet<String>();
+   private Set<String> remoteServices = new LinkedHashSet<>();
    private String configModule;
    private boolean isConfigGenerated;
+   private boolean system;
 
+   /**
+    * Constructor.
+    * 
+    * @param buildManagementService build management service
+    * @param options jellyfish options
+    */
    public CucumberDto(IBuildManagementService buildManagementService,
                       IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
+      this.system = CommonParameters.evaluateBooleanParameter(options.getParameters(),
+               CommonParameters.SYSTEM.getName(), false);
+   }
+
+   public boolean isSystem() {
+      return system;
    }
 
    public String getProjectName() {
@@ -115,6 +130,14 @@ public class CucumberDto {
    public CucumberDto setConfigGenerated(boolean isConfigGenerated) {
       this.isConfigGenerated = isConfigGenerated;
       return this;
+   }
+
+   public Set<String> getRemoteServices() {
+      return remoteServices;
+   }
+
+   public void addRemoteService(String remoteService) {
+      this.remoteServices.add(remoteService);
    }
 
    /**

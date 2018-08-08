@@ -33,6 +33,9 @@ project(':com.ngc.seaside.jellyfish.cli.command.report.requirementsverification'
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceproject').name = 'jellyfish.cli.command.createjavaserviceproject'
 
+include 'com.ngc.seaside.jellyfish.cli.command.createjavasystemproject'
+project(':com.ngc.seaside.jellyfish.cli.command.createjavasystemproject').name = 'jellyfish.cli.command.createjavasystemproject'
+
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicebase'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicebase').name = 'jellyfish.cli.command.createjavaservicebase'
 

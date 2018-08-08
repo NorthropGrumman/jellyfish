@@ -41,7 +41,8 @@ dependencies {
     implementation "com.ngc.seaside:jellyfish.cli.command.validate:$version"
 
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version"
-    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template-service@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template-system@zip"
 
     implementation "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjellyfishcommand:$version:template@zip"
@@ -78,9 +79,14 @@ dependencies {
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaserviceproject:$version:template@zip"
 
+    implementation "com.ngc.seaside:jellyfish.cli.command.createjavasystemproject:$version"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavasystemproject:$version:template@zip"
+
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-build@zip"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-genbuild@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-servicebase@zip"
+    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicebase:$version:template-topics@zip"
 
     implementation "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version"
     commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavaservicepubsubbridge:$version:template-build@zip"

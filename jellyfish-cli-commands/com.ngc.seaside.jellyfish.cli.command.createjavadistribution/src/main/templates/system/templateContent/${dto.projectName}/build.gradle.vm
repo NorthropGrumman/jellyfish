@@ -1,0 +1,9 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.ngc.seaside.distribution.system'
+
+dependencies {
+   rootProject.systemDescriptor.parts.each {
+      distribution it.distribution
+   }
+}

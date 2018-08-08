@@ -7,6 +7,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 
 public class CreateJellyFishGradleProjectCommandGuiceWrapper implements IJellyFishCommand {
@@ -16,10 +17,12 @@ public class CreateJellyFishGradleProjectCommandGuiceWrapper implements IJellyFi
    @Inject
    public CreateJellyFishGradleProjectCommandGuiceWrapper(ILogService logService,
                                                           ITemplateService templateService,
-                                                          IBuildManagementService buildManagementService) {
+                                                          IBuildManagementService buildManagementService,
+                                                          IProjectNamingService projectNamingService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setProjectNamingService(projectNamingService);
    }
 
    @Override

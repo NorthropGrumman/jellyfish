@@ -11,7 +11,6 @@ import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationServi
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.dto.telemetry.RestTelemetryReportingConfiguration;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -39,7 +38,7 @@ public class RestTelemetryReportingTopicPlugin implements ITransportTopicConfigu
    @Override
    public Set<ITransportTopicConfigurationDto<RestConfigurationDto>>
             getTopicConfigurations(ConfigurationContext context) {
-      if (isSystemModel(context.getModel()) || context.getConfigurationType() != ConfigurationType.SERVICE) {
+      if (context.isSystemModel() || context.getConfigurationType() != ConfigurationType.SERVICE) {
          return Collections.emptySet();
       }
       EnumDto topicsDto = generationService.getTransportTopicsDescription(context.getOptions(), context.getModel());
@@ -64,10 +63,6 @@ public class RestTelemetryReportingTopicPlugin implements ITransportTopicConfigu
                new DefaultTransportTopicConfigurationDto<>(dto);
       configDto.addTransportTopic(topic);
       return configDto;
-   }
-
-   static boolean isSystemModel(IModel model) {
-      return !model.getParts().isEmpty();
    }
 
    @Override

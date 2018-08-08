@@ -5,6 +5,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -16,9 +17,11 @@ public class GradleProjectDto {
    private String systemDescriptorGav;
    private String modelName;
    private String deploymentModelName;
+   private List<ModelPartDto> modelParts = new ArrayList<>();
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
    private Collection<IProjectInformation> projects = new ArrayList<>();
+   private boolean system;
 
    public String getGroupId() {
       return groupId;
@@ -79,7 +82,7 @@ public class GradleProjectDto {
    }
 
    public GradleProjectDto setBuildScriptDependencies(
-         Collection<IBuildDependency> buildScriptDependencies) {
+            Collection<IBuildDependency> buildScriptDependencies) {
       this.buildScriptDependencies = buildScriptDependencies;
       return this;
    }
@@ -98,8 +101,58 @@ public class GradleProjectDto {
    }
 
    public GradleProjectDto setProjects(
-         Collection<IProjectInformation> projects) {
+            Collection<IProjectInformation> projects) {
       this.projects = projects;
       return this;
+   }
+
+   public boolean isSystem() {
+      return system;
+   }
+
+   public GradleProjectDto setSystem(boolean system) {
+      this.system = system;
+      return this;
+   }
+
+   public Collection<ModelPartDto> getModelParts() {
+      return modelParts;
+   }
+
+   public GradleProjectDto addModelPart(String model, String distribution, String distributionVersion) {
+      modelParts.add(new ModelPartDto(model, distribution, distributionVersion));
+      return this;
+   }
+
+   public static final class ModelPartDto {
+
+      private final String model;
+      private final String distribution;
+      private final String distributionVersion;
+
+      /**
+       * Constructor.
+       * 
+       * @param model model
+       * @param distribution distribution
+       * @param distributionVersion distribution version
+       */
+      public ModelPartDto(String model, String distribution, String distributionVersion) {
+         this.model = model;
+         this.distribution = distribution;
+         this.distributionVersion = distributionVersion;
+      }
+
+      public String getModel() {
+         return model;
+      }
+
+      public String getDistribution() {
+         return distribution;
+      }
+
+      public String getDistributionVersion() {
+         return distributionVersion;
+      }
    }
 }

@@ -125,7 +125,7 @@ file(regressionsFolderName).eachDir { folder ->
    generateRegressions.dependsOn generateTask
 
    // Build the generated project
-   def buildTask = createRegressionBuildTask("buildRegression${regressionName}", generatedFolder, tempFolder)
+   def buildTask = createRegressionBuildTask("buildRegression${regressionName}", folder, generatedFolder, tempFolder)
    buildTask.description = "Builds the generated regression ${regressionName}"
    buildTask.dependsOn buildSystemDescriptorProjects, generateTask
    buildRegressions.dependsOn buildTask
@@ -234,7 +234,17 @@ def createUpdateExpectedJellyfishVersion(name, folder) {
 
 // Creates a task to build a gradle project. This task will search sub-directories until it finds a build.gradle.
 // This task will also copy the folder to a temp directory to fix windows path length issues
-def createRegressionBuildTask(name, folder, tempDirectory) {
+def createRegressionBuildTask(name, regressionFolder, folder, tempDirectory) {
+   def propertiesFile = file("${regressionFolder}/build_regression.properties")
+   def extraProperties = [:]
+   if (propertiesFile.isFile()) {
+      Properties properties = new Properties()
+      propertiesFile.withInputStream {
+         properties.load(it)
+      }
+      extraProperties << properties
+   }
+
    def buildTask = task(name) {
       doLast {
          folder.traverse(type: groovy.io.FileType.DIRECTORIES, maxDepth: 3) { buildFolder ->
@@ -249,6 +259,7 @@ def createRegressionBuildTask(name, folder, tempDirectory) {
                gradleBuildTask.tasks = ['clean', 'build']
                gradleBuildTask.startParameter.excludedTaskNames = ['test']
                gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+               gradleBuildTask.startParameter.projectProperties << extraProperties
                gradleBuildTask.execute()
 
                return groovy.io.FileVisitResult.SKIP_SIBLINGS

@@ -1,6 +1,5 @@
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -14,16 +13,14 @@ import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.Gr
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,10 +35,9 @@ import java.util.TreeMap;
  *
  */
 @Component(service = IJellyFishCommand.class)
-public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
+public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishCommand {
 
    private static final String NAME = "create-jellyfish-gradle-project";
-   private static final IUsage USAGE = createUsage();
 
    public static final String OUTPUT_DIR_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
@@ -54,9 +50,9 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
-   private ILogService logService;
-   private ITemplateService templateService;
-   private IBuildManagementService buildManagementService;
+   public CreateJellyFishGradleProjectCommand() {
+      super(NAME);
+   }
 
    @Activate
    public void activate() {
@@ -69,17 +65,8 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
    }
 
    @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
+   protected void doRun() {
+      IJellyFishCommandOptions commandOptions = getOptions();
       DefaultParameterCollection collection = new DefaultParameterCollection();
       collection.addParameters(commandOptions.getParameters().getAllParameters());
 
@@ -109,60 +96,15 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
             .setDeploymentModelName(getDeploymentModel(commandOptions))
             .setBuildScriptDependencies(getBuildScriptDependencies(commandOptions))
             .setVersionProperties(getVersionProperties(commandOptions))
-            .setProjects(getProjects(commandOptions));
+            .setProjects(getProjects(commandOptions))
+               .setSystem(CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                        CommonParameters.SYSTEM.getName(), false));
+      configModelParts(dto);
       collection.addParameter(new DefaultParameter<>("dto", dto));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
       templateService.unpack(templateName, collection, projectDirectory, clean);
-   }
-
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
-   }
-
-   /**
-    * Remove log service.
-    */
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
-   }
-
-   /**
-    * Sets template service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeTemplateService")
-   public void setTemplateService(ITemplateService ref) {
-      this.templateService = ref;
-   }
-
-   /**
-    * Remove template service.
-    */
-   public void removeTemplateService(ITemplateService ref) {
-      setTemplateService(null);
-   }
-
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC)
-   public void setBuildManagementService(IBuildManagementService ref) {
-      this.buildManagementService = ref;
-   }
-
-   public void removeBuildManagementService(IBuildManagementService ref) {
-      setBuildManagementService(null);
    }
 
    private void registerRequiredDependencies(IJellyFishCommandOptions commandOptions) {
@@ -208,12 +150,22 @@ public class CreateJellyFishGradleProjectCommand implements IJellyFishCommand {
       }
    }
 
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   private static IUsage createUsage() {
+   private void configModelParts(GradleProjectDto dto) {
+      Collection<IModelReferenceField> parts = getModel().getParts();
+      if (parts != null) {
+         for (IModelReferenceField part : parts) {
+            IModel partModel = part.getType();
+            IProjectInformation project = projectNamingService.getDistributionProjectName(getOptions(), partModel);
+            String name = partModel.getFullyQualifiedName();
+            String distributionGav = project.getGroupId() + ":" + project.getArtifactId() + ":$"
+                     + project.getVersionPropertyName() + "@zip";
+            dto.addModelPart(name, distributionGav, project.getVersionPropertyName());
+         }
+      }
+   }
+
+   @Override
+   protected IUsage createUsage() {
       return new DefaultUsage(
             "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output"
             + " directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",

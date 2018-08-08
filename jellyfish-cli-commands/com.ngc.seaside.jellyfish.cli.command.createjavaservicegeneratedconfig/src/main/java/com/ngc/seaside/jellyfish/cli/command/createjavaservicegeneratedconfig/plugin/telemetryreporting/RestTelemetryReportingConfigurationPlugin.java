@@ -42,8 +42,7 @@ public class RestTelemetryReportingConfigurationPlugin
 
    @Override
    public Optional<RestTelemetryReportingTemplateDto> getConfigurationDto(ConfigurationContext context) {
-      if (RestTelemetryReportingTopicPlugin.isSystemModel(context.getModel())
-               || context.getConfigurationType() != ConfigurationType.SERVICE) {
+      if (context.isSystemModel() || context.getConfigurationType() != ConfigurationType.SERVICE) {
          return Optional.empty();
       }
       Set<RestTelemetryReportingConfiguration> configs =

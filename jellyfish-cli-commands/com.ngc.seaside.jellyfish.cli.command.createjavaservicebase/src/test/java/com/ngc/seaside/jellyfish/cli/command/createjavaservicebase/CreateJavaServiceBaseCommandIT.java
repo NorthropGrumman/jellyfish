@@ -25,6 +25,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +42,8 @@ import java.util.Optional;
 
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_BUILD_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.SERVICE_BASE_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.CreateJavaServiceBaseCommand.TOPICS_TEMPLATE_SUFFIX;
 import static com.ngc.seaside.jellyfish.cli.command.test.files.TestingFiles.assertFileLinesEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,11 +103,19 @@ public class CreateJavaServiceBaseCommandIT {
             .setTemplateDirectory(
                   CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
                   + SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX,
-                  Paths.get("src", "main", "templates", "genbuild"))
+                  Paths.get("src", "main", "templates", SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX))
             .setTemplateDirectory(
                   CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
                   + SERVICE_BASE_BUILD_TEMPLATE_SUFFIX,
-                  Paths.get("src", "main", "templates", "build"));
+                  Paths.get("src", "main", "templates", SERVICE_BASE_BUILD_TEMPLATE_SUFFIX))
+            .setTemplateDirectory(
+               CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
+               + SERVICE_BASE_TEMPLATE_SUFFIX,
+               Paths.get("src", "main", "templates", SERVICE_BASE_TEMPLATE_SUFFIX))
+            .setTemplateDirectory(
+                     CreateJavaServiceBaseCommand.class.getPackage().getName() + "-"
+                     + TOPICS_TEMPLATE_SUFFIX,
+                     Paths.get("src", "main", "templates", TOPICS_TEMPLATE_SUFFIX));
 
       templateDaoFactory = new BaseServiceDtoFactory(projectService,
                                                      packageService,

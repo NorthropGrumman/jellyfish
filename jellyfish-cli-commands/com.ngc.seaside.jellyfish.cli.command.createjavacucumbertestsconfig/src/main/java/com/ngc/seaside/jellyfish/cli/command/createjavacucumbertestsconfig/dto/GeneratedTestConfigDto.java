@@ -1,5 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavacucumbertestsconfig.dto;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -15,6 +16,7 @@ public class GeneratedTestConfigDto {
 
    private String projectDirectoryName;
    private String baseProjectName;
+   private boolean system;
 
    private Set<String> compileDependencies = new LinkedHashSet<>();
    private Set<String> defaultModules = new LinkedHashSet<>();
@@ -29,6 +31,12 @@ public class GeneratedTestConfigDto {
                                     IJellyFishCommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
+      this.system = CommonParameters.evaluateBooleanParameter(options.getParameters(),
+               CommonParameters.SYSTEM.getName(), false);
+   }
+
+   public boolean isSystem() {
+      return system;
    }
 
    public String getBaseProjectName() {

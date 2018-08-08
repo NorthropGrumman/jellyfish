@@ -1,0 +1,17 @@
+rootProject.name = 'com.ngc.seaside.threateval.threatevaluation'
+
+include 'te.distribution'
+project(':te.distribution').projectDir = file('com.ngc.seaside.threateval.te.distribution')
+
+include 'te.tests'
+project(':te.tests').projectDir = file('com.ngc.seaside.threateval.te.tests')
+
+include 'te.base'
+project(':te.base').projectDir = file('generated-projects/com.ngc.seaside.threateval.te.base')
+
+include 'te.messages'
+project(':te.messages').projectDir = file('generated-projects/com.ngc.seaside.threateval.te.messages')
+
+include 'te.testsconfig'
+project(':te.testsconfig').projectDir = file('generated-projects/com.ngc.seaside.threateval.te.testsconfig')
+

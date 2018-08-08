@@ -24,6 +24,8 @@ public enum CommonParameters implements IParameter<String> {
    STEREOTYPES("stereotypes",
                "A comma separated listed of stereotypes used to select models in the project.  This limits the scope of"
                + " the command to these models."),
+   SYSTEM("system",
+            "If true, indicates that the parameter " + MODEL.getName() + " should be treated as a system model"),
 
    @Deprecated
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()

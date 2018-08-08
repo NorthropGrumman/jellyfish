@@ -5,7 +5,10 @@ import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -16,12 +19,13 @@ public class BaseServiceDto {
    private ClassDto interfacez;
    private ClassDto abstractClass;
    private Set<String> projectDependencies;
+   private Map<String, Set<String>> moduleDependencies = new LinkedHashMap<>();
    private Set<String> exportedPackages;
    private EnumDto topics;
    private IModel model;
    private boolean correlationRequestHandlingEnabled;
    private boolean correlationServiceRequired;
-
+   private boolean system;
    private List<ReceiveDto> receiveMethods = new ArrayList<>();
    private List<PublishDto> publishMethods = new ArrayList<>();
    private List<BasicPubSubDto> basicPubSubMethods = new ArrayList<>();
@@ -199,5 +203,22 @@ public class BaseServiceDto {
    public BaseServiceDto setBasicServerReqResMethods(List<BasicServerReqResDto> basicServerReqResMethods) {
       this.basicServerReqResMethods = basicServerReqResMethods;
       return this;
+   }
+
+   public boolean isSystem() {
+      return system;
+   }
+
+   public BaseServiceDto setSystem(boolean system) {
+      this.system = system;
+      return this;
+   }
+
+   public Map<String, Set<String>> getModuleDependencies() {
+      return moduleDependencies;
+   }
+
+   public void addModuleDependency(String configuration, String dependency) {
+      moduleDependencies.computeIfAbsent(configuration, __ -> new LinkedHashSet<>()).add(dependency);
    }
 }

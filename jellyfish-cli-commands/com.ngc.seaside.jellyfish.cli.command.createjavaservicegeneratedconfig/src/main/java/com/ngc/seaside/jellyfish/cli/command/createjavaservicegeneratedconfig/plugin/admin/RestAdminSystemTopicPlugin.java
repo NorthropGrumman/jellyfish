@@ -37,7 +37,7 @@ public class RestAdminSystemTopicPlugin implements ITransportTopicConfigurationP
    public Set<ITransportTopicConfigurationDto<RestConfigurationDto>>
             getTopicConfigurations(ConfigurationContext context) {
       IModel model = context.getModel();
-      if (!RestAdminTopicPlugin.isSystemModel(model) || context.getConfigurationType() != ConfigurationType.TEST) {
+      if (!context.isSystemModel() || context.getConfigurationType() != ConfigurationType.TEST) {
          return Collections.emptySet();
       }
       Set<ITransportTopicConfigurationDto<RestConfigurationDto>> set = new LinkedHashSet<>();

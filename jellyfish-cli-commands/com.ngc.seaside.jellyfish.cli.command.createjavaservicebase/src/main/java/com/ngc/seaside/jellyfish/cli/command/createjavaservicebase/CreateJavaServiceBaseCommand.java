@@ -18,6 +18,8 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
    private static final String NAME = "create-java-service-base";
    static final String SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX = "genbuild";
    static final String SERVICE_BASE_BUILD_TEMPLATE_SUFFIX = "build";
+   static final String TOPICS_TEMPLATE_SUFFIX = "topics";
+   static final String SERVICE_BASE_TEMPLATE_SUFFIX = "servicebase";
 
    private IBaseServiceDtoFactory templateDaoFactory;
 
@@ -81,5 +83,9 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
+      if (!dto.isSystem()) {
+         unpackSuffixedTemplate(SERVICE_BASE_TEMPLATE_SUFFIX, parameters, outputDirectory, false);
+      }
+      unpackSuffixedTemplate(TOPICS_TEMPLATE_SUFFIX, parameters, outputDirectory, false);
    }
 }
