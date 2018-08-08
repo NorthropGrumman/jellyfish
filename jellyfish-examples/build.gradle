@@ -236,7 +236,6 @@ def createUpdateExpectedJellyfishVersion(name, folder) {
 // This task will also copy the folder to a temp directory to fix windows path length issues
 def createRegressionBuildTask(name, regressionFolder, folder, tempDirectory) {
    def propertiesFile = file("${regressionFolder}/build_regression.properties")
-   println propertiesFile.absolutePath
    def extraProperties = [:]
    if (propertiesFile.isFile()) {
       Properties properties = new Properties()
