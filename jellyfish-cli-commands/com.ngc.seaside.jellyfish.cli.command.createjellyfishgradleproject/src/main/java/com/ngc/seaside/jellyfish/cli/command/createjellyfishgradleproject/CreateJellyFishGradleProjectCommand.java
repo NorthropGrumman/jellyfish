@@ -96,7 +96,9 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             .setDeploymentModelName(getDeploymentModel(commandOptions))
             .setBuildScriptDependencies(getBuildScriptDependencies(commandOptions))
             .setVersionProperties(getVersionProperties(commandOptions))
-            .setProjects(getProjects(commandOptions));
+            .setProjects(getProjects(commandOptions))
+               .setSystem(CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
+                        CommonParameters.SYSTEM.getName(), false));
       configModelParts(dto);
       collection.addParameter(new DefaultParameter<>("dto", dto));
 

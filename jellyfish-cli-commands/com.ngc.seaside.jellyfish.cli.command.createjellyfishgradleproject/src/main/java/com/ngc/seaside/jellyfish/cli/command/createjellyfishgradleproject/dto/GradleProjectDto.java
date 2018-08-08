@@ -21,6 +21,7 @@ public class GradleProjectDto {
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
    private Collection<IProjectInformation> projects = new ArrayList<>();
+   private boolean system;
 
    public String getGroupId() {
       return groupId;
@@ -102,6 +103,15 @@ public class GradleProjectDto {
    public GradleProjectDto setProjects(
             Collection<IProjectInformation> projects) {
       this.projects = projects;
+      return this;
+   }
+
+   public boolean isSystem() {
+      return system;
+   }
+
+   public GradleProjectDto setSystem(boolean system) {
+      this.system = system;
       return this;
    }
 

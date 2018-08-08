@@ -26,11 +26,13 @@ systemDescriptor {
 #if ($dto.deploymentModelName)
    deploymentModel = '${dto.deploymentModelName}'
 #end
+#if ($dto.system)
 #foreach ( $part in $dto.modelParts)
    part {
       model = '${part.model}'
       distribution = "${part.distribution}"
    }
+#end
 #end
 }
 
