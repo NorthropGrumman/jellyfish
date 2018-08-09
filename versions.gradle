@@ -37,4 +37,9 @@ allprojects {
       dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
       m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
    }
+
+   plugins.withId('java') {
+      sourceCompatibility = '1.8'
+      targetCompatibility = '1.8'
+   }
 }
