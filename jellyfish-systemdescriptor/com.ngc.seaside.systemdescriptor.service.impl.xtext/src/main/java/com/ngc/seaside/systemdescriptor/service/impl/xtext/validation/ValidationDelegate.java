@@ -91,9 +91,20 @@ public class ValidationDelegate implements IValidatorExtension {
    @Override
    public void validate(EObject source, ValidationHelper helper) {
       // Walk the source object up the containment hierarchy to find the Package object.  Build a system descriptor
-      // for the entire package.  Then instruct the validator to validate associated wrapper of the source object.
+      // for the entire package.  Then instruct the validator to validate the associated wrapper of the source object.
       ISystemDescriptor descriptor = new WrappedSystemDescriptor(findPackage(source));
-      doValidate(source, helper, descriptor);
+
+      // Do not allow validation exceptions to bubble up.  Instead, convert the exception to an issue and consume the
+      // error.  We do this because XText calls the validators even if the project is invalid.  In this case, a
+      // validator can blow up and we lose the original cause of the invalid project because the stack unwinds and the
+      // built in XText validators that found the original problem never get to report the error.  A better strategy
+      // would be to only invoke these custom validators if the built-in language validators passed but I'm not sure how
+      // to do that.
+      try {
+         doValidate(source, helper, descriptor);
+      } catch (Throwable t) {
+         helper.warning("Error while performing validation: " + t.getMessage(), source, null);
+      }
    }
 
    /**

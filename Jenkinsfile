@@ -115,6 +115,15 @@ pipeline {
          }
       }
 
+      stage('Build jellyfish-systemdescriptor-lang') {
+         steps {
+            dir('jellyfish-systemdescriptor-lang') {
+               // No "ci" task for SD projects.
+               sh '../gradlew clean build install --parallel'
+            }
+         }
+      }
+
       stage('Test jellyfish') {
          steps {
             dir('jellyfish-examples') {
@@ -204,6 +213,9 @@ pipeline {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-packaging') {
+                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+               }
+               dir('jellyfish-systemdescriptor-lang') {
                   sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
             }

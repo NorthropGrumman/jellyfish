@@ -28,12 +28,17 @@ project contains commands for generating various reports derived from System Des
 a static analysis of architectural quality.
 
 ## jellyfish-packaging
-The [jellyfish-packaging](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging) is used to
-package Jellyfish for different deployments.  This includes
+The [jellyfish-packaging](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging) project is
+used to package Jellyfish for different deployments.  This includes
 * a command line interface
 * a set of Gradle plugins
 * an Eclipse update site for installing the language support into Eclipse
 * a Sonarqube plugin for running Jellyfish analysis with Sonarqube
+
+## jellyfish-systemdescriptor-lang
+The [jellyfish-systemdescriptor-lang](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-systemdescriptor-lang)
+project contains the default models and data types that are built into the language.  By default, all System Descriptor
+projects can reference elements in these projects. 
 
 # Examples
 The [jellyfish-examples](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-examples) project

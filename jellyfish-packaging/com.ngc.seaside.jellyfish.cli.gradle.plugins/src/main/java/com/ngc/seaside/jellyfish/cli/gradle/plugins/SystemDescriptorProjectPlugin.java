@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * A plugin that can be applied to a System Descriptor project. When a build is executed, the System Descriptor project
  * will be validated with JellyFish and then a ZIP of the project will be created. The ZIP can then be installed to
  * a local Maven repository or uploaded to a remote Maven repository.
- * 
+ *
  * <p>
  * This plugin provides the {@value #SD_CONFIGURATION_NAME} configuration so that system descriptor projects can depend
  * on other system descriptor project.
@@ -57,22 +57,22 @@ import java.util.stream.Collectors;
  *    sd "com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:$threatEvalVersion"
  * }
  * </pre>
- * 
+ *
  * <p>
  * This plugin adds the {@link SystemDescriptorAnalysisExtension#EXTENSION_NAME sdAnalysis} extension of type
  * {@link SystemDescriptorAnalysisExtension}. When the {@link SonarQubePlugin sonarqube} plugin is applied, this
  * extension can be used to configure which analysis commands should be run by the sonarqube analysis.
  * Example:
- * 
+ *
  * <pre>
  * apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
  * apply plugin: 'org.sonarqube'
- * 
+ *
  * sdAnalysis {
  *    commands 'inputs-outputs-analysis', 'foo-analysis'
  *    arg 'model', 'com.ngc.SomeModel'
  *    arg 'verbose', true
- *    args [deploymentModel : 'com.ngc.SomeDeploymentModel', what : 'ever'] 
+ *    args [deploymentModel : 'com.ngc.SomeDeploymentModel', what : 'ever']
  * }
  * </pre>
  */
@@ -89,25 +89,14 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       createConfigurations(project);
       configureTasks(project);
       configurePublishing(project);
-      configureExtension(project);
+      configureExtensions(project);
    }
 
-   @SuppressWarnings("deprecation")
    private void createConfigurations(Project project) {
       ConfigurationContainer configurations = project.getConfigurations();
       Configuration sd = configurations.create(SD_CONFIGURATION_NAME);
       sd.getResolutionStrategy().failOnVersionConflict();
-      project.afterEvaluate(__ -> {
-         DependencyHandler dependencies = project.getDependencies();
-         sd.getDependencies().forEach(dependency -> {
-            String compile = String.format("%s:%s:%s",
-                     dependency.getGroup(), dependency.getName(), dependency.getVersion());
-            String testCompile = String.format("%s:%s:%s:tests@zip",
-                     dependency.getGroup(), dependency.getName(), dependency.getVersion());
-            dependencies.add(JavaPlugin.COMPILE_CONFIGURATION_NAME, compile);
-            dependencies.add(JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME, testCompile);
-         });
-      });
+      project.afterEvaluate(this::addSdDependenciesToBuiltInConfigurations);
    }
 
    private void configureTasks(Project project) {
@@ -145,7 +134,7 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          task.setDescription("Validates the system descriptor project");
          task.setGroup(LifecycleBasePlugin.BUILD_GROUP);
          task.setArguments(Collections.singletonMap(CommonParameters.INPUT_DIRECTORY.getName(),
-                  project.getProjectDir().toString()));
+                                                    project.getProjectDir().toString()));
          build.dependsOn(task);
          sdJar.dependsOn(task);
          testJar.dependsOn(task);
@@ -153,12 +142,10 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
 
          // Dependent local projects must be built and installed first
          project.getConfigurations().getByName(SD_CONFIGURATION_NAME).getAllDependencies()
-                  .withType(ProjectDependency.class).all(dependency -> {
-                     dependency.getDependencyProject()
-                              .getTasks()
-                              .matching(projectTask -> MavenPlugin.INSTALL_TASK_NAME.equals(projectTask.getName()))
-                              .all(installTask -> task.dependsOn(installTask));
-                  });
+               .withType(ProjectDependency.class).all(dependency -> dependency.getDependencyProject()
+                     .getTasks()
+                     .matching(projectTask -> MavenPlugin.INSTALL_TASK_NAME.equals(projectTask.getName()))
+                     .all(task::dependsOn));
       });
    }
 
@@ -169,16 +156,16 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       // Disable unnecessary parts of the java plugin
       project.getTasks().getByName(JavaPlugin.JAR_TASK_NAME).setEnabled(false);
       project.getConfigurations().all(config -> config.getOutgoing().getArtifacts()
-               .removeIf(artifact -> "jar".equals(artifact.getExtension())));
+            .removeIf(artifact -> "jar".equals(artifact.getExtension())));
       project.getConfigurations().getByName(JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME)
-               .setExtendsFrom(Collections.emptySet());
+            .setExtendsFrom(Collections.emptySet());
 
       project.getPlugins().apply(MavenPublishPlugin.class);
       // Alias previously-used tasks from maven plugin
       project.getTasks().create(MavenPlugin.INSTALL_TASK_NAME,
-               task -> task.dependsOn(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME));
+                                task -> task.dependsOn(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME));
       project.getTasks().create(BasePlugin.UPLOAD_ARCHIVES_TASK_NAME,
-               task -> task.dependsOn(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME));
+                                task -> task.dependsOn(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME));
       project.getTasks().create("upload", task -> task.dependsOn(BasePlugin.UPLOAD_ARCHIVES_TASK_NAME));
 
       project.getPlugins().apply(SeasideReleaseRootProjectPlugin.class);
@@ -192,9 +179,10 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       Task createTag = tasks.getByName(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME);
       Task bumpVersion = tasks.getByName(SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME);
       Task push = tasks.getByName(SeasideReleaseRootProjectPlugin.RELEASE_PUSH_TASK_NAME);
-      Collection<Task> uploadTasks =
-               Arrays.asList(tasks.getByName(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME),
-                        tasks.getByName(BasePlugin.UPLOAD_ARCHIVES_TASK_NAME), tasks.getByName("upload"));
+      Collection<Task> uploadTasks = Arrays.asList(
+            tasks.getByName(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME),
+            tasks.getByName(BasePlugin.UPLOAD_ARCHIVES_TASK_NAME),
+            tasks.getByName("upload"));
 
       project.getTasks().create("release", task -> {
          task.setGroup(SeasideReleaseRootProjectPlugin.RELEASE_ROOT_PROJECT_TASK_GROUP_NAME);
@@ -202,9 +190,9 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          task.dependsOn(createTag, uploadTasks, bumpVersion, push);
       });
       project.getTasks().getByName(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME)
-               .mustRunAfter(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME);
+            .mustRunAfter(SeasideReleaseRootProjectPlugin.RELEASE_CREATE_TAG_TASK_NAME);
       project.getTasks().getByName(SeasideReleaseRootProjectPlugin.RELEASE_BUMP_VERSION_TASK_NAME)
-               .mustRunAfter(uploadTasks);
+            .mustRunAfter(uploadTasks);
 
       uploadTasks.forEach(task -> task.mustRunAfter(createTag));
       bumpVersion.mustRunAfter(uploadTasks);
@@ -248,18 +236,24 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       });
    }
 
-   private void configureExtension(Project project) {
+   private void configureExtensions(Project project) {
       ExtensionContainer extensions = project.getExtensions();
+      extensions.create(SystemDescriptorLanguageExtension.EXTENSION_NAME, SystemDescriptorLanguageExtension.class);
       SystemDescriptorAnalysisExtension analysisExtension = extensions.create(
-               SystemDescriptorAnalysisExtension.EXTENSION_NAME, SystemDescriptorAnalysisExtension.class);
+            SystemDescriptorAnalysisExtension.EXTENSION_NAME, SystemDescriptorAnalysisExtension.class);
+
       project.getPlugins().withType(SonarQubePlugin.class, plugin -> {
          SonarQubeExtension sonarqubeExtension =
-                  (SonarQubeExtension) extensions.getByName(SonarQubeExtension.SONARQUBE_EXTENSION_NAME);
+               (SonarQubeExtension) extensions.getByName(SonarQubeExtension.SONARQUBE_EXTENSION_NAME);
+         // This callback will only be executed when Sonarqube properties should be set.  This will probably happen
+         // after the project is evaluated.
          sonarqubeExtension.properties(properties -> {
             if (!analysisExtension.getCommands().isEmpty()) {
+               // Setup the Sonarqube properties to identify which analysis to run with the Sonarqube plugin is
+               // executed.
                String commands = analysisExtension.getCommands().stream().collect(Collectors.joining(","));
                String args = analysisExtension.getArgs().entrySet().stream()
-                        .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(","));
+                     .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(","));
 
                properties.property("sonar.sources", project.file("src/main/sd"));
                properties.property(SystemDescriptorProperties.JELLYFISH_ANALYSIS_KEY, commands);
@@ -267,6 +261,28 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
             }
          });
          project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME).dependsOn(VALIDATE_TASK_NAME);
+      });
+   }
+
+   @SuppressWarnings("deprecation")
+   private void addSdDependenciesToBuiltInConfigurations(Project project) {
+      SystemDescriptorLanguageExtension languageExtension =
+            project.getExtensions().getByType(SystemDescriptorLanguageExtension.class);
+      Configuration sd = project.getConfigurations().getByName(SD_CONFIGURATION_NAME);
+
+      DependencyHandler dependencies = project.getDependencies();
+      // Include the default dependencies for the language if configured.
+      languageExtension.getDefaultLanguageDependencies().forEach(gav -> dependencies.add(sd.getName(), gav));
+
+      // Copy the dependencies from the SD configuration to the configurations used by Java.  We do this so we can
+      // easily include the correct POM with uploading SD projects to Nexus with the Maven deployer/uploader plugin.
+      sd.getDependencies().forEach(dependency -> {
+         String compile = String.format("%s:%s:%s",
+                                        dependency.getGroup(), dependency.getName(), dependency.getVersion());
+         String testCompile = String.format("%s:%s:%s:tests@zip",
+                                            dependency.getGroup(), dependency.getName(), dependency.getVersion());
+         dependencies.add(JavaPlugin.COMPILE_CONFIGURATION_NAME, compile);
+         dependencies.add(JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME, testCompile);
       });
    }
 }

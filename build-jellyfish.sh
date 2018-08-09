@@ -22,4 +22,6 @@ cd ./jellyfish-systemdescriptor-dsl \
 && cd ../jellyfish-cli-analysis-commands \
 && ../gradlew $params \
 && cd ../jellyfish-packaging \
+&& ../gradlew $params \
+&& cd ../jellyfish-systemdescriptor-lang \
 && ../gradlew $params

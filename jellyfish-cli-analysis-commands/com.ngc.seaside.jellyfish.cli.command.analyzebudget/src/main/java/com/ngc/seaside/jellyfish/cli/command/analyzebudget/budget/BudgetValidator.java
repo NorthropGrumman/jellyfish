@@ -13,8 +13,6 @@ import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import javax.inject.Inject;
 
-import static com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget.SdBudgetAdapter.BUDGET_QUALIFIED_NAME;
-
 public class BudgetValidator extends AbstractSystemDescriptorValidator {
 
    private SdBudgetAdapter adapter;
@@ -28,24 +26,44 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
 
    @Override
    protected void validateModel(IValidationContext<IModel> context) {
+      // Only run this validator if the Budget property is actually included in the project.  We do this check because
+      // some projects may opt out of including the default SD language artifacts as dependencies.  If a project does
+      // this and then imports the Budget property and then runs Jellyfish, this validator will still be executed.
+      // When we call sdService.getAggregatedView(model) we get lots of exceptions because that Budget property can't
+      // be resolved.  However, since validators are called by XText in loops, we gets lots of exceptions that are
+      // thrown to the user.  This is confusing since this hides the actual issue of the import not being resolved.
+      // This is really an edge case that we don't have to worry much about, but this simple check helps make it more
+      // clear to the user what is going on.
+      if (context.getObject().getParent().getParent().findData(SdBudgetAdapter.BUDGET_QUALIFIED_NAME).isPresent()) {
+         doValidateModel(context);
+      }
+   }
+
+   private void doValidateModel(IValidationContext<IModel> context) {
       IModel model = context.getObject();
 
       IModel aggregatedModel = sdService.getAggregatedView(model);
       for (IProperty property : aggregatedModel.getProperties()) {
-         if (property.getType() != DataTypes.DATA || property.getCardinality() != FieldCardinality.SINGLE
-                  || !BUDGET_QUALIFIED_NAME.equals(property.getReferencedDataType().getFullyQualifiedName())) {
-            continue;
+         boolean performValidation =
+               property.getType() == DataTypes.DATA
+               && property.getCardinality() == FieldCardinality.SINGLE
+               && SdBudgetAdapter.BUDGET_QUALIFIED_NAME
+                     .equals(property.getReferencedDataType().getFullyQualifiedName());
+         if (performValidation) {
+            Object source = adapter.getSource(model, property.getName());
+            Budget<?> budget = null;
+            try {
+               budget = adapter.getBudget(aggregatedModel, property, source);
+            } catch (BudgetValidationException e) {
+               Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
+               callOffendingError(errorSource);
+               performValidation = false;
+            }
+
+            if (performValidation) {
+               checkParts(context, model, budget);
+            }
          }
-         Object source = adapter.getSource(model, property.getName());
-         Budget<?> budget;
-         try {
-            budget = adapter.getBudget(aggregatedModel, property, source);
-         } catch (BudgetValidationException e) {
-            Object errorSource = context.declare(Severity.ERROR, e.getSimpleMessage(), e.getSource());
-            callOffendingError(errorSource);
-            continue;
-         }
-         checkParts(context, model, budget);
       }
    }
 
@@ -69,5 +87,5 @@ public class BudgetValidator extends AbstractSystemDescriptorValidator {
          ((IPropertyPrimitiveValue) errorSource).getString();
       }
    }
-   
+
 }

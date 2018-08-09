@@ -1,7 +1,10 @@
 package com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget;
 
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
+import com.ngc.seaside.systemdescriptor.model.api.IPackage;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.properties.IProperty;
@@ -16,6 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static com.ngc.seaside.jellyfish.cli.command.analyzebudget.budget.SdBudgetAdapterTest.getMockedBudget;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,13 +55,15 @@ public class BudgetValidatorTest {
       adapter = new SdBudgetAdapter();
       adapter.setSdService(sdService);
 
-      when(sdService.getAggregatedView(any(IModel.class))).thenAnswer(args -> (IModel) args.getArgument(0));
+      when(sdService.getAggregatedView(any(IModel.class))).thenAnswer(args -> args.getArgument(0));
       validator = new BudgetValidator(adapter, sdService);
       when(model.getParts()).thenReturn(new NamedChildCollection<>());
    }
 
    @Test
    public void testInvalidBudget() {
+      setupForBudgetProperty(true);
+
       Properties properties = new Properties();
       when(model.getProperties()).thenReturn(properties);
 
@@ -68,6 +75,8 @@ public class BudgetValidatorTest {
 
    @Test
    public void testInvalidBudgetPart() {
+      setupForBudgetProperty(true);
+
       Properties properties = new Properties();
       when(model.getProperties()).thenReturn(properties);
 
@@ -90,9 +99,31 @@ public class BudgetValidatorTest {
       when(partProperty.getPrimitive().isSet()).thenReturn(true);
       when(partProperty.getPrimitive().getString()).thenReturn("1 m");
       part.getProperties().add(partProperty);
-      
+
       validator.validate(context);
       verify(context, times(1)).declare(eq(Severity.ERROR), any(), any());
    }
 
+   @Test
+   public void testDoesRequireBudgetPropertyToBeIncludedInTheProject() {
+      setupForBudgetProperty(false);
+
+      validator.validate(context);
+      verify(context, never()).declare(any(), any(), any());
+   }
+
+   private void setupForBudgetProperty(boolean registerBudgetDataType) {
+      ISystemDescriptor sd = mock(ISystemDescriptor.class);
+      IPackage packagez = mock(IPackage.class);
+
+      when(packagez.getParent()).thenReturn(sd);
+      when(model.getParent()).thenReturn(packagez);
+
+      if (registerBudgetDataType) {
+         IData budget = mock(IData.class);
+         when(sd.findData(SdBudgetAdapter.BUDGET_QUALIFIED_NAME)).thenReturn(Optional.of(budget));
+      } else {
+         when(sd.findData(SdBudgetAdapter.BUDGET_QUALIFIED_NAME)).thenReturn(Optional.empty());
+      }
+   }
 }

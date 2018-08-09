@@ -1,0 +1,7 @@
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
+
+// Do *not* include the default language artifact(s) as dependencies for this project
+// because this project *is* the default language artifact.
+sdLang {
+   includeDefaultLanguageDependencies = false
+}

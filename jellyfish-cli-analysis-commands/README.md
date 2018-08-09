@@ -22,6 +22,9 @@ This analysis checks that models have at least one output.  See
 [Ch. 1 Avoid components that have inputs but no outputs](http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs)
 for details
 
+## analyze-budgets
+TODO
+
 # Reports
 Jellyfish can also generate various reports which contain the results of the analysis.
 

@@ -95,6 +95,5 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor.ui:$version"
 
    plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
-   plugin "com.ngc.seaside:jellyfish.cli.command.analyzebudget:$version"
    plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
 }

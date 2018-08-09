@@ -1,6 +1,4 @@
 # jellyfish-examples
-
-## Summary
 This repo contains examples of System Descriptor models and regression tests for the jellyfish-cli.
 
 ## Running jellyfish-examples

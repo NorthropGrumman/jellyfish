@@ -5,6 +5,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 
 /**
@@ -16,6 +18,11 @@ public class ParsingContext implements AutoCloseable {
     * The XText resource set we use to create resources that will be parsed.
     */
    private final XtextResourceSet resourceSet = new XtextResourceSet();
+
+   /**
+    * Contains the resources already in the resource set keyed by URI.
+    */
+   private final Map<URI, XtextResource> resources = new HashMap<>();
 
    /**
     * Creates a new context.
@@ -54,7 +61,10 @@ public class ParsingContext implements AutoCloseable {
             // fragment (ZIPs/JARs can't have fragments)
             null
       );
-      return (XtextResource) resourceSet.createResource(uri);
+      // Only create the resource if the resource is not already in the set.  This avoid errors that have to do with
+      // dependency management of System Descriptor projects.  In particular, we could try to add the same resource
+      // multiple times if two or more projects reference the same dependency.
+      return resources.computeIfAbsent(uri, key -> (XtextResource) resourceSet.createResource(key));
    }
 
    /**
@@ -66,7 +76,10 @@ public class ParsingContext implements AutoCloseable {
    public XtextResource resourceOf(Path file) {
       // Do not load the resource here.  If we do that, validation will automatically start.  This can cause problems
       // if all the resources have not yet been added to the set.
-      return (XtextResource) resourceSet.createResource(
-            URI.createFileURI(file.toAbsolutePath().toFile().toString()));
+      URI uri = URI.createFileURI(file.toAbsolutePath().toFile().toString());
+      // Only create the resource if the resource is not already in the set.  This avoid errors that have to do with
+      // dependency management of System Descriptor projects.  In particular, we could try to add the same resource
+      // multiple times if two or more projects reference the same dependency.
+      return resources.computeIfAbsent(uri, key -> (XtextResource) resourceSet.createResource(key));
    }
 }

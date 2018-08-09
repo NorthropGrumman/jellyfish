@@ -1,3 +1,19 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+
+    dependencies {
+        classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+    }
+}
+
+import com.ngc.seaside.gradle.util.Versions
+
 sourceSets {
 	main {
 		java.srcDirs = ['src/main/java', 'src/main/xtext-gen']
@@ -16,12 +32,23 @@ sourceSets.all {
 }
 
 jar {
-	from('model') {
-		into('model')
-	}
-	manifest {
-		from file("${projectDir}/META-INF/MANIFEST.MF")
-	}
+  from('model') {
+     into('model')
+  }
+
+   manifest {
+      from('src/main/resources/META-INF/MANIFEST.MF') {
+         // Replace the version with the version from the gradle build.
+         eachEntry {
+            if(getKey().equals('Bundle-Version')) {
+               setValue(Versions.makeOsgiCompliantVersion("$version"))
+            }
+         }
+      }
+   }
+   
+   // Include 'plugin.xml'
+   from('.', { include('plugin.xml') }) 
 }
 
 plugins.withId('war') {

@@ -73,7 +73,7 @@ def installer = install.repositories.mavenInstaller
 
 jar {
    manifest {
-      from('META-INF/MANIFEST.MF') {
+      from('src/main/resources/META-INF/MANIFEST.MF') {
          // Replace the version with the version from the gradle build.
          eachEntry {
             if (getKey().equals('Bundle-Version')) {
