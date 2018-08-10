@@ -1,108 +1,124 @@
 package com.ngc.seaside.jellyfish.service.feature.impl.featureservice;
 
 import com.google.common.base.Preconditions;
-
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.Comparator;
+import java.util.TreeSet;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component(service = IFeatureService.class)
 public class FeatureService implements IFeatureService {
+   private static final Collector<IFeatureInformation, ?, ? extends Collection<IFeatureInformation>> COLLECTOR =
+            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IFeatureInformation::getPath)));
 
-   private ILogService logService;
+   private static final PathMatcher MATCHER = FileSystems.getDefault().getPathMatcher("glob:**.feature");
 
    @Override
-   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IModel model) {
-      Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
+   public Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IModel model) {
+      Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(model, "model may not be null!");
-
-      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
-      final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.feature");
-      final Path gherkin = sdPath.resolve(Paths.get("src", "test", "gherkin"))
-            .toAbsolutePath();
-      String packages = model.getParent().getName();
-      Path modelPath = Paths.get(packages.replace('.', File.separatorChar));
-
-      Path featureFilesRoot = gherkin.resolve(modelPath);
-
-      try {
-         Files.list(featureFilesRoot)
-               .filter(Files::isRegularFile)
-               .filter(matcher::matches)
-               .filter(f -> f.getFileName().toString().startsWith(model.getName() + '.'))
-               .map(Path::toAbsolutePath)
-               .forEach(path -> features.put(path, new FeatureInformation(path, gherkin.relativize(path))));
-      } catch (IOException e) {
-         logService.warn(getClass(), "No feature files at %s", featureFilesRoot);
-      }
-      return features;
-
+      return getFeaturesStream(options)
+               .filter(feature -> model.equals(feature.getModel().orElse(null)))
+               .collect(COLLECTOR);
    }
 
    @Override
-   public NavigableMap<Path, IFeatureInformation> getFeatures(Path sdPath, IScenario scenario) {
-      Preconditions.checkNotNull(sdPath, "sdPath may not be null!");
+   public Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IScenario scenario) {
+      Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scenario, "scenario may not be null!");
-      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>();
-      for (IFeatureInformation feature : getFeatures(sdPath, scenario.getParent()).values()) {
-         if (feature.getName().equals(scenario.getName())) {
-            features.put(feature.getAbsolutePath(), feature);
-         }
-      }
-      return features;
+      return getFeaturesStream(options)
+               .filter(feature -> scenario.equals(feature.getScenario().orElse(null)))
+               .collect(COLLECTOR);
    }
 
    @Override
-   public NavigableMap<Path, IFeatureInformation> getAllFeatures(Path sdPath, Collection<IModel> models) {
-      NavigableMap<Path, IFeatureInformation> features = new TreeMap<>(Collections.reverseOrder());
-
-      models.forEach(model -> {
-         features.putAll(getFeatures(sdPath, model));
-      });
-      return features;
+   public Collection<IFeatureInformation> getAllFeatures(IJellyFishCommandOptions options) {
+      Preconditions.checkNotNull(options, "options may not be null!");
+      return getFeaturesStream(options)
+               .collect(COLLECTOR);
    }
 
-   @Activate
-   public void activate() {
-      logService.debug(getClass(), "activated");
+   private static Stream<IFeatureInformation> getFeaturesStream(IJellyFishCommandOptions options) {
+      return getFeaturesFilesStream(getFeaturesBaseDir(options))
+               .map(file -> new FeatureInformation(file, getModel(options, file), getScenario(options, file)));
    }
 
-   @Deactivate
-   public void deactivate() {
-      logService.debug(getClass(), "deactivated");
+   /**
+    * Returns the model associated with the given feature, or {@code null} if there is none.
+    * 
+    * @param options options
+    * @param featureFile feature file path
+    * @return the model
+    */
+   private static IModel getModel(IJellyFishCommandOptions options, Path featureFile) {
+      Path relativePath = getFeaturesBaseDir(options).relativize(featureFile);
+      if (relativePath.getNameCount() <= 1) {
+         return null;
+      }
+      String pkg = "";
+      for (int i = 0; i < relativePath.getNameCount() - 1; i++) {
+         pkg += relativePath.getName(i).toString() + ".";
+      }
+      String[] parts = relativePath.getFileName().toString().split("\\.");
+      if (parts.length != 3) {
+         return null;
+      }
+      String model = pkg + parts[0];
+      return options.getSystemDescriptor().findModel(model).orElse(null);
    }
 
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
-   public void setLogService(ILogService ref) {
-      this.logService = ref;
+   /**
+    * Returns the scenario associated with the given feature, or {@code null} if there is none.
+    * 
+    * @param options options
+    * @param featureFile feature file path
+    * @return the scenario
+    */
+   private static IScenario getScenario(IJellyFishCommandOptions options, Path featureFile) {
+      IModel model = getModel(options, featureFile);
+      if (model == null) {
+         return null;
+      }
+      Path relativePath = getFeaturesBaseDir(options).relativize(featureFile);
+      String[] parts = relativePath.getFileName().toString().split("\\.");
+      if (parts.length != 3) {
+         return null;
+      }
+      return model.getScenarios().getByName(parts[1]).orElse(null);
    }
 
-   public void removeLogService(ILogService ref) {
-      setLogService(null);
+   private static Path getFeaturesBaseDir(IJellyFishCommandOptions options) {
+      Path p = options.getParsingResult().getTestSourcesRoot();
+      if (p == null) {
+         throw new IllegalStateException("Unable to get test features for the system descriptor project");
+      }
+      return p;
    }
 
+   private static Stream<Path> getFeaturesFilesStream(Path baseDir) {
+      try {
+         return Files.walk(baseDir)
+                  .filter(Files::isRegularFile)
+                  .filter(MATCHER::matches);
+      } catch (IOException e) {
+         throw new UncheckedIOException(e);
+      }
+   }
 
 }

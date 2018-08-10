@@ -104,6 +104,7 @@ public abstract class AbstractJellyfishAnalysisCommand extends AbstractJellyfish
       // time to complete.  This makes tracking that down easier.
       Stopwatch sw = Stopwatch.createStarted();
 
+      preAnalysis();
       if (getOptions().getParameters().containsParameter(CommonParameters.MODEL.getName())) {
          analyzeModel(getModel());
       } else if (getOptions().getParameters().containsParameter(CommonParameters.STEREOTYPES.getName())) {
@@ -165,6 +166,13 @@ public abstract class AbstractJellyfishAnalysisCommand extends AbstractJellyfish
     * override this method to perform analysis and report findings via {@link #reportFinding(SystemDescriptorFinding)}.
     */
    protected void analyzeEnumeration(IEnumeration enumeration) {
+   }
+
+   /**
+    * Invoked when before any analysis start.  The default implementation does nothing.  Extenders of this class can
+    * use this method to perform any setup.
+    */
+   protected void preAnalysis() {
    }
 
    /**

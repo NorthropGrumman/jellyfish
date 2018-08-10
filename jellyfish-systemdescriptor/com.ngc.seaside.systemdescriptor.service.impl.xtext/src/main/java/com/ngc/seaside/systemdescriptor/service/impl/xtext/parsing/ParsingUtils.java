@@ -1,7 +1,6 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
@@ -11,6 +10,10 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.eclipse.xtext.resource.XtextResource;
 
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,9 +31,11 @@ class ParsingUtils {
     * The default path that contains the {@code .sd} files for a standard
     * system descriptor project.
     */
-   private static final Path SD_SOURCE_PATH = Paths.get("src", "main", "sd");
+   private static final Path SD_MAIN_SOURCE_PATH = Paths.get("src", "main", "sd");
+   private static final Path SD_TEST_SOURCE_PATH = Paths.get("src", "test", "gherkin");
 
-   private static final Path SD_CLASSPATH = Paths.get("build", "resources", "main");
+   private static final Path SD_MAIN_CLASSPATH = Paths.get("build", "resources", "main");
+   private static final Path SD_TEST_CLASSPATH = Paths.get("build", "resources", "test");
 
    private static final Path[] POM_PATHS = {Paths.get("build", "poms"),
                                             Paths.get("build", "publications", "mavenSd")};
@@ -89,12 +94,18 @@ class ParsingUtils {
     */
    private Collection<XtextResource> parseGradleProject(Path projectDirectory, ParsingContext ctx)
          throws IOException {
-      Path resourcesDirectory = projectDirectory.resolve(SD_CLASSPATH);
+      Path resourcesDirectory = projectDirectory.resolve(SD_MAIN_CLASSPATH);
+      Path testResourcesDirectory = projectDirectory.resolve(SD_TEST_CLASSPATH);
       if (!Files.isDirectory(resourcesDirectory)) {
-         resourcesDirectory = projectDirectory.resolve(SD_SOURCE_PATH);
+         resourcesDirectory = projectDirectory.resolve(SD_MAIN_SOURCE_PATH);
+         testResourcesDirectory = projectDirectory.resolve(SD_TEST_SOURCE_PATH);
          if (!Files.isDirectory(resourcesDirectory)) {
             throw new ParsingException("Cannot find location of system descriptor files");
          }
+      }
+      ctx.setMain(resourcesDirectory);
+      if (Files.isDirectory(testResourcesDirectory)) {
+         ctx.setTest(testResourcesDirectory);
       }
 
       Path pom = null;
@@ -228,9 +239,26 @@ class ParsingUtils {
                                                 TESTS_CLASSIFIER,
                                                 splitGav[2]);
          if (includeSelf) {
-            resources.addAll(parseJar(repositoryService.getArtifact(artifactGav), ctx));
-            // Force the download of the tests artifact. We don't actually need it do anything.
-            repositoryService.getArtifact(testArtifactGav);
+            Path mainJar = repositoryService.getArtifact(artifactGav);
+            resources.addAll(parseJar(mainJar, ctx));
+            Path testJar = repositoryService.getArtifact(testArtifactGav);
+            
+            URI mainUri = URI.create("jar:file:" + mainJar.toUri().getPath());
+            URI testUri = URI.create("jar:file:" + testJar.toUri().getPath());
+            FileSystem mainFs = null;
+            try {
+               mainFs = FileSystems.getFileSystem(mainUri);
+            } catch (FileSystemNotFoundException e) {
+               mainFs = FileSystems.newFileSystem(mainUri, Collections.singletonMap("create", true));
+            }
+            FileSystem testFs = null;
+            try {
+               testFs = FileSystems.getFileSystem(testUri);
+            } catch (FileSystemNotFoundException e) {
+               testFs = FileSystems.newFileSystem(testUri, Collections.singletonMap("create", true));
+            }
+            ctx.setMain(mainFs.getPath("/"));
+            ctx.setTest(testFs.getPath("/"));
          }
          for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
             resources.addAll(parseJar(path, ctx));

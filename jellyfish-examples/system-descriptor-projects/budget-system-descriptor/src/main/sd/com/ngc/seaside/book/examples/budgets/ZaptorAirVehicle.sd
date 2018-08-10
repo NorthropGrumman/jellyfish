@@ -8,7 +8,16 @@ import com.ngc.seaside.book.examples.budgets.AttackMissionEquipmentPackage
 import com.ngc.seaside.book.examples.budgets.FlightControls
 
 model ZaptorAirVehicle {
-	
+	scenario scenarioMissingFeature {
+		when completing within 10 seconds
+		then willBeCompleted within 10 seconds
+	}
+
+	scenario scenarioWithFeature {
+		when completing within 10 seconds
+		then willBeCompleted within 10 seconds
+	}
+
 	parts {
 		Engine engine
 		Generator generator
@@ -16,9 +25,10 @@ model ZaptorAirVehicle {
 		FlightControls flightControls
 		AttackMissionEquipmentPackage mep
 	}
-	
+
 	properties {
 		Budget weight
+
 		weight.max = "2500 kg"
 		weight.min = "0"
 		weight.givenBy = "weight"

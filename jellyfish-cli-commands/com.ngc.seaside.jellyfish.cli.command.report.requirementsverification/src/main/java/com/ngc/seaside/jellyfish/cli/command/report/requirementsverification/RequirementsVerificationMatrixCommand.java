@@ -3,7 +3,6 @@ package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -36,6 +35,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component(service = IJellyFishCommand.class)
 public class RequirementsVerificationMatrixCommand implements IJellyFishCommand {
@@ -102,16 +103,9 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     * @param commandOptions Jellyfish command options containing user params
     */
    protected Path evaluateOutput(IJellyFishCommandOptions commandOptions) {
-      Path output;
       if (commandOptions.getParameters().containsParameter(OUTPUT_PROPERTY)) {
          String outputUri = commandOptions.getParameters().getParameter(OUTPUT_PROPERTY).getStringValue();
-         output = Paths.get(outputUri);
-
-         if (!output.isAbsolute()) {
-            output = commandOptions.getSystemDescriptorProjectPath().toAbsolutePath().resolve(outputUri);
-         }
-
-         return output.toAbsolutePath();
+         return Paths.get(outputUri);
       } else {
          return null;
       }
@@ -163,8 +157,10 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       Collection<IModel> models = searchModels(commandOptions, values, operator);
 
       Map<Path, IFeatureInformation>
-            features =
-            featureService.getAllFeatures(commandOptions.getSystemDescriptorProjectPath(), models);
+            features = featureService.getAllFeatures(commandOptions)
+            .stream()
+            .filter(feature -> models.contains(feature.getModel().orElse(null)))
+            .collect(Collectors.toMap(IFeatureInformation::getPath, Function.identity()));
       ArrayList<String> fullyQualifiedFeatureNameList = new ArrayList<String>();
       for (Entry<Path, IFeatureInformation> featureInfo : features.entrySet()) {
          fullyQualifiedFeatureNameList.add(featureInfo.getValue().getFullyQualifiedName());
@@ -193,7 +189,6 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       }
 
       logService.info(getClass(), "%s requirements verification matrix successfully created", values);
-
    }
 
    /**
@@ -267,7 +262,7 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
 
          if (model != null) {
 
-            IScenario scenario = model.getScenarios().getByName(featureInfo.getName()).orElse(null);
+            IScenario scenario = featureInfo.getScenario().orElse(null);
 
             // A feature file should be considered to verify a requirement:
             if (scenario != null) {

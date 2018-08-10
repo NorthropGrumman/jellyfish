@@ -1,6 +1,0 @@
-package com.ngc.seaside.testeval.datatype
-
-data FooStatus {
-	int foo
-	float bar
-}

@@ -47,6 +47,7 @@ public interface ISystemDescriptorService {
     * @return the result of parsing
     * @throws ParsingException if some exception occurs during parsing
     */
+   @Deprecated
    IParsingResult parseFiles(Collection<Path> paths);
 
    /**

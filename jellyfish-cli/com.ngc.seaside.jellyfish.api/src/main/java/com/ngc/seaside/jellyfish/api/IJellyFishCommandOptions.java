@@ -3,8 +3,6 @@ package com.ngc.seaside.jellyfish.api;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 
-import java.nio.file.Path;
-
 /**
  * This interface provides the same information as the {@link ICommandOptions} plus the added System Descriptor model.
  * The commands will be passed this object upon the execution of their tasks by the {@link IJellyFishCommandProvider}.
@@ -33,10 +31,4 @@ public interface IJellyFishCommandOptions extends ICommandOptions {
     */
    ISystemDescriptor getSystemDescriptor();
 
-   /**
-    * Gets the path to the system descriptor project.
-    *
-    * @return the path to the system descriptor project
-    */
-   Path getSystemDescriptorProjectPath();
 }

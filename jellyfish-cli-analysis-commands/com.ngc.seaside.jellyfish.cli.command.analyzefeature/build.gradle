@@ -1,0 +1,17 @@
+dependencies {
+   api "com.ngc.seaside:jellyfish.api:$version"
+
+   implementation "com.ngc.seaside:jellyfish.service.api:$version"
+   implementation "com.ngc.seaside:jellyfish.utilities:$version"
+
+   implementation "com.google.inject:guice:$guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   compileOnly "org.osgi:osgi.core:$osgiVersion"
+   compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
+
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
+   testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
+}

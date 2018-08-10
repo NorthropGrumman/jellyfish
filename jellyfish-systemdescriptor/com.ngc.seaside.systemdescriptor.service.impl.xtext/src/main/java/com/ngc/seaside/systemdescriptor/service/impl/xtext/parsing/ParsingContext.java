@@ -18,6 +18,8 @@ public class ParsingContext implements AutoCloseable {
     * The XText resource set we use to create resources that will be parsed.
     */
    private final XtextResourceSet resourceSet = new XtextResourceSet();
+   private Path main;
+   private Path test;
 
    /**
     * Contains the resources already in the resource set keyed by URI.
@@ -30,6 +32,22 @@ public class ParsingContext implements AutoCloseable {
    public ParsingContext() {
       // Configure XText to resolve imports.
       this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+   }
+
+   public Path getMain() {
+      return main;
+   }
+
+   public void setMain(Path main) {
+      this.main = main;
+   }
+
+   public Path getTest() {
+      return test;
+   }
+
+   public void setTest(Path test) {
+      this.test = test;
    }
 
    @Override

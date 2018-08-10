@@ -1,40 +1,41 @@
 package com.ngc.seaside.jellyfish.service.feature.api;
 
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+
 import java.nio.file.Path;
+import java.util.Optional;
 
+/**
+ * Information about a feature file.
+ */
 public interface IFeatureInformation {
-   /**
-    * File name of feature file
-    *
-    * @return file name of feature file
-    */
-   String getFileName();
 
    /**
-    * A qualified name is equal to "modelName.featureName"
-    *
-    * @return fully qualified name of feature
+    * Returns the path to this feature file
+    * 
+    * @return the path to this feature file
+    */
+   Path getPath();
+
+   /**
+    * Returns a unique name identifying this feature.
+    * 
+    * @return a unique name identifying this feature
     */
    String getFullyQualifiedName();
 
    /**
-    * The name of this feature
-    *
-    * @return feature name
+    * Returns the model associated with this feature file, or {@link Optional#empty()} if there is none.
+    * 
+    * @return the model associated with this feature file
     */
-   String getName();
+   Optional<IModel> getModel();
 
    /**
-    * Returns the relative path to this feature file
+    * Returns the scenario associated with this feature file, or {@link Optional#empty()} if there is none.
     * 
-    * @return the relative path
+    * @return the scenario associated with this feature file
     */
-   Path getRelativePath();
-
-   /**
-    * Returns the absolute path to this feature file
-    * 
-    * @return the absolute path
-    */
-   Path getAbsolutePath();
+   Optional<IScenario> getScenario();
 }
