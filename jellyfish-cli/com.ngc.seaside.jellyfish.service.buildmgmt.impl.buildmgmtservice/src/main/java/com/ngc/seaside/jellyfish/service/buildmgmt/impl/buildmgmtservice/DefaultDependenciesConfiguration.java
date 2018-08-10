@@ -204,8 +204,8 @@ public class DefaultDependenciesConfiguration {
    private static void configureCucumber(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("cucumberVersion")
-            .version("1.2.5")
-            .defaultGroupId("info.cukes")
+            .version("3.0.2")
+            .defaultGroupId("io.cucumber")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("cucumber-java"),
                       artifact("cucumber-guice"));

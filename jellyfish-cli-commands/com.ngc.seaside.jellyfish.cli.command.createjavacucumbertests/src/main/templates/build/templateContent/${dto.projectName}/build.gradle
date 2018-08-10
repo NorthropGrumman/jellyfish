@@ -23,8 +23,8 @@ dependencies {
 
     implementation "${dto.getFormattedDependency('com.google.inject:guice')}"
     implementation "${dto.getFormattedDependency('com.google.guava:guava')}"
-    implementation "${dto.getFormattedDependency('info.cukes:cucumber-java')}"
-    implementation "${dto.getFormattedDependency('info.cukes:cucumber-guice')}" 
+    implementation "${dto.getFormattedDependency('io.cucumber:cucumber-java')}"
+    implementation "${dto.getFormattedDependency('io.cucumber:cucumber-guice')}"
     implementation "${dto.getFormattedDependency('com.ngc.seaside:cucumber.runner')}" 
     implementation "${dto.getFormattedDependency('com.ngc.seaside:service.telemetry.impl.jsontelemetryservice.module')}"
     implementation "${dto.getFormattedDependency('com.ngc.seaside:service.fault.impl.faultloggingservice.module')}"
