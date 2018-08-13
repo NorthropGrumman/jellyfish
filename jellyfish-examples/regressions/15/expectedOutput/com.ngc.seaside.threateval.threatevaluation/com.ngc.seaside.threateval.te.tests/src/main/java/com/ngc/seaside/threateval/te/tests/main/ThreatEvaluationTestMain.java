@@ -1,4 +1,4 @@
-package com.ngc.seaside.threateval.datps.tests.main;
+package com.ngc.seaside.threateval.te.tests.main;
 
 import com.ngc.seaside.threateval.te.transport.topic.ThreatEvaluationTransportTopics;
 import com.ngc.blocs.guice.module.EventServiceModule;
