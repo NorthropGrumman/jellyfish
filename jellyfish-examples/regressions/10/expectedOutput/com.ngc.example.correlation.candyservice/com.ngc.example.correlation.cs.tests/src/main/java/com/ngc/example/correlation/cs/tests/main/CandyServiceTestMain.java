@@ -1,4 +1,4 @@
-package com.ngc.seaside.threateval.datps.tests.main;
+package com.ngc.example.correlation.cs.tests.main;
 
 import com.ngc.seaside.service.telemetry.api.ITelemetryService;
 import com.ngc.blocs.guice.module.EventServiceModule;

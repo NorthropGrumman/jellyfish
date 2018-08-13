@@ -4,7 +4,7 @@ allprojects {
 
    ext {
       blocsPluginVersion = '0.5'
-      seasidePluginsVersion = '2.17.0'
+      seasidePluginsVersion = '2.17.1'
       sonarqubePluginVersion = '2.5'
       xtextPluginVersion = '1.0.15'
 
@@ -36,5 +36,10 @@ allprojects {
       m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
       dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
       m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
+   }
+
+   plugins.withId('java') {
+      sourceCompatibility = '1.8'
+      targetCompatibility = '1.8'
    }
 }

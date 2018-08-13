@@ -6,6 +6,12 @@ pipeline {
       }
    }
 
+   environment {
+      // Specific the JDK required here.
+      JAVA_HOME = "${JAVA_10_HOME}"
+      PATH = "${JAVA_10_HOME}/bin:${PATH}"
+   }
+
    options {
       // We can use this resource to ensure only one build updates the mavenLocal repo at a time.
       // This is important because the last stage in this pipeline removes all snapshots from the local repo.  We

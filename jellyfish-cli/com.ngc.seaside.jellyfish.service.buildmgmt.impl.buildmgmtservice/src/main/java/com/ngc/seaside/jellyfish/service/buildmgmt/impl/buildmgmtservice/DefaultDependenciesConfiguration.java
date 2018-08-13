@@ -48,7 +48,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureStarfish(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("starfishVersion")
-            .version("2.12.0")
+            .version("2.14.0")
             .defaultGroupId("com.ngc.seaside")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("service.api"),
@@ -104,7 +104,7 @@ public class DefaultDependenciesConfiguration {
 
       config.addGroup()
             .versionPropertyName("blocsCoreVersion")
-            .version("2.3.2")
+            .version("3.0.0")
             .defaultGroupId("com.ngc.blocs")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("api"),
@@ -204,8 +204,8 @@ public class DefaultDependenciesConfiguration {
    private static void configureCucumber(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("cucumberVersion")
-            .version("1.2.5")
-            .defaultGroupId("info.cukes")
+            .version("3.0.2")
+            .defaultGroupId("io.cucumber")
             .defaultScope(DependencyScope.BUILD)
             .includes(artifact("cucumber-java"),
                       artifact("cucumber-guice"));

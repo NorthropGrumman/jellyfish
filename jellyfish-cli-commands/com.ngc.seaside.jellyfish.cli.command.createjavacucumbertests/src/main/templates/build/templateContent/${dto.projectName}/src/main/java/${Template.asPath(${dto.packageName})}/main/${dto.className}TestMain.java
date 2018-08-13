@@ -1,4 +1,4 @@
-package com.ngc.seaside.threateval.datps.tests.main;
+package ${dto.packageName}.main;
 
 #set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.EventServiceModule"))
 #set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.LogServiceModule"))
