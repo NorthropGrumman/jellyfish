@@ -39,7 +39,7 @@ subprojects {
    version = '1.0-SNAPSHOT'
 
    ext {
-      blocsCoreVersion = '2.3.2'
+      blocsCoreVersion = '3.0.0'
       guavaVersion = '22.0'
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.14.0-SNAPSHOT'
