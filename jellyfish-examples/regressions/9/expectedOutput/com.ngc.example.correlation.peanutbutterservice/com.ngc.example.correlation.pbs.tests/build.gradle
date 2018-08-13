@@ -19,8 +19,6 @@ dependencies {
 
     implementation "com.google.inject:guice:$guiceVersion"
     implementation "com.google.guava:guava:$guavaVersion"
-    implementation "io.cucumber:cucumber-java:$cucumberVersion"
-    implementation "io.cucumber:cucumber-guice:$cucumberVersion"
     implementation "com.ngc.seaside:cucumber.runner:$starfishVersion" 
     implementation "com.ngc.seaside:service.telemetry.impl.jsontelemetryservice.module:$starfishVersion"
     implementation "com.ngc.seaside:service.fault.impl.faultloggingservice.module:$starfishVersion"
