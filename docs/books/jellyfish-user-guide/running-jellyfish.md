@@ -249,6 +249,32 @@ Now Jellyfish will refer to the `SoftwareRequestService` as `com.helpco.helpdesk
 Java package.
 
 # Generating a System Project
+At this point, we have generated all the required services for the `SoftwareStore` system.  These services represent all
+the components that will be deployed to realize this system in production.  However, we can use an additional Jellyfish
+command to generate a project for the entire `SoftwareStore` system.  This system will _not_ contain any deployable 
+code.  Instead, it contains the following:
+1. A project can be used to test the entire system together.  This project is used to run tests against the full 
+`SoftwareStore` system with all of its services deploye.d
+1. A project that can be used to package all of the services for the system together.  This is used for convenience to
+make it easy to produce a single ZIP file that contains all of services of the system.  
+
+In order to generate this project, we need to run the command `create-java-system-project`:
+
+**Generating a SoftwareSystem project**
+```
+$> jellyfish create-java-system-project \
+ outputDirectory=. \
+ gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+ model=com.helpco.helpdesk.SoftwareStore \
+ deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+ version=1.0.0-SNAPSHOT
+```
+
+When we run this command, we use `com.helpco.helpdesk.SoftwareStore` as the value of the `model` argument.  This is 
+because we want to generate project for the top level system, not just a service.
+
+We should now have a new directory named `com.helpco.helpdesk.softwarestore` in the current directory.  This project
+contains artifacts for the entire system.
 
 # Conclusion
 We'll review the structure of each of these generated projects and learn how to build and run these projects 
