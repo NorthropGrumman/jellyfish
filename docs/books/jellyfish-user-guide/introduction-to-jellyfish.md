@@ -89,7 +89,8 @@ optional parameters:
 
 # Jellyfish Setup
 Users can download the latest version of Jellyfish at
-[https://github.ms.northgrum.com/CEACIDE/jellyfish/releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).
+[https://github.ms.northgrum.com/CEACIDE/jellyfish/releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases)
+.
 
 1.  Download the file named jellyfish-vX.X.X.zip listed under assets.  Replace _X.X.X_ with the latest version of 
 Jellyfish.  
@@ -105,6 +106,77 @@ was unzipped to the system's _PATH_.  This process is different for Windows and 
         1. Add the line `export PATH=<JELLYFISH_DIRECTORY>/bin:$PATH` where `<JELLYFISH_DIRECTORY>` is the directory
         where the Jellyfish ZIP was extracted.
     1.  In either case, open a new command prompt and run `jellyfish help` to verify everything is working correctly.
+
+## Configuring Jellyfish to Download Projects from a Remote Repository
+Many Jellyfish commands allow the user to specify an SD project that is stores remotely.  In this case, Jellyfish
+will automatically download the project if neccessary.  This is useful when releasing and uploading SD projects to a
+remote repository such as Nexus.  This requires the configuration of the URL that identifies the location of the 
+remote repository.  Since the Gradle build tool also needs this information, Jellyfish is configured to use the same
+settings as Gradle.  
+
+To configure the locateion of the remote repository, do the following:
+1. Create a file named `gradle.properties` in the directory given by the environment variable `$GRADLE_USER_HOME`.  If
+this variable is not set, a default value of `~/.gradle` is assumed.  On Windows, the default location is 
+`C:\Users\$USER\.gradle`.
+1. Create a new property named `nexusConsolidated`.  Set the value of the property to the URL of the remote repository.
+
+Below is an example file that is stored at the location `~/.gradle/gradle.properties`:
+
+**gradle.properties**
+```
+nexusConsolidated=https://nexusrepomgr.ms.northgrum.com/repository/my-project
+```
+
+## Gradle Setup
+Jellyfish generates projects use [Gradle](https://gradle.org/) as their build tool.  SD projects will also use Gradle.
+Luckly, Gradle includes a feature called the [Gradle wrapper](https://docs.gradle.org/4.9/userguide/gradle_wrapper.html)
+which allows Gradle to automatically install itself.  Jellyfish uses the wrapper when generating projects which means
+users won't have to install Gradle before running Jellyfish.
+
+**However**, users will still want to setup a `gradle.properties` files.  As described in 
+**Configuring Jellyfish to Download Projects from a Remote Repository**, this file should be located at
+`$GRADLE_USER_HOME/gradle.properties`.  The default Windows location is `C:\Users\$USER\.gradle\gradle.properties` and
+the default Linux location is `~/.gradle/gradle.properties`.  This file needs to contain the following properties:
+
+* `nexusConsolidated`: This is the location of the remote Maven repository to down dependencies from.  This is usually
+  something like Nexus or JFrog.  A good default value for a NG connected machine is
+  `https://nexusrepomgr.ms.northgrum.com/repository/maven-ng-proxy/`.
+* `nexusSnapshots`: This property the location of the remote Maven repository to upload snapshots to.  Snapshots are
+  artifacts that have been official released yet but you want to able able to share these artifacts with others.
+  Snapshots are usually used to preview changes.  **If you don't plan on uploading snapshots, set this property to any
+  value you want.**
+* `nexusReleases`: This property the location of the remote Maven repository to upload releases to.  Releases are
+  officially published artifacts.  You release projects so others can use them.  **If you don't plan on uploading
+  releases, set this property to any value you want.**
+* `nexusUsername`: This is the username for the remote Maven repository used when uploading either snapshots or
+  releases. Most remotes repositories require authentication before something can be uploaded to it.  **If you don't
+  plan on uploading or don't have a username, leave this value blank or set it to anything you want.**
+* `nexusPassword`: This is the password for the remote Maven repository used when uploading either snapshots or
+  releases. Most remotes repositories require authentication before something can be uploaded to it.  **If you don't
+  plan on uploading or don't have a password, leave this value blank or set it to anything you want.**
+
+Below is an example of a `gradle.properties` file that is a good starting point:
+
+**gradle.properties**
+```
+nexusReleases=https://nexusrepomgr.ms.northgrum.com/repository/maven-ng-releases/
+nexusSnapshots=https://nexusrepomgr.ms.northgrum.com/repository/maven-ng-snapshots/
+nexusConsolidated=https://nexusrepomgr.ms.northgrum.com/repository/maven-ng-proxy/
+
+# It's okay to leave this value blank.
+nexusUsername=<my-nexus-username>
+# It's okay to leave this value blank.
+nexusPassword=<my-nexus-password>
+```
+
+**Gradle wrapper only works in an online environment**
+```note-warning
+The Gradle wrapper configuration that Jellyfish generates will only function if the host machine that contains the 
+generated project can reach internal Northrup sites.  If not, users will need to install Gradle manually and avoid
+using the wrapper.  
+
+Alternately, users can host their on Gradle distributions and configure Gradle to use that location to download Gradle.
+```
 
 # Additional Features
 Jellyfish also provides additional features including

@@ -8,6 +8,7 @@ prev-title: Ch. 2 A Simple Software Store System
 prev-page: a-simple-software-store-system
 ---
 {% include base.html %}
+
 [Ch. 8]({{ safebase }}/books/modeling-with-the-system-descriptor/introduction-to-micro-service-architectures.html) of 
 _Modeling with the System Descriptor_ provides an introduction to micro-services in general.  In this chapter, we'll 
 explore a software framework written in Java that supports creating these types of applications.
@@ -63,6 +64,17 @@ Jellyfish only generates code for micro-service architectures.  The generated co
 infrastructure.  These projects can be used by any type of architecture, not just an MSA.  This means that much of
 Starfish and BLoCS infrastructure can be used by any application.
 ```
+
+# Additional Resources
+Consider reviewing the following resources before continuing.  This provides an overview of OSGi and some BLoCS
+components.
+
+* [Introduction to BLoCS](https://pages.github.ms.northgrum.com/BLoCS/blocs/wikis/introduction.html)
+* [BLoCS Apps and Architecture](https://pages.github.ms.northgrum.com/BLoCS/blocs/wikis/blocs-apps-and-arch.html)
+* [OSGi Primer](https://pages.github.ms.northgrum.com/BLoCS/blocs/wikis/osgi-primer.html)
+
+The main documentation for BLoCS can be found at
+[https://pages.github.ms.northgrum.com/BLoCS/blocs/docs.html](https://pages.github.ms.northgrum.com/BLoCS/blocs/docs.html).
 
 [stack]: {{ safebase }}/assets/images/msa-layers.png
 [stack2]: {{ safebase }}/assets/images/software-store-msa.png
