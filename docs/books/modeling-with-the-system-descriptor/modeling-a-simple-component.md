@@ -8,7 +8,9 @@ next-page: top-down-modeling-decomposing-components
 prev-title: Ch. 4 Modeling Data
 prev-page: modeling-data
 ---
-{% include base.html %} Data itself isn't very useful without models.  A model can represent anything: a software
+{% include base.html %}
+
+Data itself isn't very useful without models.  A model can represent anything: a software
 service or component, a hardware element, an entire system, etc.  The System Descriptor (SD) language allows models to
 declare both their structure (i.e. their inputs, outputs, and sub-components) as well as the behavior they should
 exhibit.  Models are made up of the following:
@@ -112,8 +114,10 @@ Input fields are similar to output fields in that they consist of a data type an
 within the `input` block of a model.  Our `Clock` model has no input fields, but assume the current time could be set.
 It would be declared like so (note the need to use a different name):
 
-**Note**: If you're following along with this example you should not model the input. This is being used as an example
-only.
+**Input fields**
+```note-info
+If you're following along with this example you should not model the input. This is being used as an example only.
+```
 
 **Example inputs fields**
 ```
@@ -138,7 +142,8 @@ model Clock {
 }
 ```
 
-**Modeling Behavior** We have declared that the `Clock` will produce `ZonedTime` data but we have declared under what
+# Modeling Behavior
+We have declared that the `Clock` will produce `ZonedTime` data but we have declared under what
 circumstances this data is generated.  This falls under modeling behavior.  The SD language uses the "given, when, then"
 approach to modeling behavior.  Each model may contain any number of scenarios, which describe the model's behavior.
 Each scenario is made up of multiple steps.  Steps come in 3 forms:
