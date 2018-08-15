@@ -25,6 +25,7 @@ defaults:
       path: '' # all files in the project
     values:
       layout: 'default'
+      restrictions: 'Copyright (C) 2018, Northrop Grumman Systems Corporation, All Rights Reserved.'
 
   - scope:
       path: 'books'

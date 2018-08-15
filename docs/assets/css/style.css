@@ -161,6 +161,30 @@ div.highlighter-rouge span.nf {
   background-position-x: 18px;
 }
 
+/* For footer */
+#main-container {
+  min-height: 100%;
+  position: relative;
+}
+
+#page-contents {
+  padding-bottom: 4.0em; /* Height of the footer + extra padding */
+}
+
+#footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  height: 1.5em;
+}
+
+#footer .contents {
+  background-color: #7C7C7C;
+  color: #F2F5F7;
+  text-align: right;
+  padding: 0 0.5em;
+}
+
 /* Index rules */
 #main-stripe {
   background-color: #324553;
