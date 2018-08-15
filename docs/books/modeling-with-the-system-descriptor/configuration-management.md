@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
 title: Ch. 11 Configuration Management
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor

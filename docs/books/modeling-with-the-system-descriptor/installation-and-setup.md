@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
 title: Ch. 2 Installation and Setup
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor

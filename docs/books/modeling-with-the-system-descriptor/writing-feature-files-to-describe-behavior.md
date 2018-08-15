@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
 title: Ch. 7 Writing Feature Files to Describe Behavior
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor

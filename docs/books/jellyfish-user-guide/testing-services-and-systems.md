@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
 title: Ch. 6 Testing Services and Systems
 book-title: Jellyfish User Guide
 book-page: jellyfish-user-guide

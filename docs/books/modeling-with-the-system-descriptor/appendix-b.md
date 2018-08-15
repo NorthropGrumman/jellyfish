@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
 title: Appendix B - Standard Scenario Verbs
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor
