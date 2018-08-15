@@ -22,20 +22,16 @@ public class ProjectInfoPage extends WizardPage {
 
    private static final String DEFAULT_GROUP = "com.ngc";
    private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
-   private static final String DEFAULT_CLI_VERSION = "1.9.0";
 
    private static final List<Function<String, String>> VALIDATORS = Arrays.asList(
          name -> name != null && name.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null
                                                                                          : "Invalid project name",
          group -> group != null && group.matches("[a-zA-Z_][\\w]*([-\\.][a-zA-Z_][\\w]*)*") ? null : "Invalid group ID",
-         version -> version != null && version.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null : "Invalid version",
-         cliVersion -> cliVersion != null && cliVersion.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null
-                                                                                              : "Invalid version");
+         version -> version != null && version.matches("\\d+(\\.\\d+)*(-SNAPSHOT)?") ? null : "Invalid version");
    private final Supplier<String> defaultProjectName;
    private Text projectNameField;
    private Text groupField;
    private Text versionField;
-   private Text cliField;
    private Composite container;
    private boolean hasBeenVisible = false;
 
@@ -65,8 +61,7 @@ public class ProjectInfoPage extends WizardPage {
    public boolean finished() {
       return VALIDATORS.get(0).apply(projectNameField.getText()) == null
             && VALIDATORS.get(1).apply(groupField.getText()) == null
-            && VALIDATORS.get(2).apply(versionField.getText()) == null
-            && VALIDATORS.get(3).apply(cliField.getText()) == null;
+            && VALIDATORS.get(2).apply(versionField.getText()) == null;
    }
 
    @Override
@@ -87,10 +82,6 @@ public class ProjectInfoPage extends WizardPage {
                   "Version",
                   DEFAULT_VERSION,
                   VALIDATORS.get(2));
-      createField(() -> cliField = new Text(container, TEXT_STYLE),
-                  "Jellyfish Gradle Plugins Version",
-                  DEFAULT_CLI_VERSION,
-                  VALIDATORS.get(3));
 
       setControl(container);
       setPageComplete(finished());
@@ -115,13 +106,6 @@ public class ProjectInfoPage extends WizardPage {
     */
    public String getVersion() {
       return versionField.getText();
-   }
-
-   /**
-    * @return the cli plugin version
-    */
-   public String getCliPluginVersion() {
-      return cliField.getText();
    }
 
    private void updateStatus(String message) {

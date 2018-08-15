@@ -9,6 +9,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
+import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
@@ -71,6 +72,9 @@ public class CreateJavaCucumberTestsCommandIT {
    @Mock
    private IPackageNamingService packageService;
 
+   @Mock
+   private ITelemetryConfigurationService telemetryConfigService;
+
    private IBuildManagementService buildManagementService;
 
    @Before
@@ -104,6 +108,7 @@ public class CreateJavaCucumberTestsCommandIT {
       command.setPackageNamingService(packageService);
       command.setJavaServiceGenerationService(generationService);
       command.setBuildManagementService(buildManagementService);
+      command.setTelemetryConfigService(telemetryConfigService);
       command.activate();
    }
 

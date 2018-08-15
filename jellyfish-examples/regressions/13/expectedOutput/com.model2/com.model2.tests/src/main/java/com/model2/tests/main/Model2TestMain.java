@@ -1,6 +1,5 @@
 package com.model2.tests.main;
 
-import com.ngc.seaside.service.telemetry.api.ITelemetryService;
 import com.ngc.blocs.guice.module.EventServiceModule;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
@@ -38,7 +37,6 @@ public class Model2TestMain {
                         new JsonTelemetryServiceModule(),
                         new LoggingFaultManagementServiceModule(),
                         new Model2TestModule())
-            .addRequiredRemoteService(ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC)
             .build()
             .execute();
       } catch(Throwable e) {
