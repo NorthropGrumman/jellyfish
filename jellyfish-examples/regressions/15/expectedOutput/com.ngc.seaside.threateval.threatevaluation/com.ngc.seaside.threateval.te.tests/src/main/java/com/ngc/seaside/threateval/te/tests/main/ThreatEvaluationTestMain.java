@@ -7,7 +7,6 @@ import com.ngc.blocs.guice.module.ResourceServiceModule;
 import com.ngc.blocs.guice.module.ThreadServiceModule;
 import com.ngc.seaside.cucumber.runner.api.CucumberRunnerBuilder;
 import com.ngc.seaside.service.fault.impl.faultloggingservice.module.LoggingFaultManagementServiceModule;
-import com.ngc.seaside.service.telemetry.api.ITelemetryService;
 import com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule;
 import com.ngc.seaside.threateval.te.tests.di.ThreatEvaluationTestModule;
 import com.ngc.seaside.threateval.te.tests.steps.ThreatEvaluationSteps;
