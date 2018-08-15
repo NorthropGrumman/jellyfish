@@ -5,7 +5,13 @@ dependencies {
    // Do not use the new scopes (api, implementation, etc) here.
    // Use the old compile scope because the sonar-packaging plugin
    // will only embed dependencies that are under the compile scope.
-   compile project(':jellyfish')
+   compile(project(':jellyfish')) {
+      // Do not include the custom SLF4J bindings.  This is because Sonarqube has its own SLF4J bindings and this can
+      // cause a conflict.  The Sonarqube code itself casts the SL4J loggers to a specific binding (a logback logger)
+      // so attempting to use any other type of binding will cause exceptions.
+      exclude group: 'com.ngc.blocs', module: 'service.log.impl.common.slf4jlogservicebridge'
+   }
+
    compile "com.ngc.seaside:jellyfish.api:$version"
    compile "com.ngc.seaside:jellyfish.service.api:$version"
    compile "com.ngc.seaside:guice.modules:$version"
