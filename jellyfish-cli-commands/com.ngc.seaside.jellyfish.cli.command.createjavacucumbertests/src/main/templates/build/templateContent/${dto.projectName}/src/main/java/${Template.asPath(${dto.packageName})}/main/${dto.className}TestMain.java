@@ -6,7 +6,6 @@ package ${dto.packageName}.main;
 #set ($ignore = $dto.imports.add("com.ngc.blocs.guice.module.ThreadServiceModule"))
 #set ($ignore = $dto.imports.add("com.ngc.seaside.cucumber.runner.api.CucumberRunnerBuilder"))
 #set ($ignore = $dto.imports.add("com.ngc.seaside.service.fault.impl.faultloggingservice.module.LoggingFaultManagementServiceModule"))
-#set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.api.ITelemetryService"))
 #set ($ignore = $dto.imports.add("com.ngc.seaside.service.telemetry.impl.jsontelemetryservice.module.JsonTelemetryServiceModule"))
 #set ($ignore = $dto.imports.add("${dto.packageName}.di.${dto.className}TestModule"))
 #set ($ignore = $dto.imports.add("${dto.packageName}.steps.${dto.className}Steps"))

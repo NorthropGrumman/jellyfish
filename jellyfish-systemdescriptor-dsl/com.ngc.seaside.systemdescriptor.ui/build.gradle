@@ -91,5 +91,32 @@ task copyDependencies(type: Copy) {
    into { "$buildDir/dependencies" }
 }
 
+task createTemplates {
+   tasks.withType(JavaCompile)*.dependsOn it
+   sourceSets {
+      main {
+         resources {
+            srcDir file("${project.buildDir}/templates")
+         }
+      }
+   }
+}
+
+file('src/main/templates').eachDir { template ->
+   task("createTemplate${template.name}", type:Zip) {
+      from "${template}/build.gradle", {
+         expand([cliPluginVersion: version])
+      }
+      from template, {
+         exclude 'build.gradle'
+      }
+      destinationDir = file("${project.buildDir}/templates")
+      archiveName = "${template.name}.${it.extension}"
+      createTemplates.dependsOn it
+   }
+}
+
+
+
 tasks.getByName('generateXtext').dependsOn(unzipEclipse)
 tasks.getByName('build').dependsOn(copyDependencies)

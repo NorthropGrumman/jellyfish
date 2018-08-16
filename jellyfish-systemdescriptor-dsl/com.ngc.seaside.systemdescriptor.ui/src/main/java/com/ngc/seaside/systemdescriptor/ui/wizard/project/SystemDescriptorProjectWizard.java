@@ -74,7 +74,6 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
       String projectName = gradleProjPage.getProjectName();
       String group = gradleProjPage.getGroupId();
       String version = gradleProjPage.getVersion();
-      String cliVersion = gradleProjPage.getCliPluginVersion();
 
       String defaultPkg = null;
       if (pkgPage.getCreatePkg()) {
@@ -88,7 +87,7 @@ public class SystemDescriptorProjectWizard extends Wizard implements INewWizard 
 
       try {
          SystemDescriptorProjectSupport
-               .createProject(name, location, projectName, group, version, cliVersion, defaultPkg, defaultFile);
+               .createProject(name, location, projectName, group, version, defaultPkg, defaultFile);
       } catch (CoreException e) {
          statusManager.handle(
                new Status(IStatus.ERROR, getClass().getName(), "Unable to create project", e));

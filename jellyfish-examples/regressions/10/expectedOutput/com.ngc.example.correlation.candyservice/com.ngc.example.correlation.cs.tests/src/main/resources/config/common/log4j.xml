@@ -16,7 +16,7 @@
       <param name="maxFileSize" value="10MB" />
       <param name="maxBackupIndex" value="10" />
       <param name="Threshold" value="TRACE" />
-      <param name="file" value="build/logs/engagement_track_priority_service.log" />
+      <param name="file" value="${NG_FW_HOME}/logs/com.ngc.example.correlation.CandyService.log" />
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern"
                 value="%d{yyyy-MM-dd HH:mm:ss} [model:com.ngc.example.correlation.CandyService] %-3p %c{1}:%L - %m%n" />

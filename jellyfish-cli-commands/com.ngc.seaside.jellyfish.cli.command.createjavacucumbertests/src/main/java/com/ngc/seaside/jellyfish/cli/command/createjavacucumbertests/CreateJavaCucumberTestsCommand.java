@@ -110,8 +110,10 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
             }
          }
       } else {
-         dto.getImports().add("com.ngc.seaside.service.telemetry.api.ITelemetryService");
-         dto.addRemoteService("ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC");
+         if (!telemetryConfigService.getConfigurations(commandOptions, model).isEmpty()) {
+            dto.getImports().add("com.ngc.seaside.service.telemetry.api.ITelemetryService");
+            dto.addRemoteService("ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC");
+         }
       }
 
       templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + BUILD_TEMPLATE_SUFFIX,
