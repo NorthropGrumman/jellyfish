@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporation
 title: Ch. 9 A Case Study - Modeling a Threat Evaluation System as an MSA
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor

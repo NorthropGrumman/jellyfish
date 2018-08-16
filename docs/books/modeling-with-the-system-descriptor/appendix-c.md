@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporation
 title: Appendix C - The Jellyfish Command Line Interface
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor
