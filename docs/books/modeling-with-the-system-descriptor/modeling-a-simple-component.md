@@ -1,5 +1,5 @@
 ---
-restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
+restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporation
 title: Ch. 5 Modeling a Simple Component
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor

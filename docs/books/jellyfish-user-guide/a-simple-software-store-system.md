@@ -1,5 +1,5 @@
 ---
-restrictions: UNCLASSIFIED Copyright (C) 2018, Northrop Grumman Systems Corporation
+restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporation
 title: Ch. 2 A Simple Software Store System
 book-title: Jellyfish User Guide
 book-page: jellyfish-user-guide

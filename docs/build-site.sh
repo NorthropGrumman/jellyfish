@@ -4,7 +4,7 @@
 #  Northrop Grumman Proprietary
 # ____________________________
 #
-#   Copyright (C) 2018, Northrop Grumman Systems Corporation
+#   Copyright © 2018, Northrop Grumman Systems Corporation
 #   All Rights Reserved.
 #
 #  NOTICE:  All information contained herein is, and remains the property of
