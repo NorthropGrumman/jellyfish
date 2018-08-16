@@ -126,6 +126,14 @@ public class EmailStepHandlerModule extends AbstractModule {
 }
 ```
 
+As before, be sure to create a new file in `src/main/resources/META-INF/services` named `com.google.inject.Module`.  Its
+contents should contain the fully qualified class name of the module:
+
+**com.google.inject.IModule**
+```plaintext
+com.mystuff.modeling.validation.module.EmailStepHandlerModule
+```
+
 **Creating both validators and verbs**
 ```note-info
 It's possible to package both validators and verbs in a single JAR.  Simply register all verbs and scenarios with
