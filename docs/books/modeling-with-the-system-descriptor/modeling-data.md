@@ -1,4 +1,5 @@
 ---
+restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporation
 title: Ch. 4 Modeling Data
 book-title: Modeling with the System Descriptor
 book-page: modeling-with-the-system-descriptor
