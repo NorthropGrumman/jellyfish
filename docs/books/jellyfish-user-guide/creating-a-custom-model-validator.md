@@ -257,4 +257,94 @@ distribution directory.  The validator will be automatically used when running J
 ## Deploying the Plugin to Eclipse
 This deployment option is used to show validation errors and warnings directly inside Eclipse as a modeler is editing
 files.  It is necessary to package the JAR into an Eclipse an update site to be able to use the JAR inside Eclipse.
-TODO
+
+In this example, we are going to package our validator in its own update site that is seperate from the update site
+for Jellyfish.  This will require users to first install the Jellyfish update site and then the custom update site.
+Some teams may prefer to produce an update site that also installs Jellyfish itself so users don't have to configure
+multiple update sites.  See the
+[project for the Jellyfish update site](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite)
+to see how to create such a site.
+
+### Configuring the Update Site Project
+We'll need to configure a new Gradle project.  This project will produce a ZIP file which is the update site.  Its 
+`build.gradle` file should look something like this:
+
+**build.gradle**
+```groovy
+buildscript {
+  repositories {
+    mavenLocal()
+
+    maven {
+      url nexusConsolidated
+    }
+  }
+
+  dependencies {
+    classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
+  }
+}
+
+apply plugin: 'com.ngc.seaside.repository'
+apply plugin: 'com.ngc.seaside.eclipse.updatesite'
+apply plugin: 'com.ngc.seaside.eclipse.p2'
+
+eclipseDistribution {
+   linuxVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
+   windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
+   linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
+   windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
+}
+
+eclipseUpdateSite {
+  def myStuffFeature = feature {
+    id = 'com.mystuff.modeling.feature'
+    label = 'My Stuff Jellyfish Extensions'
+    version = project.version
+    providerName = 'MyStuff, Inc'
+    description {
+       url = 'http://www.mystuff.com/description'
+       text = 'Extra extensions for Jellyfish.'
+    }
+    copyright {
+       url = 'http://www.mystuff.com/copyright'
+       text = project.resources.text.fromFile(project.file('src/main/resources/license.txt')).asString()
+    }
+    license {
+       url = 'http://www.mystuff.com/license'
+       text = copyright.text
+    }
+    plugin {
+       id = 'com.mystuff.modeling'
+       version = '0.0.0'
+       unpack = false
+    }
+  }
+
+  category {
+      name = 'my_stuff_category_id'
+      label = 'MyStuff'
+      description = 'Eclipse Plugin for MyStuff'
+      feature myStuffFeature
+   }
+}
+
+dependencies {
+  plugin "com.mystuff:modeling:$version"
+}
+```
+
+The `eclipseDistribution` section configures the version of Eclipse to use to actually build the update site.  
+`eclipseUpdateSite` is used to configure the update site itself. This configuration declares the license, copyright,
+etc of the software.  Note the `plugin` section is where we declare the JARs that make up the software.  A feature
+can reference any number of plugins.  **Plugins must be built as OSGi JARs.**  Attempting to reference an plain JAR in 
+an update site will not work correctly.
+
+Next, the `myStuffCategory` is declared.  This configures how Eclipse shows installable features to users.
+
+Finally, we need to declare a `plugin` dependency on each JAR that is referenced as a plugin in the update site.
+
+We can now run the command `gradle clean build` to build the update site.  The resulting ZIP file in the `build` 
+directory is the update site.  It can be installed into Eclipse using the same instructions as
+[installing Jellyfish]({{ safebase }}/books/modeling-with-the-system-descriptor/installation-and-setup.html)
+into Eclipse.
