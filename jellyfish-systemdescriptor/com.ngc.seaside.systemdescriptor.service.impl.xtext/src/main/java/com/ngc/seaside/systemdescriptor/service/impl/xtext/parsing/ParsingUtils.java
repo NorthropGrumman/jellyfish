@@ -242,23 +242,26 @@ class ParsingUtils {
             Path mainJar = repositoryService.getArtifact(artifactGav);
             resources.addAll(parseJar(mainJar, ctx));
             Path testJar = repositoryService.getArtifact(testArtifactGav);
-            
-            URI mainUri = URI.create("jar:file:" + mainJar.toUri().getPath());
-            URI testUri = URI.create("jar:file:" + testJar.toUri().getPath());
-            FileSystem mainFs = null;
-            try {
-               mainFs = FileSystems.getFileSystem(mainUri);
-            } catch (FileSystemNotFoundException e) {
-               mainFs = FileSystems.newFileSystem(mainUri, Collections.singletonMap("create", true));
+            if (ctx.getMain() == null) {
+               URI mainUri = URI.create("jar:file:" + mainJar.toUri().getPath());
+               FileSystem mainFs = null;
+               try {
+                  mainFs = FileSystems.getFileSystem(mainUri);
+               } catch (FileSystemNotFoundException e) {
+                  mainFs = FileSystems.newFileSystem(mainUri, Collections.singletonMap("create", true));
+               }
+               ctx.setMain(mainFs.getPath("/"));
             }
-            FileSystem testFs = null;
-            try {
-               testFs = FileSystems.getFileSystem(testUri);
-            } catch (FileSystemNotFoundException e) {
-               testFs = FileSystems.newFileSystem(testUri, Collections.singletonMap("create", true));
+            if (ctx.getTest() == null) {
+               URI testUri = URI.create("jar:file:" + testJar.toUri().getPath());
+               FileSystem testFs = null;
+               try {
+                  testFs = FileSystems.getFileSystem(testUri);
+               } catch (FileSystemNotFoundException e) {
+                  testFs = FileSystems.newFileSystem(testUri, Collections.singletonMap("create", true));
+               }
+               ctx.setTest(testFs.getPath("/"));
             }
-            ctx.setMain(mainFs.getPath("/"));
-            ctx.setTest(testFs.getPath("/"));
          }
          for (Path path : repositoryService.getArtifactDependencies(artifactGav, true)) {
             resources.addAll(parseJar(path, ctx));
