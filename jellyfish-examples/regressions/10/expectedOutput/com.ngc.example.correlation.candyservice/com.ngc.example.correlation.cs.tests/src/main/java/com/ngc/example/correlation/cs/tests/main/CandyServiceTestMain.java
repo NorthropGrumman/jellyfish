@@ -1,6 +1,5 @@
 package com.ngc.example.correlation.cs.tests.main;
 
-import com.ngc.seaside.service.telemetry.api.ITelemetryService;
 import com.ngc.blocs.guice.module.EventServiceModule;
 import com.ngc.blocs.guice.module.LogServiceModule;
 import com.ngc.blocs.guice.module.ResourceServiceModule;
@@ -38,7 +37,6 @@ public class CandyServiceTestMain {
                         new JsonTelemetryServiceModule(),
                         new LoggingFaultManagementServiceModule(),
                         new CandyServiceTestModule())
-            .addRequiredRemoteService(ITelemetryService.TELEMETRY_REQUEST_TRANSPORT_TOPIC)
             .build()
             .execute();
       } catch(Throwable e) {

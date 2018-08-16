@@ -39,7 +39,7 @@ import java.util.zip.ZipInputStream;
  */
 public class SystemDescriptorProjectSupport {
 
-   private static final String GRADLE_PROJECT_TEMPLATE_ZIP = "gradleProjectTemplate.zip";
+   private static final String GRADLE_PROJECT_TEMPLATE_ZIP = "sdproject.zip";
    private static final String NEWLINE = System.getProperty("line.separator");
    private static final String NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
    private static final String DEFAULT_GRADLE_DISTRIBUTION_VERSION = "4.2.1";
@@ -58,7 +58,6 @@ public class SystemDescriptorProjectSupport {
     * @param gradleProjectName name of the gradle project
     * @param group             gradle project group id
     * @param version           gradle project version
-    * @param cliPluginVersion  version of jellyfish cli plugins
     * @param defaultPkg        The default package to create.
     * @param defaultFile       The default model file to create in the default package.
     * @return Returns the project resource that was created, or null if the creation failed.
@@ -76,14 +75,14 @@ public class SystemDescriptorProjectSupport {
     *                       </ul>
     */
    public static IProject createProject(String projectName, URI location, String gradleProjectName, String group,
-                                        String version, String cliPluginVersion, String defaultPkg, String defaultFile)
+                                        String version, String defaultPkg, String defaultFile)
          throws CoreException {
       Assert.isNotNull(projectName);
       Assert.isTrue(projectName.trim().length() > 0);
 
       IProject project = createBaseProject(projectName, location);
 
-      addNature(project);
+      addNature(project, JavaCore.NATURE_ID);
 
       String mainPathSd = "src/main/sd";
       String mainPathRes = "src/main/resources";
@@ -110,7 +109,6 @@ public class SystemDescriptorProjectSupport {
       properties.put("projectName", gradleProjectName);
       properties.put("groupId", group);
       properties.put("version", version);
-      properties.put("cliPluginVersion", cliPluginVersion);
       properties.put("nexusConsolidated", NEXUS_CONSOLIDATED);
       properties.put("gradleDistributionVersion", DEFAULT_GRADLE_DISTRIBUTION_VERSION);
       try {
@@ -151,6 +149,9 @@ public class SystemDescriptorProjectSupport {
             addToProject(project, filepath, fileContent);
          }
       }
+
+      addNature(project, "org.eclipse.xtext.ui.shared.xtextNature");
+      addNature(project, "org.eclipse.buildship.core.gradleprojectnature");
 
       return project;
    }
@@ -325,7 +326,7 @@ public class SystemDescriptorProjectSupport {
    private static void addGradleFiles(IProject project, Map<String, String> properties)
          throws CoreException, IOException {
       try (ZipInputStream stream = new ZipInputStream(
-            SystemDescriptorProjectSupport.class.getResourceAsStream(GRADLE_PROJECT_TEMPLATE_ZIP))) {
+            SystemDescriptorProjectSupport.class.getClassLoader().getResourceAsStream(GRADLE_PROJECT_TEMPLATE_ZIP))) {
          ZipEntry entry;
          byte[] data = new byte[2048];
          while ((entry = stream.getNextEntry()) != null) {
@@ -382,17 +383,14 @@ public class SystemDescriptorProjectSupport {
     *                       <li>The file modification validator disallowed the change.</li>
     *                       </ul>
     */
-   private static void addNature(IProject project) throws CoreException {
+   private static void addNature(IProject project, String nature) throws CoreException {
       IProjectDescription description = project.getDescription();
 
       String[] prevNatures = description.getNatureIds();
-      String[] newNatures = new String[prevNatures.length + 3];
+      String[] newNatures = new String[prevNatures.length + 1];
 
       System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-
-      newNatures[prevNatures.length] = "org.eclipse.xtext.ui.shared.xtextNature";
-      newNatures[prevNatures.length + 1] = JavaCore.NATURE_ID;
-      newNatures[prevNatures.length + 2] = "org.eclipse.buildship.core.gradleprojectnature";
+      newNatures[prevNatures.length] = nature;
       description.setNatureIds(newNatures);
 
       IProgressMonitor monitor = new NullProgressMonitor();

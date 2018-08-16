@@ -1,0 +1,18 @@
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url nexusConsolidated
+        }
+    }
+    
+    dependencies {
+        classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:${cliPluginVersion}'
+    }
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
+
+group = '\${groupId}'
+version = '\${version}'

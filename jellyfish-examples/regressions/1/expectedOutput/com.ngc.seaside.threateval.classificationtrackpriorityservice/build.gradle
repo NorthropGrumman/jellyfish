@@ -14,8 +14,8 @@ buildscript {
    dependencies {
       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
       classpath "com.ngc.blocs:gradle.plugin:0.5"
-      classpath "com.ngc.seaside:gradle.plugins:2.17.1"
-      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.14.0-SNAPSHOT"
+      classpath "com.ngc.seaside:gradle.plugins:2.18.1"
+      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.15.0-SNAPSHOT"
       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
    }
 }
@@ -43,7 +43,7 @@ subprojects {
       blocsCoreVersion = '3.0.0'
       guavaVersion = '22.0'
       guiceVersion = '4.1.0'
-      jellyfishVersion = '2.14.0-SNAPSHOT'
+      jellyfishVersion = '2.15.0-SNAPSHOT'
       junitVersion = '4.12'
       mockitoVersion = '2.19.0'
       osgiVersion = '6.0.0'

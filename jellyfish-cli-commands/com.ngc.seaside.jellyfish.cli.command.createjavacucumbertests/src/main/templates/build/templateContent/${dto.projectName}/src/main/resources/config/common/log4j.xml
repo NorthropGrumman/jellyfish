@@ -1,3 +1,4 @@
+#set( $D = '$' )
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
@@ -16,7 +17,7 @@
       <param name="maxFileSize" value="10MB" />
       <param name="maxBackupIndex" value="10" />
       <param name="Threshold" value="TRACE" />
-      <param name="file" value="build/logs/engagement_track_priority_service.log" />
+      <param name="file" value="${D}{NG_FW_HOME}/logs/${model}.log" />
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern"
                 value="%d{yyyy-MM-dd HH:mm:ss} [model:${model}] %-3p %c{1}:%L - %m%n" />
