@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
@@ -26,8 +25,6 @@ import java.util.stream.Stream;
 public class FeatureService implements IFeatureService {
    private static final Collector<IFeatureInformation, ?, ? extends Collection<IFeatureInformation>> COLLECTOR =
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IFeatureInformation::getPath)));
-
-   private static final PathMatcher MATCHER = FileSystems.getDefault().getPathMatcher("glob:**.feature");
 
    @Override
    public Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IModel model) {
@@ -112,10 +109,11 @@ public class FeatureService implements IFeatureService {
    }
 
    private static Stream<Path> getFeaturesFilesStream(Path baseDir) {
+      PathMatcher matcher = baseDir.getFileSystem().getPathMatcher("glob:**.feature");
       try {
          return Files.walk(baseDir)
                   .filter(Files::isRegularFile)
-                  .filter(MATCHER::matches);
+                  .filter(matcher::matches);
       } catch (IOException e) {
          throw new UncheckedIOException(e);
       }
