@@ -22,6 +22,11 @@ apply plugin: 'com.ngc.seaside.release.root'
 
 subprojects {
 
+    // Override conflicting versions.  We are stuck on a version of Guava that is < 22.0 because of XText dependencies.
+    ext {
+        guavaVersion = '15.0'
+    }
+
     versionSettings {
         versionFile = versionsFile
     }
