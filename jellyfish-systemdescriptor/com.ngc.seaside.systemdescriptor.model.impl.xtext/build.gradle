@@ -3,6 +3,7 @@ dependencies {
 
    implementation project(":systemdescriptor.model.impl.basic")
    implementation "com.ngc.seaside:systemdescriptor:$version"
+   implementation "com.google.guava:guava:$guavaVersion"
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
