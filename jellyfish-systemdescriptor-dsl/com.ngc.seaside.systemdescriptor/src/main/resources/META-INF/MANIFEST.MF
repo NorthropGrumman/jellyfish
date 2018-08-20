@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.util,
  org.eclipse.xtend.lib;bundle-version="2.14.0",
  org.eclipse.emf.common,
- com.google.guava;bundle-version="22.0.0"
+ com.google.guava;bundle-version="15.0.0.v201403281430"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: com.ngc.seaside.systemdescriptor.parser.antlr.internal,
  com.ngc.seaside.systemdescriptor.systemDescriptor,
