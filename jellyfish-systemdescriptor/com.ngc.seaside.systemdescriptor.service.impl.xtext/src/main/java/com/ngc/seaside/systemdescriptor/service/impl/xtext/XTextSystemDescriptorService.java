@@ -84,7 +84,6 @@ public class XTextSystemDescriptorService implements ISystemDescriptorService {
          .maximumSize(25)
          .build();
 
-
    /**
     * An evicting cache that stores aggregated views of models.  This enables the flyweight pattern so we can reuse
     * instances of the views.  The cache will only grow to a fixed size and then entries will be evicted.

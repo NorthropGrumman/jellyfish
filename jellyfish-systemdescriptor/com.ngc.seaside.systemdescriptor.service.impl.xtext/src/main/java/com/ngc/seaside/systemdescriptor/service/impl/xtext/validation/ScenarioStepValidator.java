@@ -33,19 +33,13 @@ public class ScenarioStepValidator extends AbstractSystemDescriptorValidator {
 
       if (SystemDescriptors.isGivenStep(step)) {
          hasHandler = service.getScenarioStepHandlers()
-               .stream()
-               .filter(h -> h.getVerbs().get(VerbTense.PAST_TENSE).getVerb().equals(keyword))
-               .count() > 0;
+               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.PAST_TENSE).getVerb().equals(keyword));
       } else if (SystemDescriptors.isWhenStep(step)) {
          hasHandler = service.getScenarioStepHandlers()
-               .stream()
-               .filter(h -> h.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb().equals(keyword))
-               .count() > 0;
+               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb().equals(keyword));
       } else {
          hasHandler = service.getScenarioStepHandlers()
-               .stream()
-               .filter(h -> h.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb().equals(keyword))
-               .count() > 0;
+               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb().equals(keyword));
       }
 
       if (!hasHandler) {
