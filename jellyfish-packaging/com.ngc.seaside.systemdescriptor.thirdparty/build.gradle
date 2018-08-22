@@ -1,0 +1,42 @@
+// Create an embedded configuration.  Any dependency added to this configuration will be embedded directly into the JAR.
+configurations {
+   embedded
+}
+
+dependencies {
+   embedded "org.apache.maven:maven-model:$mavenVersion"
+   embedded "org.eclipse.aether:aether-connector-basic:$aetherVersion"
+   embedded "org.apache.maven:maven-resolver-provider:$mavenVersion"
+   embedded "org.apache.maven:maven-settings-builder:$mavenVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+}
+
+// Configure the JAR task to embedded dependencies and setup the Bundle-ClassPath header as needed.  Also, export
+// the packages that have been embedded.
+jar {
+   from configurations.embedded {
+      into 'lib'
+   }
+
+   manifest {
+      attributes('Export-Package': 'org.apache.maven.*,org.eclipse.aether.*,org.codehaus.plexus.*',
+                 'Import-Package': '!com.google.errorprone',
+                 '-nouses' : 'true')
+   }
+
+   doLast {
+      if (!configurations.embedded.getDependencies().empty) {
+         def classpath = '.,' + configurations.embedded
+               .resolve()
+               .collect({ 'lib/' + it.name })
+               .join(',')
+
+         manifest {
+            attributes('Bundle-ClassPath': classpath)
+         }
+      }
+   }
+}
+
+

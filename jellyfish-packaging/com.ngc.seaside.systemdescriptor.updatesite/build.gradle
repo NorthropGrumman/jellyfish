@@ -8,19 +8,6 @@ eclipseDistribution {
    windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
-
-//   unzipEclipse.doLast {
-//      configurations {
-//         // Exclude transitive dependencies that are already bundled with eclipse
-//         plugin {
-//            pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
-//               if (!it.name.startsWith('com.google.inject')) {
-//                  exclude module: it.name.substring(0, it.name.indexOf('_'))
-//               }
-//            }
-//         }
-//      }
-//   }
 }
 
 eclipseUpdateSite {
@@ -63,18 +50,22 @@ eclipseUpdateSite {
          unpack = false
       }
       plugin {
+         id = 'com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice'
+         version = "${project.version}"
+         unpack = false
+      }
+      plugin {
          id = 'com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps'
          version = "${project.version}"
          unpack = false
       }
-
-      // Our bundles above try to import the com.google.inject package.  The default version that comes with XText
-      // and Eclipse is too old, so we need to ship our own version.
-//      plugin {
-//         id = 'com.google.inject'
-//         version = "$guiceVersion"
-//         unpack = false
-//      }
+      // This plugin includes 3rd party items used by com.ngc.seaside which are not packaged as OSGi bundles.
+      // This "uber" JAR embeds all those non-OSGi dependencies and exports the appropriate packages.
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor.thirdparty'
+         version = "${project.version}"
+         unpack = false
+      }
    }
 
    def sdCategory = category {
@@ -112,6 +103,7 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor.ide:$version"
    plugin "com.ngc.seaside:systemdescriptor.ui:$version"
    plugin "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
+   plugin "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
    plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
    plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
 
@@ -123,4 +115,6 @@ dependencies {
    // correct manifest.
    plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject:1_2'
    plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.aopalliance:1.0_6'
+
+   plugin project(':systemdescriptor.thirdparty')
 }

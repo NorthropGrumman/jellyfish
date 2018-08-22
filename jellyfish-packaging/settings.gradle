@@ -1,5 +1,8 @@
 rootProject.name = 'jellyfish-packaging'
 
+include 'com.ngc.seaside.systemdescriptor.thirdparty'
+project (':com.ngc.seaside.systemdescriptor.thirdparty').name = 'systemdescriptor.thirdparty'
+
 include 'com.ngc.seaside.systemdescriptor.updatesite'
 project(':com.ngc.seaside.systemdescriptor.updatesite').name = 'systemdescriptor.updatesite'
 
