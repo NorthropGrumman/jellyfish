@@ -4,11 +4,15 @@ import com.google.inject.Inject;
 
 import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
+import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.validation.api.AbstractSystemDescriptorValidator;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * A validator that requires a {@link com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler} be registered
@@ -27,26 +31,56 @@ public class ScenarioStepValidator extends AbstractSystemDescriptorValidator {
    protected void validateStep(IValidationContext<IScenarioStep> context) {
       IScenarioStep step = context.getObject();
       String keyword = step.getKeyword();
+      Collection<IScenarioStepHandler> handlers = service.getScenarioStepHandlers();
+
+      VerbTense tense;
       boolean hasHandler;
 
-      // TODO TH: update this so the user gets a better error message if they use a verb in the wrong tense.
-
       if (SystemDescriptors.isGivenStep(step)) {
-         hasHandler = service.getScenarioStepHandlers()
-               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.PAST_TENSE).getVerb().equals(keyword));
+         tense = VerbTense.PAST_TENSE;
+         hasHandler = handlers
+               .stream()
+               .anyMatch(h -> h.getVerbs().get(VerbTense.PAST_TENSE).getVerb().equals(keyword));
       } else if (SystemDescriptors.isWhenStep(step)) {
-         hasHandler = service.getScenarioStepHandlers()
-               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb().equals(keyword));
+         tense = VerbTense.PRESENT_TENSE;
+         hasHandler = handlers
+               .stream()
+               .anyMatch(h -> h.getVerbs().get(VerbTense.PRESENT_TENSE).getVerb().equals(keyword));
       } else {
-         hasHandler = service.getScenarioStepHandlers()
-               .stream().anyMatch(h -> h.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb().equals(keyword));
+         tense = VerbTense.FUTURE_TENSE;
+         hasHandler = handlers
+               .stream()
+               .anyMatch(h -> h.getVerbs().get(VerbTense.FUTURE_TENSE).getVerb().equals(keyword));
       }
 
       if (!hasHandler) {
+         String verbs = handlers
+               .stream()
+               .map(h -> h.getVerbs().get(tense).getVerb())
+               .collect(Collectors.joining(", "));
          String error = String.format(
-               "Unrecognized step keyword '%s'!  Please use a valid keyword when describing a scenario.",
-               keyword);
+               "Unrecognized step verb '%s'!  Please use a valid %s verb when describing a %s step."
+               + "  Available verbs are: %s",
+               keyword,
+               prettyTense(tense),
+               prettyStep(tense),
+               verbs);
          context.declare(Severity.ERROR, error, step).getKeyword();
+      }
+   }
+
+   private static String prettyTense(VerbTense verbTense) {
+      return verbTense.toString().toLowerCase().replace('_', ' ');
+   }
+
+   private static String prettyStep(VerbTense verbTense) {
+      switch (verbTense) {
+         case PAST_TENSE:
+            return "given";
+         case PRESENT_TENSE:
+            return "when";
+         default:
+            return "then";
       }
    }
 }
