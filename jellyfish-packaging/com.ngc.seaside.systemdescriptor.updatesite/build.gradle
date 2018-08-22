@@ -59,11 +59,38 @@ eclipseUpdateSite {
          version = "${project.version}"
          unpack = false
       }
+      plugin {
+         id = 'com.ngc.seaside.service.log.impl.common.log4jlogservice'
+         version = "${project.version}"
+         unpack = false
+      }
       // This plugin includes 3rd party items used by com.ngc.seaside which are not packaged as OSGi bundles.
       // This "uber" JAR embeds all those non-OSGi dependencies and exports the appropriate packages.
       plugin {
          id = 'com.ngc.seaside.systemdescriptor.thirdparty'
          version = "${project.version}"
+         unpack = false
+      }
+      // These are 3rd party items that are OSGi bundles and need to be included when installing the bundles above.
+      // These come from the M2RepositoryService.
+      plugin {
+         id = 'org.eclipse.aether.api'
+         version = "$aetherVersion"
+         unpack = false
+      }
+      plugin {
+         id = 'org.eclipse.aether.spi'
+         version = "$aetherVersion"
+         unpack = false
+      }
+      plugin {
+         id = 'org.eclipse.aether.util'
+         version = "$aetherVersion"
+         unpack = false
+      }
+      plugin {
+         id = 'org.eclipse.aether.connector.basic'
+         version = "$aetherVersion"
          unpack = false
       }
    }
@@ -116,5 +143,6 @@ dependencies {
    plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject:1_2'
    plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.aopalliance:1.0_6'
 
+   // Non OSGi dependencies packaged as an uber JAR.
    plugin project(':systemdescriptor.thirdparty')
 }

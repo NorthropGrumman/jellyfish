@@ -5,9 +5,9 @@ configurations {
 
 dependencies {
    embedded "org.apache.maven:maven-model:$mavenVersion"
-   embedded "org.eclipse.aether:aether-connector-basic:$aetherVersion"
    embedded "org.apache.maven:maven-resolver-provider:$mavenVersion"
    embedded "org.apache.maven:maven-settings-builder:$mavenVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-impl:$aetherVersion"
    embedded "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
    embedded "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
 }
@@ -20,9 +20,13 @@ jar {
    }
 
    manifest {
-      attributes('Export-Package': 'org.apache.maven.*,org.eclipse.aether.*,org.codehaus.plexus.*',
-                 'Import-Package': '!com.google.errorprone',
-                 '-nouses' : 'true')
+      attributes('Export-Package': 'org.apache.maven.*,org.codehaus.plexus.*,org.eclipse.aether.impl.*,org.eclipse.aether.transport.*',
+                 'Import-Package': '!com.google.errorprone.*,!org.eclipse.sisu.*,!sun.misc,!org.codehaus.plexus.logging,*',
+                 // Bnd defaults to the version of this bundle, *not* the version of each individual package.  So don't
+                 // version the packages at all.
+                 '-nodefaultversion': 'true',
+                 // Don't generates "uses" notes on the imports.
+                 '-nouses': 'true')
    }
 
    doLast {
