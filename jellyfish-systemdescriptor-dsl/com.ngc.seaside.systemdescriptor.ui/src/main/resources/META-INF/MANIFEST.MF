@@ -34,4 +34,4 @@ Export-Package: com.ngc.seaside.systemdescriptor.ui,
  com.ngc.seaside.systemdescriptor.ui.wizard.pkg.page,
  com.ngc.seaside.systemdescriptor.ui.wizard.project,
  com.ngc.seaside.systemdescriptor.ui.wizard.project.page
-Bundle-Activator: com.ngc.seaside.systemdescriptor.ui.internal.SystemdescriptorActivator
+Bundle-Activator: com.ngc.seaside.systemdescriptor.ui.AutoDeployingSystemDescriptorActivator
