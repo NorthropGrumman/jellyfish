@@ -175,10 +175,16 @@ public class RepositoryService implements IRepositoryService {
       }
    }
 
+   /**
+    * Activates this component.
+    */
    public void activate() {
       logService.trace(getClass(), "activated");
    }
 
+   /**
+    * Deactivates this component.
+    */
    public void deactivate() {
       this.remoteRepositories.clear();
       this.repositorySystem = null;
@@ -186,18 +192,38 @@ public class RepositoryService implements IRepositoryService {
       logService.trace(getClass(), "deactivated");
    }
 
+   /**
+    * Sets the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
+   /**
+    * Removes the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
+   /**
+    * Sets the property service.
+    *
+    * @param ref the property service
+    */
    public void setPropertiesService(GradlePropertiesService ref) {
       this.propertiesService = ref;
    }
 
+   /**
+    * Removes the property service.
+    *
+    * @param ref the property service
+    */
    public void removePropertiesService(GradlePropertiesService ref) {
       setPropertiesService(null);
    }

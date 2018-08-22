@@ -19,6 +19,9 @@ public class GradlePropertiesService {
 
    private Properties properties;
 
+   /**
+    * Activates this component.
+    */
    public void activate() {
       properties = new Properties();
 
@@ -37,16 +40,29 @@ public class GradlePropertiesService {
       load(Paths.get(GRADLE_PROPERTIES_FILENAME));
    }
 
+   /**
+    * Deactivates this component.
+    */
    public void deactivate() {
       if (properties != null) {
          properties.clear();
       }
    }
 
+   /**
+    * Sets the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
+   /**
+    * Removes the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
@@ -54,7 +70,7 @@ public class GradlePropertiesService {
    /**
     * Returns the property associated with the given key. The rules for resolving the key to a property are in the
     * following order:
-    * 
+    *
     * <ol>
     * <li>From {@link System#getProperty(String)}</li>
     * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the current working directory</li>
@@ -63,7 +79,7 @@ public class GradlePropertiesService {
     * {@value #GRADLE_USER_HOME} is not set</li>
     * <li>From {@link System#getenv(String)}</li>
     * </ol>
-    * 
+    *
     * @param key property key
     * @return the property associated with the given key
     */
