@@ -2,10 +2,6 @@ package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +19,6 @@ public class GradlePropertiesService {
 
    private Properties properties;
 
-   @Activate
    public void activate() {
       properties = new Properties();
 
@@ -42,14 +37,12 @@ public class GradlePropertiesService {
       load(Paths.get(GRADLE_PROPERTIES_FILENAME));
    }
 
-   @Deactivate
    public void deactivate() {
       if (properties != null) {
          properties.clear();
       }
    }
 
-   @Reference
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }

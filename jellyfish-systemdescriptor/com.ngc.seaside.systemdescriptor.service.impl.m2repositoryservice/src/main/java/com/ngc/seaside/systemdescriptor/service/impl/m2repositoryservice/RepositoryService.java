@@ -34,10 +34,6 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -56,7 +52,6 @@ import java.util.stream.Collectors;
  * This implementation uses maven's .m2 local repository in combination with nexusConsolidated
  * (found in gradle.properties) for the remote repository.
  */
-@Component(service = IRepositoryService.class)
 public class RepositoryService implements IRepositoryService {
 
    static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
@@ -167,7 +162,6 @@ public class RepositoryService implements IRepositoryService {
       }
    }
 
-   @Activate
    public void activate() {
       DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
       locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
@@ -206,7 +200,6 @@ public class RepositoryService implements IRepositoryService {
       logService.trace(getClass(), "activated");
    }
 
-   @Deactivate
    public void deactivate() {
       this.remoteRepositories.clear();
       this.repositorySystem = null;
@@ -214,7 +207,6 @@ public class RepositoryService implements IRepositoryService {
       logService.trace(getClass(), "deactivated");
    }
 
-   @Reference
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
@@ -223,7 +215,6 @@ public class RepositoryService implements IRepositoryService {
       setLogService(null);
    }
 
-   @Reference
    public void setPropertiesService(GradlePropertiesService ref) {
       this.propertiesService = ref;
    }
