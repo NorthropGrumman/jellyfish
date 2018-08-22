@@ -9,18 +9,18 @@ eclipseDistribution {
    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
 
-   unzipEclipse.doLast {
-      configurations {
-         // Exclude transitive dependencies that are already bundled with eclipse
-         plugin {
-            pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
-               if (!it.name.startsWith('com.google.inject')) {
-                  exclude module: it.name.substring(0, it.name.indexOf('_'))
-               }
-            }
-         }
-      }
-   }
+//   unzipEclipse.doLast {
+//      configurations {
+//         // Exclude transitive dependencies that are already bundled with eclipse
+//         plugin {
+//            pluginsDirectory.eachFileMatch({ it.endsWith '.jar' }) {
+//               if (!it.name.startsWith('com.google.inject')) {
+//                  exclude module: it.name.substring(0, it.name.indexOf('_'))
+//               }
+//            }
+//         }
+//      }
+//   }
 }
 
 eclipseUpdateSite {
@@ -44,19 +44,37 @@ eclipseUpdateSite {
       }
       plugin {
          id = 'com.ngc.seaside.systemdescriptor'
-         version = '0.0.0'
+         version = "${project.version}"
          unpack = false
       }
       plugin {
          id = 'com.ngc.seaside.systemdescriptor.ui'
-         version = '0.0.0'
+         version = "${project.version}"
          unpack = false
       }
       plugin {
          id = 'com.ngc.seaside.systemdescriptor.ide'
-         version = '0.0.0'
+         version = "${project.version}"
          unpack = false
       }
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor.service.impl.xtext'
+         version = "${project.version}"
+         unpack = false
+      }
+      plugin {
+         id = 'com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps'
+         version = "${project.version}"
+         unpack = false
+      }
+
+      // Our bundles above try to import the com.google.inject package.  The default version that comes with XText
+      // and Eclipse is too old, so we need to ship our own version.
+//      plugin {
+//         id = 'com.google.inject'
+//         version = "$guiceVersion"
+//         unpack = false
+//      }
    }
 
    def sdCategory = category {
@@ -93,7 +111,16 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor:$version"
    plugin "com.ngc.seaside:systemdescriptor.ide:$version"
    plugin "com.ngc.seaside:systemdescriptor.ui:$version"
-
+   plugin "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
    plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
+
+   // Our stuff needs Guice.
+   plugin "com.google.inject:guice:$guiceVersion"
+   // These are transitive dependencies needed by Guice.  Guice does not list these items as direct dependencies.
+   // However, Guice actually tries to import packages in these JARs.  Unfortunately, the official version of these
+   // JARs do not contain a correct OSGi manifest, so we have to include the versions provided by Apache which have a
+   // correct manifest.
+   plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject:1_2'
+   plugin 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.aopalliance:1.0_6'
 }
