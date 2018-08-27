@@ -17,25 +17,22 @@ Next, install RVM and use RVM to install v2.5.0 of Ruby (2.5.0 or above is requi
 ```
 curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
 curl -sSL get.rvm.io | bash -s stable
-source /etc/profile.d/rvm.sh
+source ~/.rvm/scripts/rvm
 rvm install 2.5.1
 ```
 
 Install and run Bundler to complete the setup.  Do this from the directory that contains the `Gemfile`.
 ```
-source /etc/profile.d/rvm.sh
+source ~/.rvm/scripts/rvm
 rvm use 2.5.1
 gem install bundler
 bundle install
 ```
 
-NB: If you installed ruby as a non-root user, instead of running `source /etc/profile.d/rvm.sh`, run `source
-/home/user/.rvm/scripts/rvm`.
-
 ## Building and Deploying the Site
 Once the Jekyll gem is installed, clone this repository and run the following:
 ```
-source /etc/profile.d/rvm.sh
+source ~/.rvm/scripts/rvm
 rvm use 2.5.1
 bundle exec jekyll serve
 ```

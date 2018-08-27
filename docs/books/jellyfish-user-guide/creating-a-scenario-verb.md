@@ -17,6 +17,7 @@ verbs along the same lies as custom validators.  Custom verbs are useful when a 
 with a scenario or step.
 
 For this example, we'll create a new verb called `willEmail` which can be used in a `when` step in a scenario like this:
+
 **Example willEmail scenario**
 ```
 scenario notifyRequestorOfStatus {
@@ -144,3 +145,58 @@ script of an SD project.
 # Using the New Verb
 Verbs are deployed the same way as validators.  Simply list the containing JAR as a Gradle buildscript dependency,
 copy the JAR to the Jellyfish `lib` directory, or include the JAR in an Eclipse update site.
+
+## Using the New Verb with Eclipse
+The Eclipse tooling will automatically declare an error if a scenario verb is used that can't be found.  As a result,
+custom verbs needs to be installed into Eclipse.  This can be done in one of two ways:
+
+1. Create an Eclipse update site that includes the JAR with the verbs.  Users can create a single update site that
+   installs both Jellyfish and any custom verbs or validators.  See the `build.gradle` the
+   [Jellyfish update site](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite)
+   for an example project that creates an update site with Gradle.
+2. Using the `com.ngc.seaside.jellyfish.extraBundles` system property with Eclipse.  This option is simpler than the
+   update site option and allows users to quickly install custom extensions.  Use this option with care.  The update 
+   site requires more up front setup but is usually a better option in the long term.
+
+### Using the com.ngc.seaside.jellyfish.extraBundles Property
+This option requires the JAR containing the scenario verbs to be built as described above.  Copy the JAR to some 
+location on the local filesystem such as `/opt/jellyfish/extensions`.  Next, edit the `eclipse.ini` file of the Eclipse
+instance that has Jellyfish installed.  Add the property below under the first occurance of the
+`--add-modules=ALL-SYSTEM`:
+
+**Deploying extra plugins by updating eclipse.ini**
+```plaintext
+-Dcom.ngc.seaside.jellyfish.extraBundles=<filesystem_location>
+```
+
+Replace `<filesystem_location>` with the path to the directory that contains the JAR with the custom verbs.  A complete
+example is given below.  This example assumes the JAR is at `/opt/jellyfish/extensions`.
+
+**eclipse.ini**
+```plaintext
+-startup
+plugins/org.eclipse.equinox.launcher_1.5.0.v20180512-1130.jar
+--launcher.library
+plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.700.v20180518-1200
+-product
+org.eclipse.epp.package.dsl.product
+-showsplash
+org.eclipse.epp.package.common
+--launcher.defaultAction
+openFile
+--launcher.defaultAction
+openFile
+--launcher.appendVmargs
+-vmargs
+-Dosgi.requiredJavaVersion=1.8
+-Dosgi.instance.area.default=@user.home/eclipse-workspace
+-XX:+UseG1GC
+-XX:+UseStringDeduplication
+--add-modules=ALL-SYSTEM
+-Dcom.ngc.seaside.jellyfish.extraBundles=/opt/jellyfish/extensions
+-Dosgi.requiredJavaVersion=1.8
+-Dosgi.dataAreaRequiresExplicitInit=true
+-Xms256m
+-Xmx2024m
+--add-modules=ALL-SYSTEM
+```
