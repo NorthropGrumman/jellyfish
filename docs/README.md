@@ -10,7 +10,7 @@ Jekyll supports Windows installations but the Linux setup is easier.
 You first need to install Ruby.  If you are using a bare Linux distribution like CentOS you will need to install
 development tools first
 ```
-yum groupinstall -y 'Development Tools'
+sudo yum groupinstall -y 'Development Tools'
 ```
 
 Next, install RVM and use RVM to install v2.5.0 of Ruby (2.5.0 or above is required by Jekyll):
