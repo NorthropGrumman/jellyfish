@@ -29,6 +29,9 @@ gem install bundler
 bundle install
 ```
 
+NB: If you installed ruby as a non-root user, instead of running `source /etc/profile.d/rvm.sh`, run `source
+/home/user/.rvm/scripts/rvm`.
+
 ## Building and Deploying the Site
 Once the Jekyll gem is installed, clone this repository and run the following:
 ```
