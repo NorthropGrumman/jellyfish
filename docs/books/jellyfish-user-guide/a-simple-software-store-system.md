@@ -14,20 +14,20 @@ We'll reference a simple example system throughout the next several chapters.  W
 Jellyfish works.
 
 This example is a "Software Store" system.  This system allows users to request a new application be installed on their
-PC.  The system verifies the request, performs the installation, and then notifies the user of the status of the 
+PC.  The system verifies the request, performs the installation, and then notifies the user of the status of the
 request.  It might look something like this:
 
 ![software store][design1]
 
 This system has the following components:
-* SoftwareRequestService: This service receives and intial request, verifies the request is valid, and then forwards the
+* SoftwareRequestService: This service receives an intial request, verifies the request is valid, and then forwards the
 request with additional info to the rest of the system.
 * LicenseService: This service verfies the license for the actual software is available and all requirements to install
 the service are met.
 * PcManagementService: This service performs the actual installation of the requested software onto a user's PC.
 * EmailService: This service generates emails and notifies requestors of updates to their requests.
 
-We might model each component like so:
+Using the System Descriptor (SD) language, we might model each component like so:
 
 **SoftwareRequestService.sd**
 ```
@@ -36,18 +36,18 @@ package com.helpco.helpdesk
 import com.helpco.helpdesk.datatype.InstallationRequest
 import com.helpco.helpdesk.datatype.UnapprovedRequest
 
-model SoftwareRequestService {  
+model SoftwareRequestService {
   input {
-  	InstallationRequest installationRequest
+    InstallationRequest installationRequest
   }
-  
+
   output {
-  	UnapprovedRequest unapprovedRequest
+    UnapprovedRequest unapprovedRequest
   }
-  
+
   scenario processRequest {
-  	when receiving installationRequest
-  	then willPublish unapprovedRequest
+    when receiving installationRequest
+    then willPublish unapprovedRequest
   }
 }
 ```
@@ -59,18 +59,18 @@ package com.helpco.helpdesk
 import com.helpco.helpdesk.datatype.UnapprovedRequest
 import com.helpco.helpdesk.datatype.ReviewedRequest
 
-model LicenseService {  
+model LicenseService {
   input {
-  	UnapprovedRequest unapprovedRequest
+    UnapprovedRequest unapprovedRequest
   }
-  
+
   output {
-  	ReviewedRequest reviewedRequest
+    ReviewedRequest reviewedRequest
   }
-  
+
   scenario reviewRequest {
-  	when receiving unapprovedRequest
-  	then willPublish reviewedRequest
+    when receiving unapprovedRequest
+    then willPublish reviewedRequest
   }
 }
 
@@ -85,16 +85,16 @@ import com.helpco.helpdesk.datatype.InstallationStatus
 
 model PcManagementService {
   input {
-  	ReviewedRequest reviewedRequest
+    ReviewedRequest reviewedRequest
   }
-  
+
   output {
-  	InstallationStatus installationStatus
+    InstallationStatus installationStatus
   }
-  
+
   scenario performInstallation {
-  	when receiving reviewedRequest
-  	then willPublish installationStatus
+    when receiving reviewedRequest
+    then willPublish installationStatus
   }
 }
 
@@ -107,18 +107,18 @@ package com.helpco.helpdesk
 import com.helpco.helpdesk.datatype.InstallationStatus
 import com.helpco.helpdesk.datatype.EmailMessage
 
-model EmailService {  
+model EmailService {
   input {
-  	InstallationStatus installationStatus
+    InstallationStatus installationStatus
   }
-  
+
   output {
-  	EmailMessage emailMessage
+    EmailMessage emailMessage
   }
-  
+
   scenario notifyRequestorOfStatus {
-  	when recieving installationStatus
-  	then willPublish emailMessage
+    when recieving installationStatus
+    then willPublish emailMessage
   }
 }
 
@@ -137,36 +137,36 @@ import com.helpco.helpdesk.LicenseService
 import com.helpco.helpdesk.PcManagementService
 import com.helpco.helpdesk.EmailService
 
-model SoftwareStore {  
+model SoftwareStore {
   input {
-  	InstallationRequest installationRequest
+    InstallationRequest installationRequest
   }
-  
+
   output {
-  	EmailMessage emailMessage
+    EmailMessage emailMessage
   }
-  
+
   scenario handleInstallationRequest {
-  	when receiving installationRequest
-  	then willPublish emailMessage
+    when receiving installationRequest
+    then willPublish emailMessage
   }
-  
+
   parts {
-  	SoftwareRequestService softwareRequestService
-  	LicenseService licenseService
-  	PcManagementService pcManagementService
-  	EmailService emailService
+    SoftwareRequestService softwareRequestService
+    LicenseService licenseService
+    PcManagementService pcManagementService
+    EmailService emailService
   }
-  
+
   links {
-  	link installationRequest -> softwareRequestService.installationRequest
-  	link emailService.emailMessage -> emailMessage
-  	
-  	link softwareRequestService.unapprovedRequest -> licenseService.unapprovedRequest
-  	
-  	link licenseService.reviewedRequest -> pcManagementService.reviewedRequest
-  	
-  	link pcManagementService.installationStatus -> emailService.installationStatus
+    link installationRequest -> softwareRequestService.installationRequest
+    link emailService.emailMessage -> emailMessage
+
+    link softwareRequestService.unapprovedRequest -> licenseService.unapprovedRequest
+
+    link licenseService.reviewedRequest -> pcManagementService.reviewedRequest
+
+    link pcManagementService.installationStatus -> emailService.installationStatus
   }
 }
 
