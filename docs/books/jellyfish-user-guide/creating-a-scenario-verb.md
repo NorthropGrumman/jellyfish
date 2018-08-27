@@ -162,7 +162,7 @@ custom verbs needs to be installed into Eclipse.  This can be done in one of two
 This option requires the JAR containing the scenario verbs to be built as described above.  Copy the JAR to some 
 location on the local filesystem such as `/opt/jellyfish/extensions`.  Next, edit the `eclipse.ini` file of the Eclipse
 instance that has Jellyfish installed.  Add the property below under the first occurance of the
-`--add-modules=ALL-SYSTEM`:
+`--add-modules=ALL-SYSTEM` line:
 
 **Deploying extra plugins by updating eclipse.ini**
 ```plaintext
