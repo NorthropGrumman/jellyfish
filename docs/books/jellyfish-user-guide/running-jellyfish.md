@@ -10,14 +10,14 @@ prev-page: a-lightweight-micro-service-architecture-for-java
 ---
 {% include base.html %}
 
-We'll cover actaully running Jellyfish in this chapter.  We'll use Jellyfish to intially create the micro-service
+In this chapter, we will cover actually running Jellyfish.  We'll use Jellyfish to intially create the micro-service
 projects.  We'll then create a "system" project which is useful for testing.
 
 # Updating the SD Project
 Before we generate the project, we'll want to make a few updates to the model.  Since we've decided on using a
 micro-service architecture for our system, we want to add metadata to our model to convey that decision.  This metadata
 **does not impact Jellyfish in any way**.  It just helps communicate that the sub-components of the `SoftwareStore`
-system our realized as micro-services and not some other type of architecture.
+system are realized as micro-services and not some other type of architecture.
 
 First, we'll include the `system` stereotype in the `SoftwareStore` model:
 
@@ -43,11 +43,11 @@ model SoftwareRequestService {
 
   // ... Remaining items omitted.
 }
-``` 
+```
 
 ## Deployment Models
-One of the most useful aspects of Jellyfish is its ability to generate the neccessary infrastructure to allow these 
-micro-services to communicate with one another.  In order to do, Jellyfish must reference a __deployment model__.  A 
+One of the most useful aspects of Jellyfish is its ability to generate the neccessary infrastructure to allow these
+micro-services to communicate with one another.  In order to do, Jellyfish must reference a __deployment model__.  A
 deployment refines an existing __logical model__.  In our example, the model of the `SoftwareStore` in the file
 `SoftwareStore.sd` is that logical model.
 
@@ -58,7 +58,7 @@ This is useful for development and for our example.
 
 Jellyfish can generate a project __without__ a deployment model.  However, Jellyfish won't be able to generate some of
 the infrastructure configuration.  This will be left to the development team.  As a result, the generated project won't
-run out of the box.  We do include a deployment model, we can run our services out of the box.
+run out of the box.  If we do include a deployment model, we can run our services out of the box.
 
 ## Configuring an SD Project for Gradle
 Our final step is to configure this SD project to use Gradle.  We do this so we can upload the SD project to a remote
@@ -85,7 +85,7 @@ buildscript {
             url nexusConsolidated
         }
     }
-    
+
     dependencies {
         classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:2.13.0'
     }
@@ -104,18 +104,18 @@ a __preview__ of the 1.0.0 release (which has not been published yet).
 **Gradle wrapper**
 ```note-info
 If you are in an envionrment where you can't run the Gradle wrapper, skip the next step.  Install Gradle manaully
-instead.  Instead of running Gradle with the wrapper script, use the gradle command directly.  IE, replace ./gradlew 
-with just gradle.
+instead.  Instead of running Gradle with the wrapper script, use the gradle command directly.  IE, replace ./gradlew
+with gradle.
 ```
 
-Finally, we need to setup our project to use the Gradle.  For convenience, you can find the neccessary files
-[here](https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide%2Fgradle-wrapper-swcoe.zip).  Extract the 
-contents of this ZIP directly to the project's directory.  If using Linux, run `chmod a+x gradlew` to make the `gradlew`
+Finally, we need to setup our project to use the Gradle wrapper.  For convenience, you can find the neccessary files
+[here](https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide%2Fgradle-wrapper-swcoe.zip).  Extract the
+contents of this ZIP directly to the project's directory.  If using Linux, run `chmod +x gradlew` to make the `gradlew`
 script executable.
 
-It's now possible to run the command `./gradlew clean build`.  This command will install Gradle if Gradle is not already
+It's now possible to run the command `./gradlew clean build`.  This command will install Gradle if it is not already
 installed.  This will also automatically run `jellyfish validate` to make sure the project is valid.  Modelers can now
-use Gradle to completey control the project and build it.  Once the build is finished, inspect the `build/libs`
+use Gradle to completely control the project and build it.  Once the build is finished, inspect the `build/libs`
 directory to find two ZIP files.  One ZIP contains the System Descriptor files and the other contains the feature files.
 Users can run `./gradlew clean build` at any time to rebuild the project.
 
@@ -147,10 +147,10 @@ Once Gradle is setup, we can upload our project to a remote repository.  Use the
 # Generating a Micro-Service Project
 We can now finally run Jellyfish.  Since the `SoftwareStore` system contains four sub-components which we are going to
 implement as micro-services, we will run Jellyfish four times to generate four independent services.  First, we'll run
-Jellyfish to generate the service project for the `SoftwareRequestService`.  
+Jellyfish to generate the service project for the `SoftwareRequestService`.
 
 When we run Jellyfish we need to specify the ID of the System Descriptor project that contains the models.  Since we
-have uploaded the project to a remote repository, _we don't actually need a local copy of the SD project_ to run 
+have uploaded the project to a remote repository, _we don't actually need a local copy of the SD project_ to run
 Jellyfish.  We just need the _group ID_, _artifact ID_, and _version_ or _GAV_ of the project.  The group ID and version were
 defined in the `build.gradle` file of the SD project:
 
@@ -170,18 +170,19 @@ rootProject.name = 'helpdesk.descriptor'
 When we provide the GAV to Jellyfish, we seperate these values with a colon (`:`).  So the GAV for SD project is
 `com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT`.
 
-We need to use the `create-java-service-project` command to run create a new service project.  When using this command
+We need to use the `create-java-service-project` command to create a new service project.  When using this command
 we need to include the following arguments:
 
-* `outputDirectory`: This is the directory to store the generated project.  Most of the time, a value of `.` is fine.
+* `outputDirectory`: This is the directory in which to store the generated project.  Most of the time, a value of `.`
+  is fine.
 * `version`: Jellyfish will set the intial version of the generated project to this value.  Most projects will use
   `1.0.0-SNAPSHOT` as their first version.
-* `model`: This is the fully qualified model name to reference when generating the project.  These are usually models
-  that have a stereotype of `service`.
-* `deploymentModel`: This is the deployment of the containing system to reference when generating the infrastructure.
-  As noted previously, this is not required but allows us to have a running service out of the box.
+* `model`: This is the fully qualified model name which will be referenced when generating the project.  These are
+  usually models that have a stereotype of `service`.
+* `deploymentModel`: This is the deployment of the containing system which will be referenced when generating the
+  infrastructure.  As noted previously, this is not required but allows us to have a running service out of the box.
 
-We can generate the service project for the `SoftwareRequestService` model like this.  Note we are using the `\` 
+We can generate the service project for the `SoftwareRequestService` model like this.  Note we are using the `\`
 character to break the long lines so the command line treats the contents as a single line.
 
 **Generating the SoftwareRequestService project**
@@ -240,24 +241,24 @@ model SoftwareRequestService {
   metadata {
      "stereotypes" : ["service"],
      "codegen": {
-	   "alias": "srs"
-	 }
+       "alias": "srs"
+     }
   }
 }
 ```
 
-Now Jellyfish will refer to the `SoftwareRequestService` as `com.helpco.helpdesk.srs` when naming the JAR file and 
+Now Jellyfish will refer to the `SoftwareRequestService` as `com.helpco.helpdesk.srs` when naming the JAR file and
 Java package.
 
 # Generating a System Project
 At this point, we have generated all the required services for the `SoftwareStore` system.  These services represent all
 the components that will be deployed to realize this system in production.  However, we can use an additional Jellyfish
-command to generate a project for the entire `SoftwareStore` system.  This system will _not_ contain any deployable 
+command to generate a project for the entire `SoftwareStore` system.  This system will _not_ contain any deployable
 code.  Instead, it contains the following:
-1. A project can be used to test the entire system together.  This project is used to run tests against the full 
-`SoftwareStore` system with all of its services deploye.d
+1. A project that can be used to test the entire system together.  This project is used to run tests against the full
+`SoftwareStore` system with all of its services deployed.
 1. A project that can be used to package all of the services for the system together.  This is used for convenience to
-make it easy to produce a single ZIP file that contains all of services of the system.  
+make it easy to produce a single ZIP file that contains all of services of the system.
 
 In order to generate this project, we need to run the command `create-java-system-project`:
 
@@ -271,12 +272,12 @@ $> jellyfish create-java-system-project \
  version=1.0.0-SNAPSHOT
 ```
 
-When we run this command, we use `com.helpco.helpdesk.SoftwareStore` as the value of the `model` argument.  This is 
-because we want to generate project for the top level system, not just a service.
+When we run this command, we use `com.helpco.helpdesk.SoftwareStore` as the value of the `model` argument.  This is
+because we want to generate a project for the top level system, not just a service.
 
 We should now have a new directory named `com.helpco.helpdesk.softwarestore` in the current directory.  This project
 contains artifacts for the entire system.
 
 # Conclusion
-We'll review the structure of each of these generated projects and learn how to build and run these projects 
+We'll review the structure of each of these generated projects and learn how to build and run these projects
 in the next chapter.
