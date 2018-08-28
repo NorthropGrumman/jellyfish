@@ -30,31 +30,31 @@ and a new scenario:
 **SoftwareRequestService.sd**
 ```
 model SoftwareRequestService {
-  metadata {
-     "stereotypes" : ["service"],
-     "codegen": {
-        "alias": "srs"
-     }
-  }
+   metadata {
+      "stereotypes" : ["service"],
+      "codegen": {
+         "alias": "srs"
+      }
+   }
 
-  input {
-    InstallationRequest installationRequest
-    EmailMessage emailedInstallationRequest
-  }
+   input {
+      InstallationRequest installationRequest
+      EmailMessage emailedInstallationRequest
+   }
 
-  output {
-    UnapprovedRequest unapprovedRequest
-  }
+   output {
+      UnapprovedRequest unapprovedRequest
+   }
 
-  scenario processRequest {
-    when receiving installationRequest
-    then willPublish unapprovedRequest
-  }
+   scenario processRequest {
+      when receiving installationRequest
+      then willPublish unapprovedRequest
+   }
 
-  scenario processEmailedRequest {
-    when receiving emailedInstallationRequest
-    then willPublish unapprovedRequest
-  }
+   scenario processEmailedRequest {
+      when receiving emailedInstallationRequest
+      then willPublish unapprovedRequest
+   }
 }
 ```
 
@@ -63,18 +63,18 @@ We now need to update the inputs and links in the top level `SoftwareStore` syst
 **SoftwareStore.sd**
 ```
 model SoftwareStore {
-  input {
-    InstallationRequest installationRequest
-    EmailMessage emailedInstallationRequest // This input is new
-  }
+   input {
+      InstallationRequest installationRequest
+      EmailMessage emailedInstallationRequest // This input is new
+   }
 
-  // ... (omitted)
+   // ... (omitted)
 
-  links {
-    link emailedInstallationRequest -> softwareRequestService.emailedInstallationRequest // this link is new
-    link installationRequest -> softwareRequestService.installationRequest
-    // ... (omitted)
-  }
+   links {
+      link emailedInstallationRequest -> softwareRequestService.emailedInstallationRequest // this link is new
+      link installationRequest -> softwareRequestService.installationRequest
+      // ... (omitted)
+   }
 }
 ```
 
@@ -83,8 +83,8 @@ Finally, we can also include a new top-level scenario:
 **SoftwareStore.sd**
 ```
 scenario handleEmailedInstallationRequest {
-  when receiving emailedInstallationRequest
-  then willPublish emailMessage
+   when receiving emailedInstallationRequest
+   then willPublish emailMessage
 }
 ```
 
@@ -137,8 +137,8 @@ automatically generate this method or we can manually create it in the `Software
 ```java
 @Override
 public UnapprovedRequest doProcessEmailedRequest(EmailMessage emailedInstalledRequest) throws ServiceFaultException {
-  // TODO: implement this
-  throw new UnsupportedOperationException("not implemented");
+   // TODO: implement this
+   throw new UnsupportedOperationException("not implemented");
 }
 ```
 

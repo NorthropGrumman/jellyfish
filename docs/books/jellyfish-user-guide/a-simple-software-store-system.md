@@ -37,18 +37,18 @@ import com.helpco.helpdesk.datatype.InstallationRequest
 import com.helpco.helpdesk.datatype.UnapprovedRequest
 
 model SoftwareRequestService {
-  input {
-    InstallationRequest installationRequest
-  }
+   input {
+      InstallationRequest installationRequest
+   }
 
-  output {
-    UnapprovedRequest unapprovedRequest
-  }
+   output {
+      UnapprovedRequest unapprovedRequest
+   }
 
-  scenario processRequest {
-    when receiving installationRequest
-    then willPublish unapprovedRequest
-  }
+   scenario processRequest {
+      when receiving installationRequest
+      then willPublish unapprovedRequest
+   }
 }
 ```
 
@@ -60,18 +60,18 @@ import com.helpco.helpdesk.datatype.UnapprovedRequest
 import com.helpco.helpdesk.datatype.ReviewedRequest
 
 model LicenseService {
-  input {
-    UnapprovedRequest unapprovedRequest
-  }
+   input {
+      UnapprovedRequest unapprovedRequest
+   }
 
-  output {
-    ReviewedRequest reviewedRequest
-  }
+   output {
+      ReviewedRequest reviewedRequest
+   }
 
-  scenario reviewRequest {
-    when receiving unapprovedRequest
-    then willPublish reviewedRequest
-  }
+   scenario reviewRequest {
+      when receiving unapprovedRequest
+      then willPublish reviewedRequest
+   }
 }
 
 ```
@@ -84,18 +84,18 @@ import com.helpco.helpdesk.datatype.ReviewedRequest
 import com.helpco.helpdesk.datatype.InstallationStatus
 
 model PcManagementService {
-  input {
-    ReviewedRequest reviewedRequest
-  }
+   input {
+      ReviewedRequest reviewedRequest
+   }
 
-  output {
-    InstallationStatus installationStatus
-  }
+   output {
+      InstallationStatus installationStatus
+   }
 
-  scenario performInstallation {
-    when receiving reviewedRequest
-    then willPublish installationStatus
-  }
+   scenario performInstallation {
+      when receiving reviewedRequest
+      then willPublish installationStatus
+   }
 }
 
 ```
@@ -108,18 +108,18 @@ import com.helpco.helpdesk.datatype.InstallationStatus
 import com.helpco.helpdesk.datatype.EmailMessage
 
 model EmailService {
-  input {
-    InstallationStatus installationStatus
-  }
+   input {
+      InstallationStatus installationStatus
+   }
 
-  output {
-    EmailMessage emailMessage
-  }
+   output {
+      EmailMessage emailMessage
+   }
 
-  scenario notifyRequestorOfStatus {
-    when recieving installationStatus
-    then willPublish emailMessage
-  }
+   scenario notifyRequestorOfStatus {
+      when recieving installationStatus
+      then willPublish emailMessage
+   }
 }
 
 ```
@@ -138,36 +138,36 @@ import com.helpco.helpdesk.PcManagementService
 import com.helpco.helpdesk.EmailService
 
 model SoftwareStore {
-  input {
-    InstallationRequest installationRequest
-  }
+   input {
+      InstallationRequest installationRequest
+   }
 
-  output {
-    EmailMessage emailMessage
-  }
+   output {
+      EmailMessage emailMessage
+   }
 
-  scenario handleInstallationRequest {
-    when receiving installationRequest
-    then willPublish emailMessage
-  }
+   scenario handleInstallationRequest {
+      when receiving installationRequest
+      then willPublish emailMessage
+   }
 
-  parts {
-    SoftwareRequestService softwareRequestService
-    LicenseService licenseService
-    PcManagementService pcManagementService
-    EmailService emailService
-  }
+   parts {
+      SoftwareRequestService softwareRequestService
+      LicenseService licenseService
+      PcManagementService pcManagementService
+      EmailService emailService
+   }
 
-  links {
-    link installationRequest -> softwareRequestService.installationRequest
-    link emailService.emailMessage -> emailMessage
+   links {
+      link installationRequest -> softwareRequestService.installationRequest
+      link emailService.emailMessage -> emailMessage
 
-    link softwareRequestService.unapprovedRequest -> licenseService.unapprovedRequest
+      link softwareRequestService.unapprovedRequest -> licenseService.unapprovedRequest
 
-    link licenseService.reviewedRequest -> pcManagementService.reviewedRequest
+      link licenseService.reviewedRequest -> pcManagementService.reviewedRequest
 
-    link pcManagementService.installationStatus -> emailService.installationStatus
-  }
+      link pcManagementService.installationStatus -> emailService.installationStatus
+   }
 }
 
 ```

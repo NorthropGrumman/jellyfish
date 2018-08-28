@@ -24,11 +24,11 @@ First, we'll include the `system` stereotype in the `SoftwareStore` model:
 **SoftwareStore.sd**
 ```
 model SoftwareStore {
-  metadata {
-    "stereotypes" : ["system"]
-  }
+   metadata {
+      "stereotypes" : ["system"]
+   }
 
-  // ... Remaining items omitted.
+   // ... Remaining items omitted.
 }
 ```
 
@@ -37,11 +37,11 @@ Next, we'll add the `service` stereotype to each of the services.  For example,
 **SoftwareRequestService.sd**
 ```
 model SoftwareRequestService {
-  metadata {
-     "stereotypes" : ["service"]
-  }
+   metadata {
+      "stereotypes" : ["service"]
+   }
 
-  // ... Remaining items omitted.
+   // ... Remaining items omitted.
 }
 ```
 
@@ -78,17 +78,17 @@ Next, we need to create a file named `build.gradle`:
 **build.gradle**
 ```groovy
 buildscript {
-    repositories {
-        mavenLocal()
+   repositories {
+      mavenLocal()
 
-        maven {
-            url nexusConsolidated
-        }
-    }
+      maven {
+         url nexusConsolidated
+      }
+   }
 
-    dependencies {
-        classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:2.13.0'
-    }
+   dependencies {
+      classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:2.13.0'
+   }
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
@@ -188,11 +188,11 @@ character to break the long lines so the command line treats the contents as a s
 **Generating the SoftwareRequestService project**
 ```
 $> jellyfish create-java-service-project \
- outputDirectory=. \
- gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
- model=com.helpco.helpdesk.SoftwareRequestService \
- deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
- version=1.0.0-SNAPSHOT
+  outputDirectory=. \
+  gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+  model=com.helpco.helpdesk.SoftwareRequestService \
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+  version=1.0.0-SNAPSHOT
 ```
 
 When this command completes, a new directory named `com.helpco.helpdesk.softwarestore` should be created.  This contains
@@ -204,31 +204,31 @@ needs to change.
 **Generating the LicenseService project**
 ```
 $> jellyfish create-java-service-project \
- outputDirectory=. \
- gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
- model=com.helpco.helpdesk.LicenseService \
- deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
- version=1.0.0-SNAPSHOT
+  outputDirectory=. \
+  gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+  model=com.helpco.helpdesk.LicenseService \
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+  version=1.0.0-SNAPSHOT
 ```
 
 **Generating the PcManagementService project**
 ```
 $> jellyfish create-java-service-project \
- outputDirectory=. \
- gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
- model=com.helpco.helpdesk.PcManagementService \
- deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
- version=1.0.0-SNAPSHOT
+  outputDirectory=. \
+  gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+  model=com.helpco.helpdesk.PcManagementService \
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+  version=1.0.0-SNAPSHOT
 ```
 
 **Generating the EmailService project**
 ```
 $> jellyfish create-java-service-project \
- outputDirectory=. \
- gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
- model=com.helpco.helpdesk.EmailService \
- deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
- version=1.0.0-SNAPSHOT
+  outputDirectory=. \
+  gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+  model=com.helpco.helpdesk.EmailService \
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+  version=1.0.0-SNAPSHOT
 ```
 
 ## Configuring Code Generation
@@ -238,12 +238,12 @@ this is not desireable, a modeler can include the `codegen` metadata to override
 **Configuring the names of generated files**
 ```
 model SoftwareRequestService {
-  metadata {
-     "stereotypes" : ["service"],
-     "codegen": {
-       "alias": "srs"
-     }
-  }
+   metadata {
+      "stereotypes" : ["service"],
+      "codegen": {
+         "alias": "srs"
+      }
+   }
 }
 ```
 
@@ -265,11 +265,11 @@ In order to generate this project, we need to run the command `create-java-syste
 **Generating a SoftwareSystem project**
 ```
 $> jellyfish create-java-system-project \
- outputDirectory=. \
- gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
- model=com.helpco.helpdesk.SoftwareStore \
- deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
- version=1.0.0-SNAPSHOT
+  outputDirectory=. \
+  gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
+  model=com.helpco.helpdesk.SoftwareStore \
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
+  version=1.0.0-SNAPSHOT
 ```
 
 When we run this command, we use `com.helpco.helpdesk.SoftwareStore` as the value of the `model` argument.  This is
