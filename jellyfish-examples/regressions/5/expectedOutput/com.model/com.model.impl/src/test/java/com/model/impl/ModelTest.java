@@ -33,6 +33,18 @@ public class ModelTest {
    }
 
    @Test
+   public void doBasicPubSubWithNoCorrelationWithInput1Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+   }
+
+   @Test
+   public void doBasicPubSubWithNoCorrelationWithInput2Test() throws Exception {
+      // TODO: implement this
+      fail("not implemented");
+   }
+
+   @Test
    public void doSingleOutputCorrelationTest() throws Exception {
       // TODO: implement this
       fail("not implemented");

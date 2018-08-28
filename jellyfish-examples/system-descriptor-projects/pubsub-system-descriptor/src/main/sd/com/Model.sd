@@ -27,6 +27,12 @@ model Model {
 		 and willCorrelate input1.field1 to output1.field2
 		 and willCorrelate input1.field3.field4 to output1.field5.field6
 	}
+
+	scenario basicPubSubWithNoCorrelation {
+	   when receiving input1
+	    and receiving input2
+	   then willPublish output1
+	}
 	
 //	scenario basicSink {
 //		when receiving input1

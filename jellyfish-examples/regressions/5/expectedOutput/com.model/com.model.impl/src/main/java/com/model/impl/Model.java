@@ -30,6 +30,18 @@ public class Model extends AbstractModel {
    }
 
    @Override
+   public Data4 doBasicPubSubWithNoCorrelationWithInput1(Data1 input1) throws ServiceFaultException {
+      // TODO: implement this
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
+   public Data4 doBasicPubSubWithNoCorrelationWithInput2(Data2 input2) throws ServiceFaultException {
+      // TODO: implement this
+      throw new UnsupportedOperationException("not implemented");
+   }
+
+   @Override
    public Data4 doSingleOutputCorrelation(
                Data1 input1,
                Data2 input2) {
