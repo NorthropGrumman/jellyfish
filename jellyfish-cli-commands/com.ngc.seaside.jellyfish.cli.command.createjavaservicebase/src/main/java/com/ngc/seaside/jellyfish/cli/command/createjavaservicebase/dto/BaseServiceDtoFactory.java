@@ -271,7 +271,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
             // scenario has this input
             if (flow.getCorrelationDescription().isPresent()
-                && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+                      && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
                receive.setHasCorrelations(true);
             }
 
@@ -589,7 +589,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       // Ignore flows with input-input correlations
       if (flow.getCorrelationDescription().isPresent()
-          && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+                && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
          return Optional.empty();
       }
 
