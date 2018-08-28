@@ -17,7 +17,7 @@ dependencies {
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava' && details.requested.version == '19.0') {
-            details.useVersion '26.0-jre'
+            details.useVersion $guavaVersion
             details.because 'causes nexus lifecycle security vulnerability'
         }
     }
