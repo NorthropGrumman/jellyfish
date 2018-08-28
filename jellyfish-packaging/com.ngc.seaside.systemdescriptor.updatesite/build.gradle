@@ -94,6 +94,21 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor.ide:$version"
    plugin "com.ngc.seaside:systemdescriptor.ui:$version"
 
-   plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
-   plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
+   plugin ("com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"){
+      exclude group: 'com.google.guava', module: 'guava'
+      configurations.all {
+	     resolutionStrategy {
+	   	    force "com.google.guava:guava:$guavaVersion"
+		 }
+      }
+   }
+   plugin ("com.ngc.seaside:service.log.impl.common.log4jlogservice:$version") {
+       exclude group: 'com.google.guava', module: 'guava'
+	   configurations.all {
+	     resolutionStrategy {
+	   	    force "com.google.guava:guava:$guavaVersion"
+		 }
+      }
+   }
+
 }
