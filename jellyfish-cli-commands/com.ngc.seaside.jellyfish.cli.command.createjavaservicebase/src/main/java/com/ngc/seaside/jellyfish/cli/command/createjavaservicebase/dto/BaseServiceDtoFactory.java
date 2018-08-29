@@ -3,6 +3,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+
 import com.ngc.blocs.service.event.api.IEvent;
 import com.ngc.blocs.service.event.api.Subscriber;
 import com.ngc.blocs.service.log.api.ILogService;
@@ -46,6 +47,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -84,7 +86,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
    @Override
    public BaseServiceDto newDto(IJellyFishCommandOptions options, IModel model) {
       boolean system = CommonParameters.evaluateBooleanParameter(options.getParameters(),
-               CommonParameters.SYSTEM.getName(), false);
+                                                                 CommonParameters.SYSTEM.getName(), false);
 
       Set<String> projectDependencies = Collections.singleton(
             projectService.getEventsProjectName(options, model).getArtifactId());
@@ -165,9 +167,9 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             continue;
          }
 
-         Optional<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
-         if (pubSub.isPresent()) {
-            dto.getBasicPubSubMethods().add(pubSub.get());
+         Collection<BasicPubSubDto> pubSub = getBasicPubSubMethod(scenario, flow, dto, options);
+         if (!pubSub.isEmpty()) {
+            dto.getBasicPubSubMethods().addAll(pubSub);
             inputs.addAll(flow.getInputs());
             outputs.addAll(flow.getOutputs());
             continue;
@@ -179,6 +181,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
             outputs.addAll(flow.getOutputs());
             continue;
          }
+         // TODO TH: refactor "complex scenarios".
          Optional<ComplexScenarioDto> complex = getComplexScenario(scenario, flow, dto, options);
          if (complex.isPresent()) {
             dto.getComplexScenarios().add(complex.get());
@@ -268,7 +271,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
             // scenario has this input
             if (flow.getCorrelationDescription().isPresent()
-                  && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+                      && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
                receive.setHasCorrelations(true);
             }
 
@@ -309,32 +312,51 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       dto.setPublishMethods(publishDtos);
    }
 
-   private Optional<BasicPubSubDto> getBasicPubSubMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
-                                                         BaseServiceDto dto, IJellyFishCommandOptions options) {
+   private Collection<BasicPubSubDto> getBasicPubSubMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
+                                                           BaseServiceDto dto, IJellyFishCommandOptions options) {
 
       // check for basic scenario
-      if (flow.getInputs().size() != 1 || flow.getOutputs().size() != 1) {
-         return Optional.empty();
+      if (flow.getInputs().isEmpty() || flow.getOutputs().size() != 1) {
+         return Collections.emptyList();
       }
 
-      BasicPubSubDto pubSub = new BasicPubSubDto();
-      pubSub.setScenarioName(scenario.getName());
-      pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
+      // Use a map keyed on the fully qualified name of the data type for the input to determine if we have already
+      // setup to receive the given input type.  Use a tree map for predictable ordering.
+      Map<String, BasicPubSubDto> dtos = new TreeMap<>();
+      for (IDataReferenceField input : flow.getInputs()) {
+         // Only do this for each unique type of input.  We need this check because some models might have the same
+         // data type as input but have different field names for the same type.
+         if (!dtos.containsKey(input.getType().getFullyQualifiedName())) {
+            BasicPubSubDto pubSub = new BasicPubSubDto();
+            pubSub.setScenarioName(scenario.getName());
 
-      pubSub.setInput(getInputDto(flow.getInputs().iterator().next(), dto, options));
-      pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(),
-                                     dto,
-                                     options));
-      pubSub.getOutput().setName("do" + StringUtils.capitalize(scenario.getName()));
+            if (flow.getInputs().size() > 1) {
+               pubSub.setName("do"
+                              + StringUtils.capitalize(scenario.getName())
+                              + "With"
+                              + StringUtils.capitalize(input.getName()));
+            } else {
+               pubSub.setName("do" + StringUtils.capitalize(scenario.getName()));
+            }
 
-      pubSub.setServiceMethod(scenario.getName());
+            pubSub.setInput(getInputDto(input, dto, options));
+            pubSub.setOutput(getPublishDto(flow.getOutputs().iterator().next(),
+                                           dto,
+                                           options));
+            pubSub.getOutput().setName("do" + StringUtils.capitalize(scenario.getName()));
 
-      if (flow.getCorrelationDescription().isPresent()) {
-         pubSub.setInputOutputCorrelations(
-               getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+            pubSub.setServiceMethod(scenario.getName());
+
+            if (flow.getCorrelationDescription().isPresent()) {
+               pubSub.setInputOutputCorrelations(
+                     getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+            }
+
+            dtos.put(input.getType().getFullyQualifiedName(), pubSub);
+         }
       }
 
-      return Optional.of(pubSub);
+      return dtos.values();
    }
 
    private Optional<BasicPubSubDto> getBasicSinkMethod(IScenario scenario, IPublishSubscribeMessagingFlow flow,
@@ -475,7 +497,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       trigger.setServiceFromStatus(scenario.getName() + "FromStatus");
       trigger.setCorrelationMethod("do" + StringUtils.capitalize(scenario.getName()));
       trigger.setInputOutputCorrelations(
-               getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
+            getInputOutputCorrelations(flow.getCorrelationDescription().get(), dto, options));
 
       trigger.setInputs(flow.getInputs()
                               .stream()
@@ -567,7 +589,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
       // Ignore flows with input-input correlations
       if (flow.getCorrelationDescription().isPresent()
-            && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
+                && !flow.getCorrelationDescription().get().getCompletenessExpressions().isEmpty()) {
          return Optional.empty();
       }
 
@@ -686,10 +708,10 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
    private void computeFinalCorrelationSettings(BaseServiceDto dto) {
       dto.setCorrelationRequestHandlingEnabled(dto.getBasicPubSubMethods()
-                                                      .stream()
-                                                      .anyMatch(BasicPubSubDto::isCorrelating));
+                                                     .stream()
+                                                     .anyMatch(BasicPubSubDto::isCorrelating));
       dto.setCorrelationServiceRequired(!dto.getCorrelationMethods().isEmpty()
-                                              || dto.isCorrelationRequestHandlingEnabled());
+                                        || dto.isCorrelationRequestHandlingEnabled());
       if (dto.isCorrelationRequestHandlingEnabled()) {
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.IRequest");
          dto.getAbstractClass().getImports().add("com.ngc.blocs.requestmodel.api.Requests");
