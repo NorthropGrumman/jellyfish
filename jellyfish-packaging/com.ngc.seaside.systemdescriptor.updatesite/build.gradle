@@ -94,6 +94,8 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor.ide:$version"
    plugin "com.ngc.seaside:systemdescriptor.ui:$version"
 
+   // Added to force standardsteps to use the latest version of guava rather than
+   // guava 19.0 due to a security issue in Nexus lifecycle
    plugin ("com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"){
       exclude group: 'com.google.guava', module: 'guava'
       configurations.all {
@@ -102,6 +104,8 @@ dependencies {
 		 }
       }
    }
+   // Added to force log4jlogservice to use the latest version of guava rather than
+   // guava 19.0 due to a security issue in Nexus lifecycle
    plugin ("com.ngc.seaside:service.log.impl.common.log4jlogservice:$version") {
        exclude group: 'com.google.guava', module: 'guava'
 	   configurations.all {
