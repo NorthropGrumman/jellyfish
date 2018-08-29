@@ -16,3 +16,9 @@ dependencies {
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
+
+jar {
+   manifest {
+      attributes('Export-Package': 'com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.module')
+   }
+}

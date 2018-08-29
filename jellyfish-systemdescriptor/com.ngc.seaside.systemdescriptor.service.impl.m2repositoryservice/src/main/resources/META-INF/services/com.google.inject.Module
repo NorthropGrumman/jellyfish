@@ -1,1 +1,1 @@
-com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.RepositoryServiceGuiceModule
+com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.module.RepositoryServiceGuiceModule

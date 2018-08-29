@@ -1,6 +1,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.google.common.base.Preconditions;
+
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
@@ -34,10 +35,6 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -56,7 +53,6 @@ import java.util.stream.Collectors;
  * This implementation uses maven's .m2 local repository in combination with nexusConsolidated
  * (found in gradle.properties) for the remote repository.
  */
-@Component(service = IRepositoryService.class)
 public class RepositoryService implements IRepositoryService {
 
    static final String NEXUS_CONSOLIDATED = "nexusConsolidated";
@@ -66,27 +62,34 @@ public class RepositoryService implements IRepositoryService {
    // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>,
    private static final Pattern ARTIFACT_IDENTIFIER = Pattern.compile(
          "(?<groupId>[^:\\s@]+)"
-               + ":(?<artifactId>[^:\\s@]+)"
-               + "(?::(?<extension>[^:\\s@]+)"
-               + "(?::(?<classifier>[^:\\s@]+))?)?"
-               + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
+         + ":(?<artifactId>[^:\\s@]+)"
+         + "(?::(?<extension>[^:\\s@]+)"
+         + "(?::(?<classifier>[^:\\s@]+))?)?"
+         + ":(?<version>\\d+(?:\\.\\d+)*(?:-SNAPSHOT)?)");
    private static final String MAVEN_ENV = "M2_HOME";
    private static final String MAVEN_PROPERTY_NAME = "maven.home";
    private static final String NEXUS_USERNAME = "nexusUsername";
    private static final String NEXUS_PASSWORD = "nexusPassword";
    private static final String USER_HOME_PROPERTY_NAME = "user.home";
 
-   private ILogService logService;
    private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
+   private boolean initialized = false;
    private RepositorySystem repositorySystem;
    private RepositorySystemSession session;
    private GradlePropertiesService propertiesService;
+
+   private ILogService logService;
 
    @Override
    public Path getArtifact(String identifier) {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
       Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
                                   "invalid identifier: " + identifier);
+
+      // Defer initialization until necessary.  We do this because this service might be needed for dependencies
+      // but might not actually be used.  This is the case if this bundle is deployed in Eclipse.
+      initalizeIfNecessary();
+
       ArtifactRequest request = new ArtifactRequest();
       request.setArtifact(new DefaultArtifact(identifier));
       request.setRepositories(remoteRepositories);
@@ -112,6 +115,11 @@ public class RepositoryService implements IRepositoryService {
       Preconditions.checkNotNull(identifier, "identifier may not be null!");
       Preconditions.checkArgument(ARTIFACT_IDENTIFIER.matcher(identifier).matches(),
                                   "invalid identifier: " + identifier);
+
+      // Defer initialization until necessary.  We do this because this service might be needed for dependencies
+      // but might not actually be used.  This is the case if this bundle is deployed in Eclipse.
+      initalizeIfNecessary();
+
       Artifact baseArtifact = new DefaultArtifact(identifier);
       CollectRequest request = new CollectRequest();
       request.setRoot(new Dependency(baseArtifact, null));
@@ -136,9 +144,9 @@ public class RepositoryService implements IRepositoryService {
                .filter(artifactResult -> {
                   Artifact artifact = artifactResult.getArtifact();
                   return !(Objects.equals(artifact.getGroupId(), baseArtifact.getGroupId())
-                                 && Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId())
-                                 && Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier())
-                                 && Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
+                           && Objects.equals(artifact.getArtifactId(), baseArtifact.getArtifactId())
+                           && Objects.equals(artifact.getClassifier(), baseArtifact.getClassifier())
+                           && Objects.equals(artifact.getExtension(), baseArtifact.getExtension()));
                })
                .peek(artifactResult -> {
                   if (artifactResult.isMissing() || !artifactResult.isResolved()) {
@@ -167,46 +175,16 @@ public class RepositoryService implements IRepositoryService {
       }
    }
 
-   @Activate
+   /**
+    * Activates this component.
+    */
    public void activate() {
-      DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-      locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-      locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-      locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-      this.repositorySystem = locator.getService(RepositorySystem.class);
-
-      DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-      Optional<Path> mavenLocalRepo = findMavenLocal();
-      if (mavenLocalRepo.isPresent()) {
-         LocalRepository localRepository = new LocalRepository(mavenLocalRepo.get().toFile());
-         session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, localRepository));
-      } else {
-         logService.warn(RepositoryService.class, "Unable to find maven local repository");
-      }
-
-      Optional<RemoteRepository> nexusRemoteRepo = findRemoteNexus();
-      if (nexusRemoteRepo.isPresent()) {
-         remoteRepositories.add(nexusRemoteRepo.get());
-      } else {
-         logService.warn(RepositoryService.class, "Unable to find Nexus remote repository");
-      }
-
-      if (!mavenLocalRepo.isPresent() && !nexusRemoteRepo.isPresent()) {
-         logService.error(RepositoryService.class, "Unable to find any local or remote repositories");
-         throw new RepositoryServiceException("Unable to find any local or remote repositories");
-      }
-
-      Optional<String> trustStore = propertiesService.getProperty(SYSTEM_PROPERTY_PREFIX + TRUST_STORE_PROPERTY);
-      if (trustStore.isPresent() && System.getProperty(TRUST_STORE_PROPERTY) == null) {
-         System.setProperty(TRUST_STORE_PROPERTY, trustStore.get());
-      }
-
-      this.session = session;
-
       logService.trace(getClass(), "activated");
    }
 
-   @Deactivate
+   /**
+    * Deactivates this component.
+    */
    public void deactivate() {
       this.remoteRepositories.clear();
       this.repositorySystem = null;
@@ -214,20 +192,38 @@ public class RepositoryService implements IRepositoryService {
       logService.trace(getClass(), "deactivated");
    }
 
-   @Reference
+   /**
+    * Sets the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
+   /**
+    * Removes the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
 
-   @Reference
+   /**
+    * Sets the property service.
+    *
+    * @param ref the property service
+    */
    public void setPropertiesService(GradlePropertiesService ref) {
       this.propertiesService = ref;
    }
 
+   /**
+    * Removes the property service.
+    *
+    * @param ref the property service
+    */
    public void removePropertiesService(GradlePropertiesService ref) {
       setPropertiesService(null);
    }
@@ -252,8 +248,8 @@ public class RepositoryService implements IRepositoryService {
       RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", nexusConsolidated.get());
       if (nexusUsername.isPresent() && nexusPassword.isPresent()) {
          builder.setAuthentication(new AuthenticationBuilder().addUsername(nexusUsername.get())
-                  .addPassword(nexusPassword.get())
-                  .build());
+                                         .addPassword(nexusPassword.get())
+                                         .build());
       }
 
       return Optional.of(builder.build());
@@ -316,4 +312,42 @@ public class RepositoryService implements IRepositoryService {
       return Optional.of(userMavenRepo);
    }
 
+   private synchronized void initalizeIfNecessary() {
+      if (!this.initialized) {
+         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+         locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+         locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+         this.repositorySystem = locator.getService(RepositorySystem.class);
+
+         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+         Optional<Path> mavenLocalRepo = findMavenLocal();
+         if (mavenLocalRepo.isPresent()) {
+            LocalRepository localRepository = new LocalRepository(mavenLocalRepo.get().toFile());
+            session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, localRepository));
+         } else {
+            logService.warn(RepositoryService.class, "Unable to find maven local repository");
+         }
+
+         Optional<RemoteRepository> nexusRemoteRepo = findRemoteNexus();
+         if (nexusRemoteRepo.isPresent()) {
+            remoteRepositories.add(nexusRemoteRepo.get());
+         } else {
+            logService.warn(RepositoryService.class, "Unable to find Nexus remote repository");
+         }
+
+         if (!mavenLocalRepo.isPresent() && !nexusRemoteRepo.isPresent()) {
+            logService.error(RepositoryService.class, "Unable to find any local or remote repositories");
+            throw new RepositoryServiceException("Unable to find any local or remote repositories");
+         }
+
+         Optional<String> trustStore = propertiesService.getProperty(SYSTEM_PROPERTY_PREFIX + TRUST_STORE_PROPERTY);
+         if (trustStore.isPresent() && System.getProperty(TRUST_STORE_PROPERTY) == null) {
+            System.setProperty(TRUST_STORE_PROPERTY, trustStore.get());
+         }
+
+         this.session = session;
+         this.initialized = true;
+      }
+   }
 }

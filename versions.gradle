@@ -4,7 +4,7 @@ allprojects {
 
    ext {
       blocsPluginVersion = '0.5'
-      seasidePluginsVersion = '2.18.1'
+      seasidePluginsVersion = '2.18.2'
       sonarqubePluginVersion = '2.5'
       xtextPluginVersion = '1.0.15'
 

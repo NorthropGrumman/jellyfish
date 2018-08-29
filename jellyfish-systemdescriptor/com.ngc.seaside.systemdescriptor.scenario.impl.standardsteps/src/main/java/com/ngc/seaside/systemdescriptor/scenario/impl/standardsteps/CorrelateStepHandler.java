@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class CorrelateStepHandler extends AbstractStepHandler {
 
-   public static final ScenarioStepVerb PAST = ScenarioStepVerb.presentTense("hasCorrelated");
+   public static final ScenarioStepVerb PAST = ScenarioStepVerb.pastTense("hasCorrelated");
    public static final ScenarioStepVerb PRESENT = ScenarioStepVerb.presentTense("correlating");
    public static final ScenarioStepVerb FUTURE = ScenarioStepVerb.futureTense("willCorrelate");
 
@@ -176,7 +176,7 @@ public class CorrelateStepHandler extends AbstractStepHandler {
       } catch (RuntimeException e) {
          declareOrThrowError(context,
                              step,
-                             e.getMessage());
+                             "Invalid field references!  " + e.getMessage());
          return null;
       }
 

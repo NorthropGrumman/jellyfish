@@ -1,0 +1,46 @@
+// Create an embedded configuration.  Any dependency added to this configuration will be embedded directly into the JAR.
+configurations {
+   embedded
+}
+
+dependencies {
+   embedded "org.apache.maven:maven-model:$mavenVersion"
+   embedded "org.apache.maven:maven-resolver-provider:$mavenVersion"
+   embedded "org.apache.maven:maven-settings-builder:$mavenVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-impl:$aetherVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
+   embedded "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+}
+
+// Configure the JAR task to embedded dependencies and setup the Bundle-ClassPath header as needed.  Also, export
+// the packages that have been embedded.
+jar {
+   from configurations.embedded {
+      into 'lib'
+   }
+
+   manifest {
+      attributes('Export-Package': 'org.apache.maven.*,org.codehaus.plexus.*,org.eclipse.aether.impl.*,org.eclipse.aether.transport.*',
+                 'Import-Package': '!com.google.errorprone.*,!org.eclipse.sisu.*,!sun.misc,!org.codehaus.plexus.logging,*',
+                 // Bnd defaults to the version of this bundle, *not* the version of each individual package.  So don't
+                 // version the packages at all.
+                 '-nodefaultversion': 'true',
+                 // Don't generates "uses" notes on the imports.
+                 '-nouses': 'true')
+   }
+
+   doLast {
+      if (!configurations.embedded.getDependencies().empty) {
+         def classpath = '.,' + configurations.embedded
+               .resolve()
+               .collect({ 'lib/' + it.name })
+               .join(',')
+
+         manifest {
+            attributes('Bundle-ClassPath': classpath)
+         }
+      }
+   }
+}
+
+

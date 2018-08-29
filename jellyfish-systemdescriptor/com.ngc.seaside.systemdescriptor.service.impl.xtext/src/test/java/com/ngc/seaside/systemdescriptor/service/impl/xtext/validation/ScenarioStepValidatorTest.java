@@ -47,7 +47,7 @@ public class ScenarioStepValidatorTest {
    private IScenarioStepHandler handler;
 
    @Before
-   public void setup() throws Throwable {
+   public void setup() {
       when(step.getParent()).thenReturn(scenario);
       when(context.getObject()).thenReturn(step);
       when(context.declare(any(), any(), any())).thenReturn(step);
@@ -56,7 +56,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateGivenStep() throws Throwable {
+   public void testDoesValidateGivenStep() {
       when(step.getKeyword()).thenReturn("foo");
       when(scenario.getGivens()).thenReturn(Collections.singletonList(step));
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.PAST_TENSE));
@@ -68,7 +68,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateMissingGivenStep() throws Throwable {
+   public void testDoesValidateMissingGivenStep() {
       when(step.getKeyword()).thenReturn("bar");
       when(scenario.getGivens()).thenReturn(Collections.singletonList(step));
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.PAST_TENSE));
@@ -80,7 +80,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateWhenStep() throws Throwable {
+   public void testDoesValidateWhenStep() {
       when(step.getKeyword()).thenReturn("foo");
       when(scenario.getWhens()).thenReturn(Collections.singletonList(step));
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.PRESENT_TENSE));
@@ -92,7 +92,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateMissingWhenStep() throws Throwable {
+   public void testDoesValidateMissingWhenStep() {
       when(step.getKeyword()).thenReturn("bar");
       when(scenario.getWhens()).thenReturn(Collections.singletonList(step));
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.PRESENT_TENSE));
@@ -104,7 +104,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateThenStep() throws Throwable {
+   public void testDoesValidateThenStep() {
       when(step.getKeyword()).thenReturn("foo");
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.FUTURE_TENSE));
       when(service.getScenarioStepHandlers()).thenReturn(Collections.singletonList(handler));
@@ -115,7 +115,7 @@ public class ScenarioStepValidatorTest {
    }
 
    @Test
-   public void testDoesValidateMissingThenStep() throws Throwable {
+   public void testDoesValidateMissingThenStep() {
       when(step.getKeyword()).thenReturn("bar");
       when(handler.getVerbs()).thenReturn(mapOf("foo", VerbTense.FUTURE_TENSE));
       when(service.getScenarioStepHandlers()).thenReturn(Collections.singletonList(handler));

@@ -2,10 +2,6 @@ package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +19,9 @@ public class GradlePropertiesService {
 
    private Properties properties;
 
-   @Activate
+   /**
+    * Activates this component.
+    */
    public void activate() {
       properties = new Properties();
 
@@ -42,18 +40,29 @@ public class GradlePropertiesService {
       load(Paths.get(GRADLE_PROPERTIES_FILENAME));
    }
 
-   @Deactivate
+   /**
+    * Deactivates this component.
+    */
    public void deactivate() {
       if (properties != null) {
          properties.clear();
       }
    }
 
-   @Reference
+   /**
+    * Sets the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
+   /**
+    * Removes the log service this component will use.
+    *
+    * @param ref the log service this component will use
+    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
@@ -61,7 +70,7 @@ public class GradlePropertiesService {
    /**
     * Returns the property associated with the given key. The rules for resolving the key to a property are in the
     * following order:
-    * 
+    *
     * <ol>
     * <li>From {@link System#getProperty(String)}</li>
     * <li>From {@value #GRADLE_PROPERTIES_FILENAME} located in the current working directory</li>
@@ -70,7 +79,7 @@ public class GradlePropertiesService {
     * {@value #GRADLE_USER_HOME} is not set</li>
     * <li>From {@link System#getenv(String)}</li>
     * </ol>
-    * 
+    *
     * @param key property key
     * @return the property associated with the given key
     */
