@@ -17,15 +17,6 @@ dependencies {
    testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava' && details.requested.version == '19.0') {
-            details.useVersion '26.0-jre'
-            details.because 'causes nexus lifecycle security vulnerability'
-        }
-    }
-}
-
 jar {
    manifest {
       // Note we don't import org.eclipse.xtext.util.  If we do, this bundle will not allow Eclipse to start if it is
