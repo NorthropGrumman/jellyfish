@@ -16,7 +16,7 @@ explore a software framework written in Java that supports creating these types 
 
 # Architectures for Systems
 Our `SoftwareStore` system contains four sub-components (which are modeled as _parts_).  We haven't declared how this
-system is deployed and how the sub-components are realized, yet.  Before we can do that, when need to explore some
+system is deployed and how the sub-components are realized, yet.  Before we can do that, we need to explore some
 potential Architectures
 
 ## Single Application
@@ -28,15 +28,15 @@ of flexibility.  Note that as we add more components, the application will still
 
 ## MSA
 An alternative architecture might involve deploying the `SoftwareStore` system using micro-services.  In this style of
-deployment, each sub-component is deployed as a seperate micro-service application and process.  This means that four processes must
+deployment, each sub-component is deployed as a separate micro-service application and process.  This means that four processes must
 be executing together to form the behavior of the `SoftwareStore`.  This also means that **no single component**
 represents the entire `SoftwareStore` system.  All four services must be started and running for the system to be
 operational.
 
-This provides several advanages as it allows different parts of the system to scale at different rates.  It also allows
-each sub-component of the system be independently managed, developed, and maintained.
+This provides several advantages as it allows different parts of the system to scale at different rates.  It also allows
+each sub-component of the system to be independently managed, developed, and maintained.
 
-This is the default architecture Jellyfish perfers.  Jellyfish currently only generates for this style of architecture.
+This is the default architecture Jellyfish prefers.  Jellyfish currently only generates for this style of architecture.
 However, it's possible to extend Jellyfish with new commands that will generate an application using any desired
 architecture.
 

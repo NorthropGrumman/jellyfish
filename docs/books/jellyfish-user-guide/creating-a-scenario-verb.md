@@ -130,7 +130,7 @@ public class EmailStepHandlerModule extends AbstractModule {
 As before, be sure to create a new file in `src/main/resources/META-INF/services/` named `com.google.inject.Module`.  Its
 contents should contain the fully-qualified class name of the module:
 
-**com.google.inject.IModule**
+**com.google.inject.Module**
 ```plaintext
 com.mystuff.modeling.validation.module.EmailStepHandlerModule
 ```
@@ -138,7 +138,7 @@ com.mystuff.modeling.validation.module.EmailStepHandlerModule
 **Creating both validators and verbs**
 ```note-info
 It's possible to package both validators and verbs in a single JAR.  Simply register all verbs and scenarios with
-the JAR's Guice module.  In this case, it will only be neccessary to list a single JAR as a dependency when configuring
+the JAR's Guice module.  In this case, it will only be necessary to list a single JAR as a dependency when configuring
 the build script of an SD project.
 ```
 
@@ -161,7 +161,7 @@ custom verbs need to be installed into Eclipse.  This can be done in one of two 
 ### Using the com.ngc.seaside.jellyfish.extraBundles Property
 This option requires the JAR containing the scenario verbs to be built as described above.  Copy the JAR to some
 location on the local filesystem such as `/opt/jellyfish/extensions/`.  Next, edit the `eclipse.ini` file of the Eclipse
-instance that has Jellyfish installed.  Add the property below under the first occurance of the
+instance that has Jellyfish installed.  Add the property below under the first occurrence of the
 `--add-modules=ALL-SYSTEM` line:
 
 **Deploying extra plugins by updating eclipse.ini**
