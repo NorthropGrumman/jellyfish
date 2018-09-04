@@ -1,5 +1,4 @@
 #set( $D = '$' )
-apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.ngc.seaside.distribution.felixservice'
 
 configurations {
