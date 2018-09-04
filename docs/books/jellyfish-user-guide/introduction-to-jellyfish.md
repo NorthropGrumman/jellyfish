@@ -14,7 +14,7 @@ generate various custom artifacts from a project.  The most notable feature that
 generation.
 
 It should be noted that Jellyfish does not aim to completely generate a software application from a System Descriptor
-model.  Instead, it is used to generate infrastructure, boilerplate, or other "unintresting" (and likely error-prone)
+model.  Instead, it is used to generate infrastructure, boilerplate, or other "uninteresting" (and likely error-prone)
 aspects of an application.  Application developers are still expected to implement the core business functionality of
 the app themselves.  Jellyfish aims to generate unobtrusive code, so developers are free to implement their own
 business logic however they wish.
@@ -37,7 +37,7 @@ System Descriptor project is valid.
 The `inputDir` parameter is used to point to the specific location of the project on disk.
 
 ## Help
-Users can always run `jellyfish help` to learn about the avaiable commands and parameters needed to run a particualr
+Users can always run `jellyfish help` to learn about the available commands and parameters needed to run a particular
 Jellyfish command.
 
 **Viewing help**
@@ -97,14 +97,14 @@ Users can download the latest version of Jellyfish at
 1.  Download the file named jellyfish-X.X.X.zip listed under assets.  Replace _X.X.X_ with the latest version of
 Jellyfish.
 1. Extract the ZIP file to any location.
-1. In order to be able to run Jellyfish from any command prompt, it is neccessary to add the location where Jellyfish
+1. In order to be able to run Jellyfish from any command prompt, it is necessary to add the location where Jellyfish
 was unzipped to the system's `PATH`.  This process is different for Windows and Linux users.
     1. **Windows**: Search for `env` and select **Edit Environment Variables for your account**.
         1. Select the `PATH` variable and select **Edit**.
         1. Add the following to the field: `;<JELLYFISH_DIRECTORY>\bin` where `<JELLYFISH_DIRECTORY>` is the directory
         where the Jellyfish ZIP was extracted.
         1. Click OK to save the changes.
-    1. **Linux**: Edit the profile file of the user's perferred shell, for example `~/.bashrc`.
+    1. **Linux**: Edit the profile file of the user's preferred shell, for example `~/.bashrc`.
         1. Add the line `export PATH=<JELLYFISH_DIRECTORY>/bin:$PATH` where `<JELLYFISH_DIRECTORY>` is the directory
         where the Jellyfish ZIP was extracted.
     1.  In either case, open a new command prompt or terminal and run `jellyfish help` to verify everything is working
@@ -112,7 +112,7 @@ was unzipped to the system's `PATH`.  This process is different for Windows and 
 
 ## Configuring Jellyfish to Download Projects from a Remote Repository
 Many Jellyfish commands allow the user to specify an SD project that is stored remotely.  In this case, Jellyfish
-will automatically download the project if neccessary.  This is useful when releasing and uploading SD projects to a
+will automatically download the project if necessary.  This is useful when releasing and uploading SD projects to a
 remote repository such as Nexus.  This requires the configuration of the URL that identifies the location of the
 remote repository.  Since the Gradle build tool also needs this information, Jellyfish is configured to use the same
 settings as Gradle.
@@ -132,7 +132,7 @@ nexusConsolidated=https://nexusrepomgr.ms.northgrum.com/repository/my-project
 
 ## Gradle Setup
 Jellyfish generates projects that use [Gradle](https://gradle.org/) as their build tool.  SD projects will also use Gradle.
-Luckly, Gradle includes a feature called the [Gradle wrapper](https://docs.gradle.org/4.9/userguide/gradle_wrapper.html)
+Luckily, Gradle includes a feature called the [Gradle wrapper](https://docs.gradle.org/4.9/userguide/gradle_wrapper.html)
 which allows Gradle to automatically install itself.  Jellyfish uses the wrapper when generating projects which means
 users won't have to install Gradle before running Jellyfish.
 
@@ -183,14 +183,14 @@ Alternately, users can host their own Gradle distributions and configure Gradle 
 
 # Additional Features
 Jellyfish also provides additional features including
-* The ability to create and run custom analysis of SD projects.  Teams can use this functionalty to generate custom
-aritfacts directly from the model.
+* The ability to create and run custom analyses of SD projects.  Teams can use this functionality to generate custom
+artifacts directly from the model.
 * A Sonarqube plugin which integrates Jellyfish with Sonarqube.  This makes it possible to employ automated quality
-assessments of SD projects in the same way that quality accessments of software/code projects are performed.
+assessments of SD projects in the same way that quality assessments of software/code projects are performed.
 In particular, teams can build custom analyses that detect undesirable architectural patterns in SD projects.  Teams
-can then configure the SD projects so that the results of these analysis are posted to Sonarqube automatically and
+can then configure the SD projects so that the results of these analyses are posted to Sonarqube automatically and
 teams can review architectural trends of projects.
 * Various Gradle plugins to make it possible to perform Jellyfish actions during a Gradle build.  This is useful for
 both SD projects and software code projects that are generated from an SD project.
 
-All of these features are convered throughout this book.
+All of these features are covered throughout this book.

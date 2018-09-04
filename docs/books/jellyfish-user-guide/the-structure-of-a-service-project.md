@@ -35,11 +35,12 @@ We'll start by exploring the project for the `SoftwareRequestService`.  This pro
 We'll explore the contents of each of these files and directories below.
 
 The `README.md` file is used to describe the contents of the project.  By default, this file is empty. Users are encouraged
-to update this file to contain a simple description of the project and instructions about how to build it.
+to update this file to contain a simple description of the project and instructions about how to build it. This file is
+written using [Markdown](https://guides.github.com/features/mastering-markdown/).
 
 ## Gradle Configuration
-Generated service projects build with Gradle.  The `gradle` directory contains the neccessary files to run the Gradle
-wrapper.  As discussions in [Ch. 1]({{ safebase }}/books/jellyfish-user-guide/introduction-to-jellyfish.html), the
+Generated service projects build with Gradle.  The `gradle` directory contains the necessary files to run the Gradle
+wrapper.  As discussed in [Ch. 1]({{ safebase }}/books/jellyfish-user-guide/introduction-to-jellyfish.html), the
 wrapper makes it possible to automatically download and install Gradle if a user has never ran Gradle before.
 
 The entire contents of `com.helpco.helpdesk.softwarerequestservice` forms a single _root project_.  Each of the
@@ -57,7 +58,7 @@ run the build for the root project, Gradle builds each sub-project.
 
 We can also build sub-projects directly.  For example, we could build the sub-project
 `com.helpco.helpdesk.softwarerequestservice.tests` by moving to that directory and running the command
-`./gradlew clean build`.  This will build only that particular sub-project.
+`../gradlew clean build`.  This will build only that particular sub-project.
 
 The top level `build.gradle` and `settings.gradle` files contain the build configuration for the entire project.  The
 `settings.gradle` file declares which sub-projects make up the root project.  Only a single `settings.gradle` file is
@@ -76,12 +77,12 @@ The following sub-projects were _stubbed_ by Jellyfish:
 * `com.helpco.helpdesk.softwarerequestservice.impl`
 * `com.helpco.helpdesk.softwarerequestservice.tests`
 
-These projects are considered stubs because Jellyfish initally generates the structure of these projects as part of the
+These projects are considered stubs because Jellyfish initially generates the structure of these projects as part of the
 `create-java-service-project` command.  However, these projects are edited and maintained directly by the product team.
 Jellyfish will never again attempt to generate or modify any of these sub-projects.
 
 Each of the sub-projects serves a specific purpose:
-* `com.helpco.helpdesk.softwarerequestservice.impl`: This sub-project contains the actual implementation of the of the
+* `com.helpco.helpdesk.softwarerequestservice.impl`: This sub-project contains the actual implementation of the
   `SoftwareRequestService`.  This is usually where a product team will spend the bulk of their time.  This sub-project
   contains a class that is ready to be implemented by the team.  Teams are free to implement the service using any
   approach the want.
@@ -89,11 +90,11 @@ Each of the sub-projects serves a specific purpose:
   Instead, it contains the runtime resources needed to run the actual service.  This might include runtime configuration
   files, etc. This project also contains scripts that can be used to start the service.  When `./gradlew build` is run
   for this sub-project, a ZIP file will be created that is called a _distribution_ of the project.  This ZIP file
-  contains everything neccessary to run the service.  This includes JAR files, start scripts, runtime configuration,
+  contains everything necessary to run the service.  This includes JAR files, start scripts, runtime configuration,
   etc.
 * `com.helpco.helpdesk.softwarerequestservice.tests`: This sub-project is used to perform black-box-testing of the
-  service with Cucumber.  It references the feature files included with the model.  This project builds a seperate,
-  standalone application that runs a seperate process from the actual service.  More information about testing is
+  service with Cucumber.  It references the feature files included with the model.  This project builds a separate,
+  standalone application that runs a separate process from the actual service.  More information about testing is
   covered in the next chapter.
 * `com.helpco.helpdesk.softwarerequestservice.domain`: This sub-project contains _domain models_.  Domain models are
   POJOs (plain old Java objects) that are used to model data that flows _within_ the service.  This sub-project is used
@@ -116,9 +117,9 @@ Jellyfish and **should not be modified**.
   to the contents of the messages project but are serialization agnostic.  These types are used throughout the service.
 * `com.helpco.helpdesk.softwarerequestservice.messages`: Contains the messages that the services receives or publishes.
   These messages are specific to serialization techniques and expose details related to that serialization.
-* `com.helpco.helpdesk.softwarerequestservice.pubsubbridge`: Contains logic neccessary to allow the service to swap
+* `com.helpco.helpdesk.softwarerequestservice.pubsubbridge`: Contains logic necessary to allow the service to swap
   pub/sub for request/response or vice versa.
-* `com.helpco.helpdesk.softwarerequestservice.testsconfig`: Contains the transport configuration neccessary to run the
+* `com.helpco.helpdesk.softwarerequestservice.testsconfig`: Contains the transport configuration necessary to run the
   tests for the service.  This configuration is only used by the tests and not by the rest of the service.
 
 ## Running the Service
@@ -130,7 +131,7 @@ contains everything needed to run the application.  Run the start script inside 
 service.
 
 ## The Other Services
-The remaining services have a very similar project structure.  Each project will vary slightly based on each model but
+The remaining services have a very similar project structure.  Each project will vary slightly based on each model, but
 they are built and executed the same way.
 
 # Structure of a System Project
@@ -222,7 +223,7 @@ A system only contains two sub-projects that are stubs:
   all of the services that make up the system.
 * `com.helpco.helpdesk.softwarestore.tests`: This sub-project contains a black box test for testing the entire system.
   This test will require all of the services in the system to be running.  This test is implemented in a similar way as
-  the tests for services (IE, they both use Cucumber).  The test runs as a seperate application and this sub-project
+  the tests for services (IE, they both use Cucumber).  The test runs as a separate application and this sub-project
   will produce a runnable application for the tests.
 
 ## Generated Sub-projects
@@ -236,15 +237,15 @@ should not be edited.
 
 ## Running the System
 The `com.helpco.helpdesk.softwarestore.distribution` sub-project is provided for convenience to make it easy to run the
-entire system.  Before building the system's distribution, **it is neccessary to build and "install" the service
+entire system.  **Before building the system's distribution, it is necessary to build and "install" the service
 projects** that make up the system.  This means running the command `./gradlew build publishToMavenLocal` for each of
 the services described above.  Once complete, the command `./gradlew clean build` can be run for the root project of the
 system.
 
 The build will produce a ZIP that can be found in the `build` directory of the
 `com.helpco.helpdesk.softwarestore.distribution` sub-project.  This ZIP contains all of the services and a single
-start script that will start all four services as different processes.  This is primarly used for testing on a single
-host and such a script might not be useful for services that deploy on seperate hosts.
+start script that will start all four services as different processes.  This is primarily used for testing on a single
+host and such a script might not be useful for services that deploy on separate hosts.
 
 # Conclusion
 This chapter provided a detailed break-down of the services that Jellyfish generates.  The next chapter will cover

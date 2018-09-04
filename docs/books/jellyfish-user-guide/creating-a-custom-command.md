@@ -62,8 +62,8 @@ public class ExampleCommand extends AbstractJellyfishCommand {
       return new DefaultUsage(
          "This is the description of what the command does and how to use it.",
          // These are required and optional parameters for the command.
-         new DefaultParameter("foo").setDescription("the foo parameter is used to ...").setRequired(true),
-         new DefaultParameter("bar").setDescription("the bar parameter is used to ...").setRequired(false)
+         new DefaultParameter<>("foo").setDescription("the foo parameter is used to ...").setRequired(true),
+         new DefaultParameter<>("bar").setDescription("the bar parameter is used to ...").setRequired(false)
       );
    }
 
@@ -122,8 +122,8 @@ protected IUsage createUsage() {
       "This is the description of what the command does and how to use it.",
       // These are required parameters for the command.
       CommonParameters.MODEL.required(),
-      new DefaultParameter("foo").setDescription("the foo parameter is used to ...").setRequired(true),
-      new DefaultParameter("bar").setDescription("the bar parameter is used to ...").setRequired(false)
+      new DefaultParameter<>("foo").setDescription("the foo parameter is used to ...").setRequired(true),
+      new DefaultParameter<>("bar").setDescription("the bar parameter is used to ...").setRequired(false)
    );
 }
 
@@ -153,7 +153,7 @@ public class ExampleCommandModule extends AbstractModule {
 As before, be sure to create a new file in `src/main/resources/META-INF/services/` named `com.google.inject.Module`.  Its
 contents should contain the fully qualified class name of the module:
 
-**com.google.inject.IModule**
+**com.google.inject.Module**
 ```plaintext
 com.mystuff.modeling.validation.module.ExampleCommandModule
 ```
@@ -165,7 +165,7 @@ An analysis command is implemented by extending `AbstractJellyfishAnalysisComman
 ```java
 public class ExampleAnalysisCommand extends AbstractJellyfishAnalysisCommand {
 
-   public static final String NAME = "exmaple-analysis";
+   public static final String NAME = "example-analysis";
 
    public AnalyzeInputsOutputsCommand() {
       super(NAME);
@@ -230,8 +230,8 @@ public enum ExampleFindingTypes implements ISystemDescriptorFindingType {
 }
 ```
 
-This declares the different _types_ of findings.  Findings have a unqiue ID, a description, and a severity level.  Note
-that is example actually loads the description from a Markdown file.  Markdown will be converted to HTML when the
+This declares the different _types_ of findings.  Findings have a unique ID, a description, and a severity level.  Note
+that this example actually loads the description from a Markdown file.  Markdown will be converted to HTML when the
 HTML report is generated.  In order for this to work, we'll need a file named `no-inputs.md` in the directory
 `src/main/resources/docs/`.  This file might look like this:
 
@@ -288,14 +288,14 @@ Likewise, the analysis command can be invoked like this:
 **Running the analysis command**
 ```plaintext
 jellyfish analyze \
-  analyses=examle-analysis \
+  analyses=example-analysis \
   reports=html-report  \
   reportName=analysis-results \
   outputDirectory=output/results/ \
   gav=my.group:my.sd.project:1.0.0
 ```
 
-Any findings reported by the command we be in the HTML report located at `output/results/analysis-results.html`.
+Any findings reported by the command will be in the HTML report located at `output/results/analysis-results.html`.
 
 # Conclusion
 Teams can build a single JAR that contains all their custom validators, scenario verbs, and commands.  This JAR can

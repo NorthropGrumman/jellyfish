@@ -28,7 +28,7 @@ We can build the project with the command `./gradlew clean build`.
 The `build` directory of the sub-project will be populated after the project is built.  This directory contains a
 ZIP file that contains the testing application.  The ZIP file contains everything necessary to test the actual
 `SoftwareRequestService`.  We can run the tests by running the start script inside the `bin/` directory.  Since the tests
-are run as a seperate process, we need start the actual `SoftwareRequestService` service before starting the tests or
+are run as a separate process, we need to start the actual `SoftwareRequestService` service before starting the tests, or
 they will fail.
 
 The distribution ZIP also contains a `resources/` directory.  Within this directory is a directory structure that mirrors
@@ -38,8 +38,8 @@ are included.  Feature files for other services or systems are omitted.
 
 ## Implementing Tests
 By default, all tests are not implemented.  Product teams must implement these tests by implementing
-[Cucumber step definitions](https://docs.cucumber.io/guides/10-minute-tutorial/).  These definitions turn the phases
-in feature files into executable code.  Step defintions can be stored in the package
+[Cucumber step definitions](https://docs.cucumber.io/guides/10-minute-tutorial/).  These definitions turn the phrases
+in feature files into executable code.  Step definitions can be stored in the package
 `com.helpco.helpdesk.srs.tests.steps` within the tests sub-project.
 
 **Step definitions and multiple classes**
@@ -50,7 +50,7 @@ to be implemented in the same class.  Steps can be broken into multiple classes 
 
 # Testing Systems
 Systems are tested the same way.  Our `SoftwareStore` system also contains a feature file named
-`SoftwareStore.handleInstallationRequest.feature`.  Unlike tests for indiviual services, tests for systems require all
+`SoftwareStore.handleInstallationRequest.feature`.  Unlike tests for individual services, tests for systems require all
 services of a system to be running.
 
 We can run the tests for our `SoftwareStore` system by running the start script generated in the

@@ -18,8 +18,8 @@ Instead, we use Gradle to build and maintain our generated projects.
 
 **Gradle and Jellyfish**
 ```note-info
-Gradle actually uses Jellyfish internally when a service project is being built.  So even thought Jellyfish isn't be
-used directly it's still being used indirectly by Gradle during a build.
+Gradle actually uses Jellyfish internally when a service project is being built.  So even though Jellyfish isn't being
+used directly, it's still being used indirectly by Gradle during a build.
 ```
 
 # Updating the Model
@@ -131,7 +131,7 @@ systemDescriptor {
 Now perform a new build with the command `./gradlew clean build`.  The project will not compile due to errors in
 the sub-project `com.helpco.helpdesk.softwarerequestservice.impl`.  This is due to a missing method that is not
 implemented.  This error is the result of adding a new scenario to `SoftwareRequestService` model.  An IDE can
-automatically generate this method or we can manually create it in the `SoftwareRequestService` class:
+automatically generate this method, or we can manually create it in the `SoftwareRequestService` class:
 
 **SoftwareRequestService.java**
 ```java

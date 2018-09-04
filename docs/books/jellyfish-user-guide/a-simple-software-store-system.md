@@ -20,12 +20,12 @@ request.  It might look something like this:
 ![software store][design1]
 
 This system has the following components:
-* SoftwareRequestService: This service receives an intial request, verifies the request is valid, and then forwards the
+* SoftwareRequestService: This service receives an initial request, verifies the request is valid, and then forwards the
 request with additional info to the rest of the system.
-* LicenseService: This service verfies the license for the actual software is available and all requirements to install
+* LicenseService: This service verifies the license for the actual software is available and all requirements to install
 the service are met.
 * PcManagementService: This service performs the actual installation of the requested software onto a user's PC.
-* EmailService: This service generates emails and notifies requestors of updates to their requests.
+* EmailService: This service generates emails and notifies requesters of updates to their requests.
 
 Using the System Descriptor (SD) language, we might model each component like so:
 
@@ -117,7 +117,7 @@ model EmailService {
    }
 
    scenario notifyRequestorOfStatus {
-      when recieving installationStatus
+      when receiving installationStatus
       then willPublish emailMessage
    }
 }

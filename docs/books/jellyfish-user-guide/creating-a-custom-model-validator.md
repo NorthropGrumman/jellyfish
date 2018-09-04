@@ -15,13 +15,13 @@ the ability to create custom validators that can validate models, data, or other
 create validation rules they want to enforce in their models.  These validation rules are applied
 
 * when an SD project is edited with Eclipse
-* when an SD project is built using Gradle with the command `./gradlew build`
-* when an SD project is validated with Jellyfish with the command `jellyfish validate`
+* when an SD project is built with Gradle using the command `./gradlew build`
+* when an SD project is validated with Jellyfish using the command `jellyfish validate`
 
-Validation rules are packaged in a validation plugins which are just JARs or OSGi bundles.
+Validation rules are packaged in validation plugins which are just JARs or OSGi bundles.
 
 # Creating a New Validator
-Validators are created in Java by implemening the `ISystemDescriptorValidator` interface.  A new project needs to be
+Validators are created in Java by implementing the `ISystemDescriptorValidator` interface.  A new project needs to be
 created that contains the classes for the validator.  Users can use whichever build tool they prefer; this example will
 use Gradle.
 
@@ -55,7 +55,7 @@ find this version in the
 
 **Additional Gradle setup**
 ```note-info
-A Gradle project actually requires additional setup.  IE, it is usually necessary to apply the Java plugin to a
+A Gradle project actually requires additional setup.  IE, it is usually necessary to apply the Java and bnd plugins to a
 Java project.  The complete configuration of a Java project with Gradle is outside the scope of this guide, so we
 omit the details of the full project.
 ```
@@ -88,8 +88,8 @@ can invoke most any getter method on the object that is being validated after ca
 issue on that field. However, you cannot declare an error on the following:
 * `getFullyQualifiedName` of either the `IModel` or `IData` interface.  This is a derived property, declare an error on
   the name field of the model instead.
-* You cannot declare a error on a named child of any object (ie, something that implements `INamedChild`).  Instead, you
-  need to validate the child during the appropriate callback.  For example, if you wanted to validate scenario of a
+* You cannot declare an error on a named child of any object (ie, something that implements `INamedChild`).  Instead, you
+  need to validate the child during the appropriate callback.  For example, if you wanted to validate a scenario of a
   model, you would override `validateScenario`  and perform that check in that method, not in `validateModel`.
 * Note that all the children of a model may not be available during validation since validation is performed live as
   parsing progresses.  Always be sure to validate an object in the correct callback.
@@ -111,7 +111,7 @@ protected void validateDataReferenceField(IValidationContext<IDataReferenceField
 }
 ```
 
-A validator is a Guice managed component.  This means you can get dependencies injected via Guice with the `@Inject`
+A validator is a Guice-managed component.  This means you can get dependencies injected via Guice with the `@Inject`
 annotation.  For example, you could log something in your validator like this:
 
 **ExampleModelValidator.java**
@@ -161,7 +161,7 @@ the directory `src/main/resources/META-INF/services/`.  Inside the file, list th
 module. Assume the module is contained in the package `com.mystuff.modeling.validation.module`.  The file would
 look like this:
 
-**com.google.inject.IModule**
+**com.google.inject.Module**
 ```plaintext
 com.mystuff.modeling.validation.module.ExampleModelValidatorModule
 ```
@@ -258,7 +258,7 @@ distribution directory.  The validator will be automatically used when running J
 This deployment option is used to show validation errors and warnings directly inside Eclipse as a modeler is editing
 files.  It is necessary to package the JAR into an Eclipse update site to be able to use the JAR inside Eclipse.
 
-In this example, we are going to package our validator in its own update site that is seperate from the update site
+In this example, we are going to package our validator in its own update site that is separate from the update site
 for Jellyfish.  This will require users to first install the Jellyfish update site and then the custom update site.
 Some teams may prefer to produce an update site that also installs Jellyfish itself so users don't have to configure
 multiple update sites.  See the
@@ -337,7 +337,7 @@ dependencies {
 The `eclipseDistribution` section configures the version of Eclipse to use to actually build the update site.
 `eclipseUpdateSite` is used to configure the update site itself. This configuration declares the license, copyright,
 etc of the software.  Note the `plugin` section is where we declare the JARs that make up the software.  A feature
-can reference any number of plugins.  **Plugins must be built as OSGi JARs.**  Attempting to reference an plain JAR in
+can reference any number of plugins.  **Plugins must be built as OSGi JARs.**  Attempting to reference a plain JAR in
 an update site will not work correctly.
 
 Next, the `MyStuff` category is declared.  This configures how Eclipse shows installable features to users.

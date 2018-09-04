@@ -10,7 +10,7 @@ prev-page: a-lightweight-micro-service-architecture-for-java
 ---
 {% include base.html %}
 
-In this chapter, we will cover actually running Jellyfish.  We'll use Jellyfish to intially create the micro-service
+In this chapter, we will cover actually running Jellyfish.  We'll use Jellyfish to initially create the micro-service
 projects.  We'll then create a "system" project which is useful for testing.
 
 # Updating the SD Project
@@ -46,8 +46,8 @@ model SoftwareRequestService {
 ```
 
 ## Deployment Models
-One of the most useful aspects of Jellyfish is its ability to generate the neccessary infrastructure to allow these
-micro-services to communicate with one another.  In order to do, Jellyfish must reference a __deployment model__.  A
+One of the most useful aspects of Jellyfish is its ability to generate the necessary infrastructure to allow these
+micro-services to communicate with one another.  In order to do so, Jellyfish must reference a __deployment model__.  A
 deployment refines an existing __logical model__.  In our example, the model of the `SoftwareStore` in the file
 `SoftwareStore.sd` is that logical model.
 
@@ -103,12 +103,19 @@ a __preview__ of the 1.0.0 release (which has not been published yet).
 
 **Gradle wrapper**
 ```note-info
-If you are in an envionrment where you can't run the Gradle wrapper, skip the next step.  Install Gradle manaully
+If you are in an environment where you can't run the Gradle wrapper, skip the next step.  Install Gradle manaully
 instead.  Instead of running Gradle with the wrapper script, use the gradle command directly.  IE, replace ./gradlew
 with gradle.
 ```
 
-Finally, we need to setup our project to use the Gradle wrapper.  For convenience, you can find the neccessary files
+**Jellyfish version**
+```note-info
+The `build.gradle` file specifies a dependency to Jellyfish using
+`classpath 'com.ngc.seaside:jellyfish.cli.gradle.plugins:2.13.0'`. Be sure to change the version `2.13.0` to the
+actual version of Jellyfish that you have.
+```
+
+Finally, we need to setup our project to use the Gradle wrapper.  For convenience, you can find the necessary files
 [here](https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide%2Fgradle-wrapper-swcoe.zip).  Extract the
 contents of this ZIP directly to the project's directory.  If using Linux, run `chmod +x gradlew` to make the `gradlew`
 script executable.
@@ -142,7 +149,7 @@ When we are finished, the directory structure should look like this:
 This setup requires a properly configured gradle.properties file.  Please see Ch. 1 for details.
 ```
 
-Once Gradle is setup, we can upload our project to a remote repository.  Use the command `./gradlew upload` to do this.
+Once Gradle is setup, we can publish our project to a remote repository.  Use the command `./gradlew publish` to do this.
 
 # Generating a Micro-Service Project
 We can now finally run Jellyfish.  Since the `SoftwareStore` system contains four sub-components which we are going to
@@ -167,7 +174,7 @@ The artifact ID is the name of the project.  This was given in the `settings.gra
 rootProject.name = 'helpdesk.descriptor'
 ```
 
-When we provide the GAV to Jellyfish, we seperate these values with a colon (`:`).  So the GAV for SD project is
+When we provide the GAV to Jellyfish, we separate these values with a colon (`:`).  So the GAV for SD project is
 `com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT`.
 
 We need to use the `create-java-service-project` command to create a new service project.  When using this command
@@ -175,7 +182,7 @@ we need to include the following arguments:
 
 * `outputDirectory`: This is the directory in which to store the generated project.  Most of the time, a value of `.`
   is fine.
-* `version`: Jellyfish will set the intial version of the generated project to this value.  Most projects will use
+* `version`: Jellyfish will set the initial version of the generated project to this value.  Most projects will use
   `1.0.0-SNAPSHOT` as their first version.
 * `model`: This is the fully qualified model name which will be referenced when generating the project.  These are
   usually models that have a stereotype of `service`.
@@ -197,6 +204,12 @@ $> jellyfish create-java-service-project \
 
 When this command completes, a new directory named `com.helpco.helpdesk.softwarestore` should be created.  This contains
 the service project.  We'll explore the structure of this project in the next chapter.
+
+**Parameter values with spaces**
+```note-info
+For Windows, if the `outputDirectory` value contains a space, surround the value in quotes:
+`outputDirectory="c:\Program Files\project"`
+```
 
 We can now run Jellyfish to generate projects for the remaining sub-components.  Only the value of the `model` argument
 needs to change.
@@ -233,7 +246,7 @@ $> jellyfish create-java-service-project \
 
 ## Configuring Code Generation
 By default, Jellyfish will use the name of the model to name the JAR/bundle and Java packages of the generated code.  If
-this is not desireable, a modeler can include the `codegen` metadata to override the JAR and Java package names:
+this is not desirable, a modeler can include the `codegen` metadata to override the JAR and Java package names:
 
 **Configuring the names of generated files**
 ```
