@@ -1,14 +1,13 @@
 package com.ngc.seaside.jellyfish.utilities.parsing;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import com.google.common.io.LineProcessor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,7 +71,7 @@ public class ParsingResultLogging {
       lines.add(String.format("File: %s", offendingFile == null ? "unknown"
                                                                 : offendingFile.toAbsolutePath()));
       lines.add(String.format("%s: %s", issue.getSeverity(), issue.getMessage()));
-      if (offendingFile != null && offendingFile.toFile().isFile()) {
+      if (offendingFile != null && Files.isRegularFile(offendingFile)) {
          lines.addAll(printOffendingLine(issue));
       }
 
@@ -84,9 +83,10 @@ public class ParsingResultLogging {
 
       try {
          ISourceLocation location = issue.getLocation();
-         String line = Files.asCharSource(location.getPath().toFile(),
-                                          Charsets.UTF_8)
-               .readLines(new LineFinder(location.getLineNumber()));
+         String line = Files.lines(location.getPath(), StandardCharsets.UTF_8)
+                  .skip(location.getLineNumber() - 1)
+                  .findFirst()
+                  .get();
          if (line != null) {
             lines.add("");
             lines.add(line);
@@ -103,29 +103,4 @@ public class ParsingResultLogging {
       return lines;
    }
 
-   private static class LineFinder implements LineProcessor<String> {
-
-      private final int targetLineNumber;
-      private int currentLineNumber = 0;
-      private String line = null;
-
-      private LineFinder(int targetLineNumber) {
-         this.targetLineNumber = targetLineNumber;
-      }
-
-      @Override
-      public boolean processLine(String line) {
-         currentLineNumber++;
-         boolean isTargetLine = currentLineNumber == targetLineNumber;
-         if (isTargetLine) {
-            this.line = line;
-         }
-         return !isTargetLine;
-      }
-
-      @Override
-      public String getResult() {
-         return line;
-      }
-   }
 }
