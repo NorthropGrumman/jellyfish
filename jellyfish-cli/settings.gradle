@@ -12,6 +12,9 @@ project(':com.ngc.seaside.jellyfish.cli.command.validate').name = 'jellyfish.cli
 include 'com.ngc.seaside.jellyfish.cli.command.help'
 project(':com.ngc.seaside.jellyfish.cli.command.help').name = 'jellyfish.cli.command.help'
 
+include 'com.ngc.seaside.jellyfish.cli.command.version'
+project(':com.ngc.seaside.jellyfish.cli.command.version').name = 'jellyfish.cli.command.version'
+
 include 'com.ngc.seaside.jellyfish.service.api'
 project(':com.ngc.seaside.jellyfish.service.api').name = 'jellyfish.service.api'
 
