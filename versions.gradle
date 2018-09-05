@@ -36,6 +36,8 @@ allprojects {
       m2directory = project.file("${project.rootProject.projectDir}/../build/dependencies-m2")
       dependenciesReportFile = project.file("${project.rootProject.projectDir}/../build/dependencies.tsv")
       m2DeploymentScriptFile = project.file("${project.rootProject.projectDir}/../build/deploy.sh")
+
+      licenseFile = project.file("${project.rootProject.projectDir}/../LICENSE")
    }
 
    plugins.withId('java') {
@@ -46,7 +48,7 @@ allprojects {
    plugins.withId('com.github.hierynomus.license') {
       license {
          // Use this for the license file.
-         header = file('../LICENSE')
+         header = file(licenseFile)
          // Automatically update the year in the license.
          ext.year = Calendar.getInstance().get(Calendar.YEAR)
          // Handle META-INF/services.

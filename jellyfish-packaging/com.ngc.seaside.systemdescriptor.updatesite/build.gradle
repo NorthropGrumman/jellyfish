@@ -26,6 +26,12 @@ eclipseDistribution {
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
 }
 
+def licenseText = project.resources.text.fromFile(licenseFile).asString()
+licenseText = new groovy.text.SimpleTemplateEngine()
+      .createTemplate(licenseText)
+      .make(['year': Calendar.getInstance().get(Calendar.YEAR)])
+      .toString()
+
 eclipseUpdateSite {
    
    def sdFeature = feature {
@@ -39,11 +45,11 @@ eclipseUpdateSite {
       }
       copyright {
          url = 'http://www.systemdescriptor.seaside.ngc.com/copyright'
-         text = project.resources.text.fromFile(project.file('src/main/resources/license.txt')).asString()
+         text = licenseText
       }
       license {
          url = 'http://www.systemdescriptor.seaside.ngc.com/license'
-         text = copyright.text
+         text = licenseText
       }
       plugin {
          id = 'com.ngc.seaside.systemdescriptor'
