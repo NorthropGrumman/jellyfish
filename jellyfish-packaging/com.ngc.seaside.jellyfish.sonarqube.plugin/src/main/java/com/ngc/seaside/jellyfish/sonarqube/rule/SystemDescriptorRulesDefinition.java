@@ -122,13 +122,13 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
             // Adapt the finding types to rules.
             .map(FindingTypeRuleAdapter::new)
                .forEach(rule -> {  // Weird indent for Checkstyle.
-            	  if (rule.getFindingType().getSeverity() != Severity.INFO) {
-	                  rule.setReportingOutputService(result.getInjector().getInstance(IReportingOutputService.class));
-	                  // Add the rule to the complete set which includes the manual rules.
-	                  rules.add(rule);
-	                  // Add a mapping from finding type to rule key.
-	                  ruleKeys.put(rule.getFindingType(), rule.getKey());
-            	  }
+                  if (rule.getFindingType().getSeverity() != Severity.INFO) {
+                     rule.setReportingOutputService(result.getInjector().getInstance(IReportingOutputService.class));
+                     // Add the rule to the complete set which includes the manual rules.
+                     rules.add(rule);
+                     // Add a mapping from finding type to rule key.
+                     ruleKeys.put(rule.getFindingType(), rule.getKey());
+                  }
                });
    }
 
