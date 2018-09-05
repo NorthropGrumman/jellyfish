@@ -23,13 +23,23 @@ import java.util.Properties;
 @Component(service = ICommand.class)
 public class VersionCommand implements ICommand<ICommandOptions> {
 
+   /**
+    * The command name
+    */
    public static final String COMMAND_NAME = "version";
+
+   /**
+    * The command usage
+    */
    public static final IUsage COMMAND_USAGE = new DefaultUsage(
          "Prints the current Jellyfish version along with library dependency locations.");
 
+   /**
+    * The environment variables that will be displayed along with the version information
+    */
    public static final Map<String, String> ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES = new HashMap<>();
-   public static final String USER_HOME = System.getProperty("user.home");
 
+   private static final String USER_HOME = System.getProperty("user.home");
    private static final String DEFAULT_JELLYFISH_USER_HOME = USER_HOME + "/.jellyfish/plugins";
    private static final String DEFAULT_GRADLE_USER_HOME = USER_HOME + "/.gradle";
    private static final String DEFAULT_M2_USER_HOME = USER_HOME + "/.m2";
@@ -40,6 +50,10 @@ public class VersionCommand implements ICommand<ICommandOptions> {
    private ILogService logService;
    private String version;
 
+   /**
+    * Initialize environment variables to display along with their default values that will be displayed if the
+    * variables are not set in the user's environment.
+    */
    public VersionCommand() {
       ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.put("JELLYFISH_USER_HOME", DEFAULT_JELLYFISH_USER_HOME);
       ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.put("GRADLE_USER_HOME", DEFAULT_GRADLE_USER_HOME);
