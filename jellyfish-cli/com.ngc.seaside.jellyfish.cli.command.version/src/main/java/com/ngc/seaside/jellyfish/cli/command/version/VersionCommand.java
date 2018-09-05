@@ -32,7 +32,7 @@ public class VersionCommand implements ICommand<ICommandOptions> {
     * The command usage
     */
    public static final IUsage COMMAND_USAGE = new DefaultUsage(
-         "Prints the current Jellyfish version along with library dependency locations.");
+         "Prints the current Jellyfish version along with environment information.");
 
    /**
     * The environment variables that will be displayed along with the version information
