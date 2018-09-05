@@ -6,6 +6,7 @@ dependencies {
    implementation "com.ngc.blocs:service.api:$blocsVersion"
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
+   implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
    compileOnly "org.osgi:osgi.core:$osgiVersion"
    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
