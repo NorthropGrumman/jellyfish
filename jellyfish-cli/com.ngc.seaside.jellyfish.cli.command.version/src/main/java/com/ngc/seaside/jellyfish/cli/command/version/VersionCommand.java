@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 @Component(service = ICommand.class)
 public class VersionCommand implements ICommand<ICommandOptions> {
@@ -93,17 +94,32 @@ public class VersionCommand implements ICommand<ICommandOptions> {
    }
 
    private void displayVersions() {
-      logService.info(getClass(), "Jellyfish" + getSpaces("Jellyfish") + getJellyfishVersion());
-      logService.info(getClass(), "Java" + getSpaces("Java") + getJavaVersion());
+      logItem("Jellyfish", this::getJellyfishVersion);
+      logItem("Java", this::getJavaVersion);
+   }
+
+   private void logItem(String name, Callable<String> function) {
+      try {
+         logService.info(getClass(), name + getSpaces(name) + function.call());
+      } catch (Exception e) {
+         throw new RuntimeException(String.format("Could not log item: %s", name), e);
+      }
+   }
+
+   private String getSpaces(String name) {
+      final int DEFAULT_NUM_EXTRA_SPACES = 5;
+
+      int longestEnvVarNameLength = ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet()
+            .stream()
+            .mapToInt(String::length)
+            .max()
+            .orElseGet(null);
+
+      return StringUtils.repeat(' ', longestEnvVarNameLength + DEFAULT_NUM_EXTRA_SPACES - name.length());
    }
 
    private void logBlankLine() {
       logService.info(getClass(), "");
-   }
-
-   private void displayEnvironmentVariables() {
-      ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet().stream().sorted().forEach(name ->
-            logService.info(getClass(), name + getSpaces(name) + getEnvironmentVariableValueOrDefault(name)));
    }
 
    private String getJellyfishVersion() {
@@ -128,16 +144,11 @@ public class VersionCommand implements ICommand<ICommandOptions> {
       return System.getProperty("java.version");
    }
 
-   private String getSpaces(String name) {
-      final int DEFAULT_NUM_EXTRA_SPACES = 5;
-
-      int longestEnvVarNameLength = ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet()
+   private void displayEnvironmentVariables() {
+      ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet()
             .stream()
-            .mapToInt(String::length)
-            .max()
-            .orElseGet(null);
-
-      return StringUtils.repeat(' ', longestEnvVarNameLength + DEFAULT_NUM_EXTRA_SPACES - name.length());
+            .sorted()
+            .forEach(name -> logItem(name, () -> getEnvironmentVariableValueOrDefault(name)));
    }
 
    private String getEnvironmentVariableValueOrDefault(String name) {
