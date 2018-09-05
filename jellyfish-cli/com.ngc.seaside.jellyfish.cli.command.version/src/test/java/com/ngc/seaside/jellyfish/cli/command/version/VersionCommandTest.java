@@ -51,8 +51,8 @@ public class VersionCommandTest {
 
    @Test
    public void testCommandDisplaysEnvironmentVariables() {
-      for (String name : VersionCommand.ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet()) {
-         assertTrue(name + " is not present!", text.matches(".*" + name + "\\h+[\\w/]+( \\(default\\))?.*"));
-      }
+      VersionCommand.ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES.keySet()
+            .forEach(name -> assertTrue(String.format("%s is not present!", name),
+                                        text.matches(".*" + name + "\\h+[\\w/]+( \\(default\\))?.*")));
    }
 }
