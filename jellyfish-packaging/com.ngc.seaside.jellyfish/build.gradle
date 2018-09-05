@@ -40,6 +40,7 @@ dependencies {
 
    implementation "com.ngc.seaside:jellyfish.cli.command.help:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.validate:$version"
+   implementation "com.ngc.seaside:jellyfish.cli.command.version:$version"
 
    implementation "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version"
    commandTemplate "com.ngc.seaside:jellyfish.cli.command.createjavadistribution:$version:template-service@zip"
