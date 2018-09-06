@@ -111,7 +111,6 @@ public class HelpCommandTest {
       assertTrue(output.contains("Usage 1"));
       assertTrue(output.contains("Usage 2"));
 
-      assertFalse(output.contains("param"));
       assertFalse(output.contains("Description"));
    }
 
