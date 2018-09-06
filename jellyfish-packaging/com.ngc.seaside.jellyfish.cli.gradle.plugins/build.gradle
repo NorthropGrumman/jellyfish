@@ -30,6 +30,7 @@ dependencies {
    implementation "com.ngc.seaside:guice.modules:$version"
    implementation "com.ngc.seaside:jellyfish.service.impl.templateservice:$version"
    implementation "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+   implementation "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:$licensePluginVersion"
 
    implementation gradleApi()
    implementation localGroovy()

@@ -125,7 +125,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-lang') {
                // No "ci" task for SD projects.
-               sh '../gradlew clean build install --parallel'
+               sh '../gradlew clean license build install --parallel'
             }
          }
       }
