@@ -182,8 +182,6 @@ we need to include the following arguments:
 
 * `outputDirectory`: This is the directory in which to store the generated project.  Most of the time, a value of `.`
   is fine.
-* `version`: Jellyfish will set the initial version of the generated project to this value.  Most projects will use
-  `1.0.0-SNAPSHOT` as their first version.
 * `model`: This is the fully qualified model name which will be referenced when generating the project.  These are
   usually models that have a stereotype of `service`.
 * `deploymentModel`: This is the deployment of the containing system which will be referenced when generating the
@@ -198,8 +196,7 @@ $> jellyfish create-java-service-project \
   outputDirectory=. \
   gav=com.ngc.seaside:helpdesk.descriptor:1.0.0-SNAPSHOT \
   model=com.helpco.helpdesk.SoftwareRequestService \
-  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore \
-  version=1.0.0-SNAPSHOT
+  deploymentModel=com.helpco.helpdesk.LocalSoftwareStore
 ```
 
 When this command completes, a new directory named `com.helpco.helpdesk.softwarestore` should be created.  This contains
