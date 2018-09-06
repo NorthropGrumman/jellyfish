@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -113,7 +114,7 @@ public class JellyfishCommandProviderTest {
 
    @Test(expected = CommandException.class)
    public void testDoesCheckRequiredParametersBeforeRunningCommand() {
-      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setRequired(true));
+      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setParameterCategory(ParameterCategory.REQUIRED));
 
       IJellyFishCommand command = mockedCommand("foo-command");
       when(command.getUsage()).thenReturn(usage);

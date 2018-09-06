@@ -23,6 +23,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +78,7 @@ public class AbstractCommandProviderTest {
 
    @Test(expected = CommandException.class)
    public void testDoesVerifyRequiredParameters() {
-      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setRequired(true));
+      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setParameterCategory(ParameterCategory.REQUIRED));
       when(command.getUsage()).thenReturn(usage);
 
       DefaultParameterCollection parameters = new DefaultParameterCollection();

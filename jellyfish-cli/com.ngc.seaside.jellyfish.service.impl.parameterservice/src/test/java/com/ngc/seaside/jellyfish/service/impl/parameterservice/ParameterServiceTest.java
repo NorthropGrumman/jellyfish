@@ -21,6 +21,7 @@ import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -122,9 +123,9 @@ public class ParameterServiceTest {
 
       DefaultUsage usage1 = new DefaultUsage(
             "Description",
-            new DefaultParameter<>("key1").setRequired(true),
-            new DefaultParameter<>("key2").setRequired(false),
-            new DefaultParameter<>("key3").setRequired(true));
+            new DefaultParameter<>("key1").setParameterCategory(ParameterCategory.REQUIRED),
+            new DefaultParameter<>("key2").setParameterCategory(ParameterCategory.ADVANCED),
+            new DefaultParameter<>("key3").setParameterCategory(ParameterCategory.REQUIRED));
 
       assertTrue(delegate.isUsageSatisfied(usage1, collection));
       IParameterCollection unset = delegate.getUnsetRequiredParameters(usage1, collection);
@@ -135,9 +136,9 @@ public class ParameterServiceTest {
       IParameterCollection collection2 = delegate.parseParameters(missingParameters);
       DefaultUsage usage2 = new DefaultUsage(
             "Description",
-            new DefaultParameter<>("key1").setRequired(true),
-            new DefaultParameter<>("key2").setRequired(true),
-            new DefaultParameter<>("key3").setRequired(true));
+            new DefaultParameter<>("key1").setParameterCategory(ParameterCategory.REQUIRED),
+            new DefaultParameter<>("key2").setParameterCategory(ParameterCategory.REQUIRED),
+            new DefaultParameter<>("key3").setParameterCategory(ParameterCategory.REQUIRED));
 
       assertFalse(delegate.isUsageSatisfied(usage2, collection2));
       IParameterCollection unset2 = delegate.getUnsetRequiredParameters(usage2, collection2);
