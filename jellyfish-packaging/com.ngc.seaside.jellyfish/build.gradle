@@ -165,6 +165,15 @@ seasideApplication {
    }
 }
 
+startScripts.doLast {
+   unixScript.text = unixScript.text.replaceFirst('(?m)^CLASSPATH=.*?$', '$0:\\${JELLYFISH_USER_HOME:-~/.jellyfish}/plugins/*')
+   windowsScript.text = windowsScript.text.replaceFirst(/(?m)^set CLASSPATH=.*?(?="$)/, '''
+      if NOT defined JELLYFISH_USER_HOME (
+          set JELLYFISH_USER_HOME="%USERPROFILE%\\\\.jellyfish"
+      )
+      $0;%JELLYFISH_USER_HOME%\\\\plugins\\\\*'''.stripIndent())
+}
+
 copyApplicationResources {
    dependsOn copyCommandTemplate
 }
