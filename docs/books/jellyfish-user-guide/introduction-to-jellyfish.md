@@ -29,12 +29,12 @@ can be run like this:
 
 **jellyfish CLI example**
 ```
-$> jellyfish validate inputDir=/home/me/my-sd-project
+$> jellyfish validate inputDirectory=/home/me/my-sd-project
 System Descriptor project is valid.
 -- SUCCESS (00:00:03.173) --
 ```
 
-The `inputDir` parameter is used to point to the specific location of the project on disk.
+The `inputDirectory` parameter is used to point to the specific location of the project on disk.
 
 ## Help
 Users can always run `jellyfish help` to learn about the available commands and parameters needed to run a particular
@@ -43,21 +43,22 @@ Jellyfish command.
 **Viewing help**
 ```
 $> jellyfish help
-Usage: jellyfish command [option1=value1 ...]
+Usage: jellyfish <command-name> [parameter1=value1 ...]
+Jellyfish is a command-line tool for inspecting System Descriptor projects and generating various custom artifacts
+from a project. Most commands require you to identify the System Descriptor project, either using the parameter
+`gav=<groupId>:<artifactId>:version` or `inputDirectory=<path-to-project>`.
 
 Commands:
 
-
-   analyze                                Run various types of analysis and
-                                          generates reports.
-   analyze-budget                         Analyzes the budgets of a model and
-                                          its parts.
-   analyze-inputs-outputs                 Checks that models which have
-                                          inputs also have outputs.
-   console-report                         Outputs the results of analysis to
-                                          the console.  This command is
-                                          rarely run directly; instead it is
-                                          run with the 'analyze' command.
+   analyze                                Runs various types of analysis and generates reports
+   analyze-budget                         Analyzes the budgets of a model and its parts. This command is rarely ran
+                                          directly; instead it is run with the 'analyze' command.
+   analyze-features                       Checks that scenarios have a corresponding feature file and vice versa.
+                                          This command is rarely ran directly; instead it is run with the 'analyze'
+                                          command.
+   analyze-inputs-outputs                 Checks that models which have inputs also have outputs
+   console-report                         Outputs the results of analysis to the console.  This command is rarely
+                                          ran directly; instead it is run with the 'analyze' command.
 ...
 ```
 
@@ -74,19 +75,19 @@ Run various types of analysis and generates reports.
 required parameters:
 
 
-   analyses                        Configures the analysis to execute.  The
-                                   values are comma (,) separated.
-
+   analyses                        Configures the analysis to execute.  The values are comma (,) separated.
+   gav                             The identifier of a system descriptor project in the form
+                                   <groupId>:<artifactId>:<version>; inputDirectory can be optionally used instead
+                                   of this parameter
 
 
 
 optional parameters:
 
 
-   reports                         Configures the reports to be generated after
-                                   performing analysis.  The values are comma
-                                   (,) separated.
-
+   inputDirectory                  Base directory of the system descriptor project
+   reports                         Configures the reports to generated after performing analysis. The values are
+                                   comma (,) separated.
 ```
 
 # Jellyfish Setup
