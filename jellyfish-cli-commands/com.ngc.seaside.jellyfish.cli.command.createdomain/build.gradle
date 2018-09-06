@@ -37,3 +37,7 @@ dependencies {
     testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
     testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
+
+license {
+    exclude 'service-domain.java.vm'
+}
