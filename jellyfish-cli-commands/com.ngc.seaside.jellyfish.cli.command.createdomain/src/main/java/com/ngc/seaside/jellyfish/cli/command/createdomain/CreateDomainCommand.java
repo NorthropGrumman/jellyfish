@@ -38,6 +38,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.jellyfish.utilities.resource.ITemporaryFileResource;
 import com.ngc.seaside.jellyfish.utilities.resource.TemporaryFileResource;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
@@ -73,19 +74,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component(service = IJellyFishCommand.class)
-public class CreateDomainCommand implements IJellyFishCommand {
+public class CreateDomainCommand extends AbstractJellyfishCommand {
 
    private static final String NAME = "create-domain";
-   private static final IUsage USAGE = createUsage();
    private static final String DEFAULT_DOMAIN_TEMPLATE_FILE = "service-domain.java.vm";
    static final String BLOCS_PLUGINS_DEPENDENCY = "com.ngc.blocs:gradle.plugin";
 
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
-   public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    public static final String EXTENSION_PROPERTY = "extension";
-   public static final String BUILD_GRADLE_TEMPLATE_PROPERTY = "buildGradleTemplate";
    public static final String DOMAIN_TEMPLATE_FILE_PROPERTY = "domainTemplateFile";
    public static final String USE_VERBOSE_IMPORTS_PROPERTY = "useVerboseImports";
 
@@ -97,58 +95,10 @@ public class CreateDomainCommand implements IJellyFishCommand {
 
    static final Path DOMAIN_PATH = Paths.get("src", "main", "resources", "domain");
 
-   private ILogService logService;
-   private ITemplateService templateService;
    private IResourceService resourceService;
-   private IProjectNamingService projectNamingService;
-   private IPackageNamingService packageNamingService;
-   private IBuildManagementService buildManagementService;
 
-   @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
-      final IParameterCollection parameters = commandOptions.getParameters();
-      final IModel model = evaluateModelParameter(commandOptions);
-      final Supplier<IProjectInformation> projectInfoSupplier = evaluateProjectNamerParameter(commandOptions, model);
-
-      IProjectInformation projectInfo = projectInfoSupplier.get();
-      final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
-      final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
-      final boolean useVerboseImports = CommonParameters.evaluateBooleanParameter(parameters,
-                                                                                  USE_VERBOSE_IMPORTS_PROPERTY);
-      final Function<INamedChild<IPackage>, String> packageGenerator = evaluatePackageGeneratorParameter(
-            commandOptions);
-      final Predicate<INamedChild<IPackage>> generatedObjectPredicate = evaluateObjectPredicate(commandOptions);
-
-      final Path outputDir = evaluateOutputDirectory(parameters);
-      final Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
-
-      final Path xmlFile = projectDir.resolve(DOMAIN_PATH).resolve(model.getFullyQualifiedName() + ".xml");
-      final Set<String> exportPackages = generateDomainXml(xmlFile,
-                                                           model,
-                                                           generatedObjectPredicate,
-                                                           packageGenerator,
-                                                           useVerboseImports);
-
-      createGradleBuild(projectDir, commandOptions, domainTemplateFile, exportPackages, clean);
-      createDomainTemplate(projectDir, domainTemplateFile);
-      if (CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
-                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
-                                                    true)) {
-         buildManagementService.registerProject(commandOptions, projectInfo);
-      }
-
-      // Register blocs plugins as a required dependency.
-      buildManagementService.registerDependency(commandOptions, BLOCS_PLUGINS_DEPENDENCY);
+   public CreateDomainCommand() {
+      super(NAME);
    }
 
    @Activate
@@ -242,6 +192,65 @@ public class CreateDomainCommand implements IJellyFishCommand {
       setBuildManagementService(null);
    }
 
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage("Generate a BLoCS domain model gradle project.",
+                              CommonParameters.GROUP_ID,
+                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.OUTPUT_DIRECTORY.required(),
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.CLEAN,
+                              CommonParameters.UPDATE_GRADLE_SETTING,
+                              new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
+                                    .setDescription("The velocity template file")
+                                    .setRequired(false),
+                              new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
+                                    .setDescription(
+                                          "If true, imports from the same package will be included for "
+                                          + "generated domains")
+                                    .setRequired(false),
+                              new DefaultParameter<String>(EXTENSION_PROPERTY)
+                                    .setDescription("The extension of the generated domain files")
+                                    .setRequired(false));
+   }
+
+   @Override
+   protected void doRun() {
+      final IParameterCollection parameters = getOptions().getParameters();
+      final IModel model = getModel();
+      final Supplier<IProjectInformation> projectInfoSupplier = evaluateProjectNamerParameter(getOptions(), model);
+
+      IProjectInformation projectInfo = projectInfoSupplier.get();
+      final Path domainTemplateFile = evaluateDomainTemplateFile(parameters);
+      final boolean clean = CommonParameters.evaluateBooleanParameter(parameters, CLEAN_PROPERTY);
+      final boolean useVerboseImports = CommonParameters.evaluateBooleanParameter(parameters,
+                                                                                  USE_VERBOSE_IMPORTS_PROPERTY);
+      final Function<INamedChild<IPackage>, String> packageGenerator =
+            evaluatePackageGeneratorParameter(getOptions());
+      final Predicate<INamedChild<IPackage>> generatedObjectPredicate = evaluateObjectPredicate(getOptions());
+
+      final Path outputDir = evaluateOutputDirectory(parameters);
+      final Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
+
+      final Path xmlFile = projectDir.resolve(DOMAIN_PATH).resolve(model.getFullyQualifiedName() + ".xml");
+      final Set<String> exportPackages = generateDomainXml(xmlFile,
+                                                           model,
+                                                           generatedObjectPredicate,
+                                                           packageGenerator,
+                                                           useVerboseImports);
+
+      createGradleBuild(projectDir, getOptions(), domainTemplateFile, exportPackages, clean);
+      createDomainTemplate(projectDir, domainTemplateFile);
+      if (CommonParameters.evaluateBooleanParameter(getOptions().getParameters(),
+                                                    CommonParameters.UPDATE_GRADLE_SETTING.getName(),
+                                                    true)) {
+         buildManagementService.registerProject(getOptions(), projectInfo);
+      }
+
+      // Register blocs plugins as a required dependency.
+      buildManagementService.registerDependency(getOptions(), BLOCS_PLUGINS_DEPENDENCY);
+   }
+
    @SuppressWarnings("unchecked")
    private Predicate<INamedChild<IPackage>> evaluateObjectPredicate(IJellyFishCommandOptions options) {
       Predicate<INamedChild<IPackage>> predicate = __ -> true;
@@ -279,20 +288,6 @@ public class CreateDomainCommand implements IJellyFishCommand {
          namer = () -> projectNamingService.getDomainProjectName(options, model);
       }
       return namer;
-   }
-
-   /**
-    * Returns the {@link IModel} associated with the value of the {@link #MODEL_PROPERTY}.
-    *
-    * @param commandOptions command options
-    * @return the {@link IModel}
-    * @throws CommandException if the model name is invalid or missing
-    */
-   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
-      ISystemDescriptor sd = commandOptions.getSystemDescriptor();
-      IParameterCollection parameters = commandOptions.getParameters();
-      final String modelName = parameters.getParameter(MODEL_PROPERTY).getStringValue();
-      return sd.findModel(modelName).orElseThrow(() -> new CommandException("Unknown model: " + modelName));
    }
 
    /**
@@ -375,18 +370,13 @@ public class CreateDomainCommand implements IJellyFishCommand {
          extension = commandOptions.getParameters().getParameter(EXTENSION_PROPERTY).getStringValue();
       }
 
-      String template = CreateDomainCommand.class.getPackage().getName();
-      if (commandOptions.getParameters().containsParameter(BUILD_GRADLE_TEMPLATE_PROPERTY)) {
-         template = commandOptions.getParameters().getParameter(BUILD_GRADLE_TEMPLATE_PROPERTY).getStringValue();
-      }
-
       DefaultParameterCollection parameters = new DefaultParameterCollection();
       parameters.addParameter(new DefaultParameter<>("options", commandOptions));
       parameters.addParameter(new DefaultParameter<>("velocityFile", domainTemplateFile.getFileName()));
       parameters.addParameter(new DefaultParameter<>("packages", packages));
       parameters.addParameter(new DefaultParameter<>(EXTENSION_PROPERTY, extension));
 
-      templateService.unpack(template, parameters, projectDir, clean);
+      unpackDefaultTemplate(parameters, projectDir, clean);
    }
 
    /**
@@ -604,35 +594,5 @@ public class CreateDomainCommand implements IJellyFishCommand {
       object.setGenerated(generated);
       object.setEnumValues(enumVal.getValues().stream().collect(Collectors.joining(" ")));
       return object;
-   }
-
-   /**
-    * Create the usage for this command.
-    *
-    * @return the usage.
-    */
-   private static IUsage createUsage() {
-      return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
-                              CommonParameters.OUTPUT_DIRECTORY.required(),
-                              CommonParameters.MODEL.required(),
-                              CommonParameters.CLEAN,
-                              CommonParameters.UPDATE_GRADLE_SETTING,
-                              new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
-                                    .setDescription("The velocity template file")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
-                                    .setDescription(
-                                          "If true, imports from the same package will be included for "
-                                          + "generated domains")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(EXTENSION_PROPERTY)
-                                    .setDescription("The extension of the generated domain files")
-                                    .setRequired(false),
-                              new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
-                                    .setDescription(
-                                          "Name of template used to generate the domain project build.gradle")
-                                    .setRequired(false));
    }
 }

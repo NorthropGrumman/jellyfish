@@ -44,8 +44,6 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
 
-   static final String GRADLE_JELLYFISH_COMMAND_PARAMETER_NAME = "gradleJellyfishCommand";
-
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME = "create-java-cucumber-tests";
    static final String CREATE_JAVA_CUCUMBER_TESTS_CONFIG_COMMAND_NAME = "create-java-cucumber-tests-config";
