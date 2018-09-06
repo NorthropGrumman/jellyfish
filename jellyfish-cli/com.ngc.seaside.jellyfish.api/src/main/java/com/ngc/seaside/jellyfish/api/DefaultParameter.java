@@ -27,6 +27,7 @@ public class DefaultParameter<T> implements IParameter<T> {
    private T value;
    private String description = "";
    private boolean required;
+   private ParameterCategory paramCategory;
 
    /**
     * Creates a new parameter with the given nam
@@ -85,6 +86,16 @@ public class DefaultParameter<T> implements IParameter<T> {
 
    public DefaultParameter<T> setRequired(boolean required) {
       this.required = required;
+      return this;
+   }
+   
+   @Override
+   public ParameterCategory getParameterCategory() {
+      return paramCategory;
+   }
+   
+   public DefaultParameter<T> setParameterCategory(ParameterCategory paramCategory) {
+      this.paramCategory = paramCategory;
       return this;
    }
 

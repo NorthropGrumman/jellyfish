@@ -38,5 +38,13 @@ public interface IParameter<T> {
     *
     * @return true if the parameter is required.
     */
+   @Deprecated
    boolean isRequired();
+   
+   /**
+    * Get the category of the parameter.
+    * 
+    * @return the parameter category.
+    */
+   ParameterCategory getParameterCategory();
 }
