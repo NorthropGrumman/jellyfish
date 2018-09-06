@@ -72,22 +72,22 @@ public class XtextSourceLocatorServiceIT {
    public void testModel() {
       String filename = "Alarm.sd";
       IModel alarm = sd.findModel("clocks.models.Alarm").get();
-      testLocation(alarm, filename, 6, 7, 5);
+      testLocation(alarm, filename, 22, 7, 5);
       IDataReferenceField input = alarm.getInputs().getByName("currentTime").get();
-      testLocation(input, filename, 17, 13, 11);
+      testLocation(input, filename, 33, 13, 11);
       IModelReferenceField requires = alarm.getRequiredModels().getByName("speaker").get();
-      testLocation(requires, filename, 13, 17, 7);
+      testLocation(requires, filename, 29, 17, 7);
       IScenario scenario = alarm.getScenarios().getByName("triggerAlerts").get();
-      testLocation(scenario, filename, 21, 15, 13);
+      testLocation(scenario, filename, 37, 15, 13);
    }
 
    @Test
    public void testData() {
       String filename = "Time.sd";
       IData time = sd.findData("clocks.datatypes.Time").get();
-      testLocation(time, filename, 3, 6, 4);
+      testLocation(time, filename, 19, 6, 4);
       IDataField field = time.getFields().getByName("hour").get();
-      testLocation(field, filename, 9, 7, 4);
+      testLocation(field, filename, 25, 7, 4);
    }
 
    private static void testLocation(Object o, String filename, int line, int column, int length) {

@@ -107,7 +107,7 @@ public class ParsingDelegateIT {
 
       IParsingIssue issue = result.getIssues().iterator().next();
       ISourceLocation location = issue.getLocation();
-      assertEquals("wrong line number!", 9, location.getLineNumber());
+      assertEquals("wrong line number!", 25, location.getLineNumber());
       assertEquals("wrong column number!", 3, location.getColumn());
       assertNotNull("error message should not be null!", issue.getMessage());
       assertEquals("file not correct!", time.toAbsolutePath(), location.getPath());
