@@ -221,24 +221,24 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
     */
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
-      return new DefaultUsage("Description of requirements-allocation-matrix command",
+      return new DefaultUsage("Generates a matrix showing requirements and which services cover them",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
-                                    "Format of the output. The possible values are default and csv. Default: default.")
+                                    "Format of the output; possible values are default and csv")
                                     .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                    "File where the output is sent.")
+                                    "File where the output is sent; default prints to stdout")
                                     .setRequired(false),
                               new DefaultParameter(SCOPE_PROPERTY).setDescription(
-                                    "Keyword scope (metadata, input, output, etc..). "
-                                    + "Default: model.metadata.json.stereotypes.")
+                                    "Keyword scope (metadata, input, output, etc..); "
+                                    + "default: model.metadata.json.stereotypes")
                                     .setRequired(false),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
-                                    "The values in which to search for in the scope defined. This is a comma separated "
-                                    + "string. Default: service.")
+                                    "The values in which to search for in the scope defined as a comma-separated "
+                                    + "string; default: service")
                                     .setRequired(false),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
-                                    "AND, OR, NOT (or their lowercase counterparts): should the items be AND'd "
-                                    + "together or OR'd together: default: OR.")
+                                    "How the values should be logically combined; "
+                                    + "possible values are AND, OR, NOT; default: OR")
                                     .setRequired(false));
    }
 

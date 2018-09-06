@@ -177,7 +177,7 @@ public class CreateJavaServiceCommand implements IJellyFishCommand {
 
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the service for a Java application",
+            "Generates a Gradle project containing the actual implementation of a service",
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),

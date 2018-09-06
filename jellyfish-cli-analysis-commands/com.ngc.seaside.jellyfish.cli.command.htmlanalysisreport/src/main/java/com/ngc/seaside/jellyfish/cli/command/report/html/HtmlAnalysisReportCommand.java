@@ -86,10 +86,10 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
    @Override
    public IUsage getUsage() {
       return new DefaultUsage(
-            "Outputs the results of analysis to an HTML report.  This command is rarely ran directly;"
+            "Outputs the results of analysis to an HTML report. This command is rarely ran directly;"
             + " instead it is run with the 'analyze' command.",
-            new DefaultParameter<String>(REPORT_NAME_PARAMETER_NAME)
-                  .setDescription("The name of the report to generate.  The report files will be located within the"
+            new DefaultParameter<>(REPORT_NAME_PARAMETER_NAME)
+                  .setDescription("The name of the report to generate. The report files will be located within the"
                                   + " directory given by the outputDirectory parameter.")
                   .setRequired(true),
             CommonParameters.OUTPUT_DIRECTORY.required());

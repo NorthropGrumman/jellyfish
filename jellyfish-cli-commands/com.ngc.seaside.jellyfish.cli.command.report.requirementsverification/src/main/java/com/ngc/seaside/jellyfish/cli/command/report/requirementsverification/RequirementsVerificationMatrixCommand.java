@@ -66,20 +66,20 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
     */
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
-      return new DefaultUsage("Generates a requirements verification matrix for a given model stereotype.",
+      return new DefaultUsage("Generates a matrix showing requirements and which services' acceptance tests cover them",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
-                                    "Allows the user to define the output format. "
-                                    + "The possible values are default and csv.")
+                                    "Format of the output; possible values are default and csv")
                                     .setRequired(false),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                    "Allows the user to define the file where the output will be stored. "
-                                    + "Default: prints to stdout."),
+                                    "File where the output is sent; default prints to stdout")
+                                    .setRequired(false),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
-                                    "The values in which to search as a comma separated string. Default: service.")
+                                    "The values in which to search for in the scope defined as a comma-separated "
+                                    + "string; default: service")
                                     .setRequired(false),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
-                                    "AND, OR, NOT: determines if the items be AND'd together or OR'd together. "
-                                    + "Default: OR.")
+                                    "How the values should be logically combined; "
+                                    + "possible values are AND, OR, NOT; default: OR")
                                     .setRequired(false));
    }
 

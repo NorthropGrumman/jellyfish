@@ -45,8 +45,8 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
    public static final String DEPLOYMENT_MODEL_NAME_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
 
-   public static final String PROJECT_NAME_PROPERTY = "projectName";
-   public static final String VERSION_PROPERTY = "version";
+   public static final String PROJECT_NAME_PROPERTY = CommonParameters.PROJECT_NAME.getName();
+   public static final String VERSION_PROPERTY = CommonParameters.VERSION.getName();
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
@@ -167,21 +167,15 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output"
-            + " directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
+            "Generates the root Gradle files for a new Jellyfish project",
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            new DefaultParameter<>(PROJECT_NAME_PROPERTY)
-                  .setDescription("The name of the Gradle project. This should use hyphens and lower case letters,"
-                                  + " (ie my-project)")
-                  .setRequired(false),
+            CommonParameters.PROJECT_NAME,
             new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
                   .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
                                   + "  Defaults to the current version of Jellyfish.")
                   .setRequired(false),
             CommonParameters.GROUP_ID,
-            new DefaultParameter<>(VERSION_PROPERTY)
-                  .setDescription("The version to use for the Gradle project")
-                  .setRequired(true),
+            CommonParameters.VERSION,
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.DEPLOYMENT_MODEL,

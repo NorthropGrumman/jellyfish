@@ -223,8 +223,10 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
 
    @Override
    protected IUsage createUsage() {
+      //                "Generates the generated service configuration for a Cucumber tests",
       return new DefaultUsage(
-               "Generates the generated service configuration for a Cucumber tests",
+               "Generates a Gradle project responsible for transport configuration "
+               + "and other configurations for a service's acceptance tests",
                CommonParameters.GROUP_ID,
                CommonParameters.ARTIFACT_ID,
                CommonParameters.MODEL.required(),

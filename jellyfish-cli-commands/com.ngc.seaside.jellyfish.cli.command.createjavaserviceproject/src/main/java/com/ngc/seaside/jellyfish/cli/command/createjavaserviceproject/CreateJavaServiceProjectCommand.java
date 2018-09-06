@@ -22,7 +22,7 @@ import java.util.Optional;
 public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
 
    static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
-   static final String PROJECT_NAME_PROPERTY = "projectName";
+   static final String PROJECT_NAME_PROPERTY = CommonParameters.PROJECT_NAME.getName();
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
@@ -87,16 +87,11 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    protected IUsage createUsage() {
       Map<String, IParameter<?>> usageParameters = new HashMap<>();
 
-      usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
+      usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY, new DefaultParameter<>(CREATE_SERVICE_DOMAIN_PROPERTY, 
+               "Whether or not to create the service's domain model"));
       usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
-      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
-      usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
-            .setDescription("The name of the project.").setRequired(false));
-      usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY,
-                          new DefaultParameter<String>(CREATE_SERVICE_DOMAIN_PROPERTY)
-                                .setDescription("Whether or not to create the service's domain model")
-                                .setRequired(false));
-      usageParameters.put(GAV_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION);
+      usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
+      usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME);
 
       for (String subcommand : SUBCOMMANDS) {
          List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
@@ -115,7 +110,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
       usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
 
       IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
-      return new DefaultUsage("Create a new Java service project for a particular model.", parameters);
+      return new DefaultUsage("Creates a new Java micro-service project for a service model", parameters);
    }
 
    @Override

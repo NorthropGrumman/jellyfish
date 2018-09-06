@@ -1,7 +1,6 @@
 package com.ngc.seaside.jellyfish.cli.command.help;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
@@ -20,17 +19,25 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component(service = ICommand.class)
 public final class HelpCommand implements ICommand<ICommandOptions> {
 
+   private static final Collector<ICommand<?>, ?, SortedSet<ICommand<?>>> COMMAND_COLLECTOR =
+            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ICommand::getName)));
+   private static final Collector<IParameter<?>, ?, SortedSet<IParameter<?>>> PARAMETER_COLLECTOR =
+            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IParameter::getName)));
+
    public static final String COMMAND_NAME = "help";
-   private static final int LINE_WIDTH = 80;
+   private static final int LINE_WIDTH = 119;
    private static final String INDENT = "   ";
    private static final IUsage COMMAND_USAGE = new DefaultUsage(
          "Prints this help",
@@ -159,7 +166,8 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             writeCommandHelp(true, cmd);
          }
       } else {
-         StringTable<ICommand<?>> table = getCommandTable(INDENT, commands.values());
+         StringTable<ICommand<?>> table =
+                  getCommandTable(INDENT, commands.values().stream().collect(COMMAND_COLLECTOR));
          logService.info(getClass(), table);
          logService.info(getClass(), "\nTo see more detail about a command, "
                + "run `jellyfish help -Dcommand=<command-name>`\n");
@@ -180,17 +188,18 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       if (command == null) {
          logService.info(getClass(), commandName + " command not found\n");
       } else {
+         Map<Boolean, SortedSet<IParameter<?>>> commands = command.getUsage()
+                  .getAllParameters()
+                  .stream()
+                  .collect(Collectors.partitioningBy(IParameter::isRequired, PARAMETER_COLLECTOR));
          StringTable<IParameter<?>> parameterTable = getParameterTable(
-               parameterIndent,
-               command.getUsage().getAllParameters()
-                     .stream()
-                     .filter(p -> !p.isRequired())
-                     .collect(Collectors.toList()));
+               parameterIndent, commands.get(false));
          StringTable<IParameter<?>> requiredParameterTable = getParameterTable(parameterIndent,
-                                                                               command.getUsage()
-                                                                                     .getRequiredParameters());
+                                                                               commands.get(true));
          if (inUsage) {
-            StringTable<ICommand<?>> table = getCommandTable(baseIndent, Collections.singleton(command));
+            TreeSet<ICommand<?>> set = new TreeSet<>(Comparator.comparing(ICommand::getName));
+            set.add(command);
+            StringTable<ICommand<?>> table = getCommandTable(baseIndent, set);
             logService.info(getClass(), table);
             logService.info(getClass(), '\n');
          } else {
@@ -227,7 +236,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * @param elements    commands to be added to the table
     * @return a properly-formatted StringTable for printing IJellyFishCommands
     */
-   private StringTable<ICommand<?>> getCommandTable(String columnSpace, Collection<ICommand<?>> elements) {
+   private StringTable<ICommand<?>> getCommandTable(String columnSpace, SortedSet<ICommand<?>> elements) {
       int maxNameWidth = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
       return getTable(columnSpace, elements,
                       new JellyFishCommandFormat(LINE_WIDTH, columnSpace.length(), maxNameWidth));
@@ -240,7 +249,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * @param elements    parameters to be added to the table
     * @return a properly-formatted StringTable for printing IParameters
     */
-   private StringTable<IParameter<?>> getParameterTable(String columnSpace, Collection<IParameter<?>> elements) {
+   private StringTable<IParameter<?>> getParameterTable(String columnSpace, SortedSet<IParameter<?>> elements) {
       int maxNameWidth = commands.values()
             .stream()
             .flatMap(i -> i.getUsage().getAllParameters().stream())
@@ -258,7 +267,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * @param format      instance of the ITableFormat
     * @return a properly-formatted StringTable for printing IParameters
     */
-   private <T> StringTable<T> getTable(String columnSpace, Collection<T> elements, ITableFormat<T> format) {
+   private <T> StringTable<T> getTable(String columnSpace, SortedSet<T> elements, ITableFormat<T> format) {
       StringTable<T> table = new StringTable<>(format);
       if (columnSpace != null) {
          table.setColumnSpacer(columnSpace);

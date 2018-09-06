@@ -76,10 +76,7 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
 
       usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
       usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
-      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
-      usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
-            .setDescription("The name of the project.").setRequired(false));
-      usageParameters.put(GAV_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION);
+      usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME);
 
       for (String subcommand : SUBCOMMANDS) {
          List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
@@ -98,7 +95,7 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
       usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
 
       IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
-      return new DefaultUsage("Create a new Java service project for a particular model.", parameters);
+      return new DefaultUsage("Creates a new project for a system model", parameters);
    }
 
    @Override

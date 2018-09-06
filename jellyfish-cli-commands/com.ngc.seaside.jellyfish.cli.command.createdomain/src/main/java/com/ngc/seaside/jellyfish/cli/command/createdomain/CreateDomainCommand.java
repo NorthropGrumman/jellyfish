@@ -596,25 +596,25 @@ public class CreateDomainCommand implements IJellyFishCommand {
     * @return the usage.
     */
    private static IUsage createUsage() {
-      return new DefaultUsage("Generate a BLoCS domain model gradle project.",
+      return new DefaultUsage("Generates a BLoCS domain model gradle project",
                               CommonParameters.GROUP_ID,
                               CommonParameters.ARTIFACT_ID,
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN,
                               CommonParameters.UPDATE_GRADLE_SETTING,
-                              new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
+                              new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                     .setDescription("The velocity template file")
                                     .setRequired(false),
-                              new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
+                              new DefaultParameter<>(USE_VERBOSE_IMPORTS_PROPERTY)
                                     .setDescription(
                                           "If true, imports from the same package will be included for "
                                           + "generated domains")
                                     .setRequired(false),
-                              new DefaultParameter<String>(EXTENSION_PROPERTY)
-                                    .setDescription("The extension of the generated domain files")
+                              new DefaultParameter<>(EXTENSION_PROPERTY)
+                                    .setDescription("The extension type of the generated domain files")
                                     .setRequired(false),
-                              new DefaultParameter<String>(BUILD_GRADLE_TEMPLATE_PROPERTY)
+                              new DefaultParameter<>(BUILD_GRADLE_TEMPLATE_PROPERTY)
                                     .setDescription(
                                           "Name of template used to generate the domain project build.gradle")
                                     .setRequired(false));

@@ -217,7 +217,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-               "Generates the generated service configuration for a Java application",
+               "Generates a Gradle project that automatically handles "
+               + "transport configuration and other configurations for a service using the service's deployment model",
                CommonParameters.GROUP_ID,
                CommonParameters.ARTIFACT_ID,
                CommonParameters.MODEL.required(),

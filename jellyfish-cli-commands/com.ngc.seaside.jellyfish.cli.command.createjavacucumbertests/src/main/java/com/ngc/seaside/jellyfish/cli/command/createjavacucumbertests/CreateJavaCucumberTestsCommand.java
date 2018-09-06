@@ -159,7 +159,7 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
 
    @Override
    protected IUsage createUsage() {
-      return new DefaultUsage("Generates the gradle distribution project for a Java application",
+      return new DefaultUsage("Generates the Gradle project responsible for testing a service's acceptance tests",
                               CommonParameters.GROUP_ID,
                               CommonParameters.ARTIFACT_ID,
                               CommonParameters.OUTPUT_DIRECTORY.required(),

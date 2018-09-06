@@ -199,7 +199,7 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
 
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the service configuration for a Java application",
+            "Generates a Gradle project responsible for transport configuration and other configurations for a service",
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),

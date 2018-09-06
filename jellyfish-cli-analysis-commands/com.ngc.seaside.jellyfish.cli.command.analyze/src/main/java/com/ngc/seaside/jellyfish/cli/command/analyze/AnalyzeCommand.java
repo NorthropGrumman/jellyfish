@@ -101,12 +101,12 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Run various types of analysis and generates reports.",
+            "Runs various types of analysis and generates reports",
             new DefaultParameter<>(ANALYSES_PARAMETER_NAME)
                   .setDescription("Configures the analysis to execute.  The values are comma (,) separated.")
                   .setRequired(true),
             new DefaultParameter<>(REPORTS_PARAMETER_NAME)
-                  .setDescription("Configures the reports to generated after performing analysis.  The values are comma"
+                  .setDescription("Configures the reports to generated after performing analysis. The values are comma"
                                   + " (,) separated."));
    }
 
