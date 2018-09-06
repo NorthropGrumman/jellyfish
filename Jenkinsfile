@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) ${year}, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 pipeline {
    agent {
       label {
@@ -56,7 +72,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-dsl') {
                sh 'chmod a+x ../gradlew'
-               sh '../gradlew clean ci'
+               sh '../gradlew clean license ci'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -65,7 +81,7 @@ pipeline {
       stage('Build jellyfish-systemdescriptor') {
          steps {
             dir('jellyfish-systemdescriptor') {
-               sh '../gradlew clean ci --parallel'
+               sh '../gradlew clean license ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -74,7 +90,7 @@ pipeline {
       stage('Build jellyfish-cli') {
          steps {
             dir('jellyfish-cli') {
-               sh '../gradlew clean ci --parallel'
+               sh '../gradlew clean license ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -85,7 +101,7 @@ pipeline {
             stage('Build jellyfish-cli-commands') {
                steps {
                   dir('jellyfish-cli-commands') {
-                     sh '../gradlew clean ci --parallel'
+                     sh '../gradlew clean license ci --parallel'
                      junit '**/build/test-results/test/*.xml'
                   }
                }
@@ -93,7 +109,7 @@ pipeline {
             stage('Build jellyfish-cli-analysis-commands') {
                steps {
                   dir('jellyfish-cli-analysis-commands') {
-                     sh '../gradlew clean ci --parallel'
+                     sh '../gradlew clean license ci --parallel'
                      junit '**/build/test-results/test/*.xml'
                   }
                }
@@ -104,7 +120,7 @@ pipeline {
       stage('Build jellyfish-packaging') {
          steps {
             dir('jellyfish-packaging') {
-               sh '../gradlew clean ci -x :jellyfish.cli.gradle.plugins:test --parallel'
+               sh '../gradlew clean license ci -x :jellyfish.cli.gradle.plugins:test --parallel'
                withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
                                                  passwordVariable: 'nexusPassword',
                                                  usernameVariable: 'nexusUsername')]) {
@@ -125,7 +141,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-lang') {
                // No "ci" task for SD projects.
-               sh '../gradlew clean build install --parallel'
+               sh '../gradlew clean license build install --parallel'
             }
          }
       }
