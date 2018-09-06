@@ -6,12 +6,14 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -48,6 +50,9 @@ public class HelpCommandTest {
 
    @Mock
    private ICommandOptions options;
+   
+   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+   private IJellyFishCommandProvider jellyfishProvider;
 
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
@@ -55,9 +60,13 @@ public class HelpCommandTest {
 
    @Before
    public void before() {
+      when(jellyfishProvider.getUsage().getAllParameters())
+         .thenReturn(new DefaultParameterCollection().getAllParameters());
+
       cmd = new HelpCommand();
       cmd.setLogService(new PrintStreamLogService(new PrintStream(stream)));
       cmd.addCommand(cmd);
+      cmd.setJellyfishProvider(jellyfishProvider);
       cmd.activate();
 
       IJellyFishCommand mock1 = mock(IJellyFishCommand.class);

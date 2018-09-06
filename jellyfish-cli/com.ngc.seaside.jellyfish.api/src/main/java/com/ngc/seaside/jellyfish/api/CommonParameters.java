@@ -8,10 +8,11 @@ public enum CommonParameters implements IParameter<String> {
    CLASSNAME("classname", "The name of the class that will be generated"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
    DEPLOYMENT_MODEL("deploymentModel", "The fully qualified name of a system descriptor deployment model"),
-   GROUP_ARTIFACT_VERSION("gav",
-                          "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
    GROUP_ID("groupId", "The project's group ID"),
    INPUT_DIRECTORY("inputDirectory", "Base directory of the system descriptor project"),
+   GROUP_ARTIFACT_VERSION("gav",
+            "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>; "
+                     + INPUT_DIRECTORY.getName() + " can be optionally used instead of this parameter"),
    MODEL("model", "The fully qualified name of a system descriptor model"),
    OUTPUT_DIRECTORY("outputDirectory", "Base directory in which to output the project"),
    PACKAGE("package", "The project's default package"),

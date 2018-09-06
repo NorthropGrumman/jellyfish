@@ -10,6 +10,7 @@ import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 
 import java.util.Set;
@@ -65,6 +66,7 @@ public class HelpCommandGuiceWrapper implements ICommand<ICommandOptions> {
          TypeLiteral<Set<ICommand>> commandsType = new TypeLiteral<Set<ICommand>>() {
          };
          injector.getInstance(Key.get(commandsType)).forEach(delegate::addCommand);
+         delegate.setJellyfishProvider(injector.getInstance(IJellyFishCommandProvider.class));
       }
    }
 }
