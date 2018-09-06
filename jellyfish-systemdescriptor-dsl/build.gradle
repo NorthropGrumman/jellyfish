@@ -70,6 +70,24 @@ subprojects {
         exclude '**/*.tokens'
     }
 
+    // Do not scan Xtext generated code.
+
+    licenseMain {
+        source = 'src/main/java'
+    }
+
+    licenseTest {
+        source = 'src/test/java'
+    }
+
+    licenseFormatMain {
+        source = 'src/main/java'
+    }
+
+    licenseFormatTest {
+        source = 'src/test/java'
+    }
+
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 
