@@ -91,14 +91,14 @@ public enum CommonParameters implements IParameter<String> {
    }
    
    /**
-    * Returns a copy of the current parameter whose parameter category is useful.
+    * Returns a copy of the current parameter whose parameter category is optional.
     *
-    * @return a useful version of the current parameter
+    * @return an optional version of the current parameter
     */
-   public IParameter<String> useful() {
+   public IParameter<String> optional() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setParameterCategory(ParameterCategory.USEFUL);
+      parameter.setParameterCategory(ParameterCategory.OPTIONAL);
       return parameter;
    }
    
@@ -114,7 +114,6 @@ public enum CommonParameters implements IParameter<String> {
       return parameter;
    }
    
-
    /**
     * Returns the boolean value of the given parameter if it was set, false otherwise.
     *
