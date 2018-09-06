@@ -1,0 +1,5 @@
+ext {
+    command = '${gradleJellyfishCommand}'
+}
+
+apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'
