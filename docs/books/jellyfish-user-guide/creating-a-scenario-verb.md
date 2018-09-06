@@ -144,7 +144,7 @@ the build script of an SD project.
 
 # Using the New Verb
 Verbs are deployed the same way as validators.  Simply list the containing JAR as a Gradle `buildscript` dependency,
-copy the JAR to the Jellyfish `lib/` directory, or include the JAR in an Eclipse update site.
+copy the JAR to the `JELLYFISH_USER_HOME` `plugins/` directory, or include the JAR in an Eclipse update site.
 
 ## Using the New Verb within Eclipse
 The Eclipse tooling will automatically declare an error if a scenario verb is used that can't be found.  As a result,
