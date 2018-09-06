@@ -56,7 +56,7 @@ pipeline {
          steps {
             dir('jellyfish-systemdescriptor-dsl') {
                sh 'chmod a+x ../gradlew'
-               sh '../gradlew clean ci'
+               sh '../gradlew clean license ci'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -65,7 +65,7 @@ pipeline {
       stage('Build jellyfish-systemdescriptor') {
          steps {
             dir('jellyfish-systemdescriptor') {
-               sh '../gradlew clean ci --parallel'
+               sh '../gradlew clean license ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -74,7 +74,7 @@ pipeline {
       stage('Build jellyfish-cli') {
          steps {
             dir('jellyfish-cli') {
-               sh '../gradlew clean ci --parallel'
+               sh '../gradlew clean license ci --parallel'
                junit '**/build/test-results/test/*.xml'
             }
          }
@@ -85,7 +85,7 @@ pipeline {
             stage('Build jellyfish-cli-commands') {
                steps {
                   dir('jellyfish-cli-commands') {
-                     sh '../gradlew clean ci --parallel'
+                     sh '../gradlew clean license ci --parallel'
                      junit '**/build/test-results/test/*.xml'
                   }
                }
@@ -93,7 +93,7 @@ pipeline {
             stage('Build jellyfish-cli-analysis-commands') {
                steps {
                   dir('jellyfish-cli-analysis-commands') {
-                     sh '../gradlew clean ci --parallel'
+                     sh '../gradlew clean license ci --parallel'
                      junit '**/build/test-results/test/*.xml'
                   }
                }
@@ -104,7 +104,7 @@ pipeline {
       stage('Build jellyfish-packaging') {
          steps {
             dir('jellyfish-packaging') {
-               sh '../gradlew clean ci -x :jellyfish.cli.gradle.plugins:test --parallel'
+               sh '../gradlew clean license ci -x :jellyfish.cli.gradle.plugins:test --parallel'
                withCredentials([usernamePassword(credentialsId: 'ngc-nexus-repo-mgr-pipelines',
                                                  passwordVariable: 'nexusPassword',
                                                  usernameVariable: 'nexusUsername')]) {
@@ -133,7 +133,7 @@ pipeline {
       stage('Test jellyfish') {
          steps {
             dir('jellyfish-examples') {
-               sh '../gradlew clean build --parallel -S --continue'
+               sh '../gradlew clean license build --parallel -S --continue'
             }
          }
       }
