@@ -10,6 +10,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
 import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
 
@@ -45,10 +46,10 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
          "Prints this help",
          new DefaultParameter<>("verbose")
                .setDescription("Prints the help of all of the known commands")
-               .setRequired(false),
+               .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("command")
                .setDescription("Command to print help")
-               .setRequired(false));
+               .setParameterCategory(ParameterCategory.REQUIRED));
 
    private ILogService logService;
 
@@ -58,9 +59,11 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
    @Reference
    public void setJellyfishProvider(IJellyFishCommandProvider jellyfishProvider) {
       this.jellyfishProviderParameters = jellyfishProvider.getUsage().getAllParameters().stream()
-               .collect(Collectors.partitioningBy(IParameter::isRequired, PARAMETER_COLLECTOR));
+               .collect(Collectors.partitioningBy(
+                        (IParameter<?> param) -> param.getParameterCategory() == ParameterCategory.REQUIRED,
+                        PARAMETER_COLLECTOR));
    }
-   
+
    public void removeJellyfishProvider(IJellyFishCommandProvider jellyfishProvider) {
       jellyfishProviderParameters = null;
    }
@@ -196,7 +199,9 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
          Map<Boolean, SortedSet<IParameter<?>>> commands = command.getUsage()
                   .getAllParameters()
                   .stream()
-                  .collect(Collectors.partitioningBy(IParameter::isRequired, PARAMETER_COLLECTOR));
+                  .collect(Collectors.partitioningBy(
+                           (IParameter<?> param) -> param.getParameterCategory() == ParameterCategory.REQUIRED,
+                           PARAMETER_COLLECTOR));
          if (command instanceof IJellyFishCommand) {
             commands.get(false).addAll(jellyfishProviderParameters.get(false));
             commands.get(true).addAll(jellyfishProviderParameters.get(true));
@@ -213,9 +218,9 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             logService.info(getClass(), '\n');
          } else {
             String parameterUsage = command.getUsage().getAllParameters().stream()
-                  .map(
-                        p -> (p.isRequired() ? "" : "[") + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
-                  .collect(Collectors.joining(" "));
+                     .map(p -> (p.getParameterCategory() == ParameterCategory.REQUIRED ? "" : "[") + p.getName()
+                              + "=value" + (p.getParameterCategory() == ParameterCategory.REQUIRED ? "" : "]"))
+                     .collect(Collectors.joining(" "));
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
             }

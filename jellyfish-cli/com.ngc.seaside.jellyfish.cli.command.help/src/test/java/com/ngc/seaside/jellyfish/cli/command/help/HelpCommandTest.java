@@ -8,6 +8,7 @@ import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,19 +33,19 @@ public class HelpCommandTest {
          "Usage 1",
          new DefaultParameter<>("param1_1")
                .setDescription("Description 1_1")
-               .setRequired(true),
+               .setParameterCategory(ParameterCategory.ADVANCED),
          new DefaultParameter<>("param1_2")
                .setDescription("Description 1_2")
-               .setRequired(false));
+               .setParameterCategory(ParameterCategory.ADVANCED));
 
    private static final IUsage USAGE_2 = new DefaultUsage(
          "Usage 2",
          new DefaultParameter<>("param2_1")
                .setDescription("Description 2_1")
-               .setRequired(true),
+               .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("param2_2")
                .setDescription("Description 2_2")
-               .setRequired(false));
+               .setParameterCategory(ParameterCategory.ADVANCED));
 
    private HelpCommand cmd;
 

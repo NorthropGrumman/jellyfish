@@ -34,14 +34,6 @@ public interface IParameter<T> {
    String getStringValue();
 
    /**
-    * Determine if the parameter is required.
-    *
-    * @return true if the parameter is required.
-    */
-   @Deprecated
-   boolean isRequired();
-   
-   /**
     * Get the category of the parameter.
     * 
     * @return the parameter category.

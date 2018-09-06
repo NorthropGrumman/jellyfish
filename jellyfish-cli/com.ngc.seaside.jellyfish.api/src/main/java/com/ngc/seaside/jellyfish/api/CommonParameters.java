@@ -58,21 +58,46 @@ public enum CommonParameters implements IParameter<String> {
    }
 
    @Override
-   public boolean isRequired() {
-      return false;
+   public ParameterCategory getParameterCategory() {
+      return ParameterCategory.ADVANCED;
    }
 
    /**
-    * Returns a copy of the current parameter whose required value is true.
+    * Returns a copy of the current parameter whose parameter category is required.
     *
     * @return a required version of the current parameter
     */
    public IParameter<String> required() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setRequired(true);
+      parameter.setParameterCategory(ParameterCategory.REQUIRED);
       return parameter;
    }
+   
+   /**
+    * Returns a copy of the current parameter whose parameter category is useful.
+    *
+    * @return a useful version of the current parameter
+    */
+   public IParameter<String> useful() {
+      DefaultParameter<String> parameter = new DefaultParameter<>(name);
+      parameter.setDescription(description);
+      parameter.setParameterCategory(ParameterCategory.USEFUL);
+      return parameter;
+   }
+   
+   /**
+    * Returns a copy of the current parameter whose parameter category is advanced.
+    *
+    * @return an advanced version of the current parameter
+    */
+   public IParameter<String> advanced() {
+      DefaultParameter<String> parameter = new DefaultParameter<>(name);
+      parameter.setDescription(description);
+      parameter.setParameterCategory(ParameterCategory.ADVANCED);
+      return parameter;
+   }
+   
 
    /**
     * Returns the boolean value of the given parameter if it was set, false otherwise.

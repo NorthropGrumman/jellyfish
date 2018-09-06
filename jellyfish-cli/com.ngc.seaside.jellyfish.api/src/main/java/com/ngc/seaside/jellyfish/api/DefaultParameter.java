@@ -26,7 +26,6 @@ public class DefaultParameter<T> implements IParameter<T> {
    private String name;
    private T value;
    private String description = "";
-   private boolean required;
    private ParameterCategory paramCategory;
 
    /**
@@ -78,16 +77,6 @@ public class DefaultParameter<T> implements IParameter<T> {
       this.description = description;
       return this;
    }
-
-   @Override
-   public boolean isRequired() {
-      return required;
-   }
-
-   public DefaultParameter<T> setRequired(boolean required) {
-      this.required = required;
-      return this;
-   }
    
    @Override
    public ParameterCategory getParameterCategory() {
@@ -101,7 +90,7 @@ public class DefaultParameter<T> implements IParameter<T> {
 
    @Override
    public String toString() {
-      return String.format("Name: %s, Required: %s, Value: %s", name, required, value);
+      return String.format("Name: %s, Required: %s, Value: %s", name, paramCategory, value);
    }
 
    @Override
@@ -115,11 +104,11 @@ public class DefaultParameter<T> implements IParameter<T> {
       IParameter<?> that = (IParameter<?>) obj;
       return Objects.equals(name, that.getName())
              && Objects.equals(value, that.getValue())
-             && Objects.equals(required, that.isRequired());
+             && Objects.equals(paramCategory, that.getParameterCategory());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(name, required, value);
+      return Objects.hash(name, paramCategory, value);
    }
 }
