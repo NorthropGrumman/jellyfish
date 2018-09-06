@@ -1,3 +1,19 @@
+/*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.ngc.seaside.ci'
 apply plugin: 'com.ngc.seaside.eclipse.updatesite'
@@ -9,6 +25,12 @@ eclipseDistribution {
    linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
    windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
 }
+
+def licenseText = project.resources.text.fromFile(licenseFile).asString()
+licenseText = new groovy.text.SimpleTemplateEngine()
+      .createTemplate(licenseText)
+      .make(['year': Calendar.getInstance().get(Calendar.YEAR)])
+      .toString()
 
 eclipseUpdateSite {
    
@@ -23,11 +45,11 @@ eclipseUpdateSite {
       }
       copyright {
          url = 'http://www.systemdescriptor.seaside.ngc.com/copyright'
-         text = project.resources.text.fromFile(project.file('src/main/resources/license.txt')).asString()
+         text = licenseText
       }
       license {
          url = 'http://www.systemdescriptor.seaside.ngc.com/license'
-         text = copyright.text
+         text = licenseText
       }
       plugin {
          id = 'com.ngc.seaside.systemdescriptor'
