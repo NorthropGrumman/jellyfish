@@ -17,6 +17,7 @@
 
 plugins {
    id 'com.ngc.seaside.jellyfish.system-descriptor'
+   id 'com.ngc.seaside.jellyfish.system-descriptor-license'
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
@@ -28,4 +29,9 @@ sdLang {
    // Disable this for test.  We need to do this because the artifact for the language has not been built or installed
    // by the time this test is run.
    includeDefaultLanguageDependencies = false
+}
+
+license {
+   header = file('../../../../../../LICENSE')
+   ext.year = Calendar.getInstance().get(Calendar.YEAR)
 }

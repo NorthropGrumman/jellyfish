@@ -29,11 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeNotNull;
-
-public class SystemDescriptorProjectPluginFT {
+public class SystemDescriptorLicensePluginFT {
 
    private File projectDir;
 
@@ -47,35 +43,15 @@ public class SystemDescriptorProjectPluginFT {
    }
 
    @Test
-   public void runsGradleBuildWithSuccess() {
-      assumePropertyExists("nexusSnapshots");
-      assumePropertyExists("nexusUsername");
-      assumePropertyExists("nexusPassword");
-      
+   public void runsGradleLicenseWithSuccess() {
       SeasideGradleRunner runner = SeasideGradleRunner.create()
-               .withNexusProperties()
-               .withProjectDir(projectDir)
-               .withPluginClasspath()
-               .forwardOutput()
-               .withArguments("clean", "build", "publishToMavenLocal", "publish");
+            .withNexusProperties()
+            .withProjectDir(projectDir)
+            .withPluginClasspath()
+            .forwardOutput()
+            .withArguments("license", "--rerun-tasks");
 
-      try {
-         BuildResult result = runner.build();
-         TestingUtilities.assertTaskSuccess(result, null, "build");
-         TestingUtilities.assertTaskSuccess(result, null, "publishToMavenLocal");
-         TestingUtilities.assertTaskSuccess(result, null, "publish");
-      } catch (Exception e) {
-         e.printStackTrace(new PasswordHidingWriter(System.err));
-         fail();
-      }
-
+      BuildResult result = runner.build();
+      TestingUtilities.assertTaskSuccess(result, null, "license");
    }
-
-   private void assumePropertyExists(String key) {
-      String property = System.getProperty(key);
-      assumeNotNull(property);
-      assumeFalse(property.isEmpty());
-      assumeFalse("null".equals(property));
-   }
-   
 }
