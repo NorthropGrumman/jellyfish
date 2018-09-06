@@ -164,7 +164,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
                "from a project. Most commands require you to identify the System "
                + "Descriptor project, either using the parameter");
       logService.info(getClass(), 
-               "`gav=<groupId>:<artifactId>:version` or `inputDirectory=<path-to-project>`.");
+               "`gav=<groupId>:<artifactId>:<version>` or `inputDirectory=<path-to-project>`.");
       logService.info(getClass(), "\nCommands:\n");
       if (verbose) {
          for (String cmd : commands.keySet()) {
