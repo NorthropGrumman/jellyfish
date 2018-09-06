@@ -61,6 +61,8 @@ allprojects {
          // Exclude binary files.
          exclude '**/*.zip'
          exclude '**/*.jar'
+         exclude '**/*.expected'
+         exclude '**/*.csv'
       }
    }
 }

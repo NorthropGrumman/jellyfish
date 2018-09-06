@@ -37,3 +37,8 @@ dependencies {
     testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
     testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
+
+license {
+    // Don't mess up expected files for tests.
+    exclude '**/*.txt'
+}
