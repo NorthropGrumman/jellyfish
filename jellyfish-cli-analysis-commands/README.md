@@ -12,7 +12,7 @@ jellyfish analyze \
  gav=my.group:my.sd.project:1.0.0-SNAPSHOT
 ```
 
-You can also use the `inputDir` parameter instead of `gav` to scan a project directly.
+You can also use the `inputDirectory` parameter instead of `gav` to scan a project directly.
 
 # Analysis
 Various types of analysis can be executed.

@@ -59,3 +59,7 @@ test.systemProperty 'nexusConsolidated', nexusConsolidated
 test.systemProperty 'nexusSnapshots', nexusSnapshots
 test.systemProperty 'nexusUsername', nexusUsername
 test.systemProperty 'nexusPassword', nexusPassword
+['javax.net.ssl.trustStore', 'http.proxyHost', 'http.proxyPort', 'http.nonProxyHosts',
+ 'https.proxyHost', 'https.proxyPort', 'https.nonProxyHosts', 'sonar.host.url'].each { key ->
+   test.systemProperty(key, System.properties[key])
+}
