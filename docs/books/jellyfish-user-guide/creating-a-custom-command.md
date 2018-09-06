@@ -273,7 +273,7 @@ public class ExampleAnalysisCommandModule extends AbstractModule {
 
 # Deploying and Using the New Command
 Jellyfish commands are deployed like scenario verbs and validators.  Copy the JAR that contains the command
-to the `lib/` directory of Jellyfish.  The example command can now be run like this:
+to the `plugins/` directory of `JELLYFISH_USER_HOME`.  The example command can now be run like this:
 
 **Running the example command**
 ```plaintext
