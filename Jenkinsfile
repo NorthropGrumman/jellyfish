@@ -133,7 +133,7 @@ pipeline {
       stage('Test jellyfish') {
          steps {
             dir('jellyfish-examples') {
-               sh '../gradlew clean license build --parallel -S --continue'
+               sh '../gradlew clean build --parallel -S --continue'
             }
          }
       }
