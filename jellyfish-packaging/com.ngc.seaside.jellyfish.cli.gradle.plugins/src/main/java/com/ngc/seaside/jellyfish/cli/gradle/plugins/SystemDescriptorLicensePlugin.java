@@ -41,6 +41,7 @@ import java.util.Arrays;
  *   }
  * }</pre>
  *
+ * <p>
  * Use the tasks {@code license} to check for license consistency and {@code licenseFormat} to apply the license to all
  * files.
  */
