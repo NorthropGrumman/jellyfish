@@ -55,7 +55,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureSeasideGradlePlugins(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("seasidePluginsVersion")
-            .version("2.18.2")
+            .version("2.19.1-SNAPSHOT")
             .includes(artifact("gradle.plugins")
                             .groupId("com.ngc.seaside")
                             .scope(DependencyScope.BUILDSCRIPT));
