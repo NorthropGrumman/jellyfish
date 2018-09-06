@@ -1,3 +1,19 @@
+/*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask
 import com.ngc.seaside.jellyfish.examples.tasks.BuildScriptUpdater
 import com.ngc.seaside.jellyfish.examples.tasks.RegressionDiffTask
@@ -28,6 +44,7 @@ buildscript {
 
 apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.parent'
+apply plugin: 'com.ngc.seaside.root.parent'
 
 versionSettings {
    versionFile = versionsFile
@@ -42,6 +59,26 @@ ext {
 
 gradle.buildFinished {
    buildScriptUpdater.restoreAllScripts()
+}
+
+licenseMain {
+   source file('system-descriptor-projects')
+   include '**/*.sd'
+   include '**/*.feature'
+}
+
+licenseFormatMain {
+   source file('system-descriptor-projects')
+   include '**/*.sd'
+   include '**/*.feature'
+}
+
+licenseCheckGradleScripts {
+   exclude 'regressions/'
+}
+
+licenseFormatGradleScripts {
+   exclude 'regressions/'
 }
 
 task('cleanSystemDescriptorProjects', description: 'cleans all of the system descriptor projects') {
@@ -198,8 +235,8 @@ def createGenerationTask(name, folder, regressionName) {
 
    properties['outputDirectory'] = "${folder}/${generatedFolderName}"
    properties['clean'] = 'true'
-   if (properties.containsKey('inputDir')) {
-      properties['inputDir'] = file("${systemDescriptorProjectsFolderName}/${properties['inputDir']}").absolutePath
+   if (properties.containsKey('inputDirectory')) {
+      properties['inputDirectory'] = file("${systemDescriptorProjectsFolderName}/${properties['inputDirectory']}").absolutePath
    }
 
    def generateTask = task(name,
