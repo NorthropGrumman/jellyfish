@@ -6,6 +6,8 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
@@ -51,38 +53,32 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
    private ILogService logService;
 
    private final TreeMap<String, ICommand<?>> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+   private Map<Boolean, SortedSet<IParameter<?>>> jellyfishProviderParameters;
 
-   /**
-    * Adds a command to the help
-    *
-    * @param command command to be added
-    */
+   @Reference
+   public void setJellyfishProvider(IJellyFishCommandProvider jellyfishProvider) {
+      this.jellyfishProviderParameters = jellyfishProvider.getUsage().getAllParameters().stream()
+               .collect(Collectors.partitioningBy(IParameter::isRequired, PARAMETER_COLLECTOR));
+   }
+   
+   public void removeJellyfishProvider(IJellyFishCommandProvider jellyfishProvider) {
+      jellyfishProviderParameters = null;
+   }
+   
    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeCommand")
+            policy = ReferencePolicy.STATIC,
+            unbind = "removeCommand")
    public void addCommand(ICommand<?> command) {
       Preconditions.checkNotNull(command);
       commands.put(command.getName(), command);
    }
 
-   /**
-    * Removes a command from the help
-    *
-    * @param command command to be removed
-    */
    public void removeCommand(ICommand<?> command) {
       Preconditions.checkNotNull(command);
       commands.remove(command.getName());
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+   @Reference
    public void setLogService(ILogService ref) {
       logService = ref;
    }
@@ -160,7 +156,16 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * @param verbose whether or not to print each command's help along with the overall usage
     */
    private void writeUsage(boolean verbose) {
-      logService.info(getClass(), "\nUsage: jellyfish command [-Doption1=value1 ...]\n\nCommands:\n\n");
+      logService.info(getClass(), "\nUsage: jellyfish <command-name> [parameter1=value1 ...]\n");
+      logService.info(getClass(), 
+               "Jellyfish is a command-line tool for inspecting System Descriptor "
+               + "projects and generating various custom artifacts");
+      logService.info(getClass(), 
+               "from a project. Most commands require you to identify the System "
+               + "Descriptor project, either using the parameter");
+      logService.info(getClass(), 
+               "`gav=<groupId>:<artifactId>:version` or `inputDirectory=<path-to-project>`.");
+      logService.info(getClass(), "\nCommands:\n");
       if (verbose) {
          for (String cmd : commands.keySet()) {
             writeCommandHelp(true, cmd);
@@ -170,7 +175,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
                   getCommandTable(INDENT, commands.values().stream().collect(COMMAND_COLLECTOR));
          logService.info(getClass(), table);
          logService.info(getClass(), "\nTo see more detail about a command, "
-               + "run `jellyfish help -Dcommand=<command-name>`\n");
+               + "run `jellyfish help command=<command-name>`\n");
       }
    }
 
@@ -192,6 +197,10 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
                   .getAllParameters()
                   .stream()
                   .collect(Collectors.partitioningBy(IParameter::isRequired, PARAMETER_COLLECTOR));
+         if (command instanceof IJellyFishCommand) {
+            commands.get(false).addAll(jellyfishProviderParameters.get(false));
+            commands.get(true).addAll(jellyfishProviderParameters.get(true));
+         }
          StringTable<IParameter<?>> parameterTable = getParameterTable(
                parameterIndent, commands.get(false));
          StringTable<IParameter<?>> requiredParameterTable = getParameterTable(parameterIndent,
@@ -205,7 +214,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
          } else {
             String parameterUsage = command.getUsage().getAllParameters().stream()
                   .map(
-                        p -> (p.isRequired() ? "" : "[") + "-D" + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
+                        p -> (p.isRequired() ? "" : "[") + p.getName() + "=value" + (p.isRequired() ? "" : "]"))
                   .collect(Collectors.joining(" "));
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
