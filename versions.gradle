@@ -63,6 +63,7 @@ allprojects {
          exclude '**/*.jar'
          exclude '**/*.expected'
          exclude '**/*.csv'
+         exclude '**/*.md'
       }
    }
 }
