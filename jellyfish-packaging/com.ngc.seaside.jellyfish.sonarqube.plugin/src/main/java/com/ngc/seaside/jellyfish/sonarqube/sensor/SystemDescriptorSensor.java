@@ -150,7 +150,11 @@ public class SystemDescriptorSensor implements Sensor {
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 
       for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> f : analysisService.getFindings()) {
-         convertSystemDescriptorFindingToSonarqubeIssue(f);
+         if (f.getType().getSeverity() 
+                  != com.ngc.seaside.jellyfish.service.analysis
+                     .api.ISystemDescriptorFindingType.Severity.INFO) {
+            convertSystemDescriptorFindingToSonarqubeIssue(f);
+         }
       }
    }
 
