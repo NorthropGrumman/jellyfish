@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * A type that is added as a parameter when unpacking a template.  The parameter will have the name {@link
  * AbstractJellyfishCommand#FILE_HEADER_TEMPLATE_VARIABLE}.
  */
-class FileHeader {
+public class FileHeader {
 
    /**
     * The header that uses Jellyfish's default license.
@@ -116,8 +116,7 @@ class FileHeader {
             StringBuilder header = new StringBuilder(type.getStartBlock())
                   .append(System.lineSeparator());
             drained.forEach(line -> header.append(type.getPrefix()).append(line).append(System.lineSeparator()));
-            header.append(type.getEndBlock())
-                  .append(System.lineSeparator());
+            header.append(type.getEndBlock());
             headers.put(type, header.toString());
          }
       }

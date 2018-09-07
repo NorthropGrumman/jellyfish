@@ -27,6 +27,10 @@ public enum CommonParameters implements IParameter<String> {
    GROUP_ARTIFACT_VERSION("gav",
                           "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
    GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
+   HEADER_FILE("headerFile", "A file whose contents will be injected into the header of all source code files that"
+                             + " Jellyfish generates.  This file should be a plain text file.  Jellyfish includes a"
+                             + " default header with an NGC license and UNCLASSIFIED markings.  Use a custom header for"
+                             + " a different license or to change the markings of generated files."),
    INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
    MODEL("model", "The fully qualified path to the system descriptor model"),
    MODEL_OBJECT("modelObject", "The fully qualified name of the model to generate connectors for"),
@@ -41,7 +45,7 @@ public enum CommonParameters implements IParameter<String> {
                "A comma separated listed of stereotypes used to select models in the project.  This limits the scope of"
                + " the command to these models."),
    SYSTEM("system",
-            "If true, indicates that the parameter " + MODEL.getName() + " should be treated as a system model"),
+          "If true, indicates that the parameter " + MODEL.getName() + " should be treated as a system model"),
 
    @Deprecated
    GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()

@@ -157,6 +157,7 @@ public class CreateJavaServiceCommand extends AbstractJellyfishCommand {
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN);
    }
 
@@ -171,7 +172,7 @@ public class CreateJavaServiceCommand extends AbstractJellyfishCommand {
       BaseServiceDto baseServiceDto = baseServiceTemplateDaoFactory.newDto(getOptions(), model);
       ServiceDto serviceDto = serviceTemplateDaoFactory.newDto(getOptions(), model, baseServiceDto);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("serviceDto", serviceDto));
       parameters.addParameter(new DefaultParameter<>("baseServiceDto", baseServiceDto));
       unpackDefaultTemplate(parameters, outputDir, clean);

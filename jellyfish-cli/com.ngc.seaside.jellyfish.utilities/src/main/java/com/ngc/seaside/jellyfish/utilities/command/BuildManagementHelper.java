@@ -24,7 +24,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
  * A type that is added as a parameter when unpacking a template.  The parameter will have the name {@link
  * AbstractJellyfishCommand#BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE}.
  */
-class BuildManagementHelper {
+public class BuildManagementHelper {
 
    private final IBuildManagementService buildManagementService;
 

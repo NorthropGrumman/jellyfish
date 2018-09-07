@@ -36,6 +36,7 @@ import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -237,12 +238,30 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     * @return the parameters to use when unpacking templates
     */
    protected IParameterCollection addDefaultUnpackParameters(IParameterCollection parameters) {
+      DefaultParameterCollection mutableParams = new DefaultParameterCollection(parameters);
+
       if (buildManagementService != null) {
-         parameters = new DefaultParameterCollection(parameters)
-               .addParameter(new DefaultParameter<>(BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
-                                                    new BuildManagementHelper(buildManagementService, getOptions())));
+         mutableParams.addParameter(new DefaultParameter<>(
+               BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
+               new BuildManagementHelper(buildManagementService, getOptions())));
       }
-      return parameters;
+
+      if (mutableParams.containsParameter(CommonParameters.HEADER_FILE.getName())) {
+         // Make sure the parameter resolves to a file.
+         Path header = Paths.get(mutableParams.getParameter(CommonParameters.HEADER_FILE.getName()).getStringValue());
+         if (!Files.isReadable(header)) {
+            throw new CommandException(String.format(
+                  "the file given by the parameter %s is either not a file or is not readable!  Expected to find a"
+                  + " file at %s.",
+                  CommonParameters.HEADER_FILE.getName(),
+                  header.toAbsolutePath()));
+         }
+         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, new FileHeader(header)));
+      } else {
+         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, FileHeader.DEFAULT_HEADER));
+      }
+
+      return mutableParams;
    }
 
    /**

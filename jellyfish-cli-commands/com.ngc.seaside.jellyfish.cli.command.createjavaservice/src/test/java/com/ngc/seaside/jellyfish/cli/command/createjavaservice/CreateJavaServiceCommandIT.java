@@ -105,9 +105,6 @@ public class CreateJavaServiceCommandIT {
    private IJavaServiceGenerationService generatorService;
 
    @Mock
-   private ClassDto interfaceDto;
-
-   @Mock
    private IScenarioService scenarioService;
 
    @Mock
