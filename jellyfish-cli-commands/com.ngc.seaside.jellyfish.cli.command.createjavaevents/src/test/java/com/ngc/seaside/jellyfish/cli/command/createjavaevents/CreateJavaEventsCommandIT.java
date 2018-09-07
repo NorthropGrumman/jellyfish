@@ -98,6 +98,10 @@ public class CreateJavaEventsCommandIT {
       outputDirectory = Files.createTempDirectory(null);
       parameters.addParameter(
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateJavaEventsCommandIT.class.getSimpleName(), "tests")));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(options.getParameters()).thenReturn(parameters);

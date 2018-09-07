@@ -1,3 +1,4 @@
+${header.java}
 package ${dto.packageName};
 
 public class ${dto.model.name}DataConversion {

@@ -1,4 +1,5 @@
 #set( $D = '$' )
+${header.gradle}
 
 configurations {
    defaultBundles {

@@ -30,9 +30,26 @@ dependencies {
    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
 }
 
+ext {
+   licenseDir = file("${project.buildDir}/license")
+}
+
 jar {
    manifest {
       // Bnd instructions to export the api package.
       attributes('Export-Package': 'com.ngc.seaside.jellyfish.utilities.*')
    }
+
+   from licenseDir
 }
+
+task copyLicense(type: Copy) {
+   from licenseFile
+   into licenseDir
+   rename { "com.ngc.seaside.jellyfish.defaultLicense.txt" }
+   expand license.ext.properties
+}
+
+jar.dependsOn(copyLicense)
+test.dependsOn(copyLicense)
+copyLicense.shouldRunAfter(processResources)

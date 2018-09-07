@@ -1,3 +1,4 @@
+${header.gradle}
 rootProject.name = '${dto.projectName}'
 
 #foreach ( $project in $dto.projects )

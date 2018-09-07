@@ -1,3 +1,4 @@
+${header.java}
 package ${dto.packageName};
 
 import com.ngc.blocs.service.log.api.ILogService;

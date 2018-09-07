@@ -95,6 +95,10 @@ public class CreateJavaProtobufConnectorCommandIT {
 
       outputDirectory = Files.createTempDirectory(null);
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(), outputDirectory));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateJavaProtobufConnectorCommandIT.class.getSimpleName(), "tests")));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(options.getParameters()).thenReturn(parameters);

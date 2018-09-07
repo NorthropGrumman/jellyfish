@@ -1,5 +1,5 @@
 #set( $D = '$' )
-
+${header.gradle}
 apply plugin: 'com.ngc.seaside.application'
 
 dependencies {

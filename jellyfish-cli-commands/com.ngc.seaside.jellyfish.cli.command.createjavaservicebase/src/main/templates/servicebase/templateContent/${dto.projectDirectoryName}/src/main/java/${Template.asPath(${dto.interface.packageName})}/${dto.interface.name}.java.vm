@@ -1,3 +1,4 @@
+${header.java}
 package ${dto.interface.packageName};
 
 #set ($ignore = $dto.interface.imports.add("com.ngc.seaside.service.fault.api.ServiceFaultException"))

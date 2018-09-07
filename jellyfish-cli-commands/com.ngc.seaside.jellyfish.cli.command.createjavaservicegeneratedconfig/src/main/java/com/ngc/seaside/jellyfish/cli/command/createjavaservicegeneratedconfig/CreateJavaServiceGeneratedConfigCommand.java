@@ -130,7 +130,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
          }
       }
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
 
@@ -190,12 +190,12 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       String template = plugin.getTemplate(context);
       Optional<T> dto = plugin.getConfigurationDto(context);
       if (template != null && dto.isPresent()) {
-         DefaultParameterCollection parameters = new DefaultParameterCollection();
+         DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
          parameters.addParameter(new DefaultParameter<>("dto", dto.get()));
          for (Entry<String, Object> entry : plugin.getExtraTemplateParameters(context).entrySet()) {
             parameters.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
          }
-         templateService.unpack(template, parameters, outputDirectory, false);
+         templateService.unpack(template, addDefaultUnpackParameters(parameters), outputDirectory, false);
       }
    }
 
@@ -239,6 +239,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.HEADER_FILE,
                CommonParameters.CLEAN);
    }
 }

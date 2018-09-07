@@ -1,3 +1,4 @@
+${header.java}
 package ${dto.packageName}.di;
 
 import com.google.inject.AbstractModule;

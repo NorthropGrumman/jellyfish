@@ -23,7 +23,6 @@ import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig.dto.ServiceConfigDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -31,6 +30,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import org.apache.commons.io.FileUtils;
@@ -47,57 +47,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component(service = IJellyFishCommand.class)
-public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
+public class CreateJavaServiceConfigCommand extends AbstractJellyfishCommand {
 
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
-   static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
    private static final String NAME = "create-java-service-config";
-   private static final IUsage USAGE = createUsage();
 
-   private ILogService logService;
-   private ITemplateService templateService;
-   private IProjectNamingService projectNamingService;
-   private IPackageNamingService packageNamingService;
-   private IBuildManagementService buildManagementService;
-
-   @Override
-   public String getName() {
-      return NAME;
-   }
-
-   @Override
-   public IUsage getUsage() {
-      return USAGE;
-   }
-
-   @Override
-   public void run(IJellyFishCommandOptions commandOptions) {
-      IModel model = evaluateModelParameter(commandOptions);
-      boolean clean = CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(), CLEAN_PROPERTY);
-      IProjectInformation projectInfo = projectNamingService.getConfigProjectName(commandOptions, model);
-      String packagez = packageNamingService.getConfigPackageName(commandOptions, model);
-      Path outputDir = Paths.get(
-            commandOptions.getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
-      Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
-
-      ServiceConfigDto dto = new ServiceConfigDto(buildManagementService, commandOptions)
-            .setModelName(model.getName())
-            .setPackageName(packagez)
-            .setBaseProjectArtifactName(
-                  projectNamingService.getBaseServiceProjectName(commandOptions, model).getArtifactId())
-            .setProjectDirectoryName(projectDir.getFileName().toString());
-
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
-      parameters.addParameter(new DefaultParameter<>("dto", dto));
-      templateService.unpack(CreateJavaServiceConfigCommand.class.getPackage().getName(),
-                             parameters,
-                             outputDir,
-                             clean);
-
-      buildManagementService.registerProject(commandOptions, projectInfo);
+   public CreateJavaServiceConfigCommand() {
+      super(NAME);
    }
 
    @Activate
@@ -182,11 +141,40 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
       setBuildManagementService(null);
    }
 
-   private IModel evaluateModelParameter(IJellyFishCommandOptions commandOptions) {
-      String modelName = commandOptions.getParameters().getParameter(MODEL_PROPERTY).getStringValue();
-      return commandOptions.getSystemDescriptor()
-            .findModel(modelName)
-            .orElseThrow(() -> new CommandException("Unknown model:" + modelName));
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage(
+            "Generates the service configuration for a Java application",
+            CommonParameters.GROUP_ID,
+            CommonParameters.ARTIFACT_ID,
+            CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL,
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.HEADER_FILE,
+            CommonParameters.CLEAN);
+   }
+
+   @Override
+   protected void doRun() {
+      IModel model = getModel();
+      boolean clean = CommonParameters.evaluateBooleanParameter(getOptions().getParameters(), CLEAN_PROPERTY);
+      IProjectInformation projectInfo = projectNamingService.getConfigProjectName(getOptions(), model);
+      String packagez = packageNamingService.getConfigPackageName(getOptions(), model);
+      Path outputDir = Paths.get(getOptions().getParameters().getParameter(OUTPUT_DIRECTORY_PROPERTY).getStringValue());
+      Path projectDir = evaluateProjectDirectory(outputDir, projectInfo.getDirectoryName(), clean);
+
+      ServiceConfigDto dto = new ServiceConfigDto(buildManagementService, getOptions())
+            .setModelName(model.getName())
+            .setPackageName(packagez)
+            .setBaseProjectArtifactName(
+                  projectNamingService.getBaseServiceProjectName(getOptions(), model).getArtifactId())
+            .setProjectDirectoryName(projectDir.getFileName().toString());
+
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
+      parameters.addParameter(new DefaultParameter<>("dto", dto));
+      unpackDefaultTemplate(parameters, outputDir, clean);
+
+      buildManagementService.registerProject(getOptions(), projectInfo);
    }
 
    /**
@@ -210,17 +198,5 @@ public class CreateJavaServiceConfigCommand implements IJellyFishCommand {
          throw new CommandException(e);
       }
       return projectDir;
-   }
-
-
-   private static IUsage createUsage() {
-      return new DefaultUsage(
-            "Generates the service configuration for a Java application",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.MODEL.required(),
-            CommonParameters.DEPLOYMENT_MODEL,
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.CLEAN);
    }
 }

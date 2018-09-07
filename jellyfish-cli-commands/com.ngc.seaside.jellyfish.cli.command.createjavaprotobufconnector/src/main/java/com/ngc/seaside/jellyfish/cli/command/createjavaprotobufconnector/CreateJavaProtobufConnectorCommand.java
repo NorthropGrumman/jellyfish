@@ -139,6 +139,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN,
+            CommonParameters.HEADER_FILE,
             CommonParameters.UPDATE_GRADLE_SETTING,
             allPhasesParameter());
    }
@@ -153,7 +154,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       ConnectorDto dto = new ConnectorDto();
       dto.setProjectName(info.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(PUBSUB_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       buildManagementService.registerDependency(getOptions(), CommonDependencies.PROTOBUF_JAVA.getGropuId(),
@@ -192,7 +193,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       evaluatePubSubIo(getOptions(), dto);
       evaluateReqResIo(getOptions(), dto);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("IData", IData.class));
       parameters.addParameter(new DefaultParameter<>("IEnumeration", IEnumeration.class));

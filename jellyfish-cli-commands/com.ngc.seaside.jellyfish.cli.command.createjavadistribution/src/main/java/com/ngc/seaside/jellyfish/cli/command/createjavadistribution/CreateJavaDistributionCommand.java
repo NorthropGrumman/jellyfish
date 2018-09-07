@@ -184,6 +184,7 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
                               CommonParameters.ARTIFACT_ID,
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
+                              CommonParameters.HEADER_FILE,
                               CommonParameters.SYSTEM,
                               CommonParameters.CLEAN
       );

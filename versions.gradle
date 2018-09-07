@@ -64,6 +64,7 @@ allprojects {
          exclude '**/*.expected'
          exclude '**/*.csv'
          exclude '**/*.md'
+         exclude "**/*.txt"
       }
    }
 }
