@@ -49,4 +49,21 @@ subprojects {
         dependencyInfoReportFile = dependenciesReportFile
         deploymentScriptFile = m2DeploymentScriptFile
     }
+
+    task licenseCheckTemplate(type: com.hierynomus.gradle.license.tasks.LicenseCheck,
+                              group: 'License',
+                              description: 'Check for header consistency of velocity templates.') {
+        source 'src/main/template', 'src/main/templates'
+        include '**/*.vm'
+    }
+
+    task licenseFormatTemplate(type: com.hierynomus.gradle.license.tasks.LicenseFormat,
+                               group: 'License',
+                               description: 'Applies the configured license to velocity templates.') {
+        source 'src/main/template', 'src/main/templates'
+        include '**/*.vm'
+    }
+
+    tasks.getByName('license').dependsOn(licenseCheckTemplate)
+    licenseFormat.dependsOn(licenseFormatTemplate)
 }

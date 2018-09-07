@@ -58,6 +58,8 @@ allprojects {
          mapping('sd', 'JAVADOC_STYLE')
          // Handle feature files.
          mapping('feature', 'SCRIPT_STYLE')
+         // Handle Velocity templates.
+         mapping('vm', 'SHARPSTAR_STYLE')
          // Exclude binary files.
          exclude '**/*.zip'
          exclude '**/*.jar'
