@@ -24,6 +24,7 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.ParameterCategory;
@@ -85,7 +86,8 @@ public class JellyfishCommandProviderTest {
       assertTrue("missing parameter input directory!",
                  usage.getAllParameters().contains(CommonParameters.INPUT_DIRECTORY));
       assertTrue("missing parameter GAV!",
-                 usage.getAllParameters().contains(CommonParameters.GROUP_ARTIFACT_VERSION));
+               usage.getAllParameters().stream().map(IParameter::getName)
+                        .filter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()::equals).findAny().isPresent());
    }
 
    @Test
