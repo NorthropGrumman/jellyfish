@@ -29,6 +29,7 @@ import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
@@ -107,7 +108,7 @@ public class HtmlAnalysisReportCommand implements ICommand<ICommandOptions> {
             new DefaultParameter<>(REPORT_NAME_PARAMETER_NAME)
                   .setDescription("The name of the report to generate. The report files will be located within the"
                                   + " directory given by the outputDirectory parameter.")
-                  .setRequired(true),
+                  .setParameterCategory(ParameterCategory.REQUIRED),
             CommonParameters.OUTPUT_DIRECTORY.required());
    }
 

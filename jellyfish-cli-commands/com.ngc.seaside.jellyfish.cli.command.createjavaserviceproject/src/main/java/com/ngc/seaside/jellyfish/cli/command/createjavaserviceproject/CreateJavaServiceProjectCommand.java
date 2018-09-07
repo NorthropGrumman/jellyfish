@@ -25,6 +25,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -114,7 +115,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
          for (IParameter<?> parameter : parameters) {
             if (parameter.getName() != null && parameter.getDescription() != null) {
                IParameter<?> previous = usageParameters.get(parameter.getName());
-               if (previous == null || !previous.isRequired()) {
+               if (previous == null || previous.getParameterCategory() != ParameterCategory.REQUIRED) {
                   usageParameters.put(parameter.getName(), parameter);
                }
             }

@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsverification.utilities.ModelUtils;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
@@ -85,18 +86,18 @@ public class RequirementsVerificationMatrixCommand implements IJellyFishCommand 
       return new DefaultUsage("Generates a matrix showing requirements and which services' acceptance tests cover them",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
                                     "Format of the output; possible values are default and csv")
-                                    .setRequired(false),
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
                                     "File where the output is sent; default prints to stdout")
-                                    .setRequired(false),
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
                                     "The values in which to search for in the scope defined as a comma-separated "
                                     + "string; default: service")
-                                    .setRequired(false),
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
                                     "How the values should be logically combined; "
                                     + "possible values are AND, OR, NOT; default: OR")
-                                    .setRequired(false));
+                                    .setParameterCategory(ParameterCategory.OPTIONAL));
    }
 
    /**

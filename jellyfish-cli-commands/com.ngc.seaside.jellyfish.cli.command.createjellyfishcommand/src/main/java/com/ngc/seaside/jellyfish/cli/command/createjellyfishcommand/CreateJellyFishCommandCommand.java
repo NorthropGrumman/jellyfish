@@ -25,6 +25,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.utilities.file.FileUtilitiesException;
 import com.ngc.seaside.jellyfish.utilities.file.GradleSettingsUtilities;
@@ -229,7 +230,7 @@ public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> 
             new DefaultParameter(COMMAND_NAME_PROPERTY)
                   .setDescription(
                         "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
-                  .setRequired(true),
+                  .setParameterCategory(ParameterCategory.REQUIRED),
             CommonParameters.GROUP_ID,
             CommonParameters.ARTIFACT_ID,
             CommonParameters.PACKAGE,

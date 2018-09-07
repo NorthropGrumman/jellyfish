@@ -24,6 +24,7 @@ import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 
 import java.util.Arrays;
@@ -120,7 +121,7 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
             "Runs various types of analysis and generates reports",
             new DefaultParameter<>(ANALYSES_PARAMETER_NAME)
                   .setDescription("Configures the analysis to execute.  The values are comma (,) separated.")
-                  .setRequired(true),
+                  .setParameterCategory(ParameterCategory.REQUIRED),
             new DefaultParameter<>(REPORTS_PARAMETER_NAME)
                   .setDescription("Configures the reports to generated after performing analysis. The values are comma"
                                   + " (,) separated."));

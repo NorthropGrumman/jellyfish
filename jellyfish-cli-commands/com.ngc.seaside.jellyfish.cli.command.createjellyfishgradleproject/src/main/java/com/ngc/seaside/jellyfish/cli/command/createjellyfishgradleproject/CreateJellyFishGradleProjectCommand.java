@@ -25,6 +25,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.GradleProjectDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
@@ -194,7 +195,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
                   .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script;"
                                   + "  defaults to the current version of Jellyfish")
-                  .setRequired(false),
+                  .setParameterCategory(ParameterCategory.ADVANCED),
             CommonParameters.GROUP_ID,
             CommonParameters.VERSION,
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),

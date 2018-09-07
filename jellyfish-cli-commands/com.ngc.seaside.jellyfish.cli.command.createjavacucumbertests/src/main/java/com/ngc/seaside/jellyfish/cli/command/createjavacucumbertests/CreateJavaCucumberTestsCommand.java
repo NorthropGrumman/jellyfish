@@ -24,6 +24,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
@@ -184,7 +185,7 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
                               new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
                                     "If true, only copy the feature files and resources from the system descriptor "
                                     + "project into src/main/resources.")
-                                    .setRequired(false));
+                                    .setParameterCategory(ParameterCategory.OPTIONAL));
    }
 
 }
