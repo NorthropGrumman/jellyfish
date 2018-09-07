@@ -98,6 +98,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.DEPLOYMENT_MODEL,
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN);
    }
 

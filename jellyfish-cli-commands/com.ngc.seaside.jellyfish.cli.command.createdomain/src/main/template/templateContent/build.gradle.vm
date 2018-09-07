@@ -1,3 +1,4 @@
+${header.gradle}
 apply plugin: 'com.ngc.blocs.gradle.plugin.domain'
 
 generateDomain {

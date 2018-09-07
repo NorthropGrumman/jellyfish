@@ -1,15 +1,5 @@
-/**
-***************************************** UNCLASSIFIED ******************************************
-*************************************************************************************************
-************************* Copyright 2017 Northrop Grumman Corporation ***************************
-* Author: Generated
-*/
-package $dto.packageName;
+${header.java}
 
-/**
- * This file has been generated and should not be edited directly.
- * @author Generated
- */
 public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end ${dto.className}#if($dto.extendedClass) extends $dto.extendedClass#end {
 
 ## Generate an enumeration

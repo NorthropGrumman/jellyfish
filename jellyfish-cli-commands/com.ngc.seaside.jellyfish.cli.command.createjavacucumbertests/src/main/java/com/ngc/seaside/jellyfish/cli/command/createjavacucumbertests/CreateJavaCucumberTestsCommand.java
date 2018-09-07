@@ -100,6 +100,7 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN,
+                              CommonParameters.HEADER_FILE,
                               new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
                                     "If true, only copy the feature files and resources from the system descriptor "
                                     + "project into src/main/resources.")

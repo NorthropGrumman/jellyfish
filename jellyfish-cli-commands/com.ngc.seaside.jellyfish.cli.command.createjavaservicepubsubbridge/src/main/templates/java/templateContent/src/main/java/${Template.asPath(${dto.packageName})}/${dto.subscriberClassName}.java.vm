@@ -1,15 +1,6 @@
-/**
-***************************************** UNCLASSIFIED ******************************************
-*************************************************************************************************
-************************* Copyright 2017 Northrop Grumman Corporation ***************************
-* Author: Generated
-*/
+${header.java}
 package $dto.packageName;
 
-/**
- * This file has been generated and should not be edited directly.
- * @author Generated
- */
 #set ($ignore = $dto.imports.add("com.google.common.base.Preconditions"))
 #set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEvent"))
 #set ($ignore = $dto.imports.add("com.ngc.blocs.service.event.api.IEventService"))

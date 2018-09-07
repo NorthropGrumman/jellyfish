@@ -68,7 +68,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       MessagesDto messagesDto = new MessagesDto();
       messagesDto.setProjectName(projectInfo.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
       unpackSuffixedTemplate(MESSAGES_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -98,7 +98,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
                                             .map(f -> packageNamingService.getMessagePackageName(getOptions(), f))
                                             .collect(Collectors.toCollection(TreeSet::new)));
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
       unpackSuffixedTemplate(MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -109,7 +109,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
             dataDto.setClassName(child.getName());
             dataDto.setData(child);
             dataDto.setDataService(field -> dataFieldGenerationService.getMessagesField(getOptions(), field));
-            DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+            DefaultParameterCollection dataParameters = new DefaultParameterCollection(getOptions().getParameters());
             dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
             unpackSuffixedTemplate(MESSAGES_PROTO_TEMPLATE_SUFFIX,
                                    dataParameters,
@@ -157,6 +157,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN,
+            CommonParameters.HEADER_FILE,
             allPhasesParameter());
    }
 }

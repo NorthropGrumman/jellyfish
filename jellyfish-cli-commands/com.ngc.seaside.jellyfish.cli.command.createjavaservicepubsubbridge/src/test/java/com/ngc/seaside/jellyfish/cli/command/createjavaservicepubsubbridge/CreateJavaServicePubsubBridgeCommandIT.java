@@ -156,6 +156,10 @@ public class CreateJavaServicePubsubBridgeCommandIT {
             new DefaultParameter<>(OUTPUT_DIRECTORY_PROPERTY, outputDirectory));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(),
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateJavaServicePubsubBridgeCommandIT.class.getSimpleName(), "tests")));
 
       ISystemDescriptor systemDescriptor = mock(ISystemDescriptor.class);
       when(systemDescriptor.findModel("com.ngc.seaside.threateval.EngagementTrackPriorityService")).thenReturn(

@@ -201,6 +201,7 @@ public class CreateDomainCommand extends AbstractJellyfishCommand {
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN,
                               CommonParameters.UPDATE_GRADLE_SETTING,
+                              CommonParameters.HEADER_FILE,
                               new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                     .setDescription("The velocity template file")
                                     .setRequired(false),
@@ -363,14 +364,17 @@ public class CreateDomainCommand extends AbstractJellyfishCommand {
     * @param packages           set of packages to export
     * @throws CommandException if an error occurred generating the build.gradle file
     */
-   private void createGradleBuild(Path projectDir, IJellyFishCommandOptions commandOptions, Path domainTemplateFile,
-                                  Set<String> packages, boolean clean) {
+   private void createGradleBuild(Path projectDir,
+                                  IJellyFishCommandOptions commandOptions,
+                                  Path domainTemplateFile,
+                                  Set<String> packages,
+                                  boolean clean) {
       String extension = "java";
       if (commandOptions.getParameters().containsParameter(EXTENSION_PROPERTY)) {
          extension = commandOptions.getParameters().getParameter(EXTENSION_PROPERTY).getStringValue();
       }
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(commandOptions.getParameters());
       parameters.addParameter(new DefaultParameter<>("options", commandOptions));
       parameters.addParameter(new DefaultParameter<>("velocityFile", domainTemplateFile.getFileName()));
       parameters.addParameter(new DefaultParameter<>("packages", packages));

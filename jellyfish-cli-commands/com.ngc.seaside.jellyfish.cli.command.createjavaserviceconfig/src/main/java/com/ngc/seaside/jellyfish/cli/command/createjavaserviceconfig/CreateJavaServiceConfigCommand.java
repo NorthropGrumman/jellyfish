@@ -150,6 +150,7 @@ public class CreateJavaServiceConfigCommand extends AbstractJellyfishCommand {
             CommonParameters.MODEL.required(),
             CommonParameters.DEPLOYMENT_MODEL,
             CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN);
    }
 
@@ -169,7 +170,7 @@ public class CreateJavaServiceConfigCommand extends AbstractJellyfishCommand {
                   projectNamingService.getBaseServiceProjectName(getOptions(), model).getArtifactId())
             .setProjectDirectoryName(projectDir.getFileName().toString());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackDefaultTemplate(parameters, outputDir, clean);
 

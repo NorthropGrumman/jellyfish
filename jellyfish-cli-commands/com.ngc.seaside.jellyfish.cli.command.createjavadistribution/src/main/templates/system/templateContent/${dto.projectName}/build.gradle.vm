@@ -1,3 +1,4 @@
+${header.gradle}
 apply plugin: 'maven-publish'
 apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.ngc.seaside.distribution.system'

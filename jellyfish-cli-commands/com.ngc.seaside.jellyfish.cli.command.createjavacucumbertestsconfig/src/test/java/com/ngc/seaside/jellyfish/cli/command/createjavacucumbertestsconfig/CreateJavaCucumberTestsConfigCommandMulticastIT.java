@@ -69,12 +69,10 @@ public class CreateJavaCucumberTestsConfigCommandMulticastIT extends CreateJavaC
 
       command.addConfigurationPlugin(providerPlugin);
       command.addConfigurationPlugin(transportPlugin);
-
    }
 
    @Test
    public void multicast() throws Throwable {
-
       transportService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
                61000, "127.0.0.1", "127.0.0.1");
       transportService.addMulticastConfiguration("trackEngagementStatus", "224.5.6.7",
