@@ -13,12 +13,16 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#${header.gradle}
-ext {
-    command = 'create-java-cucumber-tests-config'
-#if ($dto.isSystem())
-    args = [system : true]
+ *#${header.java}
+package ${dto.topicsEnum.packageName};
+
+#set ($ignore = $dto.topicsEnum.imports.add('com.ngc.seaside.service.transport.api.ITransportTopic'))
+#foreach ($i in $dto.topicsEnum.imports)
+import ${i};
+#end
+
+public enum ${dto.topicsEnum.name} implements ITransportTopic {
+#foreach ($topic in $dto.topicsEnum.values)
+   $topic,
 #end
 }
-
-apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'
