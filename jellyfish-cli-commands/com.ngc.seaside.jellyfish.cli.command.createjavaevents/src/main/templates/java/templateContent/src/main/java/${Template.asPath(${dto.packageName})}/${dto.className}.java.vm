@@ -1,4 +1,5 @@
 ${header.java}
+package $dto.packageName;
 
 public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end ${dto.className}#if($dto.extendedClass) extends $dto.extendedClass#end {
 
