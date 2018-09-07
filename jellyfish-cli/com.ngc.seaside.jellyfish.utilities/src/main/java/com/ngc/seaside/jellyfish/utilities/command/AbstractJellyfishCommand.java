@@ -63,6 +63,13 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     */
    public static final String BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE = "build";
 
+
+   /**
+    * The name of the parameter that can be referenced in all unpacked templates which resolves to the
+    * {@link FileHeader}.  This can be referenced by templates to include a common header in all files.
+    */
+   public static final String FILE_HEADER_TEMPLATE_VARIABLE = "header";
+
    protected ILogService logService;
 
    protected IBuildManagementService buildManagementService;
