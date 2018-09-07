@@ -179,10 +179,14 @@ public class CreateJavaServiceBaseCommandIT {
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
                                                      outputDirectory.getAbsolutePath()));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateJavaServiceBaseCommandIT.class.getSimpleName(), "tests")));
    }
 
    @Test
-   public void testDoesRunDeferredPhase() throws Throwable {
+   public void testDoesRunDeferredPhase() {
       parameters.addParameter(new DefaultParameter<>(CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED));
       command.run(jellyFishCommandOptions);
       Path baseDir = outputDirectory.toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.base");

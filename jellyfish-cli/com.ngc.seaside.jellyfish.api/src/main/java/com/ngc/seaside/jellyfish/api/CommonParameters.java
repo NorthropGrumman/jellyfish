@@ -25,6 +25,10 @@ public enum CommonParameters implements IParameter<String> {
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
    DEPLOYMENT_MODEL("deploymentModel", "The fully qualified name of a system descriptor deployment model"),
    GROUP_ID("groupId", "The project's group ID"),
+   HEADER_FILE("headerFile", "A file whose contents will be injected into the header of all source code files that"
+            + " Jellyfish generates.  This file should be a plain text file.  Jellyfish includes a"
+            + " default header with an NGC license and UNCLASSIFIED markings.  Use a custom header for"
+            + " a different license or to change the markings of generated files."),
    INPUT_DIRECTORY("inputDirectory", "Base directory of the system descriptor project"),
    GROUP_ARTIFACT_VERSION("gav",
             "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>; "

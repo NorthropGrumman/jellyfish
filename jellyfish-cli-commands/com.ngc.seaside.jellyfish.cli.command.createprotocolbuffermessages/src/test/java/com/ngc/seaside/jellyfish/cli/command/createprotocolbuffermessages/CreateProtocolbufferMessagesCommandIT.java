@@ -129,6 +129,10 @@ public class CreateProtocolbufferMessagesCommandIT {
       model.addPubSub("scenario1", "input1", data, "output1", child);
       when(systemDescriptor.findModel("com.ngc.Model")).thenReturn(Optional.of(model));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.MODEL.getName(), model.getFullyQualifiedName()));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateProtocolbufferMessagesCommandIT.class.getSimpleName(), "tests")));
    }
 
    @Test

@@ -29,7 +29,7 @@ eclipseDistribution {
 def licenseText = project.resources.text.fromFile(licenseFile).asString()
 licenseText = new groovy.text.SimpleTemplateEngine()
       .createTemplate(licenseText)
-      .make(['year': Calendar.getInstance().get(Calendar.YEAR)])
+      .make(license.ext.properties)
       .toString()
 
 eclipseUpdateSite {

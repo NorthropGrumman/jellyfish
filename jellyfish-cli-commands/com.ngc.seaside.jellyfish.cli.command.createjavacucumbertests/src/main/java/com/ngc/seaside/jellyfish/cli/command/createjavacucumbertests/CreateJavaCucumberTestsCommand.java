@@ -66,6 +66,48 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
       super(NAME);
    }
 
+   @Reference
+   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      this.generationService = ref;
+   }
+
+   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
+      setJavaServiceGenerationService(null);
+   }
+
+   @Reference
+   public void setTelemetryConfigService(ITelemetryConfigurationService ref) {
+      this.telemetryConfigService = ref;
+   }
+
+   public void removeTelemetryConfigService(ITelemetryConfigurationService ref) {
+      setTelemetryConfigService(null);
+   }
+
+   protected void doCreateDirectories(Path outputDirectory) {
+      try {
+         Files.createDirectories(outputDirectory);
+      } catch (IOException e) {
+         logService.error(CreateJavaCucumberTestsCommand.class, e);
+         throw new CommandException(e);
+      }
+   }
+
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage("Generates the Gradle project responsible for testing a service's acceptance tests",
+                              CommonParameters.GROUP_ID,
+                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.OUTPUT_DIRECTORY.required(),
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.CLEAN,
+                              CommonParameters.HEADER_FILE,
+                              new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
+                                    "If true, only copy the feature files and resources from the system descriptor "
+                                    + "project into src/main/resources.")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL));
+   }
+
    @Override
    protected void doRun() {
       IJellyFishCommandOptions commandOptions = getOptions();
@@ -87,7 +129,7 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
 
       boolean isConfigGenerated = parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()) != null
                                   && parameters.getParameter(CommonParameters.DEPLOYMENT_MODEL.getName()).getValue()
-                                  != null;
+                                     != null;
 
       CucumberDto dto = new CucumberDto(buildManagementService, commandOptions)
             .setProjectName(projectName)
@@ -133,59 +175,10 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
          }
       }
 
-      templateService.unpack(CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + BUILD_TEMPLATE_SUFFIX,
-                             parameters,
-                             outputDirectory,
-                             clean);
+      unpackSuffixedTemplate(BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       if (!isConfigGenerated) {
-         templateService.unpack(
-               CreateJavaCucumberTestsCommand.class.getPackage().getName() + "-" + CONFIG_TEMPLATE_SUFFIX,
-               parameters,
-               outputDirectory,
-               false);
+         unpackSuffixedTemplate(CONFIG_TEMPLATE_SUFFIX, parameters, outputDirectory, false);
       }
       buildManagementService.registerProject(commandOptions, info);
    }
-
-   @Reference
-   public void setJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      this.generationService = ref;
-   }
-
-   public void removeJavaServiceGenerationService(IJavaServiceGenerationService ref) {
-      setJavaServiceGenerationService(null);
-   }
-
-   @Reference
-   public void setTelemetryConfigService(ITelemetryConfigurationService ref) {
-      this.telemetryConfigService = ref;
-   }
-
-   public void removeTelemetryConfigService(ITelemetryConfigurationService ref) {
-      setTelemetryConfigService(null);
-   }
-
-   protected void doCreateDirectories(Path outputDirectory) {
-      try {
-         Files.createDirectories(outputDirectory);
-      } catch (IOException e) {
-         logService.error(CreateJavaCucumberTestsCommand.class, e);
-         throw new CommandException(e);
-      }
-   }
-
-   @Override
-   protected IUsage createUsage() {
-      return new DefaultUsage("Generates the Gradle project responsible for testing a service's acceptance tests",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
-                              CommonParameters.OUTPUT_DIRECTORY.required(),
-                              CommonParameters.MODEL.required(),
-                              CommonParameters.CLEAN,
-                              new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
-                                    "If true, only copy the feature files and resources from the system descriptor "
-                                    + "project into src/main/resources.")
-                                    .setParameterCategory(ParameterCategory.OPTIONAL));
-   }
-
 }

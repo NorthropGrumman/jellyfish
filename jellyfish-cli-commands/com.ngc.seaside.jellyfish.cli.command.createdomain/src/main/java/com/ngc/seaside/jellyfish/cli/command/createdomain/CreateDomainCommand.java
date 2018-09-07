@@ -637,3 +637,4 @@ public class CreateDomainCommand implements IJellyFishCommand {
                                     .setParameterCategory(ParameterCategory.ADVANCED));
    }
 }
+

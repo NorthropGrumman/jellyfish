@@ -69,6 +69,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN,
             CommonParameters.UPDATE_GRADLE_SETTING);
    }
@@ -82,7 +83,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
       IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(getOptions(), model);
       BaseServiceDto dto = templateDaoFactory.newDto(getOptions(), model);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(SERVICE_BASE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       registerProject(projectInfo);
@@ -96,7 +97,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
 
       BaseServiceDto dto = templateDaoFactory.newDto(getOptions(), model);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       if (!dto.isSystem()) {

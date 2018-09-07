@@ -89,7 +89,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       GeneratedServiceConfigDto dto = new GeneratedServiceConfigDto(buildManagementService, getOptions());
       dto.setProjectDirectoryName(projectInfo.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(CONFIG_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -129,7 +129,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
          }
       }
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
 
@@ -197,12 +197,12 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       String template = plugin.getTemplate(context);
       Optional<T> dto = plugin.getConfigurationDto(context);
       if (template != null && dto.isPresent()) {
-         DefaultParameterCollection parameters = new DefaultParameterCollection();
+         DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
          parameters.addParameter(new DefaultParameter<>("dto", dto.get()));
          for (Entry<String, Object> entry : plugin.getExtraTemplateParameters(context).entrySet()) {
             parameters.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
          }
-         templateService.unpack(template, parameters, outputDirectory, false);
+         templateService.unpack(template, addDefaultUnpackParameters(parameters), outputDirectory, false);
       }
    }
 
@@ -248,6 +248,7 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.HEADER_FILE,
                CommonParameters.CLEAN);
    }
 }

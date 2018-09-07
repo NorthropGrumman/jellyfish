@@ -107,6 +107,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
       GradleProjectDto dto = new GradleProjectDto()
             .setGroupId(groupId)
             .setProjectName(collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue())
+            .setVersion(collection.getParameter(VERSION_PROPERTY).getStringValue())
             .setSystemDescriptorGav(collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue())
             .setModelName(collection.getParameter(MODEL_NAME_PROPERTY).getStringValue())
             .setDeploymentModelName(getDeploymentModel(commandOptions))
@@ -115,12 +116,6 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             .setProjects(getProjects(commandOptions))
                .setSystem(CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                         CommonParameters.SYSTEM.getName(), false));
-      IParameter<?> version = collection.getParameter(VERSION_PROPERTY);
-      if (version == null || version.getStringValue() == null || version.getStringValue().isEmpty()) {
-         dto.setVersion("1.0.0-SNAPSHOT");
-      } else {
-         dto.setVersion(version.getStringValue());
-      }
       configModelParts(dto);
       collection.addParameter(new DefaultParameter<>("dto", dto));
 
@@ -193,8 +188,8 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.PROJECT_NAME,
             new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
-                  .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script;"
-                                  + "  defaults to the current version of Jellyfish")
+                  .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
+                                  + "  Defaults to the current version of Jellyfish.")
                   .setParameterCategory(ParameterCategory.ADVANCED),
             CommonParameters.GROUP_ID,
             CommonParameters.VERSION,
@@ -205,3 +200,4 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    }
 
 }
+
