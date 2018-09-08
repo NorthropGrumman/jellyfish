@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 @Component(service = ICommand.class)
 public class VersionCommand implements ICommand<ICommandOptions> {
@@ -98,12 +98,8 @@ public class VersionCommand implements ICommand<ICommandOptions> {
       logItem("Java", this::getJavaVersion);
    }
 
-   private void logItem(String name, Callable<String> function) {
-      try {
-         logService.info(getClass(), name + getSpaces(name) + function.call());
-      } catch (Exception e) {
-         throw new RuntimeException(String.format("Could not log item: %s", name), e);
-      }
+   private void logItem(String name, Supplier<String> function) {
+      logService.info(getClass(), name + getSpaces(name) + function.get());
    }
 
    private String getSpaces(String name) {
