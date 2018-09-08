@@ -14,6 +14,7 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
+
 package com.ngc.seaside.jellyfish.cli.command.version;
 
 import com.google.inject.Inject;
