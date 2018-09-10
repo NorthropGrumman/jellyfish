@@ -107,7 +107,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
                "Whether or not to create the service's domain model"));
       usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
       usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
-      usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME);
+      usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME.optional());
 
       for (String subcommand : SUBCOMMANDS) {
          List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
@@ -123,7 +123,7 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
       }
 
       // This is explicitly optional since the config command will run if it's not provided
-      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
+      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL.optional());
 
       IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
       return new DefaultUsage("Creates a new Java micro-service project for a service model", parameters);

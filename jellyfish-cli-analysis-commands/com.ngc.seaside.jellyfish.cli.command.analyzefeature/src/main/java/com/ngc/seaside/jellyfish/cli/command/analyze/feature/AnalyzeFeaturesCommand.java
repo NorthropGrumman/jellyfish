@@ -69,8 +69,8 @@ public class AnalyzeFeaturesCommand extends AbstractJellyfishAnalysisCommand {
       return new DefaultUsage("Checks that scenarios have a corresponding feature file and vice versa. "
                + "This command is rarely ran directly;"
                + " instead it is run with the 'analyze' command.",
-               CommonParameters.MODEL,
-               CommonParameters.STEREOTYPES);
+               CommonParameters.MODEL.required(),
+               CommonParameters.STEREOTYPES.optional());
    }
 
    @Override

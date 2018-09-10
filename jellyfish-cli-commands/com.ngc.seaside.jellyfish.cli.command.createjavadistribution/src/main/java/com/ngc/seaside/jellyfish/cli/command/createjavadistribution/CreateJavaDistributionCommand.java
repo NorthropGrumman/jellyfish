@@ -181,13 +181,13 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    protected IUsage createUsage() {
       return new DefaultUsage(
                "Generates the Gradle project responsible for creating an executable distribution for a service",
-               CommonParameters.GROUP_ID,
-               CommonParameters.ARTIFACT_ID,
+               CommonParameters.GROUP_ID.optional(),
+               CommonParameters.ARTIFACT_ID.optional(),
                CommonParameters.OUTPUT_DIRECTORY.required(),
                CommonParameters.MODEL.required(),
-               CommonParameters.HEADER_FILE,
-               CommonParameters.SYSTEM,
-               CommonParameters.CLEAN);
+               CommonParameters.HEADER_FILE.advanced(),
+               CommonParameters.SYSTEM.optional(),
+               CommonParameters.CLEAN.optional());
    }
 
    private void addProjectDependency(Map<String, String> dependencyMap,

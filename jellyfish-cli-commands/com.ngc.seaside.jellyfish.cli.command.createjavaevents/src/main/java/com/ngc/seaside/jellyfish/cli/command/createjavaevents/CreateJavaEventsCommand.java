@@ -155,8 +155,8 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
                         + "input and output event sources as generated serialization-agnostic Java types",
                CommonParameters.OUTPUT_DIRECTORY.required(),
                CommonParameters.MODEL.required(),
-               CommonParameters.HEADER_FILE,
-               CommonParameters.CLEAN,
+               CommonParameters.HEADER_FILE.advanced(),
+               CommonParameters.CLEAN.optional(),
                allPhasesParameter());
    }
 }

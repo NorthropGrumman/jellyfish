@@ -63,7 +63,7 @@ public class JellyfishCommandContext {
     * @return true if the {@link CommonParameters#GROUP_ARTIFACT_VERSION} parameter was specified
     */
    public boolean isGavSpecified() {
-      return originalParameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.getName());
+      return originalParameters.containsParameter(CommonParameters.GROUP_ARTIFACT_VERSION.name());
    }
 
    /**

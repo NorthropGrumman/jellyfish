@@ -186,17 +186,17 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
       return new DefaultUsage(
             "Generates the root Gradle files for a new Jellyfish project",
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.PROJECT_NAME,
+            CommonParameters.PROJECT_NAME.optional(),
             new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
                   .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
                                   + "  Defaults to the current version of Jellyfish.")
                   .setParameterCategory(ParameterCategory.ADVANCED),
-            CommonParameters.GROUP_ID,
-            CommonParameters.VERSION,
+            CommonParameters.GROUP_ID.optional(),
+            CommonParameters.VERSION.optional(),
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
-            CommonParameters.DEPLOYMENT_MODEL,
-            CommonParameters.CLEAN);
+            CommonParameters.DEPLOYMENT_MODEL.optional(),
+            CommonParameters.CLEAN.optional());
    }
 
 }

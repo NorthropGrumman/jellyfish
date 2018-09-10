@@ -614,12 +614,12 @@ public class CreateDomainCommand implements IJellyFishCommand {
     */
    private static IUsage createUsage() {
       return new DefaultUsage("Generates a BLoCS domain model gradle project",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.GROUP_ID.optional(),
+                              CommonParameters.ARTIFACT_ID.optional(),
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
-                              CommonParameters.CLEAN,
-                              CommonParameters.UPDATE_GRADLE_SETTING,
+                              CommonParameters.CLEAN.optional(),
+                              CommonParameters.UPDATE_GRADLE_SETTING.advanced(),
                               new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                     .setDescription("The velocity template file")
                                     .setParameterCategory(ParameterCategory.ADVANCED),

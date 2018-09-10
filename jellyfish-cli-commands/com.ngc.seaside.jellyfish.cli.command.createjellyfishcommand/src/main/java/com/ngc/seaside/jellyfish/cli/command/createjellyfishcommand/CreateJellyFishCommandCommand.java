@@ -226,16 +226,16 @@ public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> 
             "Creates a Gradle project for a new JellyFish command. This requires that a settings.gradle file be "
             + "present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent "
             + "build.gradle.",
-            CommonParameters.CLASSNAME,
+            CommonParameters.CLASSNAME.optional(),
             new DefaultParameter(COMMAND_NAME_PROPERTY)
                   .setDescription(
                         "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
                   .setParameterCategory(ParameterCategory.REQUIRED),
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.PACKAGE,
-            CommonParameters.OUTPUT_DIRECTORY,
-            CommonParameters.CLEAN);
+            CommonParameters.GROUP_ID.optional(),
+            CommonParameters.ARTIFACT_ID.optional(),
+            CommonParameters.PACKAGE.optional(),
+            CommonParameters.OUTPUT_DIRECTORY.optional(),
+            CommonParameters.CLEAN.optional());
    }
 
 }

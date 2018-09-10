@@ -65,13 +65,13 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
    protected IUsage createUsage() {
       return new DefaultUsage(
             "Generates a Gradle project containing the interface, API, and base classes for a service",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
+            CommonParameters.GROUP_ID.optional(),
+            CommonParameters.ARTIFACT_ID.optional(),
             CommonParameters.MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.HEADER_FILE,
-            CommonParameters.CLEAN,
-            CommonParameters.UPDATE_GRADLE_SETTING);
+            CommonParameters.HEADER_FILE.advanced(),
+            CommonParameters.CLEAN.optional(),
+            CommonParameters.UPDATE_GRADLE_SETTING.advanced());
    }
 
    @Override

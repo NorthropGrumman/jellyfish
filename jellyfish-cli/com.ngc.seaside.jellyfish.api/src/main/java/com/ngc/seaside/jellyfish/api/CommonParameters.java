@@ -19,7 +19,7 @@ package com.ngc.seaside.jellyfish.api;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum CommonParameters implements IParameter<String> {
+public enum CommonParameters {
    ARTIFACT_ID("artifactId", "The project's artifact ID"),
    CLASSNAME("classname", "The name of the class that will be generated"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
@@ -57,29 +57,12 @@ public enum CommonParameters implements IParameter<String> {
       this.name = name;
    }
 
-   @Override
    public String getDescription() {
       return description;
    }
 
-   @Override
    public String getName() {
       return name;
-   }
-
-   @Override
-   public String getValue() {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public String getStringValue() {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public ParameterCategory getParameterCategory() {
-      return ParameterCategory.ADVANCED;
    }
 
    /**

@@ -28,7 +28,7 @@ public class DefaultParameter<T> implements IParameter<T> {
    private String name;
    private T value;
    private String description = "";
-   private ParameterCategory paramCategory;
+   private ParameterCategory paramCategory = ParameterCategory.REQUIRED;
 
    /**
     * Creates a new parameter with the given nam
