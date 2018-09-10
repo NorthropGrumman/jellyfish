@@ -51,7 +51,7 @@ public class VersionCommandTest {
 
       cmd.run(options);
 
-      text = output.toString().replaceAll("\n", " ");
+      text = output.toString().replaceAll(System.lineSeparator(), " ");
    }
 
    @Test
