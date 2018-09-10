@@ -1,0 +1,53 @@
+#*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ *#
+#set( $D = '$' )
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+   <appender name="console" class="org.apache.log4j.ConsoleAppender">
+      <param name="Threshold" value="TRACE" />
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern"
+                value="%d{yyyy-MM-dd HH:mm:ss} [model:${model}] %-3p %c{1}:%L - %m%n"/>
+      </layout>
+   </appender>
+
+   <appender name="file" class="org.apache.log4j.RollingFileAppender">
+      <param name="append" value="false" />
+      <param name="maxFileSize" value="10MB" />
+      <param name="maxBackupIndex" value="10" />
+      <param name="Threshold" value="TRACE" />
+      <param name="file" value="${D}{NG_FW_HOME}/logs/${model}.log" />
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern"
+                value="%d{yyyy-MM-dd HH:mm:ss} [model:${model}] %-3p %c{1}:%L - %m%n" />
+      </layout>
+   </appender>
+
+   <logger name="org.apache.commons.beanutils.converters">
+      <level value="WARN"/>
+   </logger>
+
+   <root>
+      <level value="TRACE" />
+      <appender-ref ref="console" />
+      <appender-ref ref="file" />
+   </root>
+
+</log4j:configuration>

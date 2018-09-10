@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createjavaevents;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -51,7 +67,7 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
       EventsDto eventsDto = new EventsDto();
       eventsDto.setProjectName(projectInfo.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", eventsDto));
       unpackSuffixedTemplate(EVENTS_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -95,7 +111,7 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
             });
          }
          dataDto.setDataService(field -> dataFieldGenerationService.getEventsField(getOptions(), field));
-         DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+         DefaultParameterCollection dataParameters = new DefaultParameterCollection(getOptions().getParameters());
          dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
          unpackSuffixedTemplate(EVENTS_JAVA_TEMPLATE_SUFFIX,
                                 dataParameters,
@@ -138,6 +154,7 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
             "Generate a Gradle project that can generate the event sources as Java types.",
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN,
             allPhasesParameter());
    }

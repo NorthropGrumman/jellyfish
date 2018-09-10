@@ -1,3 +1,19 @@
+/*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 buildscript {
     ext {
         versionsFile = file('../versions.gradle')
@@ -15,10 +31,12 @@ buildscript {
         classpath "org.xtext:xtext-gradle-plugin:$xtextPluginVersion"
         classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0"
     }
 }
 
 apply plugin: 'com.ngc.seaside.release.root'
+apply plugin: 'com.ngc.seaside.root.parent'
 
 subprojects {
 
@@ -49,12 +67,42 @@ subprojects {
         apply from: "${rootDir}/gradle/maven-deployment.gradle"
     }
 
+    apply plugin: "com.github.hierynomus.license"
     apply plugin: 'com.ngc.seaside.ci'
 
     seasideCi {
         m2OutputDirectory = m2directory
         dependencyInfoReportFile = dependenciesReportFile
         deploymentScriptFile = m2DeploymentScriptFile
+    }
+
+    license {
+        mapping('xtend', 'JAVADOC_STYLE')
+        mapping('xtext', 'DOUBLESLASH_STYLE')
+        mapping('mwe2', 'DOUBLESLASH_STYLE')
+        exclude '**/*._trace'
+        exclude '**/*.xtextbin'
+        exclude '**/*.g'
+        exclude '**/*.MF'
+        exclude '**/*.tokens'
+    }
+
+    // Do not scan Xtext generated code.
+
+    licenseMain {
+        source = 'src/main/java'
+    }
+
+    licenseTest {
+        source = 'src/test/java'
+    }
+
+    licenseFormatMain {
+        source = 'src/main/java'
+    }
+
+    licenseFormatTest {
+        source = 'src/test/java'
     }
 
     sourceCompatibility = '1.8'

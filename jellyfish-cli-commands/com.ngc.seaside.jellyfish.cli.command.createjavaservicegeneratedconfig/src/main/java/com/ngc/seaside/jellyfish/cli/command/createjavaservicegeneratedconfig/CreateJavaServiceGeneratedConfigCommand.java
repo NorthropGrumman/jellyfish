@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig;
 
 import com.ngc.blocs.service.log.api.ILogService;
@@ -114,7 +130,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
          }
       }
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(CONFIG_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDir, clean);
 
@@ -174,12 +190,12 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       String template = plugin.getTemplate(context);
       Optional<T> dto = plugin.getConfigurationDto(context);
       if (template != null && dto.isPresent()) {
-         DefaultParameterCollection parameters = new DefaultParameterCollection();
+         DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
          parameters.addParameter(new DefaultParameter<>("dto", dto.get()));
          for (Entry<String, Object> entry : plugin.getExtraTemplateParameters(context).entrySet()) {
             parameters.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
          }
-         templateService.unpack(template, parameters, outputDirectory, false);
+         templateService.unpack(template, addDefaultUnpackParameters(parameters), outputDirectory, false);
       }
    }
 
@@ -223,6 +239,7 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.HEADER_FILE,
                CommonParameters.CLEAN);
    }
 }

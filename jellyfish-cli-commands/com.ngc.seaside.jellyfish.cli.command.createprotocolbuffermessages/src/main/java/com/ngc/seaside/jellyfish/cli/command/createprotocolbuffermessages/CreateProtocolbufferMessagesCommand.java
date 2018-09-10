@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createprotocolbuffermessages;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -52,7 +68,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       MessagesDto messagesDto = new MessagesDto();
       messagesDto.setProjectName(projectInfo.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
       unpackSuffixedTemplate(MESSAGES_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -82,7 +98,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
                                             .map(f -> packageNamingService.getMessagePackageName(getOptions(), f))
                                             .collect(Collectors.toCollection(TreeSet::new)));
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", messagesDto));
       unpackSuffixedTemplate(MESSAGES_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
 
@@ -93,7 +109,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
             dataDto.setClassName(child.getName());
             dataDto.setData(child);
             dataDto.setDataService(field -> dataFieldGenerationService.getMessagesField(getOptions(), field));
-            DefaultParameterCollection dataParameters = new DefaultParameterCollection();
+            DefaultParameterCollection dataParameters = new DefaultParameterCollection(getOptions().getParameters());
             dataParameters.addParameter(new DefaultParameter<>("dto", dataDto));
             unpackSuffixedTemplate(MESSAGES_PROTO_TEMPLATE_SUFFIX,
                                    dataParameters,
@@ -141,6 +157,7 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN,
+            CommonParameters.HEADER_FILE,
             allPhasesParameter());
    }
 }

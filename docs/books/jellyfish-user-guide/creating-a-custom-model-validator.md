@@ -250,9 +250,11 @@ We can now run `./gradlew clean build` on the `SoftwareStore` project to build t
 be used to ensure that no model declared in the `SoftwareStore` project has a name called `Foo`.
 
 ## Using the Plugin with the Jellyfish Command Line Interface
-When running a Jellyfish command directly (such as `validate` or `create-java-service-project`) we can package the
-validator directly with Jellyfish.  To do this, simply copy the JAR file to the `lib/` directory of the Jellyfish
-distribution directory.  The validator will be automatically used when running Jellyfish.
+The Jellyfish CLI looks for extra JARs in the folder
+`$JELLYFISH_USER_HOME/plugins` or `%JELLYFISH_USER_HOME%\plugins`. If the `JELLYFISH_USER_HOME` environment variable
+is not set, it defaults to `~/.jellyfish` or `%USERPROFILE%\.jellyfish`. When running a Jellyfish command directly
+(such as `validate` or `create-java-service-project`) we can include the validator in Jellyfish by copying the JAR
+to the `plugins/` directory of `JELLYFISH_USER_HOME`. The validator will be automatically used when running Jellyfish.
 
 ## Deploying the Plugin to Eclipse
 This deployment option is used to show validation errors and warnings directly inside Eclipse as a modeler is editing

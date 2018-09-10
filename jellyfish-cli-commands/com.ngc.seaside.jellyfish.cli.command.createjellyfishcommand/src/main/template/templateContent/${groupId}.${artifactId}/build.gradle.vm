@@ -1,0 +1,39 @@
+#*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ *#
+#set( $D = '$' )
+apply plugin: 'com.ngc.seaside.command'
+
+dependencies {
+   implementation "com.ngc.seaside:jellyfish.api:${D}jellyfishVersion"
+   implementation "com.ngc.seaside:jellyfish.utilities:${D}jellyfishVersion"
+   implementation "com.ngc.seaside:jellyfish.service.api:${D}jellyfishVersion"
+
+   implementation "com.google.inject:guice:${D}guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"
+   implementation "com.ngc.blocs:component.impl.common.componentutilities:${D}blocsVersion"
+   implementation "com.ngc.blocs:service.api:${D}blocsVersion"
+   implementation "org.osgi:osgi.core:${D}osgiVersion"
+   implementation "org.osgi:osgi.enterprise:${D}osgiVersion"
+   implementation "commons-io:commons-io:${D}commonsIOVersion"
+   implementation "commons-lang:commons-lang:${D}commonsLangVersion"
+
+   testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:${D}jellyfishVersion"
+   testImplementation "junit:junit:${D}junitVersion"
+   testImplementation "org.mockito:mockito-core:${D}mockitoVersion"
+   testImplementation "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"
+   testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:${D}version"
+}

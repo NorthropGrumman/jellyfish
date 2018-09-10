@@ -1,7 +1,0 @@
-rootProject.name = '${dto.projectName}'
-
-#foreach ( $project in $dto.projects )
-include '${project.artifactId}'
-project(':${project.artifactId}').projectDir = file('${project.directoryName}')
-
-#end

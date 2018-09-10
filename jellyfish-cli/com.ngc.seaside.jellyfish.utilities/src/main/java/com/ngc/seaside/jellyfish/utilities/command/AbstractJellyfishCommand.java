@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.utilities.command;
 
 import com.google.common.base.Preconditions;
@@ -11,7 +27,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -21,6 +36,7 @@ import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -42,13 +58,18 @@ import java.nio.file.Paths;
  */
 public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
+   /**
+    * The name of the parameter that can be referenced in all unpacked templates which resolves to the
+    * {@link IBuildManagementService}.
+    */
    public static final String BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE = "build";
 
-   private final String name;
 
-   private IUsage usage;
-
-   private IJellyFishCommandOptions options;
+   /**
+    * The name of the parameter that can be referenced in all unpacked templates which resolves to the
+    * {@link FileHeader}.  This can be referenced by templates to include a common header in all files.
+    */
+   public static final String FILE_HEADER_TEMPLATE_VARIABLE = "header";
 
    protected ILogService logService;
 
@@ -59,6 +80,12 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
    protected IProjectNamingService projectNamingService;
 
    protected IPackageNamingService packageNamingService;
+
+   private final String name;
+
+   private IUsage usage;
+
+   private IJellyFishCommandOptions options;
 
    /**
     * Creates a new command with the given name.
@@ -205,6 +232,39 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
    }
 
    /**
+    * Adds default parameters that can be referenced by templates when unpacking templates.
+    *
+    * @param parameters the parameters provided by the client
+    * @return the parameters to use when unpacking templates
+    */
+   protected IParameterCollection addDefaultUnpackParameters(IParameterCollection parameters) {
+      DefaultParameterCollection mutableParams = new DefaultParameterCollection(parameters);
+
+      if (buildManagementService != null) {
+         mutableParams.addParameter(new DefaultParameter<>(
+               BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
+               new BuildManagementHelper(buildManagementService, getOptions())));
+      }
+
+      if (mutableParams.containsParameter(CommonParameters.HEADER_FILE.getName())) {
+         // Make sure the parameter resolves to a file.
+         Path header = Paths.get(mutableParams.getParameter(CommonParameters.HEADER_FILE.getName()).getStringValue());
+         if (!Files.isReadable(header)) {
+            throw new CommandException(String.format(
+                  "the file given by the parameter %s is either not a file or is not readable!  Expected to find a"
+                  + " file at %s.",
+                  CommonParameters.HEADER_FILE.getName(),
+                  header.toAbsolutePath()));
+         }
+         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, new FileHeader(header)));
+      } else {
+         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, FileHeader.DEFAULT_HEADER));
+      }
+
+      return mutableParams;
+   }
+
+   /**
     * Uses the {@code ITemplateService} to unpack and expand a template for this command.  This operation will
     * automatically place a parameter named {@link #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE} in the parameter
     * collection.  The value of this parameter is a {@link BuildManagementHelper} object which can be used by a template
@@ -222,12 +282,10 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                                                    Path outputDirectory,
                                                    boolean clean) {
       Preconditions.checkState(templateService != null, "template service not set!");
-      if (buildManagementService != null) {
-         parameters = new DefaultParameterCollection(parameters)
-               .addParameter(new DefaultParameter<>(BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
-                                                    new BuildManagementHelper()));
-      }
-      return templateService.unpack(getClass().getPackage().getName(), parameters, outputDirectory, clean);
+      return templateService.unpack(getClass().getPackage().getName(),
+                                    addDefaultUnpackParameters(parameters),
+                                    outputDirectory,
+                                    clean);
    }
 
    /**
@@ -250,38 +308,9 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
                                                     Path outputDirectory,
                                                     boolean clean) {
       Preconditions.checkState(templateService != null, "template service not set!");
-      if (buildManagementService != null) {
-         parameters = new DefaultParameterCollection(parameters)
-               .addParameter(new DefaultParameter<>(BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
-                                                    new BuildManagementHelper()));
-      }
       return templateService.unpack(getClass().getPackage().getName() + "-" + templateSuffix,
-                                    parameters,
+                                    addDefaultUnpackParameters(parameters),
                                     outputDirectory,
                                     clean);
-   }
-
-   /**
-    * A type that is added as a parameter when unpacking a template.  The parameter will have the name {@link
-    * #BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE}.
-    */
-   public class BuildManagementHelper {
-
-      private BuildManagementHelper() {
-      }
-
-      /**
-       * Gets a string that describes the given dependency in the format
-       * {@code groupId:artifactId:$versionPropertyName}.
-       *
-       * @return a string that describes the given dependency
-       */
-      public String getFormattedDependency(String groupAndArtifactId) {
-         IBuildDependency dependency = buildManagementService.registerDependency(options, groupAndArtifactId);
-         return String.format("%s:%s:$%s",
-                              dependency.getGroupId(),
-                              dependency.getArtifactId(),
-                              dependency.getVersionPropertyName());
-      }
    }
 }

@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -123,6 +139,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN,
+            CommonParameters.HEADER_FILE,
             CommonParameters.UPDATE_GRADLE_SETTING,
             allPhasesParameter());
    }
@@ -137,7 +154,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       ConnectorDto dto = new ConnectorDto();
       dto.setProjectName(info.getDirectoryName());
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(PUBSUB_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       buildManagementService.registerDependency(getOptions(), CommonDependencies.PROTOBUF_JAVA.getGropuId(),
@@ -176,7 +193,7 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       evaluatePubSubIo(getOptions(), dto);
       evaluateReqResIo(getOptions(), dto);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       parameters.addParameter(new DefaultParameter<>("IData", IData.class));
       parameters.addParameter(new DefaultParameter<>("IEnumeration", IEnumeration.class));

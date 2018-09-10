@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -53,6 +69,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
             CommonParameters.ARTIFACT_ID,
             CommonParameters.MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
+            CommonParameters.HEADER_FILE,
             CommonParameters.CLEAN,
             CommonParameters.UPDATE_GRADLE_SETTING);
    }
@@ -66,7 +83,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
       IProjectInformation projectInfo = projectNamingService.getBaseServiceProjectName(getOptions(), model);
       BaseServiceDto dto = templateDaoFactory.newDto(getOptions(), model);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(SERVICE_BASE_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       registerProject(projectInfo);
@@ -80,7 +97,7 @@ public class CreateJavaServiceBaseCommand extends AbstractMultiphaseJellyfishCom
 
       BaseServiceDto dto = templateDaoFactory.newDto(getOptions(), model);
 
-      DefaultParameterCollection parameters = new DefaultParameterCollection();
+      DefaultParameterCollection parameters = new DefaultParameterCollection(getOptions().getParameters());
       parameters.addParameter(new DefaultParameter<>("dto", dto));
       unpackSuffixedTemplate(SERVICE_BASE_GENERATED_BUILD_TEMPLATE_SUFFIX, parameters, outputDirectory, clean);
       if (!dto.isSystem()) {

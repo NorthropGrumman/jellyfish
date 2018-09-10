@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase;
 
 import com.ngc.blocs.service.log.api.ILogService;
@@ -163,10 +179,14 @@ public class CreateJavaServiceBaseCommandIT {
                                                      "com.ngc.seaside.threateval.EngagementTrackPriorityService"));
       parameters.addParameter(new DefaultParameter<>(CommonParameters.OUTPUT_DIRECTORY.getName(),
                                                      outputDirectory.getAbsolutePath()));
+      // Turn off the file header with an empty file.
+      parameters.addParameter(new DefaultParameter<>(
+            CommonParameters.HEADER_FILE.getName(),
+            Files.createTempFile(CreateJavaServiceBaseCommandIT.class.getSimpleName(), "tests")));
    }
 
    @Test
-   public void testDoesRunDeferredPhase() throws Throwable {
+   public void testDoesRunDeferredPhase() {
       parameters.addParameter(new DefaultParameter<>(CommonParameters.PHASE.getName(), JellyfishCommandPhase.DEFERRED));
       command.run(jellyFishCommandOptions);
       Path baseDir = outputDirectory.toPath().resolve("com.ngc.seaside.threateval.engagementtrackpriorityservice.base");

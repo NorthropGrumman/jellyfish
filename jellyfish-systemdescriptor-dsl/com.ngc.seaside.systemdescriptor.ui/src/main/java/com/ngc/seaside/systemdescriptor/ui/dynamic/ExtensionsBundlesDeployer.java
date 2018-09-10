@@ -1,3 +1,19 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
 package com.ngc.seaside.systemdescriptor.ui.dynamic;
 
 import com.google.common.base.Preconditions;
@@ -16,55 +32,40 @@ import java.nio.file.Paths;
 
 /**
  * This is a simple class that will install bundles in a certain directory into
- * Eclipse. The directory name is configured with the system property
- * {@code com.ngc.seaside.jellyfish.extraBundles}. This should point to a
- * directory that contains bundle JAR files that should be installed when
- * Eclipse starts.
+ * Eclipse. Using the system property or environment variable
+ * {@code JELLYFISH_USER_HOME}, bundles within the directory {@code JELLYFISH_USER_HOME/plugins} will be installed
+ * when Eclipse starts. 
  * <p/>
  * This is useful when developing the Eclipse product and running Eclipse with
  * JellyFish within Eclipse. This can be used to include any JellyFish extension
- * bundles when debugging Eclipse. For example, if you
- * <ol>
- * <li>clone the jellyfish-systemdescriptor-ext repo to the location
- * C:\projects\ceacide\jellyfish-systemdescriptor-ext</li>
- * <li>run {@code gradle build}</li>
- * <li>Set the value
- * {@code -Dcom.ngc.seaside.jellyfish.extraBundles=C:\projects\ceacide\jellyfish-systemdescriptor-ext\
- * com.ngc.seaside.systemdescriptor.ext.updatesite\build\\updatesite\plugins}
- * as a VM argument inside the Eclipse configuration
- * </ol>
- * then Eclipse will start with the extension bundles installed.
+ * bundles when debugging Eclipse.
  */
 public class ExtensionsBundlesDeployer {
 
    /**
-    * The name of the system property that points to a directory that contains
-    * extra bundles to deploy when starting Eclipse.
+    * The name of the system property that points to a directory for jellyfish settings. Extra bundles should be added
+    * to the {@code plugins} subdirectory.
     */
-   private static final String BUNDLE_DIRECTORY_PROPERY_NAME = "com.ngc.seaside.jellyfish.extraBundles";
-   private static final Logger LOGGER = Logger.getLogger(ExtensionsBundlesDeployer.class);
+   public static final String JELLYFISH_USER_HOME = "JELLYFISH_USER_HOME";
 
-   private Path bundleDirectory;
+   private static final String USER_HOME_PROPERTY_NAME = "user.home";
+   private static final String DEFAULT_JELLYFISH_USER_HOME = ".jellyfish";
+   private static final String PLUGINS_DIRECTORY = "plugins";
+
+   private static final Logger LOGGER = Logger.getLogger(ExtensionsBundlesDeployer.class);
 
    /**
     * Uses the system property {@code BUNDLE_DIRECTORY_PROPERY_NAME} to find the bundles to load at runtime.
     */
    public boolean useSystemArgumentForBundleLocation() {
-      String bundleDirectoryName = System.getProperty(BUNDLE_DIRECTORY_PROPERY_NAME);
-      boolean valid = bundleDirectoryName != null && !bundleDirectoryName.trim().isEmpty();
-      if (valid) {
-         bundleDirectory = Paths.get(bundleDirectoryName);
-         valid = bundleDirectory.toFile().isDirectory();
-         if (!valid) {
-            LOGGER.warn(String.format(
-                  "System property %s does not point to a directory, extra bundles will not be installed.",
-                  BUNDLE_DIRECTORY_PROPERY_NAME));
-         }
-      } else {
-         LOGGER.info(String.format("System property %s not set, extra bundles will not be installed.",
-                                   BUNDLE_DIRECTORY_PROPERY_NAME));
+      Path bundleDirectory = getPluginsDirectory();
+      
+      if (Files.isDirectory(bundleDirectory)) {
+         return true;
       }
-      return valid;
+      LOGGER.info(String.format("%s not set, extra bundles will not be installed.",
+               JELLYFISH_USER_HOME));
+      return false;
    }
 
    /**
@@ -72,6 +73,7 @@ public class ExtensionsBundlesDeployer {
     * {@code BUNDLE_DIRECTORY_PROPERY_NAME}.
     */
    public void installExtraBundles() {
+      Path bundleDirectory = getPluginsDirectory();
       Preconditions.checkState(bundleDirectory != null, "bundle directory not set!");
       Preconditions.checkState(bundleDirectory.toFile().isDirectory(), "%s is not a directory!", bundleDirectory);
 
@@ -87,6 +89,7 @@ public class ExtensionsBundlesDeployer {
    }
 
    private void installBundle(Path bundle) {
+      Path bundleDirectory = getPluginsDirectory();
       BundleContext bundleContext = SystemdescriptorActivator.getInstance().getBundle().getBundleContext();
       File bundleFile = bundle.toFile();
 
@@ -116,4 +119,11 @@ public class ExtensionsBundlesDeployer {
       }
    }
 
+   private Path getPluginsDirectory() {
+      String jellyfishUserHome = System.getProperty(JELLYFISH_USER_HOME, System.getenv(JELLYFISH_USER_HOME));
+      Path jellyfishUserHomePath = jellyfishUserHome == null
+               ? Paths.get(System.getProperty(USER_HOME_PROPERTY_NAME), DEFAULT_JELLYFISH_USER_HOME)
+               : Paths.get(jellyfishUserHome);
+      return jellyfishUserHomePath.resolve(PLUGINS_DIRECTORY);
+   }
 }
