@@ -18,6 +18,7 @@ package com.ngc.seaside.jellyfish.cli.command.help;
 
 import com.google.common.base.Preconditions;
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
@@ -25,6 +26,7 @@ import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
@@ -35,7 +37,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.BiPredicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -54,24 +56,35 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ICommand::getName)));
    private static final Collector<IParameter<?>, ?, SortedSet<IParameter<?>>> PARAMETER_COLLECTOR =
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IParameter::getName)));
+   private static final BiPredicate<IParameter<?>, Boolean> ADVANCED_USAGE_PREDICATE =
+            (param, advanced) -> advanced ? true : param.getParameterCategory() != ParameterCategory.ADVANCED;
+
+   public static final String VERBOSE_PARAMETER_NAME = "verbose";
+   public static final String ADVANCED_PARAMETER_NAME = "advanced";
 
    public static final String COMMAND_NAME = "help";
    private static final int LINE_WIDTH = 119;
    private static final String INDENT = "   ";
    private static final IUsage COMMAND_USAGE = new DefaultUsage(
          "Prints this help",
-         new DefaultParameter<>("verbose")
+         new DefaultParameter<>(VERBOSE_PARAMETER_NAME)
                .setDescription("Prints the help of all of the known commands")
-               .setParameterCategory(ParameterCategory.REQUIRED),
+               .setParameterCategory(ParameterCategory.OPTIONAL),
+         new DefaultParameter<>(ADVANCED_PARAMETER_NAME)
+               .setDescription("Prints all of the command's parameters, even advanced usage parameters")
+               .setParameterCategory(ParameterCategory.OPTIONAL),
          new DefaultParameter<>("command")
                .setDescription("Command to print help")
-               .setParameterCategory(ParameterCategory.REQUIRED));
+               .setParameterCategory(ParameterCategory.OPTIONAL));
 
    private ILogService logService;
 
    private final TreeMap<String, ICommand<?>> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
    private Map<Boolean, SortedSet<IParameter<?>>> jellyfishProviderParameters;
 
+   /**
+    * Sets the jellyfish provider
+    */
    @Reference
    public void setJellyfishProvider(IJellyFishCommandProvider jellyfishProvider) {
       this.jellyfishProviderParameters = jellyfishProvider.getUsage().getAllParameters().stream()
@@ -84,9 +97,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       jellyfishProviderParameters = null;
    }
    
-   @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.STATIC,
-            unbind = "removeCommand")
+   @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE)
    public void addCommand(ICommand<?> command) {
       Preconditions.checkNotNull(command);
       commands.put(command.getName(), command);
@@ -102,9 +113,6 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       logService = ref;
    }
 
-   /**
-    * Remove log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }
@@ -132,49 +140,36 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
    @Override
    public void run(ICommandOptions commandOptions) {
       Preconditions.checkNotNull(commandOptions);
-      IParameter<?> verboseParameter = commandOptions.getParameters().getParameter("verbose");
-
-      final boolean verbose;
-      if (verboseParameter == null) {
-         verbose = false;
-      } else {
-         switch (verboseParameter.getStringValue()) {
-            case "true":
-               verbose = true;
-               break;
-            case "false":
-               verbose = false;
-               break;
-            default:
-               throw new IllegalArgumentException(
-                     "Invalid value for verbose: " + verboseParameter.getValue() + ". Expected true or false");
-         }
-      }
+      IParameterCollection parameters = commandOptions.getParameters();
+      boolean verbose = CommonParameters.evaluateBooleanParameter(parameters, "verbose");
+      boolean advanced = CommonParameters.evaluateBooleanParameter(parameters, "advanced");
 
       IParameter<?> commandParameter = commandOptions.getParameters().getParameter("command");
-      printHelp(commandParameter, verbose);
+      printHelp(commandParameter, advanced, verbose);
    }
 
    /**
     * Prints the help to the log service.
     *
     * @param commandParameter command to be printed or null if the generic help is to be printed
+    * @param advanced         whether or not to print the command's optional advanced parameters
     * @param verbose          whether or not to print each command's help along with the overall usage
     */
-   private void printHelp(IParameter<?> commandParameter, boolean verbose) {
+   private void printHelp(IParameter<?> commandParameter, boolean advanced, boolean verbose) {
       if (commandParameter == null) {
-         writeUsage(verbose);
+         writeUsage(advanced, verbose);
       } else {
-         writeCommandHelp(false, commandParameter.getStringValue());
+         writeCommandHelp(false, advanced, commandParameter.getStringValue());
       }
    }
 
    /**
     * Writes the usage for the JellyFish cli.
     *
-    * @param verbose whether or not to print each command's help along with the overall usage
+    * @param advanced whether or not to print the command's optional advanced parameters
+    * @param verbose  whether or not to print each command's help along with the overall usage
     */
-   private void writeUsage(boolean verbose) {
+   private void writeUsage(boolean advanced, boolean verbose) {
       logService.info(getClass(), "\nUsage: jellyfish <command-name> [parameter1=value1 ...]\n");
       logService.info(getClass(), 
                "Jellyfish is a command-line tool for inspecting System Descriptor "
@@ -187,7 +182,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       logService.info(getClass(), "\nCommands:\n");
       if (verbose) {
          for (String cmd : commands.keySet()) {
-            writeCommandHelp(true, cmd);
+            writeCommandHelp(true, advanced, cmd);
          }
       } else {
          StringTable<ICommand<?>> table =
@@ -203,9 +198,10 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
     * Writes the help for the given command.
     *
     * @param inUsage     if writing the help command within the usage
+    * @param advanced    whether or not to print the command's optional advanced parameters
     * @param commandName name of command
     */
-   private void writeCommandHelp(boolean inUsage, String commandName) {
+   private void writeCommandHelp(boolean inUsage, boolean advanced, String commandName) {
       String baseIndent = inUsage ? INDENT : "";
       String parameterIndent = inUsage ? INDENT + INDENT : INDENT;
       ICommand<?> command = commands.get(commandName);
@@ -215,6 +211,7 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
          Map<Boolean, SortedSet<IParameter<?>>> commands = command.getUsage()
                   .getAllParameters()
                   .stream()
+                  .filter(param -> ADVANCED_USAGE_PREDICATE.test(param, advanced))
                   .collect(Collectors.partitioningBy(
                            (IParameter<?> param) -> param.getParameterCategory() == ParameterCategory.REQUIRED,
                            PARAMETER_COLLECTOR));

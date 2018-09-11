@@ -49,9 +49,12 @@ public class HelpCommandTest {
          "Usage 1",
          new DefaultParameter<>("param1_1")
                .setDescription("Description 1_1")
-               .setParameterCategory(ParameterCategory.ADVANCED),
+               .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("param1_2")
                .setDescription("Description 1_2")
+               .setParameterCategory(ParameterCategory.OPTIONAL),
+         new DefaultParameter<>("param1_3")
+               .setDescription("Description 1_3")
                .setParameterCategory(ParameterCategory.ADVANCED));
 
    private static final IUsage USAGE_2 = new DefaultUsage(
@@ -61,6 +64,9 @@ public class HelpCommandTest {
                .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("param2_2")
                .setDescription("Description 2_2")
+               .setParameterCategory(ParameterCategory.OPTIONAL),
+         new DefaultParameter<>("param2_3")
+               .setDescription("Description 2_3")
                .setParameterCategory(ParameterCategory.ADVANCED));
 
    private HelpCommand cmd;
@@ -137,6 +143,8 @@ public class HelpCommandTest {
       assertTrue(output.contains("Description 1_2"));
       assertTrue(output.contains("Description 2_1"));
       assertTrue(output.contains("Description 2_2"));
+      assertFalse(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
    }
 
    @Test
@@ -158,6 +166,31 @@ public class HelpCommandTest {
       assertTrue(output.contains("Description 1_2"));
       assertFalse(output.contains("Description 2_1"));
       assertFalse(output.contains("Description 2_2"));
+      assertFalse(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
+   }
+
+   @Test
+   public void testAdvancedRun() {
+      parameters.addParameter(new DefaultParameter<>("command", "Command1"));
+      parameters.addParameter(new DefaultParameter<>("advanced", "true"));
+      cmd.run(options);
+
+      String output = stream.toString();
+
+      assertTrue(output.contains("Command1"));
+      assertFalse(output.contains("Command2"));
+      assertTrue(output.contains("Usage 1"));
+      assertFalse(output.contains("Usage 2"));
+
+      assertTrue(output.contains("param1_1"));
+      assertTrue(output.contains("param1_2"));
+      assertTrue(output.contains("Description 1_1"));
+      assertTrue(output.contains("Description 1_2"));
+      assertFalse(output.contains("Description 2_1"));
+      assertFalse(output.contains("Description 2_2"));
+      assertTrue(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
    }
 
    @After
