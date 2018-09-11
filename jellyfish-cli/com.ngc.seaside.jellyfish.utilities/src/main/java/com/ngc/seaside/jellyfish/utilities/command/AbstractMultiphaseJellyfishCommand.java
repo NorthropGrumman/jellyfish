@@ -90,7 +90,7 @@ public abstract class AbstractMultiphaseJellyfishCommand extends AbstractJellyfi
          }
       }
 
-      DefaultParameter<?> p = new DefaultParameter<>(CommonParameters.PHASE.getName());
+      DefaultParameter<?> p = new DefaultParameter<>(CommonParameters.PHASE.getName()).advanced();
       p.setDescription(description.toString());
       return p;
    }
