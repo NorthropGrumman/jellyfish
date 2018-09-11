@@ -58,6 +58,9 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IParameter::getName)));
    private static final BiPredicate<IParameter<?>, Boolean> ADVANCED_USAGE_PREDICATE =
             (param, advanced) -> advanced ? true : param.getParameterCategory() != ParameterCategory.ADVANCED;
+   private static final Comparator<IParameter<?>> USAGE_COMPARATOR =
+            Comparator.comparing((IParameter<?> param) -> param.getParameterCategory() != ParameterCategory.REQUIRED)
+                     .thenComparing(IParameter::getName);
 
    public static final String VERBOSE_PARAMETER_NAME = "verbose";
    public static final String ADVANCED_PARAMETER_NAME = "advanced";
@@ -230,28 +233,26 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
             logService.info(getClass(), table);
             logService.info(getClass(), '\n');
          } else {
-            String parameterUsage = command.getUsage().getAllParameters().stream()
-                     .map(p -> (p.getParameterCategory() == ParameterCategory.REQUIRED ? "" : "[") + p.getName()
-                              + "=value" + (p.getParameterCategory() == ParameterCategory.REQUIRED ? "" : "]"))
+            String parameterUsage = command.getUsage()
+                     .getAllParameters()
+                     .stream()
+                     .filter(param -> ADVANCED_USAGE_PREDICATE.test(param, advanced))
+                     .sorted(USAGE_COMPARATOR)
+                     .map(HelpCommand::getUsageString)
                      .collect(Collectors.joining(" "));
             if (!parameterUsage.isEmpty()) {
                parameterUsage = " " + parameterUsage;
             }
-            logService.info(getClass(), String.format("Usage: jellyfish %s%s%n%n", commandName, parameterUsage));
-            logService.info(getClass(), command.getUsage().getDescription());
-            logService.info(getClass(), "\n\n");
+            logService.info(getClass(), String.format("Usage: jellyfish %s%s%n", commandName, parameterUsage));
+            logService.info(getClass(), command.getUsage().getDescription() + "\n");
          }
          if (!requiredParameterTable.getModel().getItems().isEmpty()) {
-            logService.info(getClass(), baseIndent);
-            logService.info(getClass(), "required parameters:\n\n");
+            logService.info(getClass(), baseIndent + "required parameters:\n");
             logService.info(getClass(), requiredParameterTable);
-            logService.info(getClass(), '\n');
          }
          if (!parameterTable.getModel().getItems().isEmpty()) {
-            logService.info(getClass(), baseIndent);
-            logService.info(getClass(), "optional parameters:\n\n");
+            logService.info(getClass(), baseIndent + "optional parameters:\n");
             logService.info(getClass(), parameterTable);
-            logService.info(getClass(), '\n');
          }
       }
    }
@@ -308,4 +309,16 @@ public final class HelpCommand implements ICommand<ICommandOptions> {
       return table;
    }
 
+   private static final String getUsageString(IParameter<?> parameter) {
+      StringBuilder builder = new StringBuilder();
+      if (parameter.getParameterCategory() != ParameterCategory.REQUIRED) {
+         builder.append('[');
+      }
+      builder.append(parameter.getName()).append("=value");
+      if (parameter.getParameterCategory() != ParameterCategory.REQUIRED) {
+         builder.append(']');
+      }
+      return builder.toString();
+   }
+   
 }
