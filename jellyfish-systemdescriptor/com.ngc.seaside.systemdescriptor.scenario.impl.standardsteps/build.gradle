@@ -19,6 +19,7 @@ dependencies {
    api project(":systemdescriptor.service.api")
 
    implementation "com.ngc.seaside:systemdescriptor:$version"
+   implementation "com.google.guava:guava:$guavaVersion"
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "com.ngc.blocs:service.api:$blocsVersion"

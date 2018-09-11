@@ -23,6 +23,7 @@ dependencies {
    implementation "org.apache.maven:maven-settings-builder:$mavenVersion"
    implementation "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
    implementation "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+   implementation "com.google.guava:guava:$guavaVersion"
    implementation "com.google.inject:guice:$guiceVersion"
    compileOnly "org.osgi:osgi.core:$osgiVersion"
    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"

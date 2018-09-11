@@ -15,7 +15,7 @@
  *  permission is obtained from Northrop Grumman.
  */
 
-@import url("bootstrap-4.0.0/bootstrap.min.css");
+@import url("bootstrap-4.1.3/bootstrap.min.css");
 @import url("fontawesome-5.1.0/all.css");
 @import url("tango.css");
 
@@ -77,9 +77,9 @@ blockquote {
 }
 
 .btn-gold:hover,
-.btn-gold:focus, 
-.btn-gold:active, 
-.btn-gold.active, 
+.btn-gold:focus,
+.btn-gold:active,
+.btn-gold.active,
 .btn-gold:active:focus,
 .open>.dropdown-toggle.btn-gold {
   color: #fff;
