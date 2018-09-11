@@ -124,7 +124,8 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
                   .setParameterCategory(ParameterCategory.REQUIRED),
             new DefaultParameter<>(REPORTS_PARAMETER_NAME)
                   .setDescription("Configures the reports to generated after performing analysis. The values are comma"
-                                  + " (,) separated."));
+                                  + " (,) separated.")
+                  .optional());
    }
 
    @Override
