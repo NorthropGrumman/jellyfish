@@ -622,19 +622,19 @@ public class CreateDomainCommand implements IJellyFishCommand {
                               CommonParameters.UPDATE_GRADLE_SETTING.advanced(),
                               new DefaultParameter<>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                     .setDescription("The velocity template file")
-                                    .setParameterCategory(ParameterCategory.ADVANCED),
+                                    .advanced(),
                               new DefaultParameter<>(USE_VERBOSE_IMPORTS_PROPERTY)
                                     .setDescription(
                                           "If true, imports from the same package will be included for "
                                           + "generated domains")
-                                    .setParameterCategory(ParameterCategory.ADVANCED),
+                                    .advanced(),
                               new DefaultParameter<>(EXTENSION_PROPERTY)
                                     .setDescription("The extension type of the generated domain files")
-                                    .setParameterCategory(ParameterCategory.ADVANCED),
+                                    .advanced(),
                               new DefaultParameter<>(BUILD_GRADLE_TEMPLATE_PROPERTY)
                                     .setDescription(
                                           "Name of template used to generate the domain project build.gradle")
-                                    .setParameterCategory(ParameterCategory.ADVANCED));
+                                    .advanced());
    }
 }
 
