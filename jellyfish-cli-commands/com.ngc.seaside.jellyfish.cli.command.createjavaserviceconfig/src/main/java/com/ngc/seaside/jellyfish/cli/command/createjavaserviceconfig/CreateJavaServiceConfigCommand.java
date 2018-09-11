@@ -145,8 +145,8 @@ public class CreateJavaServiceConfigCommand extends AbstractJellyfishCommand {
    protected IUsage createUsage() {
       return new DefaultUsage(
             "Generates a Gradle project responsible for transport configuration and other configurations for a service",
-            CommonParameters.GROUP_ID.optional(),
-            CommonParameters.ARTIFACT_ID.optional(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.MODEL.required(),
             CommonParameters.DEPLOYMENT_MODEL.optional(),
             CommonParameters.OUTPUT_DIRECTORY.required(),

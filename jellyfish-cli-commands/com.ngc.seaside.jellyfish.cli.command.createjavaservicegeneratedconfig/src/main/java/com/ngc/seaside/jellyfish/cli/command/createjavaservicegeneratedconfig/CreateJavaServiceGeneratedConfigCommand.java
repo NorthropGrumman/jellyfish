@@ -235,8 +235,8 @@ public class CreateJavaServiceGeneratedConfigCommand extends AbstractMultiphaseJ
       return new DefaultUsage(
                "Generates a Gradle project that automatically handles "
                + "transport configuration and other configurations for a service using the service's deployment model",
-               CommonParameters.GROUP_ID.optional(),
-               CommonParameters.ARTIFACT_ID.optional(),
+               CommonParameters.GROUP_ID.advanced(),
+               CommonParameters.ARTIFACT_ID.advanced(),
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),

@@ -78,8 +78,8 @@ public class ${classname} extends AbstractJellyfishCommand implements IJellyFish
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of ${commandName} command",
          new DefaultParameter<>(EXAMPLE_PROPERTY).setDescription("Description of example property").advanced(),
-         CommonParameters.GROUP_ID,
-         CommonParameters.ARTIFACT_ID,
+         CommonParameters.GROUP_ID.advanced(),
+         CommonParameters.ARTIFACT_ID.advanced(),
          CommonParameters.MODEL.required());
    }
 

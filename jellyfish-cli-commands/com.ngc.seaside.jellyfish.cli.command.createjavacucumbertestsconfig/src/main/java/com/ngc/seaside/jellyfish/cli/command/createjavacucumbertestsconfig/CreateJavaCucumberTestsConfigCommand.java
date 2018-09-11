@@ -243,8 +243,8 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
       return new DefaultUsage(
                "Generates a Gradle project responsible for transport configuration "
                + "and other configurations for a service's acceptance tests",
-               CommonParameters.GROUP_ID.optional(),
-               CommonParameters.ARTIFACT_ID.optional(),
+               CommonParameters.GROUP_ID.advanced(),
+               CommonParameters.ARTIFACT_ID.advanced(),
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),

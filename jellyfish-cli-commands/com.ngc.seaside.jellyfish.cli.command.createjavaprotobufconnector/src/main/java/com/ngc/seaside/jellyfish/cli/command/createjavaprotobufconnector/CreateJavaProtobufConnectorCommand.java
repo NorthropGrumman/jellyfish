@@ -136,8 +136,8 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
             "Generates a Gradle project responsible for serializing/deserializing "
             + "messages and interacting with the transport layer",
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.GROUP_ID.optional(),
-            CommonParameters.ARTIFACT_ID.optional(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN.optional(),
             CommonParameters.HEADER_FILE.advanced(),

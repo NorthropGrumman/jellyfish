@@ -96,8 +96,8 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Generates the Gradle project responsible for testing a service's acceptance tests",
-                              CommonParameters.GROUP_ID.optional(),
-                              CommonParameters.ARTIFACT_ID.optional(),
+                              CommonParameters.GROUP_ID.advanced(),
+                              CommonParameters.ARTIFACT_ID.advanced(),
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN.optional(),
@@ -105,7 +105,7 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
                               new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
                                     "If true, only copy the feature files and resources from the system descriptor "
                                     + "project into src/main/resources.")
-                                    .setParameterCategory(ParameterCategory.OPTIONAL));
+                                    .setParameterCategory(ParameterCategory.ADVANCED));
    }
 
    @Override

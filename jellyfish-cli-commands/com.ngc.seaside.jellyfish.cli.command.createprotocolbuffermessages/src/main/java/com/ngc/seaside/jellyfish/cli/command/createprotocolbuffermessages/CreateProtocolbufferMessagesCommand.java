@@ -152,8 +152,8 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
       return new DefaultUsage(
             "Generates a Gradle project containing a service's "
                      + "input and output IDL messages as generated serialization-dependent Java types",
-            CommonParameters.GROUP_ID.optional(),
-            CommonParameters.ARTIFACT_ID.optional(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN.optional(),

@@ -216,8 +216,8 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
       return new DefaultUsage(
             "Generates a Gradle project containing logic necessary to allow "
             + "the service to swap pub/sub for request/response or vice versa",
-            CommonParameters.GROUP_ID.optional(),
-            CommonParameters.ARTIFACT_ID.optional(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
             CommonParameters.CLEAN.optional(),

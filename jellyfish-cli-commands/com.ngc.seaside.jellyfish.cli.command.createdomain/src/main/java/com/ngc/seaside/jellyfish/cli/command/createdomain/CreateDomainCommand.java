@@ -195,8 +195,8 @@ public class CreateDomainCommand extends AbstractJellyfishCommand {
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-                              CommonParameters.GROUP_ID.optional(),
-                              CommonParameters.ARTIFACT_ID.optional(),
+                              CommonParameters.GROUP_ID.advanced(),
+                              CommonParameters.ARTIFACT_ID.advanced(),
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
                               CommonParameters.CLEAN.optional(),
