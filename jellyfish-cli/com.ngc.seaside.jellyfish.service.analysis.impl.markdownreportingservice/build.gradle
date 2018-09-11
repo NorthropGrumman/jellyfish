@@ -18,7 +18,9 @@ dependencies {
     api project(':jellyfish.service.api')
 
     implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation "com.vladsch.flexmark:flexmark-all:$flexmarkVersion"
+    implementation ("com.vladsch.flexmark:flexmark-all:$flexmarkVersion") {
+        exclude group: 'org.apache.pdfbox', module: 'fontbox'
+    }
     implementation "com.google.inject:guice:$guiceVersion"
     compileOnly "org.osgi:osgi.core:$osgiVersion"
     compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
