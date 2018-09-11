@@ -15,18 +15,19 @@
  * permission is obtained from Northrop Grumman.
  */
 dependencies {
-    api project(':jellyfish.service.api')
+   api project(':jellyfish.service.api')
 
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
-    implementation ("com.vladsch.flexmark:flexmark-all:$flexmarkVersion") {
-        exclude group: 'org.apache.pdfbox', module: 'fontbox'
-    }
-    implementation "com.google.inject:guice:$guiceVersion"
-    compileOnly "org.osgi:osgi.core:$osgiVersion"
-    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
+   implementation "com.ngc.blocs:service.api:$blocsVersion"
+   implementation("com.vladsch.flexmark:flexmark-all:$flexmarkVersion") {
+      // Exclude this transtive dependency because it has a security issue and we don't actually use this functionality.
+      exclude group: 'org.apache.pdfbox', module: 'fontbox'
+   }
+   implementation "com.google.inject:guice:$guiceVersion"
+   compileOnly "org.osgi:osgi.core:$osgiVersion"
+   compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
-    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
+   testImplementation "junit:junit:$junitVersion"
+   testImplementation "org.mockito:mockito-core:$mockitoVersion"
+   testImplementation "com.ngc.seaside:systemdescriptor.model.impl.basic:$version"
+   testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
