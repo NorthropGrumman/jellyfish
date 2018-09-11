@@ -25,7 +25,6 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.GradleProjectDto;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
@@ -48,9 +47,6 @@ import java.util.EnumSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-/**
- *
- */
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishCommand {
 
@@ -62,8 +58,8 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
    public static final String DEPLOYMENT_MODEL_NAME_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
 
-   public static final String PROJECT_NAME_PROPERTY = CommonParameters.PROJECT_NAME.getName();
-   public static final String VERSION_PROPERTY = CommonParameters.VERSION.getName();
+   public static final String PROJECT_NAME_PROPERTY = "projectName";
+   public static final String VERSION_PROPERTY = "version";
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
@@ -79,6 +75,30 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    @Deactivate
    public void deactivate() {
       logService.trace(getClass(), "Deactivated");
+   }
+
+   @Override
+   protected IUsage createUsage() {
+      return new DefaultUsage(
+            "Generates the root Gradle files for a new Jellyfish project",
+            CommonParameters.OUTPUT_DIRECTORY.required(),
+            new DefaultParameter<>(PROJECT_NAME_PROPERTY)
+                  .setDescription("The name of the Gradle project. This should use hyphens and lower case letters,"
+                                  + " (ie my-project)")
+                  .optional(),
+            new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
+                  .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
+                                  + "  Defaults to the current version of Jellyfish.")
+                  .advanced(),
+            CommonParameters.GROUP_ID.optional(),
+            new DefaultParameter<>(VERSION_PROPERTY)
+                  .setDescription("The version to use for the Gradle project")
+                  .required(),
+            CommonParameters.GROUP_ARTIFACT_VERSION.required(),
+            CommonParameters.MODEL.required(),
+            CommonParameters.DEPLOYMENT_MODEL.optional(),
+            CommonParameters.HEADER_FILE.advanced(),
+            CommonParameters.CLEAN.optional());
    }
 
    @Override
@@ -120,8 +140,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
       collection.addParameter(new DefaultParameter<>("dto", dto));
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
-      String templateName = CreateJellyFishGradleProjectCommand.class.getPackage().getName();
-      templateService.unpack(templateName, collection, projectDirectory, clean);
+      unpackDefaultTemplate(collection, projectDirectory, clean);
    }
 
    private void registerRequiredDependencies(IJellyFishCommandOptions commandOptions) {
@@ -180,24 +199,4 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
          }
       }
    }
-
-   @Override
-   protected IUsage createUsage() {
-      return new DefaultUsage(
-            "Generates the root Gradle files for a new Jellyfish project",
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.PROJECT_NAME.optional(),
-            new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
-                  .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
-                                  + "  Defaults to the current version of Jellyfish.")
-                  .setParameterCategory(ParameterCategory.ADVANCED),
-            CommonParameters.GROUP_ID.optional(),
-            CommonParameters.VERSION.optional(),
-            CommonParameters.GROUP_ARTIFACT_VERSION.required(),
-            CommonParameters.MODEL.required(),
-            CommonParameters.DEPLOYMENT_MODEL.optional(),
-            CommonParameters.CLEAN.optional());
-   }
-
 }
-
