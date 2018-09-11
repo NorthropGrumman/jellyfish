@@ -19,6 +19,7 @@ dependencies {
 
    implementation "log4j:log4j:$log4jVersion"
    implementation "com.google.inject:guice:$guiceVersion"
+   implementation "com.google.guava:guava:$guavaVersion"
 }
 
 jar {

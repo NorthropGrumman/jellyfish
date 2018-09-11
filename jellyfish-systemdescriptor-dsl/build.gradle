@@ -110,12 +110,6 @@ subprojects {
 
     configurations.all {
         exclude group: 'asm'
-		resolutionStrategy {
-			// add dependency substitution rules
-			dependencySubstitution {
-				substitute module('com.google.guava:guava') with module('com.google.guava:guava:26.0-jre')
-            }
-		}
     }
 
     clean.doFirst {

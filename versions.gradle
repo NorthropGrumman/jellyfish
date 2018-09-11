@@ -18,7 +18,6 @@ allprojects {
       emfVersion = '2.12.0'
       flexmarkVersion = '0.34.2'
       glassfishJsonVersion = '1.1'
-      guavaVersionForModelXtextImpl = '18.0'
       guavaVersion = '26.0-jre'
       guiceVersion = '4.1.0'
       jaxbVersion = '2.3.0'
