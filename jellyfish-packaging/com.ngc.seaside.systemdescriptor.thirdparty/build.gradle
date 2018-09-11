@@ -26,6 +26,8 @@ dependencies {
    embedded "org.apache.maven.resolver:maven-resolver-impl:$aetherVersion"
    embedded "org.apache.maven.resolver:maven-resolver-transport-http:$aetherVersion"
    embedded "org.apache.maven.resolver:maven-resolver-transport-file:$aetherVersion"
+   // Use a version of Guava that does not have any CVEs.
+   embedded "com.google.guava:guava:$guavaVersion"
 }
 
 // Configure the JAR task to embedded dependencies and setup the Bundle-ClassPath header as needed.  Also, export
