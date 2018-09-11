@@ -145,6 +145,11 @@ eclipseUpdateSite {
          }
       }
    }
+
+   // Blacklist these components due to security issues.
+   blacklist 'com.google.guava:guava:19.0'
+   blacklist 'com.google.guava:guava:20.0'
+   blacklist 'com.google.guava:guava:21.0'
 }
 
 dependencies {
