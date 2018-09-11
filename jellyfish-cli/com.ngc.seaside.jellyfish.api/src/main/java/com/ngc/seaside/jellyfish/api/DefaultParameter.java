@@ -89,6 +89,21 @@ public class DefaultParameter<T> implements IParameter<T> {
       this.paramCategory = paramCategory;
       return this;
    }
+   
+   public DefaultParameter<T> required() {
+      this.paramCategory = ParameterCategory.REQUIRED;
+      return this;
+   }
+   
+   public DefaultParameter<T> optional() {
+      this.paramCategory = ParameterCategory.OPTIONAL;
+      return this;
+   }
+   
+   public DefaultParameter<T> advanced() {
+      this.paramCategory = ParameterCategory.ADVANCED;
+      return this;
+   }
 
    @Override
    public String toString() {
@@ -100,7 +115,7 @@ public class DefaultParameter<T> implements IParameter<T> {
       if (obj == this) {
          return true;
       }
-      if (!(obj instanceof IUsage)) {
+      if (!(obj instanceof IParameter)) {
          return false;
       }
       IParameter<?> that = (IParameter<?>) obj;

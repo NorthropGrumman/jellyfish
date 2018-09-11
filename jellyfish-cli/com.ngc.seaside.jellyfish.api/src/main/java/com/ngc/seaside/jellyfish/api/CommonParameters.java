@@ -73,7 +73,7 @@ public enum CommonParameters {
    public IParameter<String> required() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setParameterCategory(ParameterCategory.REQUIRED);
+      parameter.required();
       return parameter;
    }
    
@@ -85,7 +85,7 @@ public enum CommonParameters {
    public IParameter<String> optional() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setParameterCategory(ParameterCategory.OPTIONAL);
+      parameter.optional();
       return parameter;
    }
    
@@ -97,7 +97,7 @@ public enum CommonParameters {
    public IParameter<String> advanced() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setParameterCategory(ParameterCategory.ADVANCED);
+      parameter.advanced();
       return parameter;
    }
    

@@ -77,7 +77,7 @@ public class ${classname} extends AbstractJellyfishCommand implements IJellyFish
    protected IUsage createUsage() {
       // TODO Auto-generated method stub
       return new DefaultUsage("Description of ${commandName} command",
-         new DefaultParameter<>(EXAMPLE_PROPERTY).setDescription("Description of example property").setRequired(false),
+         new DefaultParameter<>(EXAMPLE_PROPERTY).setDescription("Description of example property").advanced(),
          CommonParameters.GROUP_ID,
          CommonParameters.ARTIFACT_ID,
          CommonParameters.MODEL.required());

@@ -171,7 +171,7 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
       // Resolve the input directory parameters if necessary.
       if (!ctx.getOriginalParameters().containsParameter(CommonParameters.INPUT_DIRECTORY.getName())) {
          ctx.addParameter(new DefaultParameter<>(CommonParameters.INPUT_DIRECTORY.getName(),
-                                                 new File(".").getAbsolutePath()));
+                                                 new File(".").getAbsolutePath()).required());
       }
 
       // Resolve the GAV parameter if necessary.

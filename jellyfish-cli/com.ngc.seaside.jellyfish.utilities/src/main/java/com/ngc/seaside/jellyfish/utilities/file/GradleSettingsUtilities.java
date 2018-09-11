@@ -74,7 +74,7 @@ public class GradleSettingsUtilities {
                newParameters.addParameter(new DefaultParameter<>(GROUP_ID_PROPERTY,
                                                                  outputDirectory.getFileName() + "/" + parameters
                                                                        .getParameter(GROUP_ID_PROPERTY)
-                                                                       .getStringValue()));
+                                                                       .getStringValue()).required());
                newParameters.addParameter(parameters.getParameter(ARTIFACT_ID_PROPERTY));
                addProject(newParameters, settings);
                return true;

@@ -84,7 +84,7 @@ public class JellyfishCommandProviderTest {
       assertNotNull("description not set!",
                     usage.getDescription());
       assertTrue("missing parameter input directory!",
-                 usage.getAllParameters().contains(CommonParameters.INPUT_DIRECTORY));
+                 usage.getAllParameters().contains(CommonParameters.INPUT_DIRECTORY.required()));
       assertTrue("missing parameter GAV!",
                usage.getAllParameters().stream().map(IParameter::getName)
                         .filter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()::equals).findAny().isPresent());

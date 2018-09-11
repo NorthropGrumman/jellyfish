@@ -110,18 +110,18 @@ public class ${classname} implements IJellyFishCommand {
          "The ${commandName} ... fill in the blank.",
             new DefaultParameter(CLASSNAME_PROPERTY)
                .setDescription("The name of the class that will be generated. i.e. MyClass")
-               .setRequired(true),
+               .required(),
             new DefaultParameter(GROUP_ID_PROPERTY)
                .setDescription("The groupId. This is usually similar to com.ngc.myprojectname.")
-               .setRequired(true),
+               .required(),
             new DefaultParameter(ARTIFACT_ID_PROPERTY)
                .setDescription("The artifactId. This is usually the lowercase version of the classname.")
-               .setRequired(true),
+               .required(),
             new DefaultParameter(PACKAGE_PROPERTY)
                .setDescription("The default package for the classname to reside. This is usually a combination of the groupId.artifactId")
-               .setRequired(true),
+               .required(),
             new DefaultParameter(OUTPUT_DIR_PROPERTY)
                .setDescription("The directory in which the bundle has been created.")
-               .setRequired(true));
+               .required());
    }
 }
