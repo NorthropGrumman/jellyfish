@@ -22,6 +22,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.MatrixUtils;
 import com.ngc.seaside.jellyfish.cli.command.report.requirementsallocation.utilities.ModelUtils;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
@@ -237,25 +238,25 @@ public class RequirementsAllocationMatrixCommand implements IJellyFishCommand {
     */
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
-      return new DefaultUsage("Description of requirements-allocation-matrix command",
+      return new DefaultUsage("Generates a matrix showing requirements and which services cover them",
                               new DefaultParameter(OUTPUT_FORMAT_PROPERTY).setDescription(
-                                    "Format of the output. The possible values are default and csv. Default: default.")
-                                    .setRequired(false),
+                                    "Format of the output; possible values are default and csv")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(OUTPUT_PROPERTY).setDescription(
-                                    "File where the output is sent.")
-                                    .setRequired(false),
+                                    "File where the output is sent; default prints to stdout")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(SCOPE_PROPERTY).setDescription(
-                                    "Keyword scope (metadata, input, output, etc..). "
-                                    + "Default: model.metadata.json.stereotypes.")
-                                    .setRequired(false),
+                                    "Keyword scope (metadata, input, output, etc..); "
+                                    + "default: model.metadata.json.stereotypes")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(VALUES_PROPERTY).setDescription(
-                                    "The values in which to search for in the scope defined. This is a comma separated "
-                                    + "string. Default: service.")
-                                    .setRequired(false),
+                                    "The values in which to search for in the scope defined as a comma-separated "
+                                    + "string; default: service")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL),
                               new DefaultParameter(OPERATOR_PROPERTY).setDescription(
-                                    "AND, OR, NOT (or their lowercase counterparts): should the items be AND'd "
-                                    + "together or OR'd together: default: OR.")
-                                    .setRequired(false));
+                                    "How the values should be logically combined; "
+                                    + "possible values are AND, OR, NOT; default: OR")
+                                    .setParameterCategory(ParameterCategory.OPTIONAL));
    }
 
    /**

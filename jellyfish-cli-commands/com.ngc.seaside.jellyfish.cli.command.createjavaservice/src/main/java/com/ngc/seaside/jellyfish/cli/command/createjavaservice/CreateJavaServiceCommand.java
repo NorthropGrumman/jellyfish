@@ -152,13 +152,13 @@ public class CreateJavaServiceCommand extends AbstractJellyfishCommand {
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the service for a Java application",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
+            "Generates a Gradle project containing the actual implementation of a service",
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.MODEL.required(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.HEADER_FILE,
-            CommonParameters.CLEAN);
+            CommonParameters.HEADER_FILE.advanced(),
+            CommonParameters.CLEAN.optional());
    }
 
    @Override

@@ -133,14 +133,15 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Creates a new JellyFish Pub/Sub Connector project.",
+            "Generates a Gradle project responsible for serializing/deserializing "
+            + "messages and interacting with the transport layer",
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.MODEL.required(),
-            CommonParameters.CLEAN,
-            CommonParameters.HEADER_FILE,
-            CommonParameters.UPDATE_GRADLE_SETTING,
+            CommonParameters.CLEAN.optional(),
+            CommonParameters.HEADER_FILE.advanced(),
+            CommonParameters.UPDATE_GRADLE_SETTING.advanced(),
             allPhasesParameter());
    }
 

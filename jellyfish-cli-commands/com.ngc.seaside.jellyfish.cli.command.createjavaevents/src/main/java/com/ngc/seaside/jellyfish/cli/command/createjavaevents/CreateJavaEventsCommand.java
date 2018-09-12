@@ -151,11 +151,12 @@ public class CreateJavaEventsCommand extends AbstractMultiphaseJellyfishCommand 
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generate a Gradle project that can generate the event sources as Java types.",
-            CommonParameters.OUTPUT_DIRECTORY.required(),
-            CommonParameters.MODEL.required(),
-            CommonParameters.HEADER_FILE,
-            CommonParameters.CLEAN,
-            allPhasesParameter());
+               "Generates a Gradle project containing a service's "
+                        + "input and output event sources as generated serialization-agnostic Java types",
+               CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.MODEL.required(),
+               CommonParameters.HEADER_FILE.advanced(),
+               CommonParameters.CLEAN.optional(),
+               allPhasesParameter());
    }
 }

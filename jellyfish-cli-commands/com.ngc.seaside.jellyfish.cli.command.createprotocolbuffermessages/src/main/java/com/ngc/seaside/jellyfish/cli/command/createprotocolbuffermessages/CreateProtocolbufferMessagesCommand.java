@@ -150,14 +150,14 @@ public class CreateProtocolbufferMessagesCommand extends AbstractMultiphaseJelly
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generate the message IDL and gradle project structure that can generate the protocol buffer "
-            + "message bundle.",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
+            "Generates a Gradle project containing a service's "
+                     + "input and output IDL messages as generated serialization-dependent Java types",
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
-            CommonParameters.CLEAN,
-            CommonParameters.HEADER_FILE,
+            CommonParameters.CLEAN.optional(),
+            CommonParameters.HEADER_FILE.advanced(),
             allPhasesParameter());
    }
 }

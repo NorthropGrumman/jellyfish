@@ -60,7 +60,7 @@ public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> 
    public static final String GROUP_ID_PROPERTY = CommonParameters.GROUP_ID.getName();
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
-   public static final String CLASSNAME_PROPERTY = "classname";
+   public static final String CLASSNAME_PROPERTY = CommonParameters.CLASSNAME.getName();
    public static final String COMMAND_NAME_PROPERTY = "commandName";
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
 
@@ -222,20 +222,19 @@ public class CreateJellyFishCommandCommand implements ICommand<ICommandOptions> 
    @SuppressWarnings("rawtypes")
    private static IUsage createUsage() {
       return new DefaultUsage(
-            "Creates a new JellyFish Command project. This requires that a settings.gradle file be "
+            "Creates a Gradle project for a new JellyFish command. This requires that a settings.gradle file be "
             + "present in the output directory. It also requires that the jellyfishAPIVersion be set in the parent "
             + "build.gradle.",
-            new DefaultParameter(CLASSNAME_PROPERTY)
-                  .setDescription("The name of the class that will be generated. i.e. MyClass").setRequired(false),
+            CommonParameters.CLASSNAME.optional(),
             new DefaultParameter(COMMAND_NAME_PROPERTY)
                   .setDescription(
                         "The name of the command. This should use hyphens and lower case letters. i.e.  my-class")
-                  .setRequired(true),
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
-            CommonParameters.PACKAGE,
-            CommonParameters.OUTPUT_DIRECTORY,
-            CommonParameters.CLEAN);
+                  .required(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
+            CommonParameters.PACKAGE.advanced(),
+            CommonParameters.OUTPUT_DIRECTORY.optional(),
+            CommonParameters.CLEAN.optional());
    }
 
 }

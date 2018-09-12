@@ -55,7 +55,7 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
    public static final String ARTIFACT_ID_PROPERTY = CommonParameters.ARTIFACT_ID.getName();
    public static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
    public static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
-   public static final String MODEL_OBJECT_PROPERTY = CommonParameters.MODEL_OBJECT.getName();
+   public static final String MODEL_OBJECT_PROPERTY = "modelObject";
    public static final String PACKAGE_PROPERTY = CommonParameters.PACKAGE.getName();
    public static final String CLEAN_PROPERTY = CommonParameters.CLEAN.getName();
    public static final String SYSTEM_PROPERTY = CommonParameters.SYSTEM.getName();
@@ -179,15 +179,15 @@ public class CreateJavaDistributionCommand extends AbstractJellyfishCommand impl
 
    @Override
    protected IUsage createUsage() {
-      return new DefaultUsage("Generates the gradle distribution project for a Java application",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
-                              CommonParameters.OUTPUT_DIRECTORY.required(),
-                              CommonParameters.MODEL.required(),
-                              CommonParameters.HEADER_FILE,
-                              CommonParameters.SYSTEM,
-                              CommonParameters.CLEAN
-      );
+      return new DefaultUsage(
+               "Generates the Gradle project responsible for creating an executable distribution for a service",
+               CommonParameters.GROUP_ID.advanced(),
+               CommonParameters.ARTIFACT_ID.advanced(),
+               CommonParameters.OUTPUT_DIRECTORY.required(),
+               CommonParameters.MODEL.required(),
+               CommonParameters.HEADER_FILE.advanced(),
+               CommonParameters.SYSTEM.advanced(),
+               CommonParameters.CLEAN.optional());
    }
 
    private void addProjectDependency(Map<String, String> dependencyMap,

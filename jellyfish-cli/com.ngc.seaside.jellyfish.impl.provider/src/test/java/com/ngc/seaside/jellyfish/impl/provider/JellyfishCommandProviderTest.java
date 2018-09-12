@@ -24,8 +24,10 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
@@ -82,9 +84,10 @@ public class JellyfishCommandProviderTest {
       assertNotNull("description not set!",
                     usage.getDescription());
       assertTrue("missing parameter input directory!",
-                 usage.getAllParameters().contains(CommonParameters.INPUT_DIRECTORY));
+                 usage.getAllParameters().contains(CommonParameters.INPUT_DIRECTORY.optional()));
       assertTrue("missing parameter GAV!",
-                 usage.getAllParameters().contains(CommonParameters.GROUP_ARTIFACT_VERSION));
+               usage.getAllParameters().stream().map(IParameter::getName)
+                        .filter(CommonParameters.GROUP_ARTIFACT_VERSION.getName()::equals).findAny().isPresent());
    }
 
    @Test
@@ -113,7 +116,7 @@ public class JellyfishCommandProviderTest {
 
    @Test(expected = CommandException.class)
    public void testDoesCheckRequiredParametersBeforeRunningCommand() {
-      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setRequired(true));
+      IUsage usage = new DefaultUsage("", new DefaultParameter<>("y").setParameterCategory(ParameterCategory.REQUIRED));
 
       IJellyFishCommand command = mockedCommand("foo-command");
       when(command.getUsage()).thenReturn(usage);

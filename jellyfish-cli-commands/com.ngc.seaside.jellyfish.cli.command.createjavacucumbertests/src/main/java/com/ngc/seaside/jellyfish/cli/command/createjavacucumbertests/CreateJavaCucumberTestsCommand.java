@@ -24,6 +24,7 @@ import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
 import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
@@ -94,17 +95,17 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
 
    @Override
    protected IUsage createUsage() {
-      return new DefaultUsage("Generates the gradle distribution project for a Java application",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
+      return new DefaultUsage("Generates the Gradle project responsible for testing a service's acceptance tests",
+                              CommonParameters.GROUP_ID.advanced(),
+                              CommonParameters.ARTIFACT_ID.advanced(),
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
-                              CommonParameters.CLEAN,
-                              CommonParameters.HEADER_FILE,
+                              CommonParameters.CLEAN.optional(),
+                              CommonParameters.HEADER_FILE.optional(),
                               new DefaultParameter<>(REFRESH_FEATURE_FILES_PROPERTY).setDescription(
                                     "If true, only copy the feature files and resources from the system descriptor "
                                     + "project into src/main/resources.")
-                                    .setRequired(false));
+                                    .setParameterCategory(ParameterCategory.ADVANCED));
    }
 
    @Override

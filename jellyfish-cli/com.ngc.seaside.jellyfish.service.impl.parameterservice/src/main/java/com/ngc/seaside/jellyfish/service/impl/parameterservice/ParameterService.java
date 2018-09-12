@@ -70,7 +70,7 @@ public class ParameterService implements IParameterService {
          if (matcher.matches()) {
             String name = matcher.group(NAME_GROUP);
             String value = matcher.group(VALUE_GROUP);
-            parameterCollection.addParameter(new DefaultParameter<>(name, value));
+            parameterCollection.addParameter(new DefaultParameter<>(name, value).required());
          } else {
             logService.warn(getClass(), "Unable to parse parameter '%s'", eachParameterArg);
          }
@@ -86,7 +86,7 @@ public class ParameterService implements IParameterService {
 
       DefaultParameterCollection parameterCollection = new DefaultParameterCollection();
       for (Map.Entry<String, ?> entry : parameters.entrySet()) {
-         parameterCollection.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()));
+         parameterCollection.addParameter(new DefaultParameter<>(entry.getKey(), entry.getValue()).advanced());
       }
 
       return parameterCollection;

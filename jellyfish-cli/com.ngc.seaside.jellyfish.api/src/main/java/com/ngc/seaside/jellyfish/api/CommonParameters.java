@@ -19,44 +19,36 @@ package com.ngc.seaside.jellyfish.api;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum CommonParameters implements IParameter<String> {
-   ARTIFACT_ID("artifactId", "The project's artifact ID."),
-   CLASSNAME("classname", "The name of the class that will be generated. i.e. MyClass"),
+public enum CommonParameters {
+   ARTIFACT_ID("artifactId", "The project's artifact ID"),
+   CLASSNAME("classname", "The name of the class that will be generated"),
    CLEAN("clean", "If true, recursively deletes the project (if it already exists) before generating it again"),
-   DEPLOYMENT_MODEL("deploymentModel", "The fully qualified path to the system descriptor deployment model"),
-   GROUP_ARTIFACT_VERSION("gav",
-                          "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>"),
-   GROUP_ID("groupId", "The project's group ID. (default: the package in the model)"),
+   DEPLOYMENT_MODEL("deploymentModel", "The fully qualified name of a system descriptor deployment model"),
+   GROUP_ID("groupId", "The project's group ID"),
    HEADER_FILE("headerFile", "A file whose contents will be injected into the header of all source code files that"
-                             + " Jellyfish generates.  This file should be a plain text file.  Jellyfish includes a"
-                             + " default header with an NGC license and UNCLASSIFIED markings.  Use a custom header for"
-                             + " a different license or to change the markings of generated files."),
-   INPUT_DIRECTORY("inputDir", "Base directory of the system descriptor project"),
-   MODEL("model", "The fully qualified path to the system descriptor model"),
-   MODEL_OBJECT("modelObject", "The fully qualified name of the model to generate connectors for"),
+            + " Jellyfish generates.  This file should be a plain text file.  Jellyfish includes a"
+            + " default header with an NGC license and UNCLASSIFIED markings.  Use a custom header for"
+            + " a different license or to change the markings of generated files."),
+   INPUT_DIRECTORY("inputDirectory", "Base directory of the system descriptor project"),
+   GROUP_ARTIFACT_VERSION("gav",
+            "The identifier of a system descriptor project in the form <groupId>:<artifactId>:<version>; "
+                     + INPUT_DIRECTORY.getName() + " can be optionally used instead of this parameter"),
+   MODEL("model", "The fully qualified name of a system descriptor model"),
    OUTPUT_DIRECTORY("outputDirectory", "Base directory in which to output the project"),
    PACKAGE("package", "The project's default package"),
-   PACKAGE_SUFFIX("packageSuffix", "A string to append to the end of the generated package name"),
    UPDATE_GRADLE_SETTING("updateGradleSettings", "If false, the generated project will not be added to any existing"
                                                  + " settings.gradle file"),
    PHASE("phase",
          "Indicates which phase of the command should be executed.  This command supports the following phases: "),
+   PROJECT_NAME("projectName", "The name of the project"),
    STEREOTYPES("stereotypes",
                "A comma separated listed of stereotypes used to select models in the project.  This limits the scope of"
                + " the command to these models."),
    SYSTEM("system",
-          "If true, indicates that the parameter " + MODEL.getName() + " should be treated as a system model"),
+            "If true, indicates that the parameter " + MODEL.getName() + " should be treated as a system model"),
+   VERSION("version", "The project's version");
 
-   @Deprecated
-   GROUP_ARTIFACT_VERSION_EXTENSION("gave", "(Deprecated, use " + GROUP_ARTIFACT_VERSION.name()
-                                            + ") The identifier of a system descriptor project in the "
-                                            + "form <groupId>:<artifactId>:<version>@<extension>"),
-   @Deprecated
-   REPOSITORY_URL("repositoryUrl",
-                  "(Deprecated, no longer used) The url of a system descriptor repository. If specified, "
-                  + GROUP_ARTIFACT_VERSION_EXTENSION.getName() + " parameter is required");
-
-   private static final Pattern GAV_REGEX = java.util.regex.Pattern.compile("([^:@\\s]+):([^:@\\s]+):([^:@\\s]+)");
+   private static final Pattern GAV_REGEX = Pattern.compile("([^:@\\s]+):([^:@\\s]+):([^:@\\s]+)");
    private final String description;
    private final String name;
 
@@ -65,43 +57,50 @@ public enum CommonParameters implements IParameter<String> {
       this.name = name;
    }
 
-   @Override
    public String getDescription() {
       return description;
    }
 
-   @Override
    public String getName() {
       return name;
    }
 
-   @Override
-   public String getValue() {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public String getStringValue() {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public boolean isRequired() {
-      return false;
-   }
-
    /**
-    * Returns a copy of the current parameter whose required value is true.
+    * Returns a copy of the current parameter whose parameter category is required.
     *
     * @return a required version of the current parameter
     */
    public IParameter<String> required() {
       DefaultParameter<String> parameter = new DefaultParameter<>(name);
       parameter.setDescription(description);
-      parameter.setRequired(true);
+      parameter.required();
       return parameter;
    }
-
+   
+   /**
+    * Returns a copy of the current parameter whose parameter category is optional.
+    *
+    * @return an optional version of the current parameter
+    */
+   public IParameter<String> optional() {
+      DefaultParameter<String> parameter = new DefaultParameter<>(name);
+      parameter.setDescription(description);
+      parameter.optional();
+      return parameter;
+   }
+   
+   /**
+    * Returns a copy of the current parameter whose parameter category is advanced.
+    *
+    * @return an advanced version of the current parameter
+    */
+   public IParameter<String> advanced() {
+      DefaultParameter<String> parameter = new DefaultParameter<>(name);
+      parameter.setDescription(description);
+      parameter.advanced();
+      return parameter;
+   }
+   
    /**
     * Returns the boolean value of the given parameter if it was set, false otherwise.
     *

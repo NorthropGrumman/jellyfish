@@ -239,14 +239,16 @@ public class CreateJavaCucumberTestsConfigCommand extends AbstractMultiphaseJell
 
    @Override
    protected IUsage createUsage() {
+      //                "Generates the generated service configuration for a Cucumber tests",
       return new DefaultUsage(
-               "Generates the generated service configuration for a Cucumber tests",
-               CommonParameters.GROUP_ID,
-               CommonParameters.ARTIFACT_ID,
+               "Generates a Gradle project responsible for transport configuration "
+               + "and other configurations for a service's acceptance tests",
+               CommonParameters.GROUP_ID.advanced(),
+               CommonParameters.ARTIFACT_ID.advanced(),
                CommonParameters.MODEL.required(),
                CommonParameters.DEPLOYMENT_MODEL.required(),
                CommonParameters.OUTPUT_DIRECTORY.required(),
-               CommonParameters.HEADER_FILE,
-               CommonParameters.CLEAN);
+               CommonParameters.HEADER_FILE.advanced(),
+               CommonParameters.CLEAN.optional());
    }
 }

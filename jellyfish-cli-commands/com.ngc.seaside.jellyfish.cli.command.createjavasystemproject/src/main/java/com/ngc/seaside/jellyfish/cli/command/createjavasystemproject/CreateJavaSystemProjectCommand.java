@@ -25,6 +25,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameter;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -42,7 +43,6 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
    static final String MODEL_PROPERTY = CommonParameters.MODEL.getName();
    static final String DEPLOYMENT_MODEL_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
    static final String OUTPUT_DIRECTORY_PROPERTY = CommonParameters.OUTPUT_DIRECTORY.getName();
-   static final String GAV_PROPERTY = CommonParameters.GROUP_ARTIFACT_VERSION.getName();
 
    static final String CREATE_JELLYFISH_GRADLE_PROJECT_COMMAND_NAME = "create-jellyfish-gradle-project";
    static final String CREATE_JAVA_CUCUMBER_TESTS_COMMAND_NAME = "create-java-cucumber-tests";
@@ -90,10 +90,7 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
 
       usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
       usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
-      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
-      usageParameters.put(PROJECT_NAME_PROPERTY, new DefaultParameter<String>(PROJECT_NAME_PROPERTY)
-            .setDescription("The name of the project.").setRequired(false));
-      usageParameters.put(GAV_PROPERTY, CommonParameters.GROUP_ARTIFACT_VERSION);
+      usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME.optional());
 
       for (String subcommand : SUBCOMMANDS) {
          List<IParameter<?>> parameters = jellyFishCommandProvider.getCommand(subcommand).getUsage()
@@ -101,7 +98,7 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
          for (IParameter<?> parameter : parameters) {
             if (parameter.getName() != null && parameter.getDescription() != null) {
                IParameter<?> previous = usageParameters.get(parameter.getName());
-               if (previous == null || !previous.isRequired()) {
+               if (previous == null || previous.getParameterCategory() != ParameterCategory.REQUIRED) {
                   usageParameters.put(parameter.getName(), parameter);
                }
             }
@@ -109,10 +106,10 @@ public class CreateJavaSystemProjectCommand extends AbstractJellyfishCommand {
       }
 
       // This is explicitly optional since the config command will run if it's not provided
-      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL);
+      usageParameters.put(DEPLOYMENT_MODEL_PROPERTY, CommonParameters.DEPLOYMENT_MODEL.optional());
 
       IParameter<?>[] parameters = usageParameters.values().toArray(new IParameter<?>[usageParameters.size()]);
-      return new DefaultUsage("Create a new Java service project for a particular model.", parameters);
+      return new DefaultUsage("Creates a new project for a system model", parameters);
    }
 
    @Override

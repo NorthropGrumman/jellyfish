@@ -54,9 +54,9 @@ public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisComman
 
    @Override
    protected IUsage createUsage() {
-      return new DefaultUsage("Checks that models which have inputs also have outputs.",
-                              CommonParameters.MODEL,
-                              CommonParameters.STEREOTYPES);
+      return new DefaultUsage("Checks that models which have inputs also have outputs",
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.STEREOTYPES.optional());
    }
 
    @Override

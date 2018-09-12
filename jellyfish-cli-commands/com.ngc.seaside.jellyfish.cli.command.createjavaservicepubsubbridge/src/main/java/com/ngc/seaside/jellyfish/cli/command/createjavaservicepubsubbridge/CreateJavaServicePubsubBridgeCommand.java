@@ -214,14 +214,14 @@ public class CreateJavaServicePubsubBridgeCommand extends AbstractMultiphaseJell
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Generates the pubsub bridge which handles the receipt and send of all message types when a"
-                  + "pubsub event occurs.",
-            CommonParameters.GROUP_ID,
-            CommonParameters.ARTIFACT_ID,
+            "Generates a Gradle project containing logic necessary to allow "
+            + "the service to swap pub/sub for request/response or vice versa",
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.ARTIFACT_ID.advanced(),
             CommonParameters.OUTPUT_DIRECTORY.required(),
             CommonParameters.MODEL.required(),
-            CommonParameters.CLEAN,
-            CommonParameters.HEADER_FILE,
+            CommonParameters.CLEAN.optional(),
+            CommonParameters.HEADER_FILE.advanced(),
             allPhasesParameter());
    }
 

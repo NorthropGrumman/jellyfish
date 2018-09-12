@@ -17,42 +17,21 @@
 package com.ngc.seaside.jellyfish.api;
 
 /**
- * An input parameter to a command.
+ * An enumeration describing the "usefulness" of a jellyfish command parameter to a typical user
  */
-public interface IParameter<T> {
-
+public enum ParameterCategory {
    /**
-    * Get the description for this parameter.
-    *
-    * @return the parameter's description.
+    * Represents a parameter that is required to run a command.
     */
-   String getDescription();
-
+   REQUIRED,
+   
    /**
-    * Get the name of the parameter.
-    *
-    * @return the name.
+    * Represents a parameter that is not required, but the user might want to specify.
     */
-   String getName();
-
+   OPTIONAL,
+   
    /**
-    * Get the value of the parameter.
-    *
-    * @return the value of the parameter.
+    * Represents a parameter that only an advanced jellyfish user will ever want to use.
     */
-   T getValue();
-
-   /**
-    * Gets the string value of the parameter or an empty string if the value is {@code null}.
-    *
-    * @return the string value of the parameter or an empty string if the value is {@code null}
-    */
-   String getStringValue();
-
-   /**
-    * Get the category of the parameter.
-    * 
-    * @return the parameter category.
-    */
-   ParameterCategory getParameterCategory();
+   ADVANCED
 }

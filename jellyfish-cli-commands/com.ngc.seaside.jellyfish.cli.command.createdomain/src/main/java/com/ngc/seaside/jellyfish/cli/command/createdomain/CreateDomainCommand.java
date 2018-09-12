@@ -195,24 +195,24 @@ public class CreateDomainCommand extends AbstractJellyfishCommand {
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Generate a BLoCS domain model gradle project.",
-                              CommonParameters.GROUP_ID,
-                              CommonParameters.ARTIFACT_ID,
+                              CommonParameters.GROUP_ID.advanced(),
+                              CommonParameters.ARTIFACT_ID.advanced(),
                               CommonParameters.OUTPUT_DIRECTORY.required(),
                               CommonParameters.MODEL.required(),
-                              CommonParameters.CLEAN,
-                              CommonParameters.UPDATE_GRADLE_SETTING,
-                              CommonParameters.HEADER_FILE,
+                              CommonParameters.CLEAN.optional(),
+                              CommonParameters.UPDATE_GRADLE_SETTING.advanced(),
+                              CommonParameters.HEADER_FILE.advanced(),
                               new DefaultParameter<String>(DOMAIN_TEMPLATE_FILE_PROPERTY)
                                     .setDescription("The velocity template file")
-                                    .setRequired(false),
+                                    .advanced(),
                               new DefaultParameter<String>(USE_VERBOSE_IMPORTS_PROPERTY)
                                     .setDescription(
                                           "If true, imports from the same package will be included for "
                                           + "generated domains")
-                                    .setRequired(false),
+                                    .advanced(),
                               new DefaultParameter<String>(EXTENSION_PROPERTY)
                                     .setDescription("The extension of the generated domain files")
-                                    .setRequired(false));
+                                    .advanced());
    }
 
    @Override

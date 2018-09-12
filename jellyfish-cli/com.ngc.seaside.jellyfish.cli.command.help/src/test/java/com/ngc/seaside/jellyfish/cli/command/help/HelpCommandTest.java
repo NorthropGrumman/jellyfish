@@ -22,12 +22,15 @@ import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -46,24 +49,33 @@ public class HelpCommandTest {
          "Usage 1",
          new DefaultParameter<>("param1_1")
                .setDescription("Description 1_1")
-               .setRequired(true),
+               .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("param1_2")
                .setDescription("Description 1_2")
-               .setRequired(false));
+               .setParameterCategory(ParameterCategory.OPTIONAL),
+         new DefaultParameter<>("param1_3")
+               .setDescription("Description 1_3")
+               .setParameterCategory(ParameterCategory.ADVANCED));
 
    private static final IUsage USAGE_2 = new DefaultUsage(
          "Usage 2",
          new DefaultParameter<>("param2_1")
                .setDescription("Description 2_1")
-               .setRequired(true),
+               .setParameterCategory(ParameterCategory.REQUIRED),
          new DefaultParameter<>("param2_2")
                .setDescription("Description 2_2")
-               .setRequired(false));
+               .setParameterCategory(ParameterCategory.OPTIONAL),
+         new DefaultParameter<>("param2_3")
+               .setDescription("Description 2_3")
+               .setParameterCategory(ParameterCategory.ADVANCED));
 
    private HelpCommand cmd;
 
    @Mock
    private ICommandOptions options;
+   
+   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+   private IJellyFishCommandProvider jellyfishProvider;
 
    private DefaultParameterCollection parameters = new DefaultParameterCollection();
 
@@ -71,9 +83,13 @@ public class HelpCommandTest {
 
    @Before
    public void before() {
+      when(jellyfishProvider.getUsage().getAllParameters())
+         .thenReturn(new DefaultParameterCollection().getAllParameters());
+
       cmd = new HelpCommand();
       cmd.setLogService(new PrintStreamLogService(new PrintStream(stream)));
       cmd.addCommand(cmd);
+      cmd.setJellyfishProvider(jellyfishProvider);
       cmd.activate();
 
       IJellyFishCommand mock1 = mock(IJellyFishCommand.class);
@@ -102,7 +118,6 @@ public class HelpCommandTest {
       assertTrue(output.contains("Usage 1"));
       assertTrue(output.contains("Usage 2"));
 
-      assertFalse(output.contains("param"));
       assertFalse(output.contains("Description"));
    }
 
@@ -128,6 +143,8 @@ public class HelpCommandTest {
       assertTrue(output.contains("Description 1_2"));
       assertTrue(output.contains("Description 2_1"));
       assertTrue(output.contains("Description 2_2"));
+      assertFalse(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
    }
 
    @Test
@@ -149,6 +166,31 @@ public class HelpCommandTest {
       assertTrue(output.contains("Description 1_2"));
       assertFalse(output.contains("Description 2_1"));
       assertFalse(output.contains("Description 2_2"));
+      assertFalse(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
+   }
+
+   @Test
+   public void testAdvancedRun() {
+      parameters.addParameter(new DefaultParameter<>("command", "Command1"));
+      parameters.addParameter(new DefaultParameter<>("advanced", "true"));
+      cmd.run(options);
+
+      String output = stream.toString();
+
+      assertTrue(output.contains("Command1"));
+      assertFalse(output.contains("Command2"));
+      assertTrue(output.contains("Usage 1"));
+      assertFalse(output.contains("Usage 2"));
+
+      assertTrue(output.contains("param1_1"));
+      assertTrue(output.contains("param1_2"));
+      assertTrue(output.contains("Description 1_1"));
+      assertTrue(output.contains("Description 1_2"));
+      assertFalse(output.contains("Description 2_1"));
+      assertFalse(output.contains("Description 2_2"));
+      assertTrue(output.contains("Description 1_3"));
+      assertFalse(output.contains("Description 2_3"));
    }
 
    @After

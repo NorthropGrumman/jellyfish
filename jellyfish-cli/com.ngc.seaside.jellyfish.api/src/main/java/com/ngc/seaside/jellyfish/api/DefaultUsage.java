@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Simple object for storing the attributes of the IUsage interface.
@@ -42,8 +41,11 @@ public class DefaultUsage implements IUsage {
       this.description = description;
       if (parameters != null) {
          this.allParameters = Arrays.asList(parameters);
-         requiredParameters.addAll(this.allParameters.stream().filter(IParameter::isRequired)
-                                            .collect(Collectors.toList()));
+         for (IParameter<?> param : this.allParameters) {
+            if (param.getParameterCategory() == ParameterCategory.REQUIRED) {
+               requiredParameters.add(param);
+            }
+         }
       }
    }
 
@@ -55,9 +57,12 @@ public class DefaultUsage implements IUsage {
    public DefaultUsage(String description, List<IParameter<?>> parameters) {
       this.description = description;
       if (parameters != null) {
-         this.allParameters = parameters;
-         requiredParameters.addAll(this.allParameters.stream().filter(IParameter::isRequired)
-                                            .collect(Collectors.toList()));
+         this.allParameters = parameters;   
+         for (IParameter<?> param : this.allParameters) {
+            if (param.getParameterCategory() == ParameterCategory.REQUIRED) {
+               requiredParameters.add(param);
+            }
+         }
       } else {
          this.allParameters = new ArrayList<>();
       }

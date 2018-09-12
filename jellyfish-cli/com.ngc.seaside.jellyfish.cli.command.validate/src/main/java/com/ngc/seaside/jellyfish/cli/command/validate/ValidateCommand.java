@@ -29,8 +29,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * This class provides the implementation of the validate command.
@@ -41,8 +39,7 @@ public class ValidateCommand implements IJellyFishCommand {
    private static final String NAME = "validate";
    private static final IUsage
          COMMAND_USAGE =
-         new DefaultUsage("Validates the System Descriptor. "
-                          + "Requires a system descriptor project within src/main/sd");
+         new DefaultUsage("Validates a System Descriptor project for syntax warnings and errors");
 
    private ILogService logService;
 
@@ -56,21 +53,11 @@ public class ValidateCommand implements IJellyFishCommand {
       logService.trace(getClass(), "Deactivated");
    }
 
-   /**
-    * Sets log service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeLogService")
+   @Reference
    public void setLogService(ILogService ref) {
       this.logService = ref;
    }
 
-   /**
-    * Remove log service.
-    */
    public void removeLogService(ILogService ref) {
       setLogService(null);
    }

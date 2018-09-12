@@ -58,8 +58,8 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String MODEL_NAME_PROPERTY = CommonParameters.MODEL.getName();
    public static final String DEPLOYMENT_MODEL_NAME_PROPERTY = CommonParameters.DEPLOYMENT_MODEL.getName();
 
-   public static final String PROJECT_NAME_PROPERTY = "projectName";
-   public static final String VERSION_PROPERTY = "version";
+   public static final String PROJECT_NAME_PROPERTY = CommonParameters.PROJECT_NAME.getName();
+   public static final String VERSION_PROPERTY = CommonParameters.VERSION.getName();
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
 
@@ -80,26 +80,20 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage(
-            "Creates a new JellyFish Gradle project. This requires that a settings.gradle file be present in the output"
-            + " directory. It also requires that the jellyfishAPIVersion be set in the parent build.gradle.",
+            "Generates the root Gradle files for a new Jellyfish project",
             CommonParameters.OUTPUT_DIRECTORY.required(),
-            new DefaultParameter<>(PROJECT_NAME_PROPERTY)
-                  .setDescription("The name of the Gradle project. This should use hyphens and lower case letters,"
-                                  + " (ie my-project)")
-                  .setRequired(false),
+            CommonParameters.PROJECT_NAME.optional(),
             new DefaultParameter<>(JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY)
                   .setDescription("The version of the Jellyfish Gradle plugins to use when generating the script."
                                   + "  Defaults to the current version of Jellyfish.")
-                  .setRequired(false),
-            CommonParameters.GROUP_ID,
-            new DefaultParameter<>(VERSION_PROPERTY)
-                  .setDescription("The version to use for the Gradle project")
-                  .setRequired(true),
+                  .advanced(),
+            CommonParameters.GROUP_ID.advanced(),
+            CommonParameters.VERSION.optional(),
             CommonParameters.GROUP_ARTIFACT_VERSION.required(),
             CommonParameters.MODEL.required(),
-            CommonParameters.DEPLOYMENT_MODEL,
-            CommonParameters.HEADER_FILE,
-            CommonParameters.CLEAN);
+            CommonParameters.DEPLOYMENT_MODEL.optional(),
+            CommonParameters.HEADER_FILE.advanced(),
+            CommonParameters.CLEAN.optional());
    }
 
    @Override
@@ -128,7 +122,6 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
       GradleProjectDto dto = new GradleProjectDto()
             .setGroupId(groupId)
             .setProjectName(collection.getParameter(PROJECT_NAME_PROPERTY).getStringValue())
-            .setVersion(collection.getParameter(VERSION_PROPERTY).getStringValue())
             .setSystemDescriptorGav(collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue())
             .setModelName(collection.getParameter(MODEL_NAME_PROPERTY).getStringValue())
             .setDeploymentModelName(getDeploymentModel(commandOptions))
@@ -137,6 +130,13 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             .setProjects(getProjects(commandOptions))
                .setSystem(CommonParameters.evaluateBooleanParameter(commandOptions.getParameters(),
                         CommonParameters.SYSTEM.getName(), false));
+      
+      IParameter<?> version = collection.getParameter(VERSION_PROPERTY);
+      if (version == null || version.getStringValue() == null || version.getStringValue().isEmpty()) {
+         dto.setVersion("1.0.0-SNAPSHOT");
+      } else {
+         dto.setVersion(version.getStringValue());
+      }
       configModelParts(dto);
       collection.addParameter(new DefaultParameter<>("dto", dto));
 

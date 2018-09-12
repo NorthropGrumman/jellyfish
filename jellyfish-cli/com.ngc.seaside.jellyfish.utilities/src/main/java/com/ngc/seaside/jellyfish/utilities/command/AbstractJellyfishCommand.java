@@ -243,7 +243,7 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       if (buildManagementService != null) {
          mutableParams.addParameter(new DefaultParameter<>(
                BUILT_MANAGEMENT_HELPER_TEMPLATE_VARIABLE,
-               new BuildManagementHelper(buildManagementService, getOptions())));
+               new BuildManagementHelper(buildManagementService, getOptions())).advanced());
       }
 
       if (mutableParams.containsParameter(CommonParameters.HEADER_FILE.getName())) {

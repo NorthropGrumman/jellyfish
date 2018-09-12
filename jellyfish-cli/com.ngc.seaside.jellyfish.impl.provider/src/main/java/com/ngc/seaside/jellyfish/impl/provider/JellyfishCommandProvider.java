@@ -88,8 +88,8 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
    @Override
    public IUsage getUsage() {
       List<IParameter<?>> parameters = new ArrayList<>();
-      parameters.add(CommonParameters.INPUT_DIRECTORY);
-      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION);
+      parameters.add(CommonParameters.INPUT_DIRECTORY.optional());
+      parameters.add(CommonParameters.GROUP_ARTIFACT_VERSION.required());
       return new DefaultUsage("JellyFish - Generate artifacts from System Descriptor models", parameters);
    }
 
@@ -171,7 +171,7 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
       // Resolve the input directory parameters if necessary.
       if (!ctx.getOriginalParameters().containsParameter(CommonParameters.INPUT_DIRECTORY.getName())) {
          ctx.addParameter(new DefaultParameter<>(CommonParameters.INPUT_DIRECTORY.getName(),
-                                                 new File(".").getAbsolutePath()));
+                                                 new File(".").getAbsolutePath()).required());
       }
 
       // Resolve the GAV parameter if necessary.

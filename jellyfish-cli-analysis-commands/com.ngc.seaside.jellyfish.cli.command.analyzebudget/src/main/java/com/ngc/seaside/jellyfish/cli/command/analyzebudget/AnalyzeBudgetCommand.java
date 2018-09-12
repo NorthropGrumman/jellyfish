@@ -112,9 +112,10 @@ public class AnalyzeBudgetCommand extends AbstractJellyfishAnalysisCommand {
 
    @Override
    protected IUsage createUsage() {
-      return new DefaultUsage("Analyzes the budgets of a model and its parts.",
-               CommonParameters.MODEL,
-               CommonParameters.STEREOTYPES);
+      return new DefaultUsage("Analyzes the budgets of a model and its parts. This command is rarely ran directly;"
+               + " instead it is run with the 'analyze' command.",
+               CommonParameters.MODEL.required(),
+               CommonParameters.STEREOTYPES.optional());
    }
 
 }
