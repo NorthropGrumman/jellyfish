@@ -103,8 +103,9 @@ public class CreateJavaServiceProjectCommand extends AbstractJellyfishCommand {
    protected IUsage createUsage() {
       Map<String, IParameter<?>> usageParameters = new HashMap<>();
 
-      usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY, new DefaultParameter<>(CREATE_SERVICE_DOMAIN_PROPERTY, 
-               "Whether or not to create the service's domain model").advanced());
+      usageParameters.put(CREATE_SERVICE_DOMAIN_PROPERTY, new DefaultParameter<>(CREATE_SERVICE_DOMAIN_PROPERTY)
+               .setDescription("Whether or not to create the service's domain model")
+               .advanced());
       usageParameters.put(MODEL_PROPERTY, CommonParameters.MODEL.required());
       usageParameters.put(OUTPUT_DIRECTORY_PROPERTY, CommonParameters.OUTPUT_DIRECTORY.required());
       usageParameters.put(PROJECT_NAME_PROPERTY, CommonParameters.PROJECT_NAME.optional());
