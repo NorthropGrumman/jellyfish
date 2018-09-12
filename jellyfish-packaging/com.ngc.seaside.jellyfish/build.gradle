@@ -183,11 +183,16 @@ seasideApplication {
 }
 
 startScripts.doLast {
-   unixScript.text = unixScript.text.replaceFirst('(?m)^CLASSPATH=.*?$', '$0:"\\$(find \\${JELLYFISH_USER_HOME:~/.jellyfish}/plugins -type f | paste -sd:)"')
-   windowsScript.text = windowsScript.text.replaceFirst(/(?m)^set CLASSPATH=.*?(?="$)/, '''
+   unixScript.text = unixScript.text.replaceFirst('(?m)^CLASSPATH=.*?$', '''
+      JELLYFISH_USER_HOME="\\${JELLYFISH_USER_HOME:-~/.jellyfish}"
+      mkdir -p \\$JELLYFISH_USER_HOME/plugins
+      $0:"\\$(find \\$JELLYFISH_USER_HOME/plugins -type f | paste -sd:)"'''.stripIndent())
+
+   windowsScript.text = windowsScript.text.replaceFirst('(?m)^set CLASSPATH=.*?(?="$)', '''
       if NOT defined JELLYFISH_USER_HOME (
           set JELLYFISH_USER_HOME="%USERPROFILE%\\\\.jellyfish"
       )
+      mkdir "%JELLYFISH_USER_HOME%\\\\plugins" 2> NUL
       $0;%JELLYFISH_USER_HOME%\\\\plugins\\\\*'''.stripIndent())
 }
 
