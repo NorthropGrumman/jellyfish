@@ -58,7 +58,7 @@ public class VersionCommand implements ICommand<ICommandOptions> {
    public static final Map<String, String> ENVIRONMENT_VARIABLE_NAMES_AND_DEFAULT_VALUES = new HashMap<>();
 
    private static final String USER_HOME = System.getProperty("user.home");
-   private static final String DEFAULT_JELLYFISH_USER_HOME = USER_HOME + "/.jellyfish/plugins";
+   private static final String DEFAULT_JELLYFISH_USER_HOME = USER_HOME + "/.jellyfish";
    private static final String DEFAULT_GRADLE_USER_HOME = USER_HOME + "/.gradle";
    private static final String DEFAULT_M2_USER_HOME = USER_HOME + "/.m2";
 
