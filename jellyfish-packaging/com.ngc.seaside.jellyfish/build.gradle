@@ -184,7 +184,7 @@ seasideApplication {
 
 startScripts.doLast {
    unixScript.text = unixScript.text.replaceFirst('(?m)^CLASSPATH=.*?$', '''
-      JELLYFISH_USER_HOME="\\${JELLYFISH_USER_HOME:-~/.jellyfish}"
+      JELLYFISH_USER_HOME="\\${JELLYFISH_USER_HOME:-\\$HOME/.jellyfish}"
       mkdir -p \\$JELLYFISH_USER_HOME/plugins
       $0:"\\$(find \\$JELLYFISH_USER_HOME/plugins -type f | paste -sd:)"'''.stripIndent())
 
