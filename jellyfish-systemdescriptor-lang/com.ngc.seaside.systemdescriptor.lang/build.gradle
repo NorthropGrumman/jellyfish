@@ -22,3 +22,6 @@ apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-license'
 sdLang {
    includeDefaultLanguageDependencies = false
 }
+
+sdJar.from { licenseFile }
+testJar.from { licenseFile }

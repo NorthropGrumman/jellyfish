@@ -49,6 +49,13 @@ allprojects {
       }
    }
 
+   plugins.withId('com.ngc.seaside.command') {
+      // Include the license in every ZIP
+      tasks.matching({ it.name.startsWith('createTemplate') }).all {
+         from licenseFile
+      }
+   }
+
    plugins.withId('com.github.hierynomus.license') {
       license {
          // Use this for the license file.
