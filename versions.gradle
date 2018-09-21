@@ -42,6 +42,11 @@ allprojects {
    plugins.withId('java') {
       sourceCompatibility = '1.8'
       targetCompatibility = '1.8'
+
+      // Include the license in every JAR.
+      tasks.withType(Jar) {
+         from licenseFile
+      }
    }
 
    plugins.withId('com.github.hierynomus.license') {
