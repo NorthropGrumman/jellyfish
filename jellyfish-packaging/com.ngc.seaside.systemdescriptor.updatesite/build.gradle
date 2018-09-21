@@ -173,3 +173,5 @@ dependencies {
    // Non OSGi dependencies packaged as an uber JAR.
    plugin project(':systemdescriptor.thirdparty')
 }
+
+createZip.from { licenseFile }

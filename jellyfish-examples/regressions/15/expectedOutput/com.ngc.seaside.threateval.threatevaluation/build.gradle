@@ -29,7 +29,7 @@ buildscript {
 
    dependencies {
       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
-      classpath "com.ngc.seaside:gradle.plugins:2.19.1"
+      classpath "com.ngc.seaside:gradle.plugins:2.21.1"
       classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.16.0-SNAPSHOT"
       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
    }
@@ -86,6 +86,6 @@ subprojects {
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.16.0-SNAPSHOT'
       protobufVersion = '3.2.0'
-      starfishVersion = '2.14.0'
+      starfishVersion = '2.14.1'
    }
 }

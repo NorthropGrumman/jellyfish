@@ -4,7 +4,7 @@ allprojects {
 
    ext {
       blocsPluginVersion = '0.5'
-      seasidePluginsVersion = '2.20.2'
+      seasidePluginsVersion = '2.21.1'
       sonarqubePluginVersion = '2.5'
       xtextPluginVersion = '1.0.15'
 
@@ -42,6 +42,18 @@ allprojects {
    plugins.withId('java') {
       sourceCompatibility = '1.8'
       targetCompatibility = '1.8'
+
+      // Include the license in every JAR.
+      tasks.withType(Jar) {
+         from licenseFile
+      }
+   }
+
+   plugins.withId('com.ngc.seaside.command') {
+      // Include the license in every ZIP
+      tasks.matching({ it.name.startsWith('createTemplate') }).all {
+         from licenseFile
+      }
    }
 
    plugins.withId('com.github.hierynomus.license') {
