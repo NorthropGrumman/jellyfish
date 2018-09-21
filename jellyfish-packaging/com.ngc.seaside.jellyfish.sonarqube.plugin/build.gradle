@@ -59,6 +59,7 @@ sonarPackaging {
    pluginDescription = 'Adds support for scanning System Descriptor projects.'
    pluginUrl = ''
    pluginSourceUrl = 'https://github.ms.northgrum.com/CEACIDE/jellyfish'
+   pluginLicense = 'Northrop Grumman Proprietary'
 }
 
 // Build a file that lists all the modules to use when running Jellyfish.  We do this because classpath scanning
@@ -105,6 +106,16 @@ tasks.create('buildModuleDependencyFile').doLast {
    }
 }
 
-jar.dependsOn(buildModuleDependencyFile)
+// This looks weird (instead of doing a copy task) but the Copy tasks deletes files that are already in the target
+// directory.  And jar.from licenseFile copies the file to the JAR but not in the *plugin* JAR that has the updated
+// manifest and dependencies for Sonarqube...
+tasks.create('copyLicenseToPlugin').doLast {
+   project.copy {
+      from licenseFile
+      into project.file("${project.buildDir.absolutePath}/resources/main")
+   }
+}
+
+jar.dependsOn(buildModuleDependencyFile, copyLicenseToPlugin)
 test.dependsOn(buildModuleDependencyFile)
 buildModuleDependencyFile.shouldRunAfter(processResources)
