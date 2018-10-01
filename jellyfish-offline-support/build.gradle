@@ -52,9 +52,7 @@ dependencies {
    // Required by SD projects themselves.
    extra "com.ngc.seaside:systemdescriptor.lang:$version@zip"
    extra "com.ngc.seaside:systemdescriptor.lang:$version:tests@zip"
-
-//   // TODO TH: I don't think these dependencies need to be listed here anymore.  They should be included by default now
-//   // but that has not been tested yet.
+   // Needed by the license plugin for Gradle.
    extra 'com.mycila:license-maven-plugin:3.0'
    extra 'com.mycila.xmltool:xmltool:3.3'
 }
