@@ -98,8 +98,8 @@ public class DynamicModuleLoader {
 
          String line = in.readLine();
          while (line != null) {
-			// Skip comments.
-			if (!line.startsWith("#")) {
+            // Skip comments.
+            if (!line.startsWith("#")) {
                try {
                   // Create a new instance of the module and add it to the list.
                   modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).getConstructor()
@@ -117,7 +117,7 @@ public class DynamicModuleLoader {
                         bundle.getSymbolicName()),
                                e);
                }
-			}
+            }
             line = in.readLine();
          }
       } catch (IOException | BundleException e) {
