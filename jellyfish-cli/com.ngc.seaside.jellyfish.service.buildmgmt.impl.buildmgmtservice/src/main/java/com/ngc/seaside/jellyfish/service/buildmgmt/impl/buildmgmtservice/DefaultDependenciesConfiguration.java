@@ -181,7 +181,7 @@ public class DefaultDependenciesConfiguration {
    private static void configureGoogle(DependenciesConfiguration config) {
       config.addGroup()
             .versionPropertyName("guavaVersion")
-            .version("22.0")
+            .version("26.0-jre")
             .includes(artifact("guava")
                             .groupId("com.google.guava")
                             .scope(DependencyScope.BUILD));

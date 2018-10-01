@@ -56,7 +56,7 @@ subprojects {
 
    ext {
       blocsCoreVersion = '3.0.0'
-      guavaVersion = '22.0'
+      guavaVersion = '26.0-jre'
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.16.0-SNAPSHOT'
       junitVersion = '4.12'
