@@ -179,7 +179,7 @@ pipeline {
             }
             dir('jellyfish-packaging') {
                // Get dependencies for Jellyfish itself.
-               sh '../gradlew com.ngc.seaside.jellyfish:populateM2repo'
+               sh '../gradlew jellyfish:populateM2repo'
             }
             dir('jellyfish-offline-support') {
                // Finally, we may need some extra dependencies.
