@@ -44,6 +44,8 @@ configurations {
 
 // These are extra dependencies we need.
 dependencies {
+   // Don't know why this isn't showing up.
+   extra "com.google.guava:guava:$guavaVersion"
    // Required at runtime for OSGi.
    extra "log4j:log4j-osgi:$log4jVersion"
    // Required by the protobuf plugin when building on Linux.  Does not show up as a dependency until actually running
@@ -52,6 +54,9 @@ dependencies {
    // Required by SD projects themselves.
    extra "com.ngc.seaside:systemdescriptor.lang:$version@zip"
    extra "com.ngc.seaside:systemdescriptor.lang:$version:tests@zip"
+   // Required for the Gradle license plugin.
+   extra 'com.mycila:license-maven-plugin:3.0'
+   extra 'com.mycila.xmltool:xmltool:3.3'
 }
 
 seasideCi {
