@@ -127,6 +127,8 @@ eclipseUpdateSite {
    def externalUpdateSites = [
       'https://cucumber.io/cucumber-eclipse/update-site',                 // Cucumber
       'https://nodeclipse.github.io/updates/markdown',                    // Markdown editor
+      'http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases', // XText (used just for C2BMC)
+      'http://download.eclipse.org/buildship/updates/e47/releases/2.x', // Gradle buildship (used just for C2BMC)
       // 'https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite' // Markdown git viewer - really slow
    ]
 
