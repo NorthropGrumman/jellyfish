@@ -86,6 +86,6 @@ subprojects {
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.16.0-SNAPSHOT'
       protobufVersion = '3.2.0'
-      starfishVersion = '2.14.1'
+      starfishVersion = '2.14.4'
    }
 }
