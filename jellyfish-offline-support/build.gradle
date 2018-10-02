@@ -52,6 +52,9 @@ dependencies {
    // Required by SD projects themselves.
    extra "com.ngc.seaside:systemdescriptor.lang:$version@zip"
    extra "com.ngc.seaside:systemdescriptor.lang:$version:tests@zip"
+   // Needed by the license plugin for Gradle.
+   extra 'com.mycila:license-maven-plugin:3.0'
+   extra 'com.mycila.xmltool:xmltool:3.3'
 }
 
 seasideCi {
@@ -60,4 +63,17 @@ seasideCi {
    m2OutputDirectory = m2directory
    dependencyInfoReportFile = dependenciesReportFile
    deploymentScriptFile = m2DeploymentScriptFile
+}
+
+// This appears to be a bug in the Seaside repository plugin or Gradle.  We get an NPE from this line
+// org.gradle.internal.resource.transport.http.ntlm.NTLMCredentials.<init>(NTLMCredentials.java:35)
+// if we don't set *some* username and password on Nexus Consoldiated.  However, we *don't actually need this* so I
+// don't know why we have to specifiy it.  Anyway, as long as its not null, anything works.
+afterEvaluate {
+   repositories.getByName('NexusConsolidated') {
+      credentials {
+         username "foo"
+         password "bar"
+      }
+   }
 }

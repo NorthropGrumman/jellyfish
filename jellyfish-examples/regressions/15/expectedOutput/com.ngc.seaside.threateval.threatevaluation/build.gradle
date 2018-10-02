@@ -82,10 +82,10 @@ subprojects {
 
    ext {
       blocsCoreVersion = '3.0.0'
-      guavaVersion = '22.0'
+      guavaVersion = '26.0-jre'
       guiceVersion = '4.1.0'
       jellyfishVersion = '2.16.0-SNAPSHOT'
       protobufVersion = '3.2.0'
-      starfishVersion = '2.14.1'
+      starfishVersion = '2.14.4'
    }
 }
