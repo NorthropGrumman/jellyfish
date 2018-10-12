@@ -20,6 +20,8 @@ import com.ngc.seaside.gradle.api.AbstractProjectPlugin;
 import com.ngc.seaside.gradle.plugins.release.SeasideReleaseRootProjectPlugin;
 import com.ngc.seaside.gradle.plugins.repository.SeasideRepositoryPlugin;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.cli.command.analyze.AnalyzeCommand;
+import com.ngc.seaside.jellyfish.cli.command.report.console.ConsoleAnalysisReportCommand;
 import com.ngc.seaside.jellyfish.cli.gradle.tasks.JellyFishCliCommandTask;
 import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 
@@ -55,6 +57,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +73,7 @@ import java.util.stream.Collectors;
  * <pre>
  * apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
  * dependencies {
- *    sd project(':')
+ *    sd project(':my.other.project')
  *    sd "com.ngc.seaside.jellyfish.examples:threatevaluation.descriptor:$threatEvalVersion"
  * }
  * </pre>
@@ -94,10 +98,31 @@ import java.util.stream.Collectors;
  */
 public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
 
+   /**
+    * The name of the configuration that can be used to configure dependencies on other models.
+    */
    public static final String SD_CONFIGURATION_NAME = "sd";
+
+   /**
+    * The name of the task that creates the ZIP file that contains the SD files.
+    */
    public static final String SD_JAR_TASK_NAME = "sdJar";
+
+   /**
+    * The name of the task that creates the ZIP file that contains the Gherkin feature files and test data.
+    */
    public static final String TEST_JAR_TASK_NAME = "testJar";
+
+   /**
+    * The name of the task that validates the SD project.
+    */
    public static final String VALIDATE_TASK_NAME = "validateSd";
+
+   /**
+    * Performs and analyst of the project using the analysis configured in the {@link
+    * SystemDescriptorAnalysisExtension}.
+    */
+   public static final String ANALYZE_TASK_NAME = "analyze";
 
    @Override
    protected void doApply(Project project) {
@@ -106,6 +131,12 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
       configureTasks(project);
       configurePublishing(project);
       configureExtensions(project);
+
+      project.afterEvaluate(this::afterEvaluate);
+   }
+
+   private void afterEvaluate(Project project) {
+      setupAnalysisTask(project);
    }
 
    private void createConfigurations(Project project) {
@@ -159,9 +190,16 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          // Dependent local projects must be built and installed first
          project.getConfigurations().getByName(SD_CONFIGURATION_NAME).getAllDependencies()
                .withType(ProjectDependency.class).all(dependency -> dependency.getDependencyProject()
-                     .getTasks()
-                     .matching(projectTask -> MavenPlugin.INSTALL_TASK_NAME.equals(projectTask.getName()))
-                     .all(task::dependsOn));
+               .getTasks()
+               .matching(projectTask -> MavenPlugin.INSTALL_TASK_NAME.equals(projectTask.getName()))
+               .all(task::dependsOn));
+      });
+
+      tasks.create(ANALYZE_TASK_NAME, JellyFishCliCommandTask.class, task -> {
+         task.setCommand(AnalyzeCommand.NAME);
+         task.setDescription("Runs various analyses that have been configured.");
+         task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
+         task.dependsOn(tasks.getByName(VALIDATE_TASK_NAME));
       });
    }
 
@@ -300,5 +338,28 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          dependencies.add(JavaPlugin.COMPILE_CONFIGURATION_NAME, compile);
          dependencies.add(JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME, testCompile);
       });
+   }
+
+   private void setupAnalysisTask(Project project) {
+      SystemDescriptorAnalysisExtension analysisExtension =
+            project.getExtensions().getByType(SystemDescriptorAnalysisExtension.class);
+
+      Map<String, String> args = new HashMap<>();
+      // Add any default args.  Do this first so we can override any other args.
+      analysisExtension.getArgs().forEach((k, v) -> args.put(k, v.toString()));
+      args.put(CommonParameters.INPUT_DIRECTORY.getName(), project.getProjectDir().toString());
+      args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, String.join(",", analysisExtension.getCommands()));
+      // Use the default console report if no other report is configured.
+      if (analysisExtension.getReports().isEmpty()) {
+         args.put(AnalyzeCommand.REPORTS_PARAMETER_NAME, ConsoleAnalysisReportCommand.NAME);
+      } else {
+         args.put(AnalyzeCommand.REPORTS_PARAMETER_NAME, String.join(",", analysisExtension.getReports()));
+      }
+
+      JellyFishCliCommandTask analyze = (JellyFishCliCommandTask) project.getTasks().getByName(ANALYZE_TASK_NAME);
+      analyze.setArguments(args);
+
+      // If no analysis are configured, disable the task.
+      analyze.onlyIf(task -> !analysisExtension.getCommands().isEmpty());
    }
 }

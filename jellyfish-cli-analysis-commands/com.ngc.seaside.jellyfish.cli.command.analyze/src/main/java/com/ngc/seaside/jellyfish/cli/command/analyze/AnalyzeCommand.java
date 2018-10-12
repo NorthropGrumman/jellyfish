@@ -50,7 +50,7 @@ public class AnalyzeCommand extends AbstractJellyfishCommand {
    /**
     * The parameter that controls the reports to generate.
     */
-   static final String REPORTS_PARAMETER_NAME = "reports";
+   public static final String REPORTS_PARAMETER_NAME = "reports";
 
    /**
     * The delimiter that separates the analyses and reports commands.

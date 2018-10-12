@@ -28,14 +28,27 @@ import java.util.Set;
  */
 public class SystemDescriptorAnalysisExtension {
 
+   /**
+    * The name of the extension that can be referenced in the build script.
+    */
    public static final String EXTENSION_NAME = "sdAnalysis";
 
+   private final Set<String> reports = new LinkedHashSet<>();
    private final Set<String> commands = new LinkedHashSet<>();
    private final Map<String, Object> args = new LinkedHashMap<>();
 
    /**
+    * Returns the set of analysis commands to be run.
+    *
+    * @return the set of analysis commands
+    */
+   public Set<String> getCommands() {
+      return commands;
+   }
+
+   /**
     * Sets the analysis commands to be run.
-    * 
+    *
     * @param commands analysis commands
     */
    public void setCommands(Iterable<Object> commands) {
@@ -44,17 +57,8 @@ public class SystemDescriptorAnalysisExtension {
    }
 
    /**
-    * Returns the set of analysis commands to be run.
-    * 
-    * @return the set of analysis commands
-    */
-   public Set<String> getCommands() {
-      return commands;
-   }
-
-   /**
     * Adds the given analysis command to be run.
-    * 
+    *
     * @param command analysis command
     */
    public void command(Object command) {
@@ -63,7 +67,7 @@ public class SystemDescriptorAnalysisExtension {
 
    /**
     * Adds the given analysis commands to be run.
-    * 
+    *
     * @param commands analysis commands
     */
    public void commands(Object... commands) {
@@ -72,7 +76,7 @@ public class SystemDescriptorAnalysisExtension {
 
    /**
     * Adds the given analysis commands to be run.
-    * 
+    *
     * @param commands analysis commands
     */
    public void commands(Iterable<Object> commands) {
@@ -82,8 +86,60 @@ public class SystemDescriptorAnalysisExtension {
    }
 
    /**
+    * Returns the set of reports to generate.
+    *
+    * @return the set of reports
+    */
+   public Set<String> getReports() {
+      return reports;
+   }
+
+   /**
+    * Sets the reports to generate.  Reports are only generated when running with Gradle, not when running with
+    * Sonarqube.
+    *
+    * @param reports the reports to generate
+    */
+   public void setReports(Iterable<Object> reports) {
+      this.reports.clear();
+      reports(reports);
+   }
+
+   /**
+    * Adds the given report to the reports to generate.  Reports are only generated when running with Gradle, not when
+    * running with Sonarqube.
+    *
+    * @param report the report to generate
+    */
+   public void report(Object report) {
+      reports(report);
+   }
+
+   /**
+    * Adds the given reports to generate.  Reports are only generated when running with Gradle, not when running with
+    * Sonarqube.
+    *
+    * @param reports the reports to generate
+    */
+   public void reports(Object... reports) {
+      reports(Arrays.asList(reports));
+   }
+
+   /**
+    * Adds the given reports to generate.  Reports are only generated when running with Gradle, not when running with
+    * Sonarqube.
+    *
+    * @param reports the reports to generate
+    */
+   public void reports(Iterable<Object> reports) {
+      for (Object report : reports) {
+         this.reports.add(report.toString());
+      }
+   }
+
+   /**
     * Returns the arguments to be used for the analysis.
-    * 
+    *
     * @return the arguments to be used for the analysis
     */
    public Map<String, Object> getArgs() {
@@ -92,7 +148,7 @@ public class SystemDescriptorAnalysisExtension {
 
    /**
     * Sets the arguments to be used for the analysis.
-    * 
+    *
     * @param args the arguments to be used for the analysis
     */
    public void setArgs(Map<String, Object> args) {
@@ -102,8 +158,8 @@ public class SystemDescriptorAnalysisExtension {
 
    /**
     * Adds an argument to be used for analysis.
-    * 
-    * @param key key
+    *
+    * @param key   key
     * @param value value
     */
    public void arg(String key, Object value) {
@@ -112,7 +168,7 @@ public class SystemDescriptorAnalysisExtension {
 
    /**
     * Adds the arguments to be used for the analysis.
-    * 
+    *
     * @param args the arguments to be used for the analysis
     */
    public void args(Map<String, Object> args) {

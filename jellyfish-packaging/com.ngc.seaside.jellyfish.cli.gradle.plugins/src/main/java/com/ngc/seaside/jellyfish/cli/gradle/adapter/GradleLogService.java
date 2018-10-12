@@ -20,6 +20,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.jellyfish.cli.command.report.console.ConsoleAnalysisReportCommand;
 
 import org.gradle.api.logging.Logging;
 
@@ -67,22 +68,38 @@ public class GradleLogService implements ILogService {
 
    @Override
    public void info(Class<?> clazz, Object o) {
-      Logging.getLogger(clazz).info(nullSafe(o));
+      if (shouldLoggingBePromoted(clazz)) {
+         Logging.getLogger(clazz).lifecycle(nullSafe(o));
+      } else {
+         Logging.getLogger(clazz).info(nullSafe(o));
+      }
    }
 
    @Override
    public void info(Class<?> clazz, String s, Object... objects) {
-      Logging.getLogger(clazz).info(format(s, objects));
+      if (shouldLoggingBePromoted(clazz)) {
+         Logging.getLogger(clazz).lifecycle(format(s, objects));
+      } else {
+         Logging.getLogger(clazz).info(format(s, objects));
+      }
    }
 
    @Override
    public void info(Class<?> clazz, Object o, Throwable throwable) {
-      Logging.getLogger(clazz).info(nullSafe(o), throwable);
+      if (shouldLoggingBePromoted(clazz)) {
+         Logging.getLogger(clazz).lifecycle(nullSafe(o), throwable);
+      } else {
+         Logging.getLogger(clazz).info(nullSafe(o), throwable);
+      }
    }
 
    @Override
    public void info(Class<?> clazz, Throwable throwable, String s, Object... objects) {
-      Logging.getLogger(clazz).info(format(s, objects), throwable);
+      if (shouldLoggingBePromoted(clazz)) {
+         Logging.getLogger(clazz).lifecycle(format(s, objects), throwable);
+      } else {
+         Logging.getLogger(clazz).info(format(s, objects), throwable);
+      }
    }
 
    @Override
@@ -179,5 +196,12 @@ public class GradleLogService implements ILogService {
 
    private static String format(String s, Object... o) {
       return String.format(s, o);
+   }
+
+   private static boolean shouldLoggingBePromoted(Class<?> clazz) {
+      // The console reporter logs at the info level, so we don't see the results in the Gradle output.  Therefore,
+      // if the console reporter logs anything, we promote it to the lifecycle level so we can actually see the
+      // output.
+      return ConsoleAnalysisReportCommand.class.equals(clazz);
    }
 }

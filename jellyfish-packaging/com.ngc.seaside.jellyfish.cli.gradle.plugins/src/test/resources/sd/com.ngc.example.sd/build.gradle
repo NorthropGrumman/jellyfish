@@ -35,3 +35,7 @@ license {
    header = file('../../../../../../LICENSE')
    ext.year = Calendar.getInstance().get(Calendar.YEAR)
 }
+
+sdAnalysis {
+   command 'analyze-inputs-outputs'
+}
