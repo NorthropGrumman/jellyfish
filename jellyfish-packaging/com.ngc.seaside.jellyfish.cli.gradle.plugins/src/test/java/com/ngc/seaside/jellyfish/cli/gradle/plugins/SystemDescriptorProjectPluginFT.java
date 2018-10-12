@@ -51,13 +51,13 @@ public class SystemDescriptorProjectPluginFT {
       assumePropertyExists("nexusSnapshots");
       assumePropertyExists("nexusUsername");
       assumePropertyExists("nexusPassword");
-      
+
       SeasideGradleRunner runner = SeasideGradleRunner.create()
-               .withNexusProperties()
-               .withProjectDir(projectDir)
-               .withPluginClasspath()
-               .forwardOutput()
-               .withArguments("clean", "build", "publishToMavenLocal", "publish");
+            .withNexusProperties()
+            .withProjectDir(projectDir)
+            .withPluginClasspath()
+            .forwardOutput()
+            .withArguments("clean", "build", "publishToMavenLocal", "publish");
 
       try {
          BuildResult result = runner.build();
@@ -68,7 +68,19 @@ public class SystemDescriptorProjectPluginFT {
          e.printStackTrace(new PasswordHidingWriter(System.err));
          fail();
       }
+   }
 
+   @Test
+   public void doesRunAnalyzeCommand() {
+      SeasideGradleRunner runner = SeasideGradleRunner.create()
+            .withNexusProperties()
+            .withProjectDir(projectDir)
+            .withPluginClasspath()
+            .forwardOutput()
+            .withArguments("clean", SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
+
+      BuildResult result = runner.build();
+      TestingUtilities.assertTaskSuccess(result, null, SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
    }
 
    private void assumePropertyExists(String key) {
@@ -77,5 +89,5 @@ public class SystemDescriptorProjectPluginFT {
       assumeFalse(property.isEmpty());
       assumeFalse("null".equals(property));
    }
-   
+
 }
