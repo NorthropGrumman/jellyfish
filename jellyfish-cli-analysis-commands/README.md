@@ -15,7 +15,7 @@ jellyfish analyze \
 You can also use the `inputDirectory` parameter instead of `gav` to scan a project directly.
 
 # Analysis
-Various types of analysis can be executed.
+Various types of analysis can be executed.  Below is a summary of these analysis.
 
 ## analyze-inputs-outputs 
 This analysis checks that models have at least one output.  See
@@ -23,7 +23,59 @@ This analysis checks that models have at least one output.  See
 for details
 
 ## analyze-budgets
-TODO
+This analysis can check various "budgets" that are applied to models.  Users can declare 'Budget' properties on top 
+level models.  Users can then perform allocations on various parts and sub-parts of that top level model.  This analysis
+will verify that the min and max constraints of the budget is met.  For example, consider a top level model like this:
+
+```
+import com.ngc.seaside.systemdescriptor.budget.Budget
+
+model ZaptorAirVehicle {
+
+  parts {
+		Engine engine
+		Generator generator
+	}
+
+  properties {
+		Budget weight
+
+		weight.max = "2500 kg"
+		weight.min = "0"
+		weight.givenBy = "weight"
+  }
+}
+```
+
+The line `weight.givenBy = "weight"` indicates that the weight budget is computed by examining the property named 
+"weight" on every part and sub part of the ZaptorAirVehicle.  The value of "givenBy" can be any property with any name.
+The type of the property must be a string.  Users can use most any unit for declaring max, min, and actual values.  
+
+When the analysis is ran, each part will be examined for a "budget" property.  Consider the models below:
+
+```
+model Engine {
+  properties {
+  	string weight
+  	weight = "250 kg"
+  }
+}
+```
+
+```
+model Generator {
+  properties {
+  	string weight
+  	weight = "70 kg"
+  }
+}
+```
+
+The analysis will compute the total weight as 320kg which is below the 2500kg limit.  Users must use the `model`
+property to identify which model should be examined when performing a budget analysis. 
+
+## analyze-features
+This analysis checks that all scenarios in the project have corresponding feature files.
 
 # Reports
 Jellyfish can also generate various reports which contain the results of the analysis.
@@ -34,3 +86,31 @@ the directory where the report will be created.
 
 ## console-report
 Outputs the results of analysis directly to the console as markdown.
+
+# Running Analysis with Gradle
+System Descriptor projects that have the `com.ngc.seaside.jellyfish.system-descriptor` plugin applied can use use the
+task 'analyze' to perform various analysis directly with Gradle.  First, configure the types of analysis to run in the
+`build.gradle` file of the SD project.
+
+```groovy
+sdAnalysis {
+    command 'analyze-inputs-outputs'
+    command 'analyze-budgets'
+}
+```
+
+You can also configure the type of report to generate.  If you don't configure a reporter, information is presented 
+directly to the console.  Below is an example of using the HTML reporter.
+
+```groovy
+sdAnalysis {
+    command 'analyze-inputs-outputs'
+    command 'analyze-budgets'
+    
+    report 'html-report'
+    arg 'reportName', 'example-report'
+    arg 'outputDirectory', 'build/reports/analysis'
+}
+```
+
+Finally, run the command `gradle analyze` to perform an analysis of the project. 
