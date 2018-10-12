@@ -3,6 +3,8 @@ restrictions: UNCLASSIFIED Copyright © 2018, Northrop Grumman Systems Corporati
 title: Ch. 10 Creating a Custom Command
 book-title: Jellyfish User Guide
 book-page: jellyfish-user-guide
+next-title: Ch. 11 Performing Analysis of System Descriptor Projects
+next-page: performing-analysis-of-system-descriptor-projects
 prev-title: Ch. 9 Creating a Scenario Verb
 prev-page: creating-a-scenario-verb
 ---
