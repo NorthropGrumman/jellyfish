@@ -99,7 +99,7 @@ public class DynamicModuleLoader {
          String line = in.readLine();
          while (line != null) {
             // Skip comments.
-            if (!line.startsWith("#")) {
+            if (!line.startsWith("#") && !line.trim().isEmpty()) {
                try {
                   // Create a new instance of the module and add it to the list.
                   modules.add((Module) DynamicModuleLoader.class.getClassLoader().loadClass(line).getConstructor()
