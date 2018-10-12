@@ -49,6 +49,8 @@ dependencies {
    // Required by the protobuf plugin when building on Linux.  Does not show up as a dependency until actually running
    // the protobuf plugin.
    extra "com.google.protobuf:protoc:$protobufVersion:linux-x86_64@exe"
+   // Required for Windows.
+   extra "com.google.protobuf:protoc:$protobufVersion:windows-x86_64@exe"
    // Required by SD projects themselves.
    extra "com.ngc.seaside:systemdescriptor.lang:$version@zip"
    extra "com.ngc.seaside:systemdescriptor.lang:$version:tests@zip"
