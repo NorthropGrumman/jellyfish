@@ -57,30 +57,22 @@ public class SystemDescriptorProjectPluginFT {
             .withProjectDir(projectDir)
             .withPluginClasspath()
             .forwardOutput()
-            .withArguments("clean", "build", "publishToMavenLocal", "publish");
+            .withArguments("clean",
+                           "build",
+                           SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME,
+                           "publishToMavenLocal",
+                           "publish");
 
       try {
          BuildResult result = runner.build();
          TestingUtilities.assertTaskSuccess(result, null, "build");
+         TestingUtilities.assertTaskSuccess(result, null, SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
          TestingUtilities.assertTaskSuccess(result, null, "publishToMavenLocal");
          TestingUtilities.assertTaskSuccess(result, null, "publish");
       } catch (Exception e) {
          e.printStackTrace(new PasswordHidingWriter(System.err));
          fail();
       }
-   }
-
-   @Test
-   public void doesRunAnalyzeCommand() {
-      SeasideGradleRunner runner = SeasideGradleRunner.create()
-            .withNexusProperties()
-            .withProjectDir(projectDir)
-            .withPluginClasspath()
-            .forwardOutput()
-            .withArguments("clean", SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
-
-      BuildResult result = runner.build();
-      TestingUtilities.assertTaskSuccess(result, null, SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
    }
 
    private void assumePropertyExists(String key) {
