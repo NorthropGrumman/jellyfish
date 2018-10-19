@@ -44,8 +44,8 @@ public class WizardUtils {
    public static final String JELLYFISH_PROPERTIES_FILE_NAME = "jellyfish.properties";
    public static final String GRADLE_USER_HOME_ENVIRONMENT_VARIABLE = "GRADLE_USER_HOME";
 
-   public static final String DEFAULT_NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
-   public static final String DEFAULT_GRADLE_DISTRIBUTION = "4.9";
+   public static final String DEFAULT_GRADLE_DISTRIBUTION = 
+            "https\\://nexusrepomgr.ms.northgrum.com/repository/gradle-distributions/gradle-4.9-bin.zip";
 
    /**
     * Returns the {@link FileHeader}
@@ -72,35 +72,9 @@ public class WizardUtils {
       Map<String, String> jellyfishProperties = getJellyfishProperties();
       String url = jellyfishProperties.get(JELLYFISH_USER_HOME_GRADLE_URL_PROPERTY);
       if (url == null) {
-         return getDefaultGradleDistributionUrl();
+         return DEFAULT_GRADLE_DISTRIBUTION;
       }
       return url;
-   }
-
-   private static String getDefaultGradleDistributionUrl() {
-      String gradleUserHome = System.getProperty("GRADLE_USER_HOME_ENVIRONMENT_VARIABLE");
-      if (gradleUserHome == null) {
-         gradleUserHome = System.getenv(GRADLE_USER_HOME_ENVIRONMENT_VARIABLE);
-         if (gradleUserHome == null) {
-            gradleUserHome = System.getProperty("user.home") + File.separatorChar + ".gradle";
-         }
-      }
-      Path gradleProperties = Paths.get(gradleUserHome, "gradle.properties");
-      String nexusConsolidated = null;
-      if (Files.isRegularFile(gradleProperties)) {
-         Properties properties = new Properties();
-         try {
-            properties.load(Files.newBufferedReader(gradleProperties));
-         } catch (IOException e) {
-            // ignore
-         }
-         nexusConsolidated = properties.getProperty("nexusConsolidated");
-      }
-      if (nexusConsolidated == null) {
-         nexusConsolidated = DEFAULT_NEXUS_CONSOLIDATED;
-      }
-      return nexusConsolidated + "/gradle/gradle/" + DEFAULT_GRADLE_DISTRIBUTION + "/gradle-"
-               + DEFAULT_GRADLE_DISTRIBUTION + "-bin.zip";
    }
 
    private static Map<String, String> getJellyfishProperties() {

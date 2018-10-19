@@ -21,6 +21,8 @@ import groovy.io.FileType
 import groovy.io.FileVisitResult
 
 buildscript {
+   // We don't want the dev user's jellyfish user home changing the outcome of these tests
+   System.setProperty('JELLYFISH_USER_HOME', "${buildDir}/.jellyfish")
    ext {
       versionsFile = file('../versions.gradle')
       buildScriptUpdater = new BuildScriptUpdater()
@@ -42,8 +44,7 @@ buildscript {
    }
 }
 
-// We don't want the dev user's jellyfish user home changing the outcome of these tests
-System.properties['JELLYFISH_USER_HOME'] = "${buildDir}/.jellyfish"
+
 
 apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.parent'
