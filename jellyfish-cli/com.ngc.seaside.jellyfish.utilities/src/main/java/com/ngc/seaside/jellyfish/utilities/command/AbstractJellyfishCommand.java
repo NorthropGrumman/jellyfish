@@ -74,9 +74,9 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
    /**
     * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
-    * license file to be used.
+    * header file to be used.
     */
-   public static final String JELLYFISH_USER_HOME_LICENSE_PROPERTY = "jellyfish.generated.license";
+   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header";
 
    protected ILogService logService;
 
@@ -276,7 +276,7 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
          mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, new FileHeader(header)));
       } else {
          Map<String, String> jellyfishProperties = jellyfishUserService.getJellyfishUserProperties();
-         String licenseFile = jellyfishProperties.get(JELLYFISH_USER_HOME_LICENSE_PROPERTY);
+         String licenseFile = jellyfishProperties.get(JELLYFISH_USER_HOME_HEADER_PROPERTY);
          FileHeader license = licenseFile == null ? FileHeader.DEFAULT_HEADER : new FileHeader(Paths.get(licenseFile));
          mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, license));
       }

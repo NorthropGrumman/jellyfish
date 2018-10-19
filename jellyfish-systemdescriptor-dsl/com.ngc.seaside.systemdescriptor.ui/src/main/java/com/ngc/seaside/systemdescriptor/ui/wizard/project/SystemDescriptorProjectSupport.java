@@ -16,6 +16,10 @@
  */
 package com.ngc.seaside.systemdescriptor.ui.wizard.project;
 
+import com.ngc.seaside.systemdescriptor.ui.wizard.FileHeader;
+import com.ngc.seaside.systemdescriptor.ui.wizard.WizardUtils;
+import com.ngc.seaside.systemdescriptor.ui.wizard.file.FileWizardUtils;
+
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -56,9 +60,6 @@ import java.util.zip.ZipInputStream;
 public class SystemDescriptorProjectSupport {
 
    private static final String GRADLE_PROJECT_TEMPLATE_ZIP = "sdproject.zip";
-   private static final String NEWLINE = System.getProperty("line.separator");
-   private static final String NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
-   private static final String DEFAULT_GRADLE_DISTRIBUTION_VERSION = "4.2.1";
 
    /**
     * For this project we need to:
@@ -125,8 +126,12 @@ public class SystemDescriptorProjectSupport {
       properties.put("projectName", gradleProjectName);
       properties.put("groupId", group);
       properties.put("version", version);
-      properties.put("nexusConsolidated", NEXUS_CONSOLIDATED);
-      properties.put("gradleDistributionVersion", DEFAULT_GRADLE_DISTRIBUTION_VERSION);
+      properties.put("gradleDistributionUrl", WizardUtils.getGradleDistributionUrl());
+      FileHeader header = WizardUtils.getFileHeader();
+      properties.put("header.properties", header.getProperties());
+      properties.put("header.java", header.getJava());
+      properties.put("header.gradle", header.getGradle());
+      properties.put("header.plain", header.getPlain());
       try {
          addGradleFiles(project, properties);
       } catch (IOException e) {
@@ -147,22 +152,9 @@ public class SystemDescriptorProjectSupport {
          addToProjectStructure(project, pkgPathList);
 
          if (defaultFile != null) {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("package " + defaultPkg).append(NEWLINE);
-            sb.append(NEWLINE);
-            sb.append("model " + defaultFile + " {").append(NEWLINE);
-            sb.append("  metadata {").append(NEWLINE);
-            sb.append("    \"name\" : \"" + defaultFile + "\",").append(NEWLINE);
-            sb.append("    \"description\" : \"" + defaultFile + " description\",").append(NEWLINE);
-            sb.append("    \"stereotypes\" : [\"model\", \"example\"]").append(NEWLINE);
-            sb.append("  }").append(NEWLINE);
-            sb.append("}").append(NEWLINE);
-
+            String sd = FileWizardUtils.createDefaultSd(defaultPkg, defaultFile, "model");
             String filepath = pkgMainPathSd + "/" + defaultFile + ".sd";
-            String fileContent = sb.toString();
-
-            addToProject(project, filepath, fileContent);
+            addToProject(project, filepath, sd);
          }
       }
 

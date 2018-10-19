@@ -34,7 +34,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-import java.io.InputStream;
 import java.util.Map;
 
 public class SystemDescriptorFileWizard extends Wizard implements INewWizard {
@@ -65,9 +64,9 @@ public class SystemDescriptorFileWizard extends Wizard implements INewWizard {
       }
       String elementType = this.filePage.getElementType();
 
-      InputStream stream = SystemDescriptorFileSupport.createSDStream(packageName, filename, elementType);
+      String sd = FileWizardUtils.createDefaultSd(packageName, filename, elementType);
       try {
-         boolean success = SystemDescriptorFileSupport.createFile(getShell(), file, stream);
+         boolean success = SystemDescriptorFileSupport.createFile(getShell(), file, sd);
          if (success) {
             getShell().getDisplay().asyncExec(() -> {
                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

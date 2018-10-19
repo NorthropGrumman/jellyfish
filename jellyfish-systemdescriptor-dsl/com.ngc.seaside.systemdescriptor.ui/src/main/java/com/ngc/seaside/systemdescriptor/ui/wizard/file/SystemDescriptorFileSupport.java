@@ -154,9 +154,9 @@ class SystemDescriptorFileSupport {
       return new AbstractMap.SimpleEntry<>(defaultSourceFolder, "");
    }
 
-   static boolean createFile(Shell shell, IFile file, InputStream stream) throws CoreException {
+   static boolean createFile(Shell shell, IFile file, String sd) throws CoreException {
       NullProgressMonitor monitor = new NullProgressMonitor();
-      try (InputStream str = stream) {
+      try (InputStream str = new ByteArrayInputStream(sd.getBytes(StandardCharsets.UTF_8))) {
          SystemDescriptorFileSupport.createRecursively(file, monitor);
          file.setContents(str, 3, monitor);
          return true;
@@ -184,31 +184,6 @@ class SystemDescriptorFileSupport {
          default:
             // Do nothing.
       }
-   }
-
-   static InputStream createSDStream(String packageName, String name, String elementType) {
-      StringBuilder file = new StringBuilder();
-      if (packageName != null && !packageName.isEmpty()) {
-         file.append("package ").append(packageName).append("\n\n");
-      }
-
-      switch (elementType.toLowerCase()) {
-         case "model":
-            file.append("model ").append(name)
-                  .append(
-                        " {\n  metadata {\n    \"name\" : \"My Model\",\n    \"description\" :"
-                              + " \"My Model description\",\n    \"stereotypes\" : [\"model\", \"example\"]\n  }\n}\n");
-            break;
-         case "data":
-            file.append("data ").append(name).append(" {\n\n}\n");
-            break;
-         case "enum":
-            file.append("enum ").append(name).append(" {\n\n}\n");
-            break;
-         default:
-            throw new IllegalStateException("Unknown element type: " + elementType);
-      }
-      return new ByteArrayInputStream(file.toString().getBytes(StandardCharsets.UTF_8));
    }
 
 }
