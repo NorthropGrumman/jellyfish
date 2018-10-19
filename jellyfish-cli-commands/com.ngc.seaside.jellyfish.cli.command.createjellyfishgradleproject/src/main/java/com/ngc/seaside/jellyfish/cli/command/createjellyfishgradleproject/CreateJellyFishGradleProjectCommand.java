@@ -40,6 +40,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,7 +48,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Map;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -67,6 +68,17 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
    public static final String LICENSE_FILE_NAME = "LICENSE";
+
+   public static final String GRADLE_USER_HOME_ENVIRONMENT_VARIABLE = "GRADLE_USER_HOME";
+
+   public static final String DEFAULT_NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
+   public static final String DEFAULT_GRADLE_DISTRIBUTION = "4.9";
+
+   /**
+    * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
+    * Gradle distribution URL to use in generated Gradle projects.
+    */
+   public static final String JELLYFISH_USER_HOME_GRADLE_URL_PROPERTY = "jellyfish.generated.gradle.url";
 
    public CreateJellyFishGradleProjectCommand() {
       super(NAME);
@@ -130,6 +142,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             .setSystemDescriptorGav(collection.getParameter(SYSTEM_DESCRIPTOR_GAV_PROPERTY).getStringValue())
             .setModelName(collection.getParameter(MODEL_NAME_PROPERTY).getStringValue())
             .setDeploymentModelName(getDeploymentModel(commandOptions))
+            .setGradleDistributionUrl(getGradleDistributionUrl())
             .setBuildScriptDependencies(getBuildScriptDependencies(commandOptions))
             .setVersionProperties(getVersionProperties(commandOptions))
             .setProjects(getProjects(commandOptions))
@@ -160,6 +173,36 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
             throw new JellyfishExecutionException("Unable to create " + LICENSE_FILE_NAME + " file", e);
          }
       }
+   }
+
+   private String getGradleDistributionUrl() {
+      String url = jellyfishUserService.getJellyfishUserProperties().get(JELLYFISH_USER_HOME_GRADLE_URL_PROPERTY);
+      if (url == null) {
+         String gradleUserHome = System.getProperty("GRADLE_USER_HOME_ENVIRONMENT_VARIABLE");
+         if (gradleUserHome == null) {
+            gradleUserHome = System.getenv(GRADLE_USER_HOME_ENVIRONMENT_VARIABLE);
+            if (gradleUserHome == null) {
+               gradleUserHome = System.getProperty("user.home") + File.separatorChar + ".gradle";
+            }
+         }
+         Path gradleProperties = Paths.get(gradleUserHome, "gradle.properties");
+         String nexusConsolidated = null;
+         if (Files.isRegularFile(gradleProperties)) {
+            Properties properties = new Properties();
+            try {
+               properties.load(Files.newBufferedReader(gradleProperties));
+            } catch (IOException e) {
+               // ignore
+            }
+            nexusConsolidated = properties.getProperty("nexusConsolidated");
+         }
+         if (nexusConsolidated == null) {
+            nexusConsolidated = DEFAULT_NEXUS_CONSOLIDATED;
+         }
+         return nexusConsolidated + "/gradle/gradle/" + DEFAULT_GRADLE_DISTRIBUTION + "/gradle-"
+                  + DEFAULT_GRADLE_DISTRIBUTION + "-bin.zip";
+      }
+      return url;
    }
 
    private void registerRequiredDependencies(IJellyFishCommandOptions commandOptions) {

@@ -76,7 +76,7 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
     * header file to be used.
     */
-   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header";
+   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header.file";
 
    protected ILogService logService;
 
@@ -277,7 +277,16 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
       } else {
          Map<String, String> jellyfishProperties = jellyfishUserService.getJellyfishUserProperties();
          String licenseFile = jellyfishProperties.get(JELLYFISH_USER_HOME_HEADER_PROPERTY);
-         FileHeader license = licenseFile == null ? FileHeader.DEFAULT_HEADER : new FileHeader(Paths.get(licenseFile));
+         Path licensePath = licenseFile == null ? null : Paths.get(licenseFile);
+         FileHeader license = FileHeader.DEFAULT_HEADER;
+         if (licensePath != null) {
+            if (Files.isRegularFile(licensePath)) {
+               license = new FileHeader(licensePath);
+            } else {
+               logService.error(AbstractJellyfishCommand.class, "jellyfish.properties property "
+                        + JELLYFISH_USER_HOME_HEADER_PROPERTY + "=" + licenseFile + " does not exist");
+            }
+         }
          mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, license));
       }
 

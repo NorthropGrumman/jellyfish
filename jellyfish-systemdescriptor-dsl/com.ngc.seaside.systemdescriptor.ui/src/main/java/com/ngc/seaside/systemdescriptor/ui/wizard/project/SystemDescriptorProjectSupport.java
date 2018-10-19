@@ -41,11 +41,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -345,17 +347,27 @@ public class SystemDescriptorProjectSupport {
             }
             if (entry.isDirectory()) {
                createFolder(project.getFolder(entry.getName()));
-            } else if (entry.getName().endsWith(".jar")) {
-               ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-               addToProject(project, entry.getName(), in);
+               continue;
+            }
+            String name = entry.getName();
+            if (name.endsWith(".vm")) {
+               name = name.substring(0, name.length() - 3);
+            }
+            InputStream contentStream;
+            if (entry.getName().endsWith(".jar")) {
+               contentStream = new ByteArrayInputStream(out.toByteArray());
             } else {
                String contents = out.toString();
+               if (entry.getName().endsWith(".vm")) {
+                  // Remove license comments
+                  contents = Pattern.compile("^##.*?$\\v+", Pattern.MULTILINE).matcher(contents).replaceAll("");
+               }
                for (Map.Entry<String, String> keyValue : properties.entrySet()) {
                   contents = contents.replace("${" + keyValue.getKey() + "}", keyValue.getValue());
                }
-               addToProject(project, entry.getName(), contents);
+               contentStream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
             }
-
+            addToProject(project, name, contentStream);
          }
 
       }

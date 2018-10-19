@@ -120,7 +120,7 @@ task createTemplates {
 
 file('src/main/templates').eachDir { template ->
    task("createTemplate${template.name}", type:Zip) {
-      from "${template}/build.gradle", {
+      from "${template}/build.gradle.vm", {
          expand([cliPluginVersion: version])
       }
       from template, {

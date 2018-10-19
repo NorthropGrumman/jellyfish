@@ -31,8 +31,12 @@ public class WizardUtils {
     * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
     * header file to be used.
     */
-   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header";
+   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header.file";
 
+   /**
+    * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
+    * Gradle distribution URL to use in generated Gradle projects.
+    */
    public static final String JELLYFISH_USER_HOME_GRADLE_URL_PROPERTY = "jellyfish.generated.gradle.url";
 
    public static final String JELLYFISH_USER_HOME_ENVIRONMENT_VARIABLE = "JELLYFISH_USER_HOME";
@@ -50,6 +54,10 @@ public class WizardUtils {
       Map<String, String> jellyfishProperties = getJellyfishProperties();
       String headerFile = jellyfishProperties.get(JELLYFISH_USER_HOME_HEADER_PROPERTY);
       if (headerFile == null) {
+         return FileHeader.DEFAULT_HEADER;
+      }
+      Path header = Paths.get(headerFile);
+      if (!Files.isRegularFile(header)) {
          return FileHeader.DEFAULT_HEADER;
       }
       return new FileHeader(Paths.get(headerFile));

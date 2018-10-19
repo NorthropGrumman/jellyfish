@@ -1,2 +1,0 @@
-${header.gradle}
-rootProject.name = '${projectName}'
