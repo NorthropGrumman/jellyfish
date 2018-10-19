@@ -85,6 +85,13 @@ public class FileHeader {
    }
 
    /**
+    * Gets the header as plain text.
+    */
+   public String getPlain() {
+      return headers.get(HeaderType.PLAIN);
+   }
+
+   /**
     * Gets the header for Java files.
     */
    public String getJava() {
@@ -113,11 +120,11 @@ public class FileHeader {
          if (drained.isEmpty()) {
             headers.put(type, "");
          } else {
-            StringBuilder header = new StringBuilder(type.getStartBlock())
-                  .append(System.lineSeparator());
-            drained.forEach(line -> header.append(type.getPrefix()).append(line).append(System.lineSeparator()));
-            header.append(type.getEndBlock());
-            headers.put(type, header.toString());
+            String prefix = type.getPrefix();
+            String header = drained.stream()
+                     .map(line -> prefix + line)
+                     .collect(Collectors.joining(System.lineSeparator(), type.getStartBlock(), type.getEndBlock()));
+            headers.put(type, header);
          }
       }
    }
@@ -126,9 +133,10 @@ public class FileHeader {
     * Defines the different types of comments/languages/files the header can be included in.
     */
    private enum HeaderType {
-      JAVA("/**", " * ", " */"),
-      GRADLE("/*", " * ", " */"),
-      PROPERTIES("#", "# ", "#");
+      PLAIN("", "", ""),
+      JAVA("/**\n", " * ", "\n */"),
+      GRADLE("/*\n", " * ", "\n */"),
+      PROPERTIES("#\n", "# ", "\n#");
 
       private final String startBlock;
       private final String prefix;

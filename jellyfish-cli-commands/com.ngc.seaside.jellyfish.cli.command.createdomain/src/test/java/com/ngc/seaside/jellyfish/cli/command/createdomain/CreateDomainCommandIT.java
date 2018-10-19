@@ -27,6 +27,7 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.MockedProjectNamingSer
 import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.FieldCardinality;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
@@ -40,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -79,6 +81,7 @@ public class CreateDomainCommandIT {
                                    .setTemplateDirectory(
                                          CreateDomainCommand.class.getPackage().getName(),
                                          Paths.get("src", "main", "template")));
+      cmd.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
 
       IPackageNamingService packageService = mock(IPackageNamingService.class);
       when(packageService.getDomainPackageName(any(), any())).thenAnswer(args -> {

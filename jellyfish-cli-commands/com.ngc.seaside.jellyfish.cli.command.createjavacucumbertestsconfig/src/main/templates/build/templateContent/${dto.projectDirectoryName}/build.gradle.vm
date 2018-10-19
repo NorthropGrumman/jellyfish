@@ -16,9 +16,7 @@
  *#${header.gradle}
 ext {
     command = 'create-java-cucumber-tests-config'
-#if ($dto.isSystem())
-    args = [system : true]
-#end
+    args = [headerFile : findProperty('licenseFile')#if ($dto.isSystem()), system : true#end]
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

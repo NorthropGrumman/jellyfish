@@ -29,8 +29,10 @@ import com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject.dto.Gr
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.execution.api.JellyfishExecutionException;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
+import com.ngc.seaside.jellyfish.utilities.command.FileHeader;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 
@@ -39,11 +41,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -62,6 +66,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String VERSION_PROPERTY = CommonParameters.VERSION.getName();
    public static final String JELLYFISH_GRADLE_PLUGINS_VERSION_PROPERTY = "jellyfishGradlePluginsVersion";
    public static final String DEFAULT_GROUP_ID = "com.ngc.seaside";
+   public static final String LICENSE_FILE_NAME = "LICENSE";
 
    public CreateJellyFishGradleProjectCommand() {
       super(NAME);
@@ -142,6 +147,19 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
 
       boolean clean = CommonParameters.evaluateBooleanParameter(collection, CommonParameters.CLEAN.getName(), false);
       unpackDefaultTemplate(collection, projectDirectory, clean);
+
+      @SuppressWarnings("unchecked")
+      IParameter<FileHeader> headerParam = (IParameter<FileHeader>) addDefaultUnpackParameters(collection)
+               .getParameter(AbstractJellyfishCommand.FILE_HEADER_TEMPLATE_VARIABLE);
+      FileHeader header = headerParam == null ? null : headerParam.getValue();
+      if (header != null) {
+         Path license = projectDirectory.resolve(LICENSE_FILE_NAME);
+         try {
+            Files.write(license, header.getPlain().getBytes(StandardCharsets.UTF_8));
+         } catch (IOException e) {
+            throw new JellyfishExecutionException("Unable to create " + LICENSE_FILE_NAME + " file", e);
+         }
+      }
    }
 
    private void registerRequiredDependencies(IJellyFishCommandOptions commandOptions) {

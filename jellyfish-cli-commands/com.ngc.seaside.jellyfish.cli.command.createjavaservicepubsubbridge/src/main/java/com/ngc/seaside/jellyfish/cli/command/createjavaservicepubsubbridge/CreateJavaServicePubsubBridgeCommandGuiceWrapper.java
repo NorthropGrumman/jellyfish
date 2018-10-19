@@ -27,6 +27,7 @@ import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationServi
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 public class CreateJavaServicePubsubBridgeCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -39,7 +40,8 @@ public class CreateJavaServicePubsubBridgeCommandGuiceWrapper implements IJellyF
                                                            IBaseServiceDtoFactory templateDtoFactory,
                                                            IJavaServiceGenerationService generateService,
                                                            IPackageNamingService packageNamingService,
-                                                           IProjectNamingService projectNamingService) {
+                                                           IProjectNamingService projectNamingService,
+                                                           IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setBuildManagementService(buildManagementService);
       delegate.setTemplateService(templateService);
@@ -47,6 +49,7 @@ public class CreateJavaServicePubsubBridgeCommandGuiceWrapper implements IJellyF
       delegate.setJavaServiceGenerationService(generateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
+      delegate.setJellyfishUserService(jellyfishUserService);
    }
 
    @Override

@@ -81,3 +81,6 @@ project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name
 
 include 'com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice'
 project(':com.ngc.seaside.jellyfish.service.analysis.impl.markdownreportingservice').name = 'jellyfish.service.analysis.impl.markdownreportingservice'
+
+include 'com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice'
+project(':com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice').name = 'jellyfish.service.impl.jellyfishuserservice'

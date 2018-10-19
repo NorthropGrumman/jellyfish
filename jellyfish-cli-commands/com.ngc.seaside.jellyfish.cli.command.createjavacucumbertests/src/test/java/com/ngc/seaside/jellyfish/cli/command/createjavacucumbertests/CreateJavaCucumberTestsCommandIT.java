@@ -29,6 +29,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationServi
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
@@ -39,6 +40,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
@@ -125,6 +127,7 @@ public class CreateJavaCucumberTestsCommandIT {
       command.setJavaServiceGenerationService(generationService);
       command.setBuildManagementService(buildManagementService);
       command.setTelemetryConfigService(telemetryConfigService);
+      command.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
       command.activate();
    }
 

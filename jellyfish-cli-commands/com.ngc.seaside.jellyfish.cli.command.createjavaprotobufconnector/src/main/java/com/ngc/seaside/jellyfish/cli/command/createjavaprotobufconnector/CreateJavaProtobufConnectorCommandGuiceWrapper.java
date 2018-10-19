@@ -31,6 +31,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -46,7 +47,8 @@ public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFis
                                                          IProjectNamingService projectService,
                                                          IJavaServiceGenerationService generationService,
                                                          IDataFieldGenerationService dataFieldService,
-                                                         IBuildManagementService buildManagementService) {
+                                                         IBuildManagementService buildManagementService,
+                                                         IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setScenarioService(scenarioService);
@@ -57,6 +59,7 @@ public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFis
       delegate.setJavaServiceGenerationService(generationService);
       delegate.setDataFieldGenerationService(dataFieldService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setJellyfishUserService(jellyfishUserService);
       delegate.activate();
    }
 

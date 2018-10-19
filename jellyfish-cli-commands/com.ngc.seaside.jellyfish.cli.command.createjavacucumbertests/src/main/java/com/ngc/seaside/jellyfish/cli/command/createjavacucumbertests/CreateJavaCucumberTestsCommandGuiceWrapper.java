@@ -28,6 +28,7 @@ import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationServi
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 public class CreateJavaCucumberTestsCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -40,7 +41,8 @@ public class CreateJavaCucumberTestsCommandGuiceWrapper implements IJellyFishCom
                                                      IPackageNamingService packageService,
                                                      IJavaServiceGenerationService generationService,
                                                      IBuildManagementService buildManagementService,
-                                                     ITelemetryConfigurationService telemetryConfigService) {
+                                                     ITelemetryConfigurationService telemetryConfigService,
+                                                     IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectService);
@@ -48,6 +50,7 @@ public class CreateJavaCucumberTestsCommandGuiceWrapper implements IJellyFishCom
       delegate.setJavaServiceGenerationService(generationService);
       delegate.setBuildManagementService(buildManagementService);
       delegate.setTelemetryConfigService(telemetryConfigService);
+      delegate.setJellyfishUserService(jellyfishUserService);
       delegate.activate();
    }
 

@@ -27,6 +27,7 @@ dependencies {
    api "com.google.inject:guice:$guiceVersion"
 
    implementation "com.ngc.seaside:guice.modules:$version"
+   implementation "com.ngc.seaside:jellyfish.service.impl.jellyfishuserservice:$version"
    implementation "com.ngc.seaside:jellyfish.service.name.impl.namingservices:$version"
    implementation "com.ngc.seaside:jellyfish.service.codegen.impl.codegenservices:$version"
    implementation "com.ngc.seaside:jellyfish.service.scenario.impl.scenarioservice:$version"

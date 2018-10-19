@@ -42,6 +42,9 @@ buildscript {
    }
 }
 
+// We don't want the dev user's jellyfish user home changing the outcome of these tests
+System.properties['JELLYFISH_USER_HOME'] = "${buildDir}/.jellyfish"
+
 apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.parent'
 apply plugin: 'com.ngc.seaside.root.parent'
@@ -295,7 +298,9 @@ def createRegressionBuildTask(name, regressionFolder, folder, tempDirectory) {
                gradleBuildTask.dir = tempDirectory
                gradleBuildTask.tasks = ['clean', 'build']
                gradleBuildTask.startParameter.excludedTaskNames = ['test']
-               gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+
+               // We don't want the dev user's jellyfish user home changing the outcome of these tests
+               gradleBuildTask.startParameter.systemPropertiesArgs = [JELLYFISH_USER_HOME : "${buildDir}/.jellyfish"]
                gradleBuildTask.startParameter.projectProperties << extraProperties
                gradleBuildTask.execute()
 

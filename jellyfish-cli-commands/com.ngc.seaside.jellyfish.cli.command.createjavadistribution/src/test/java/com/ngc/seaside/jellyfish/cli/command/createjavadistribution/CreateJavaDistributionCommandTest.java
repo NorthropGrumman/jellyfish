@@ -28,6 +28,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
@@ -35,6 +36,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -86,6 +88,7 @@ public class CreateJavaDistributionCommandTest {
       fixture.setProjectNamingService(projectNamingService);
       fixture.setPackageNamingService(packageNamingService);
       fixture.setBuildManagementService(new MockedBuildManagementService());
+      fixture.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
    }
 
    @Test
