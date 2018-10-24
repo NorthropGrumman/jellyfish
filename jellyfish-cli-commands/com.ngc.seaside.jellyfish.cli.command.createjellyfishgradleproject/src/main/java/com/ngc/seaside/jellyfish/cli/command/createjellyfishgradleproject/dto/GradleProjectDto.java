@@ -33,6 +33,7 @@ public class GradleProjectDto {
    private String systemDescriptorGav;
    private String modelName;
    private String deploymentModelName;
+   private String gradleDistributionUrl;
    private List<ModelPartDto> modelParts = new ArrayList<>();
    private Collection<IBuildDependency> buildScriptDependencies = new ArrayList<>();
    private SortedMap<String, String> versionProperties = new TreeMap<>();
@@ -90,6 +91,15 @@ public class GradleProjectDto {
 
    public GradleProjectDto setDeploymentModelName(String deploymentModelName) {
       this.deploymentModelName = deploymentModelName;
+      return this;
+   }
+
+   public String getGradleDistributionUrl() {
+      return gradleDistributionUrl;
+   }
+
+   public GradleProjectDto setGradleDistributionUrl(String gradleDistributionUrl) {
+      this.gradleDistributionUrl = gradleDistributionUrl;
       return this;
    }
 

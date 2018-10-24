@@ -16,6 +16,10 @@
  */
 package com.ngc.seaside.systemdescriptor.ui.wizard.project;
 
+import com.ngc.seaside.systemdescriptor.ui.wizard.FileHeader;
+import com.ngc.seaside.systemdescriptor.ui.wizard.WizardUtils;
+import com.ngc.seaside.systemdescriptor.ui.wizard.file.FileWizardUtils;
+
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -37,11 +41,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -56,9 +62,6 @@ import java.util.zip.ZipInputStream;
 public class SystemDescriptorProjectSupport {
 
    private static final String GRADLE_PROJECT_TEMPLATE_ZIP = "sdproject.zip";
-   private static final String NEWLINE = System.getProperty("line.separator");
-   private static final String NEXUS_CONSOLIDATED = "http://10.207.42.137/nexus/repository/maven-public";
-   private static final String DEFAULT_GRADLE_DISTRIBUTION_VERSION = "4.2.1";
 
    /**
     * For this project we need to:
@@ -125,8 +128,12 @@ public class SystemDescriptorProjectSupport {
       properties.put("projectName", gradleProjectName);
       properties.put("groupId", group);
       properties.put("version", version);
-      properties.put("nexusConsolidated", NEXUS_CONSOLIDATED);
-      properties.put("gradleDistributionVersion", DEFAULT_GRADLE_DISTRIBUTION_VERSION);
+      properties.put("gradleDistributionUrl", WizardUtils.getGradleDistributionUrl());
+      FileHeader header = WizardUtils.getFileHeader();
+      properties.put("header.properties", header.getProperties());
+      properties.put("header.java", header.getJava());
+      properties.put("header.gradle", header.getGradle());
+      properties.put("header.plain", header.getPlain());
       try {
          addGradleFiles(project, properties);
       } catch (IOException e) {
@@ -147,22 +154,9 @@ public class SystemDescriptorProjectSupport {
          addToProjectStructure(project, pkgPathList);
 
          if (defaultFile != null) {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("package " + defaultPkg).append(NEWLINE);
-            sb.append(NEWLINE);
-            sb.append("model " + defaultFile + " {").append(NEWLINE);
-            sb.append("  metadata {").append(NEWLINE);
-            sb.append("    \"name\" : \"" + defaultFile + "\",").append(NEWLINE);
-            sb.append("    \"description\" : \"" + defaultFile + " description\",").append(NEWLINE);
-            sb.append("    \"stereotypes\" : [\"model\", \"example\"]").append(NEWLINE);
-            sb.append("  }").append(NEWLINE);
-            sb.append("}").append(NEWLINE);
-
+            String sd = FileWizardUtils.createDefaultSd(defaultPkg, defaultFile, "model");
             String filepath = pkgMainPathSd + "/" + defaultFile + ".sd";
-            String fileContent = sb.toString();
-
-            addToProject(project, filepath, fileContent);
+            addToProject(project, filepath, sd);
          }
       }
 
@@ -353,17 +347,27 @@ public class SystemDescriptorProjectSupport {
             }
             if (entry.isDirectory()) {
                createFolder(project.getFolder(entry.getName()));
-            } else if (entry.getName().endsWith(".jar")) {
-               ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-               addToProject(project, entry.getName(), in);
+               continue;
+            }
+            String name = entry.getName();
+            if (name.endsWith(".vm")) {
+               name = name.substring(0, name.length() - 3);
+            }
+            InputStream contentStream;
+            if (entry.getName().endsWith(".jar")) {
+               contentStream = new ByteArrayInputStream(out.toByteArray());
             } else {
                String contents = out.toString();
+               if (entry.getName().endsWith(".vm")) {
+                  // Remove license comments
+                  contents = Pattern.compile("^##.*?$\\v+", Pattern.MULTILINE).matcher(contents).replaceAll("");
+               }
                for (Map.Entry<String, String> keyValue : properties.entrySet()) {
                   contents = contents.replace("${" + keyValue.getKey() + "}", keyValue.getValue());
                }
-               addToProject(project, entry.getName(), contents);
+               contentStream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
             }
-
+            addToProject(project, name, contentStream);
          }
 
       }

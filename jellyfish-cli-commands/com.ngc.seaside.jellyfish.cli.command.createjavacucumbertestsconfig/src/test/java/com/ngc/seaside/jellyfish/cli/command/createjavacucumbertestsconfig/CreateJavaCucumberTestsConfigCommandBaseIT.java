@@ -32,12 +32,15 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetry
 import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
+
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -111,6 +114,7 @@ public class CreateJavaCucumberTestsConfigCommandBaseIT {
       command.setPackageNamingService(packageService);
       command.setTemplateService(templateService);
       command.setBuildManagementService(buildManagementService);
+      command.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
    }
 
    protected void run(Object... args) {

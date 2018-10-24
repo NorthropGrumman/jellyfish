@@ -28,6 +28,7 @@ import com.ngc.seaside.jellyfish.service.data.api.IDataService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -40,7 +41,8 @@ public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
                                               ITemplateService templateService,
                                               IDataService dataService,
                                               IDataFieldGenerationService dataFieldGenerationService,
-                                              IBuildManagementService buildManagementService) {
+                                              IBuildManagementService buildManagementService,
+                                              IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
@@ -48,6 +50,7 @@ public class CreateJavaEventsCommandGuiceWrapper implements IJellyFishCommand {
       delegate.setDataService(dataService);
       delegate.setDataFieldGenerationService(dataFieldGenerationService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setJellyfishUserService(jellyfishUserService);
       delegate.activate();
    }
 

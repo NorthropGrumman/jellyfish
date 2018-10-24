@@ -98,9 +98,9 @@ importing other types of data types.  When this happens,
 This should remove the errors.  If all else fails, restart Eclipse.
 
 # Creating an Initial Project
-Once Eclipse has a restarted an initial project can be created to make sure the installation was successful.  Make sure
-the Package Explorer window is visible and follow the steps below.  If for some reason Package Explorer isn't shown
-(or you accidentally close it) just select Window -> Show View -> Package Explorer in the menu.
+Once Eclipse has a restarted, an initial project can be created to make sure the installation was successful.  Make
+sure the Package Explorer window is visible and follow the steps below.  If for some reason Package Explorer isn't
+shown (or you accidentally close it) just select Window -> Show View -> Package Explorer in the menu.
 1. Select File -> New -> Other in the menu.  You may also right click in the Package Explorer and select New -> Other.
 1. Expand JellyFish
 1. Select System Descriptor Project
@@ -120,6 +120,11 @@ Its contents should look something similar to this:
 
 **MyModel.sd**
 ```
+/*
+ * ...
+ * [license header]
+ * ...
+ */
 package com.ngc.mysdproject
  
 model MyModel {
@@ -131,6 +136,32 @@ model MyModel {
 }
 ```
 This indicates that the tooling has been successfully installed.
+
+## Customization
+Some defaults values that are generated when creating a new System Descriptor project can be modified by creating
+a `jellyfish.properties` file. This can be done as follows:
+
+1. Navigate to your home directory. This is typically `C:\users\<user>` for Windows and `/home/<user>` for Linux.
+2. If it doesn't already exist, create a folder called `.jellyfish`. If you get an error in Windows, type `.jellyfish.`
+   instead.
+3. Create the file `jellyfish.properties` in the folder `.jellyfish`.
+4. Open the file `jellyfish.properties` using your favorite text editor.
+5. You can add properties to this file using the following syntax: `<property>=<value>`. Each property should be on its
+   own line.
+
+The following defaults can be changed using the `jellyfish.properties` file. 
+
+| Property                        | Value                              | Description | Example |
+|---------------------------------|------------------------------------|-------------|---------|
+| jellyfish.generated.header.file | The file path to the header file   | Customizes the header/license that Jellyfish uses when generating files or creating a new System Descriptor project | `jellyfish.generated.header.file=C\:/users/<user>/team-license.txt` |
+| jellyfish.generated.gradle.url  | A URL to a Gradle distribution zip | Customizes the URL to the Gradle distribution that Jellyfish generates when creating a new System Descriptor project | `jellyfish.generated.gradle.url=https\://services.gradle.org/distributions/gradle-4.9-bin.zip` |
+
+```note-info
+If a value has a colon `:` or backslash `\` character in it, it must be preceded by a backslash `\` character. For
+example, the header file `C:\users\me\license.txt` should be
+`jellyfish.generated.header.file=C\:\\users\\me\\license.txt` in the properties file. Conveniently, you can use forward
+slashes `/` for Windows file paths instead: `jellyfish.generated.header.file=C\:/users/me/license.txt`
+```
 
 [setup1]: {{ safebase }}/assets/images/eclipse-install-1.png
 [setup2]: {{ safebase }}/assets/images/eclipse-install-2.png

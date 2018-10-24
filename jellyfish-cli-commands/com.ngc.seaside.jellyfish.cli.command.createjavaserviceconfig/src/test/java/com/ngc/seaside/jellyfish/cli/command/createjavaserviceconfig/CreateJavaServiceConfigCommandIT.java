@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
@@ -41,6 +42,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Files;
@@ -124,6 +126,7 @@ public class CreateJavaServiceConfigCommandIT {
       command.setPackageNamingService(packageService);
       command.setTemplateService(templateService);
       command.setBuildManagementService(buildManagementService);
+      command.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
    }
 
    @Test

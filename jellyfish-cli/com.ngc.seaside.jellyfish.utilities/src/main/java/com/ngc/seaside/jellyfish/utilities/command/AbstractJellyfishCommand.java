@@ -17,7 +17,6 @@
 package com.ngc.seaside.jellyfish.utilities.command;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
@@ -33,12 +32,14 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 /**
  * A base class for Jellyfish commands.  This class provides various convenience operations.  Notable ones include
@@ -71,7 +72,15 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
     */
    public static final String FILE_HEADER_TEMPLATE_VARIABLE = "header";
 
+   /**
+    * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default
+    * header file to be used.
+    */
+   public static final String JELLYFISH_USER_HOME_HEADER_PROPERTY = "jellyfish.generated.header.file";
+
    protected ILogService logService;
+
+   protected IJellyfishUserService jellyfishUserService;
 
    protected IBuildManagementService buildManagementService;
 
@@ -139,6 +148,14 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
 
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+
+   public void setJellyfishUserService(IJellyfishUserService ref) {
+      this.jellyfishUserService = ref;
+   }
+
+   public void removeJellyfishUserService(IJellyfishUserService ref) {
+      setJellyfishUserService(null);
    }
 
    public void setBuildManagementService(IBuildManagementService ref) {
@@ -258,7 +275,19 @@ public abstract class AbstractJellyfishCommand implements IJellyFishCommand {
          }
          mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, new FileHeader(header)));
       } else {
-         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, FileHeader.DEFAULT_HEADER));
+         Map<String, String> jellyfishProperties = jellyfishUserService.getJellyfishUserProperties();
+         String licenseFile = jellyfishProperties.get(JELLYFISH_USER_HOME_HEADER_PROPERTY);
+         Path licensePath = licenseFile == null ? null : Paths.get(licenseFile);
+         FileHeader license = FileHeader.DEFAULT_HEADER;
+         if (licensePath != null) {
+            if (Files.isRegularFile(licensePath)) {
+               license = new FileHeader(licensePath);
+            } else {
+               logService.error(AbstractJellyfishCommand.class, "jellyfish.properties property "
+                        + JELLYFISH_USER_HOME_HEADER_PROPERTY + "=" + licenseFile + " does not exist");
+            }
+         }
+         mutableParams.addParameter(new DefaultParameter<>(FILE_HEADER_TEMPLATE_VARIABLE, license));
       }
 
       return mutableParams;

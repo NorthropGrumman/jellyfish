@@ -16,6 +16,7 @@
  */
 ext {
     command = 'create-java-service-base'
+    args = [headerFile : findProperty('licenseFile')]
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

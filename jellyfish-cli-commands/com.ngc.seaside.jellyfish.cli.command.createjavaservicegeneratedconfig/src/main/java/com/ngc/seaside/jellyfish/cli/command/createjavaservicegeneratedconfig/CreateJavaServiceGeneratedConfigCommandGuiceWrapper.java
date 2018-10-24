@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 import java.util.Set;
 
@@ -39,12 +40,14 @@ public class CreateJavaServiceGeneratedConfigCommandGuiceWrapper implements IJel
                                                               IProjectNamingService projectNamingService,
                                                               IPackageNamingService packageNamingService,
                                                               IBuildManagementService buildManagementService,
+                                                              IJellyfishUserService jellyfishUserService,
                                                               Set<IConfigurationPlugin> plugins) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setJellyfishUserService(jellyfishUserService);
       plugins.forEach(delegate::addConfigurationPlugin);
       delegate.activate();
    }

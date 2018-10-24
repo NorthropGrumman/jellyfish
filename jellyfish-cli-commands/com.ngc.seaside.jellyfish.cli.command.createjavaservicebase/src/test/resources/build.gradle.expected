@@ -1,6 +1,0 @@
-
-ext {
-    command = 'create-java-service-base'
-}
-
-apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

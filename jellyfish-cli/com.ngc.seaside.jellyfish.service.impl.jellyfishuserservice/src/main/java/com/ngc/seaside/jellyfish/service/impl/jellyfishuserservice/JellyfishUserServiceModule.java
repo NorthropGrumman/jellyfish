@@ -1,4 +1,4 @@
-/*
+/**
  * UNCLASSIFIED
  * Northrop Grumman Proprietary
  * ____________________________
@@ -14,4 +14,17 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
-rootProject.name = '${projectName}'
+package com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
+
+public class JellyfishUserServiceModule extends AbstractModule {
+
+   @Override
+   protected void configure() {
+      bind(IJellyfishUserService.class).to(JellyfishUserService.class).in(Singleton.class);
+   }
+
+}

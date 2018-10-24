@@ -182,6 +182,32 @@ using the wrapper.
 Alternately, users can host their own Gradle distributions and configure Gradle to use that location to download Gradle.
 ```
 
+## Jellyfish Customization
+Some defaults values that Jellyfish uses when generating files can be modified by creating a `jellyfish.properties`
+file. This can be done as follows:
+
+1. Navigate to your home directory. This is typically `C:\users\<user>` for Windows and `/home/<user>` for Linux.
+2. If it doesn't already exist, create a folder called `.jellyfish`. If you get an error in Windows, type `.jellyfish.`
+   instead.
+3. Create the file `jellyfish.properties` in the folder `.jellyfish`.
+4. Open the file `jellyfish.properties` using your favorite text editor.
+5. You can add properties to this file using the following syntax: `<property>=<value>`. Each property should be on its
+   own line.
+
+The following defaults can be changed using the `jellyfish.properties` file. 
+
+| Property                        | Value                              | Description | Example |
+|---------------------------------|------------------------------------|-------------|---------|
+| jellyfish.generated.header.file | The file path to the header file   | Customizes the header/license that Jellyfish uses when generating files | `jellyfish.generated.header.file=C\:/users/<user>/team-license.txt` |
+| jellyfish.generated.gradle.url  | A URL to a Gradle distribution zip | Customizes the URL to the Gradle distribution that Jellyfish uses when generating a Gradle project | `jellyfish.generated.gradle.url=https\://services.gradle.org/distributions/gradle-4.9-bin.zip` |
+
+```note-info
+If a value has a colon `:` or backslash `\` character in it, it must be preceded by a backslash `\` character. For
+example, the header file `C:\users\me\license.txt` should be
+`jellyfish.generated.header.file=C\:\\users\\me\\license.txt` in the properties file. Conveniently, you can use forward
+slashes `/` for Windows file paths instead: `jellyfish.generated.header.file=C\:/users/me/license.txt`
+```
+
 # Additional Features
 Jellyfish also provides additional features including
 * The ability to create and run custom analyses of SD projects.  Teams can use this functionality to generate custom

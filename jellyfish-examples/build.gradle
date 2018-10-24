@@ -21,6 +21,8 @@ import groovy.io.FileType
 import groovy.io.FileVisitResult
 
 buildscript {
+   // We don't want the dev user's jellyfish user home changing the outcome of these tests
+   System.setProperty('JELLYFISH_USER_HOME', "${buildDir}/.jellyfish")
    ext {
       versionsFile = file('../versions.gradle')
       buildScriptUpdater = new BuildScriptUpdater()
@@ -41,6 +43,8 @@ buildscript {
       classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:$version"
    }
 }
+
+
 
 apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.parent'
@@ -295,7 +299,9 @@ def createRegressionBuildTask(name, regressionFolder, folder, tempDirectory) {
                gradleBuildTask.dir = tempDirectory
                gradleBuildTask.tasks = ['clean', 'build']
                gradleBuildTask.startParameter.excludedTaskNames = ['test']
-               gradleBuildTask.startParameter.systemPropertiesArgs = [:]
+
+               // We don't want the dev user's jellyfish user home changing the outcome of these tests
+               gradleBuildTask.startParameter.systemPropertiesArgs = [JELLYFISH_USER_HOME : "${buildDir}/.jellyfish"]
                gradleBuildTask.startParameter.projectProperties << extraProperties
                gradleBuildTask.execute()
 

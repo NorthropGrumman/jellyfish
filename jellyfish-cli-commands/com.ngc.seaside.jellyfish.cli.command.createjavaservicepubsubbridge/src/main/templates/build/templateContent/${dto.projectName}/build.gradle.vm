@@ -16,6 +16,7 @@
  *#${header.gradle}
 ext {
     command = 'create-java-service-pubsub-bridge'
+    args = [headerFile : findProperty('licenseFile')]
 }
 
 apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor-derived'

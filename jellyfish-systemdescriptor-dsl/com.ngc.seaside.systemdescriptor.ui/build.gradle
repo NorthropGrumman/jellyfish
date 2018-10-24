@@ -120,7 +120,7 @@ task createTemplates {
 
 file('src/main/templates').eachDir { template ->
    task("createTemplate${template.name}", type:Zip) {
-      from "${template}/build.gradle", {
+      from "${template}/build.gradle.vm", {
          expand([cliPluginVersion: version])
       }
       from template, {
@@ -136,3 +136,22 @@ file('src/main/templates').eachDir { template ->
 
 tasks.getByName('generateXtext').dependsOn(unzipEclipse)
 tasks.getByName('build').dependsOn(copyDependencies)
+
+ext {
+   licenseDir = file("${project.buildDir}/license")
+}
+
+jar {
+   from licenseDir
+}
+
+task copyLicense(type: Copy) {
+   from licenseFile
+   into licenseDir
+   rename { "com.ngc.seaside.jellyfish.defaultLicense.txt" }
+   expand license.ext.properties
+}
+
+jar.dependsOn(copyLicense)
+test.dependsOn(copyLicense)
+copyLicense.shouldRunAfter(processResources)

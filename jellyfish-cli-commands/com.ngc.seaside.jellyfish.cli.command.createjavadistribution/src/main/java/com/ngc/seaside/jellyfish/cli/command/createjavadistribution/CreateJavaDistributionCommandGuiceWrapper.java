@@ -25,6 +25,7 @@ import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 
 public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -35,12 +36,14 @@ public class CreateJavaDistributionCommandGuiceWrapper implements IJellyFishComm
                                                     ITemplateService templateService,
                                                     IProjectNamingService projectNamingService,
                                                     IPackageNamingService packageNamingService,
-                                                    IBuildManagementService buildManagementService) {
+                                                    IBuildManagementService buildManagementService,
+                                                    IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
       delegate.setBuildManagementService(buildManagementService);
+      delegate.setJellyfishUserService(jellyfishUserService);
       delegate.activate();
    }
 

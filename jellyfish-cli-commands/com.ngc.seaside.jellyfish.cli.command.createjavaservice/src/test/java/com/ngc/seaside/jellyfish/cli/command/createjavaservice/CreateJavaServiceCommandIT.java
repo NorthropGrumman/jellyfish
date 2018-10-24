@@ -40,6 +40,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
@@ -54,6 +55,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
@@ -157,6 +159,7 @@ public class CreateJavaServiceCommandIT {
       command.setTemplateService(templateService);
       command.setProjectNamingService(projectService);
       command.setBuildManagementService(buildManagementService);
+      command.setJellyfishUserService(mock(IJellyfishUserService.class, Mockito.RETURNS_DEEP_STUBS));
 
       when(projectService.getServiceProjectName(any(), any())).thenAnswer(args -> {
          IModel model = args.getArgument(1);

@@ -102,7 +102,9 @@ public class SystemDescriptorDerivedProjectPlugin extends AbstractProjectPlugin 
             for (Entry<?, ?> entry : extraArgs.entrySet()) {
                Object key = entry.getKey();
                Object value = entry.getValue();
-               args.put(key.toString(), value.toString());
+               if (key != null && value != null) {
+                  args.put(key.toString(), value.toString());
+               }
             }
          }
          // Note when running Jellyfish from Gradle, we are always running in the deferred phase.
@@ -128,6 +130,7 @@ public class SystemDescriptorDerivedProjectPlugin extends AbstractProjectPlugin 
       if (extraArgs != null) {
          extraArgsParam = extraArgs.entrySet()
                   .stream()
+                  .filter(entry -> entry.getKey() != null && entry.getValue() != null)
                   .map(entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey().toString(),
                            entry.getValue().toString()))
                   .sorted(Comparator.comparing(Entry::getKey))

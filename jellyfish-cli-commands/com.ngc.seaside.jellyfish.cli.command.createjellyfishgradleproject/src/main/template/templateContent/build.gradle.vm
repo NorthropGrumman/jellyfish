@@ -14,6 +14,7 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  *#${header.gradle}
+#set( $D = '$' )
 buildscript {
     repositories {
         mavenLocal()
@@ -75,6 +76,8 @@ subprojects {
    version = '${dto.version}'
 
    ext {
+      licenseFile = file("${D}{rootProject.projectDir}/LICENSE")
+
       #foreach ( $entry in $dto.versionProperties.entrySet() )
       ${entry.key} = '${entry.value}'
       #end
