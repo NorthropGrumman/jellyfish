@@ -156,6 +156,7 @@ The following defaults can be changed using the `jellyfish.properties` file.
 | jellyfish.generated.header.file | The file path to the header file   | Customizes the header/license that Jellyfish uses when generating files or creating a new System Descriptor project | `jellyfish.generated.header.file=C\:/users/<user>/team-license.txt` |
 | jellyfish.generated.gradle.url  | A URL to a Gradle distribution zip | Customizes the URL to the Gradle distribution that Jellyfish generates when creating a new System Descriptor project | `jellyfish.generated.gradle.url=https\://services.gradle.org/distributions/gradle-4.9-bin.zip` |
 
+**Special Characters**
 ```note-info
 If a value has a colon `:` or backslash `\` character in it, it must be preceded by a backslash `\` character. For
 example, the header file `C:\users\me\license.txt` should be
