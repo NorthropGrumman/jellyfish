@@ -33,3 +33,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.analyzebudget').name = 'jellyfis
 
 include 'com.ngc.seaside.jellyfish.cli.command.analyzefeature'
 project(':com.ngc.seaside.jellyfish.cli.command.analyzefeature').name = 'jellyfish.cli.command.analyzefeature'
+
+include 'com.ngc.seaside.jellyfish.cli.command.analyzestyle'
+project(':com.ngc.seaside.jellyfish.cli.command.analyzestyle').name = 'jellyfish.cli.command.analyzestyle'

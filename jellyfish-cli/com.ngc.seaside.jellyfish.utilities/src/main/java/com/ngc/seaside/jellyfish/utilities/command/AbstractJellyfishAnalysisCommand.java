@@ -157,12 +157,20 @@ public abstract class AbstractJellyfishAnalysisCommand extends AbstractJellyfish
     */
    protected void analyzeEntireProject() {
       for (IPackage packagez : getOptions().getSystemDescriptor().getPackages()) {
+         analyzePackage(packagez);
          packagez.getModels().forEach(this::analyzeModel);
          packagez.getData().forEach(this::analyzeData);
          packagez.getEnumerations().forEach(this::analyzeEnumeration);
       }
    }
 
+   /**
+    * Invoked to analyze a package.  The default implementation does nothing.  Extenders of this class will override
+    * this method to perform analysis and report findings via {@link #reportFinding(SystemDescriptorFinding)}.
+    */
+   protected void analyzePackage(IPackage pkg) {
+   }
+   
    /**
     * Invoked to analyze a model.  The default implementation does nothing.  Extenders of this class will override this
     * method to perform analysis and report findings via {@link #reportFinding(SystemDescriptorFinding)}.

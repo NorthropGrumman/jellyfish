@@ -110,11 +110,11 @@ class ParsingUtils {
     */
    private Collection<XtextResource> parseGradleProject(Path projectDirectory, ParsingContext ctx)
          throws IOException {
-      Path resourcesDirectory = projectDirectory.resolve(SD_MAIN_CLASSPATH);
-      Path testResourcesDirectory = projectDirectory.resolve(SD_TEST_CLASSPATH);
+      Path resourcesDirectory = projectDirectory.resolve(SD_MAIN_SOURCE_PATH);
+      Path testResourcesDirectory = projectDirectory.resolve(SD_TEST_SOURCE_PATH);
       if (!Files.isDirectory(resourcesDirectory)) {
-         resourcesDirectory = projectDirectory.resolve(SD_MAIN_SOURCE_PATH);
-         testResourcesDirectory = projectDirectory.resolve(SD_TEST_SOURCE_PATH);
+         resourcesDirectory = projectDirectory.resolve(SD_MAIN_CLASSPATH);
+         testResourcesDirectory = projectDirectory.resolve(SD_TEST_CLASSPATH);
          if (!Files.isDirectory(resourcesDirectory)) {
             throw new ParsingException("Cannot find location of system descriptor files");
          }
