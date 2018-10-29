@@ -40,20 +40,27 @@ apply plugin: 'com.ngc.seaside.release.root'
 apply plugin: 'com.ngc.seaside.root.parent'
 
 def NON_JAVA_PROJECTS = [
-      'systemdescriptor.updatesite'
+      'systemdescriptor.updatesite',
+      'jellyfish.cli.gradle.plugins', // We need to apply the java-gradle-plugin before the seaside parent plugin
+      'jellyfish.sonarqube.plugin' // Same problem, we must apply the sonarqube plugin before anything else 
 ]
 
 subprojects {
     if (!NON_JAVA_PROJECTS.contains(name)) {
         apply plugin: 'com.ngc.seaside.parent'
+    }
+
+    plugins.withId('com.ngc.seaside.parent') {
         versionSettings {
             versionFile = versionsFile
         }
+    }
 
+    plugins.withId('com.ngc.seacide.ci') {
         seasideCi {
             m2OutputDirectory = m2directory
             dependencyInfoReportFile = dependenciesReportFile
             deploymentScriptFile = m2DeploymentScriptFile
-       }
+        }
     }
 }

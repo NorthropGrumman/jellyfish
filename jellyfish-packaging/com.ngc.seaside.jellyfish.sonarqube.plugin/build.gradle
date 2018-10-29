@@ -14,8 +14,8 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
-apply plugin: 'com.ngc.seaside.repository'
 apply plugin: 'com.iadams.sonar-packaging'
+apply plugin: 'com.ngc.seaside.parent'
 
 dependencies {
    // Do not use the new scopes (api, implementation, etc) here.

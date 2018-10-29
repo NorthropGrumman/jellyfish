@@ -15,6 +15,7 @@
  * permission is obtained from Northrop Grumman.
  */
 import org.gradle.internal.os.OperatingSystem
+import com.ngc.seaside.gradle.plugins.maven.SeasideMavenPlugin
 import com.ngc.seaside.gradle.util.Versions
 
 // This prevents errors due to how the org.xtext.xtend
@@ -78,15 +79,6 @@ dependencies {
    testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${xtextVersion}"
 }
 
-def deployer = uploadArchives.repositories.mavenDeployer
-def installer = install.repositories.mavenInstaller
-
-[installer, deployer]*.pom*.whenConfigured { pom ->
-   // The eclipse dependencies have no groupId or version so the build fails trying to parse the generated pom for this
-   // project.
-   pom.dependencies = []
-}
-
 jar {
    manifest {
       from('src/main/resources/META-INF/MANIFEST.MF') {
@@ -132,10 +124,15 @@ file('src/main/templates').eachDir { template ->
    }
 }
 
-
-
 tasks.getByName('generateXtext').dependsOn(unzipEclipse)
 tasks.getByName('build').dependsOn(copyDependencies)
+
+// The eclipse dependencies have no groupId or version so the update site build fails trying to parse the generated pom for this
+// project.
+publishing.publications.getByName(SeasideMavenPlugin.MAVEN_JAVA_PUBLICATION_NAME).pom.withXml { xml ->
+   def pom = xml.asNode()
+   pom.remove(pom.dependencies)
+}
 
 ext {
    licenseDir = file("${project.buildDir}/license")

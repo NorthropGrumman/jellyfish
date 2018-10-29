@@ -18,6 +18,8 @@ package com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice;
 
 import com.ngc.blocs.service.log.api.ILogService;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -35,10 +37,15 @@ public class JellyfishUserServiceTest {
    @Mock
    private ILogService logService;
 
+   @Before
+   public void setup() {
+      System.setProperty(JellyfishUserService.JELLYFISH_USER_HOME_ENVIRONMENT_VARIABLE,
+                         Paths.get("src", "test", "resources").toString());
+   }
+
    @Test
    public void test() {
-      System.setProperty(JellyfishUserService.JELLYFISH_USER_HOME_ENVIRONMENT_VARIABLE,
-               Paths.get("src", "test", "resources").toString());
+
       JellyfishUserService service = new JellyfishUserService(logService);
       Map<String, String> properties = service.getJellyfishUserProperties();
       assertNotNull(properties);
@@ -46,4 +53,8 @@ public class JellyfishUserServiceTest {
       assertEquals("bar", properties.get("foo"));
    }
 
+   @After
+   public void after() {
+      System.clearProperty(JellyfishUserService.JELLYFISH_USER_HOME_ENVIRONMENT_VARIABLE);
+   }
 }

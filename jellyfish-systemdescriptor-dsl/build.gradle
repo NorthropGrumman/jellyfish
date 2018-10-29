@@ -50,11 +50,8 @@ subprojects {
     }
 
     if (name == 'systemdescriptor.ui') {
-        // We have to apply the maven plugin here instead of in the build.gradle for
-        // the UI plugin.  Otherwise, we get gradle build errors.  Weird.
         apply plugin: 'eclipse'
         apply plugin: 'idea'
-        apply plugin: 'maven'
         apply plugin: 'org.xtext.xtend'
         apply plugin: 'com.ngc.seaside.checkstyle'
     } else {
@@ -64,11 +61,12 @@ subprojects {
         apply plugin: 'org.xtext.xtend'
         apply plugin: 'com.ngc.seaside.checkstyle'
         apply from: "${rootDir}/gradle/source-layout.gradle"
-        apply from: "${rootDir}/gradle/maven-deployment.gradle"
     }
 
     apply plugin: "com.github.hierynomus.license"
     apply plugin: 'com.ngc.seaside.ci'
+	apply plugin: 'com.ngc.seaside.maven'
+	apply plugin: 'com.ngc.seaside.repository'
 
     seasideCi {
         m2OutputDirectory = m2directory
@@ -128,23 +126,6 @@ subprojects {
             // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
             name 'NexusConsolidated'
             url nexusConsolidated
-        }
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                // Use the main repo for full releases.
-                repository(url: nexusReleases) {
-                    // Make sure that nexusUsername and nexusPassword are in your
-                    // ${gradle.user.home}/gradle.properties file.
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-                // If the version has SNAPSHOT in the name, use the snapshot repo.
-                snapshotRepository(url: nexusSnapshots) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-            }
         }
     }
 

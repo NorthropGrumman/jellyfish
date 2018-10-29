@@ -15,8 +15,15 @@
  * permission is obtained from Northrop Grumman.
  */
 apply plugin: 'groovy'
-apply plugin: 'maven'
 apply plugin: 'java-gradle-plugin'
+
+// We need to apply the java-gradle-plugin befre the parent plugin to avoid issues with the maven
+// publish plugin.  Disable automatedPublishing from Gradle to avoid upload duplicate artifacts.
+gradlePlugin {
+   automatedPublishing = false
+}
+
+apply plugin: 'com.ngc.seaside.parent'
 
 configurations {
    commandTemplate

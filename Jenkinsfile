@@ -224,25 +224,25 @@ pipeline {
                                               passwordVariable: 'nexusPassword',
                                               usernameVariable: 'nexusUsername')]) {
                dir('jellyfish-systemdescriptor-dsl') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-systemdescriptor') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-cli') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-cli-commands') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-cli-analysis-commands') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-packaging') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
                dir('jellyfish-systemdescriptor-lang') {
-                  sh '../gradlew upload -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
+                  sh '../gradlew publish -PnexusUsername=$nexusUsername -PnexusPassword=$nexusPassword'
                }
             }
          }

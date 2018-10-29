@@ -4,7 +4,7 @@ set -e -u -x
 
 if [ $# -eq 0 ]
 then
-  params='clean build install'
+  params='clean build publishToMavenLocal'
 else
   params="$@"
 fi

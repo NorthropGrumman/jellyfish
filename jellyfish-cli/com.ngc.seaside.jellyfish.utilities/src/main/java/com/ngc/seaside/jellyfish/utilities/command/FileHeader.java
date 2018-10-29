@@ -134,9 +134,9 @@ public class FileHeader {
     */
    private enum HeaderType {
       PLAIN("", "", ""),
-      JAVA("/**\n", " * ", "\n */"),
-      GRADLE("/*\n", " * ", "\n */"),
-      PROPERTIES("#\n", "# ", "\n#");
+      JAVA("/**" + System.lineSeparator(), " * ", System.lineSeparator() + " */"),
+      GRADLE("/*" + System.lineSeparator(), " * ", System.lineSeparator() + " */"),
+      PROPERTIES("#" + System.lineSeparator(), "# ", System.lineSeparator() + "#");
 
       private final String startBlock;
       private final String prefix;
