@@ -57,8 +57,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -200,6 +198,7 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          task.setDescription("Runs various analyses that have been configured.");
          task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
          task.dependsOn(tasks.getByName(VALIDATE_TASK_NAME));
+         task.argument(CommonParameters.INPUT_DIRECTORY.getName(), project.getProjectDir().toString());
       });
    }
 
@@ -305,7 +304,7 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
             if (!analysisExtension.getCommands().isEmpty()) {
                // Setup the Sonarqube properties to identify which analysis to run with the Sonarqube plugin is
                // executed.
-               String commands = analysisExtension.getCommands().stream().collect(Collectors.joining(","));
+               String commands = String.join(",", analysisExtension.getCommands());
                String args = analysisExtension.getArgs().entrySet().stream()
                      .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(","));
 
@@ -343,21 +342,19 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
    private void setupAnalysisTask(Project project) {
       SystemDescriptorAnalysisExtension analysisExtension =
             project.getExtensions().getByType(SystemDescriptorAnalysisExtension.class);
+      JellyFishCliCommandTask analyze = (JellyFishCliCommandTask) project.getTasks().getByName(ANALYZE_TASK_NAME);
 
-      Map<String, String> args = new HashMap<>();
-      // Add any default args.  Do this first so we can override any other args.
-      analysisExtension.getArgs().forEach((k, v) -> args.put(k, v.toString()));
-      args.put(CommonParameters.INPUT_DIRECTORY.getName(), project.getProjectDir().toString());
-      args.put(AnalyzeCommand.ANALYSES_PARAMETER_NAME, String.join(",", analysisExtension.getCommands()));
+      // Add any default args.
+      analyze.argument(AnalyzeCommand.ANALYSES_PARAMETER_NAME, String.join(",", analysisExtension.getCommands()));
       // Use the default console report if no other report is configured.
       if (analysisExtension.getReports().isEmpty()) {
-         args.put(AnalyzeCommand.REPORTS_PARAMETER_NAME, ConsoleAnalysisReportCommand.NAME);
+         analyze.argument(AnalyzeCommand.REPORTS_PARAMETER_NAME, ConsoleAnalysisReportCommand.NAME);
       } else {
-         args.put(AnalyzeCommand.REPORTS_PARAMETER_NAME, String.join(",", analysisExtension.getReports()));
+         analyze.argument(AnalyzeCommand.REPORTS_PARAMETER_NAME, String.join(",", analysisExtension.getReports()));
       }
 
-      JellyFishCliCommandTask analyze = (JellyFishCliCommandTask) project.getTasks().getByName(ANALYZE_TASK_NAME);
-      analyze.setArguments(args);
+      // Add any other configured arguments.  Allow these values to override the defaults.
+      analysisExtension.getArgs().forEach((k, v) -> analyze.argument(k, v.toString()));
 
       // If no analysis are configured, disable the task.
       analyze.onlyIf(task -> !analysisExtension.getCommands().isEmpty());

@@ -93,6 +93,11 @@ task('buildSystemDescriptorProjects', description: 'builds and installs all of t
    build.dependsOn it
 }
 
+task('buildExamplePlugins', description: 'Builds teh example plugins project', type: GradleBuild) {
+   tasks = ['clean', 'build', 'publishToMavenLocal']
+   dir 'plugins'
+}
+
 file(systemDescriptorProjectsFolderName).eachDir { folder ->
    def sdProjectName = folder.name.capitalize()
    task("cleanSd${sdProjectName}",
@@ -111,12 +116,14 @@ file(systemDescriptorProjectsFolderName).eachDir { folder ->
    }
    task("buildSd${sdProjectName}",
         type: GradleBuild,
-        description: "Runs 'gradle build install' on the system descriptor project ${sdProjectName}") {
+        description: "Runs 'gradle build publishToMavenLocal' on the system descriptor project ${sdProjectName}") {
       dir = folder
-      tasks = ['build', 'install']
+      tasks = ['build', 'publishToMavenLocal']
       startParameter.projectProperties['jellyfishCliVersion'] = version
 
       buildSystemDescriptorProjects.dependsOn it
+      dependsOn buildExamplePlugins
+
       if (name != 'buildSdThreat-eval-system-descriptor') {
          project.afterEvaluate {
             dependsOn project.tasks['buildSdThreat-eval-system-descriptor']

@@ -26,8 +26,8 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
+import com.ngc.seaside.jellyfish.sonarqube.extension.IJellyfishModuleFactory;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
-import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SystemDescriptorRulesDefinition;
@@ -51,7 +51,6 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,10 +69,13 @@ public class SystemDescriptorSensor implements Sensor {
 
    private final SystemDescriptorRulesDefinition rules;
 
+   private final IJellyfishModuleFactory moduleFactory;
+
    private SensorContext context;
 
-   public SystemDescriptorSensor() {
-      this.rules = new SystemDescriptorRulesDefinition();
+   public SystemDescriptorSensor(IJellyfishModuleFactory moduleFactory) {
+      this.moduleFactory = moduleFactory;
+      this.rules = new SystemDescriptorRulesDefinition(moduleFactory);
    }
 
    @Override
@@ -166,20 +168,16 @@ public class SystemDescriptorSensor implements Sensor {
       IAnalysisService analysisService = injector.getInstance(IAnalysisService.class);
 
       for (SystemDescriptorFinding<? extends ISystemDescriptorFindingType> f : analysisService.getFindings()) {
-         if (f.getType().getSeverity() 
-                  != com.ngc.seaside.jellyfish.service.analysis
-                     .api.ISystemDescriptorFindingType.Severity.INFO) {
+         if (f.getType().getSeverity()
+                   != com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType.Severity.INFO) {
             convertSystemDescriptorFindingToSonarqubeIssue(f);
          }
       }
    }
 
    private IJellyfishExecution runJellyfishCommand(String commandName, Map<String, String> commandLineArgs) {
-      return Jellyfish
-            .getService()
-            .run(commandName,
-                 commandLineArgs,
-                 Collections.singleton(JellyfishSonarqubePluginModule.withNormalLogging()));
+      // Run Jellyfish with logging enabled.
+      return Jellyfish.getService().run(commandName, commandLineArgs, moduleFactory.getJellyfishModules(true));
    }
 
    private void saveSonarqubeIssue(IParsingIssue i) {

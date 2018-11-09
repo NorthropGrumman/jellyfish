@@ -15,6 +15,12 @@
  * permission is obtained from Northrop Grumman.
  */
 buildscript {
+   ext {
+      versionsFile = file('../../versions.gradle')
+   }
+   apply from: versionsFile, to: project
+   ext.currentJellyfishVersion = version
+
    repositories {
       mavenLocal()
 
@@ -24,18 +30,21 @@ buildscript {
    }
 
    dependencies {
-      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:$jellyfishCliVersion"
-      classpath 'com.ngc.seaside.jellyfish.examples:plugins:1.0.0-SNAPSHOT'
-      classpath 'org.sonarsource.sonarqube:sonar-plugin-api:6.7'
+      classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
    }
 }
 
-apply plugin: 'com.ngc.seaside.jellyfish.system-descriptor'
-apply plugin: 'org.sonarqube'
+apply plugin: 'com.ngc.seaside.parent'
 
 group = 'com.ngc.seaside.jellyfish.examples'
 version = '1.0.0-SNAPSHOT'
 
-sdAnalysis {
-   command 'analyze-inputs-outputs'
+versionSettings {
+   versionFile = versionsFile
+}
+
+dependencies {
+   implementation "com.ngc.seaside:systemdescriptor.service.api:$currentJellyfishVersion"
+   implementation "com.google.inject:guice:$guiceVersion"
+   implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
 }

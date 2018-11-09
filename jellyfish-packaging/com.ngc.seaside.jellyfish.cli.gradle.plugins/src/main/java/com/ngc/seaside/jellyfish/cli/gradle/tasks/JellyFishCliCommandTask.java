@@ -59,8 +59,12 @@ public class JellyFishCliCommandTask extends DefaultTask {
       return arguments;
    }
 
+   public void argument(String key, String value) {
+      this.arguments.put(key, value);
+   }
+
    public void setArguments(Map<String, String> arguments) {
-      this.arguments = arguments;
+      this.arguments = new HashMap<>(arguments);
    }
 
    public boolean isFailBuildOnException() {

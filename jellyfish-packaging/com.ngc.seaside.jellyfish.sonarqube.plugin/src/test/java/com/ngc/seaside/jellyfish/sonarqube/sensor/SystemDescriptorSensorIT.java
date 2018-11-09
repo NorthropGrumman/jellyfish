@@ -17,6 +17,7 @@
 package com.ngc.seaside.jellyfish.sonarqube.sensor;
 
 import com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs.InputsOutputsFindingTypes;
+import com.ngc.seaside.jellyfish.sonarqube.extension.DefaultJellyfishModuleFactory;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
 import com.ngc.seaside.jellyfish.sonarqube.properties.SystemDescriptorProperties;
 import com.ngc.seaside.jellyfish.sonarqube.rule.SyntaxWarningRule;
@@ -53,7 +54,7 @@ public class SystemDescriptorSensorIT {
 
    @Before
    public void setup() {
-      sensor = new SystemDescriptorSensor();
+      sensor = new SystemDescriptorSensor(new DefaultJellyfishModuleFactory().setIncludeDefaultModules(true));
       descriptor = new DefaultSensorDescriptor();
    }
 

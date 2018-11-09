@@ -25,8 +25,8 @@ import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType.Severity;
 import com.ngc.seaside.jellyfish.service.execution.api.IJellyfishExecution;
+import com.ngc.seaside.jellyfish.sonarqube.extension.IJellyfishModuleFactory;
 import com.ngc.seaside.jellyfish.sonarqube.language.SystemDescriptorLanguage;
-import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
 
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -71,10 +71,13 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
     */
    private final Set<AbstractRule> rules = new HashSet<>();
 
+   private final IJellyfishModuleFactory moduleFactory;
+
    /**
     * Creates a new {@code SystemDescriptorRulesDefinition}.
     */
-   public SystemDescriptorRulesDefinition() {
+   public SystemDescriptorRulesDefinition(IJellyfishModuleFactory moduleFactory) {
+      this.moduleFactory = moduleFactory;
       findRules();
    }
 
@@ -128,7 +131,7 @@ public class SystemDescriptorRulesDefinition implements RulesDefinition {
             .getService()
             .run("help",
                  Collections.emptyList(),
-                 Collections.singleton(JellyfishSonarqubePluginModule.withSuppressedLogging()));
+                 moduleFactory.getJellyfishModules(false));
       // Get all the finding types and adapt them to Sonarqube rules.
       result.getInjector()
             // Get impls by asking Guice for an instance of FindingTypeHolder which requires all the finding types

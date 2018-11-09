@@ -19,6 +19,7 @@ package com.ngc.seaside.jellyfish.sonarqube.rule;
 import com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs.InputsOutputsFindingTypes;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
 import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType.Severity;
+import com.ngc.seaside.jellyfish.sonarqube.extension.DefaultJellyfishModuleFactory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class SystemDescriptorRulesDefinitionIT {
 
    @Before
    public void setup() {
-      rules = new SystemDescriptorRulesDefinition();
+      rules = new SystemDescriptorRulesDefinition(new DefaultJellyfishModuleFactory());
    }
 
    @Test

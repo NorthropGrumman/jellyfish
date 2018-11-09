@@ -52,7 +52,7 @@ public class JellyfishPluginTest {
       assertTrue("did not register System Descriptor properties!",
                  c.getExtensions().containsAll(SystemDescriptorProperties.getProperties()));
       assertEquals("registered extra extensions!",
-                   c.getExtensions().size(),
-                   6);
+                   7,
+                   c.getExtensions().size());
    }
 }
