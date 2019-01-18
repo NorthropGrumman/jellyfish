@@ -31,6 +31,7 @@ import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 import com.ngc.seaside.systemdescriptor.systemDescriptor.SystemDescriptorFactory;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 public class WrappedEnumeration extends AbstractWrappedXtext<Enumeration> implements IEnumeration {
 
@@ -43,9 +44,16 @@ public class WrappedEnumeration extends AbstractWrappedXtext<Enumeration> implem
    public WrappedEnumeration(IWrapperResolver resolver, Enumeration wrapped) {
       super(resolver, wrapped);
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
-      this.values = new AutoWrappingCollection<>(wrapped.getValues(),
-                                                 EnumerationValueDeclaration::getValue,
-                                                 WrappedEnumeration::newEnumValue);
+      this.values = new AutoWrappingCollection<EnumerationValueDeclaration, String>(
+            wrapped.getValues(),
+            EnumerationValueDeclaration::getValue,
+            WrappedEnumeration::newEnumValue) {
+         @Override
+         public boolean contains(Object o) {
+            String value = o == null ? null : o.toString();
+            return new HashSet<>(getValues()).contains(value);
+         }
+      };
    }
 
    @Override

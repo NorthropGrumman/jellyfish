@@ -35,7 +35,8 @@ public interface IScenarioService {
     * @param scenario the scenario to get the messaging paradigms for
     * @return the messaging paradigms that are applicable to the given scenario
     */
-   Collection<MessagingParadigm> getMessagingParadigms(IJellyFishCommandOptions options, IScenario scenario);
+   Collection<MessagingParadigm> getMessagingParadigms(IJellyFishCommandOptions options,
+                                                       IScenario scenario);
 
    /**
     * Gets the publish/subscribe messaging flow that the given scenario declares or {@link Optional#empty()} if the

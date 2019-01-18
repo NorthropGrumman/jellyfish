@@ -223,6 +223,30 @@ public class SystemDescriptors {
    }
 
    /**
+    * Returns true if the given link links {@link IModelReferenceField}s together.
+    *
+    * @param link the link to examine
+    * @return true if the link can be safely cast to an instance of {@code IModelLink<IModelReferenceField>}
+    */
+   public static boolean isLinkToModel(IModelLink<?> link) {
+      if (link == null) {
+         throw new NullPointerException("link may not be null!");
+      }
+      // The type of the link's source must match the type of the link's target so we don't need to check both fields.
+      return link.getSource() instanceof IModelReferenceField;
+   }
+
+   /**
+    * Returns true if the given link links {@link IDataReferenceField}s together.
+    *
+    * @param link the link to examine
+    * @return true if the link can be safely cast to an instance of {@code IModelLink<IDataReferenceField>}
+    */
+   public static boolean isLinkToData(IModelLink<?> link) {
+      return !isLinkToModel(link);
+   }
+
+   /**
     * Records the field field the consumer is invoked with.
     */
    private static class RecordingLinkConsumer implements Consumer<IModelReferenceField> {

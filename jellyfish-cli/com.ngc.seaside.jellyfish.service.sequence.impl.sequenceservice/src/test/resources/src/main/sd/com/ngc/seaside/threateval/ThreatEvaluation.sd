@@ -1,0 +1,133 @@
+/**
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ */
+package com.ngc.seaside.threateval
+
+import com.ngc.seaside.defendedarea.DefendedAreaSystem
+import com.ngc.seaside.threateval.DefendedAreaTrackPriorityService
+import com.ngc.seaside.threateval.ClassificationTrackPriorityService
+import com.ngc.seaside.threateval.EngagementTrackPriorityService
+import com.ngc.seaside.threateval.TrackPriorityService
+import com.ngc.seaside.common.datatype.SystemTrack
+import com.ngc.seaside.classifier.datatype.Classification
+import com.ngc.seaside.engagementplanning.datatype.TrackEngagementStatus
+import com.ngc.seaside.threateval.datatype.PrioritizedSystemTrackIdentifiers
+import com.ngc.seaside.common.datatype.DroppedSystemTrack
+import com.ngc.seaside.defendedarea.datatype.ImpactAssessment
+import com.ngc.seaside.threateval.datatype.TrackPriorityRequest
+import com.ngc.seaside.threateval.datatype.TrackPriorityResponse
+
+model ThreatEvaluation {
+	metadata {
+			"description" : "Prioritizes system tracks into a list of System Track Identifiers",
+			"stereotypes" : [ "virtual", "system" ],
+			"satisfies" : [ "TE001" ],
+			"codegen" : {
+					"alias" : "te"
+			}
+	}
+
+	input {
+		SystemTrack systemTrack {
+			metadata {
+				"satisfies" : [ "TE001" ]
+			}
+		}
+
+		Classification systemTrackClassification {
+			metadata {
+				"satisfies" : [ "TE001" ]
+			}
+		}
+
+		TrackEngagementStatus trackEngagementStatus {
+			metadata {
+				"satisfies" : [ "TE001" ]
+			}
+		}
+
+		ImpactAssessment impactAssessment
+		DroppedSystemTrack droppedSystemTrack
+		TrackPriorityRequest trackPriorityRequest
+	}
+
+	output {
+		PrioritizedSystemTrackIdentifiers prioritizedSystemTracks {
+			metadata {
+				"satisfies" : [ "TE001" ]
+			}
+		}
+
+		TrackPriorityResponse trackPriorityResponse
+	}
+
+	parts {
+		DefendedAreaTrackPriorityService defendedAreaTrackPriorityService
+		ClassificationTrackPriorityService classificationTrackPriorityService
+		EngagementTrackPriorityService engagementTrackPriorityService
+		TrackPriorityService trackPriorityService
+	}
+
+	requires {
+		DefendedAreaSystem defendedAreaSystem
+	}
+
+	scenario calculateTrackPriorityWithClassification {
+	   when receiving systemTrackClassification
+	   then willPublish prioritizedSystemTracks
+	}
+
+	scenario calculateTrackPriorityWithEngagementStatus {
+      when receiving trackEngagementStatus
+      then willPublish prioritizedSystemTracks
+   }
+
+   scenario calculateTrackPriorityWithImpactAssessment {
+      when receiving impactAssessment
+      and receiving systemTrack
+      and correlating systemTrack.header.correlationEventId to impactAssessment.header.correlationEventId
+      then willPublish prioritizedSystemTracks
+      and willBeginCorrelationEvent identified by prioritizedSystemTracks.header.correlationEventId
+   }
+
+	scenario recalcuatePriorityAfterTrackDropped {
+		when receiving droppedSystemTrack
+		then willCorrelate droppedSystemTrack.header.correlationEventId to prioritizedSystemTracks.header.correlationEventId
+		and willPublish prioritizedSystemTracks
+		and willBeCompleted within 1 seconds
+	}
+
+	scenario getTrackPriorities {
+		when receivingRequest trackPriorityRequest
+		then willRespond with trackPriorityResponse
+	}
+
+	links {
+		link a systemTrack -> defendedAreaTrackPriorityService.systemTrack
+		link b impactAssessment -> defendedAreaTrackPriorityService.impactAssessment
+		link c defendedAreaSystem.defendedAreaService -> defendedAreaTrackPriorityService.defendedAreaService
+		link d systemTrackClassification -> classificationTrackPriorityService.systemTrackClassification
+		link e trackEngagementStatus -> engagementTrackPriorityService.trackEngagementStatus
+		link f trackPriorityService.prioritizedSystemTracks -> prioritizedSystemTracks
+		link g defendedAreaTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link h classificationTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link i engagementTrackPriorityService.trackPriority -> trackPriorityService.trackPriority
+		link j droppedSystemTrack -> trackPriorityService.droppedSystemTrack
+		link k trackPriorityRequest -> trackPriorityService.trackPriorityRequest
+		link l trackPriorityService.trackPriorityResponse -> trackPriorityResponse
+	}
+
+}

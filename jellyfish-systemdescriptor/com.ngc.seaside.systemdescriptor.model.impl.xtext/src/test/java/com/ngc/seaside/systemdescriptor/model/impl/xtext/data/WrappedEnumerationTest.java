@@ -80,10 +80,6 @@ public class WrappedEnumerationTest extends AbstractWrappedXtextTest {
    @Test
    public void testDoesUpdateXtextObject() throws Throwable {
       wrappedEnumeration = new WrappedEnumeration(resolver(), enumeration);
-      wrappedEnumeration.getValues().add("VALUE2");
-      assertEquals("new field name not correct!",
-                   "VALUE2",
-                   enumeration.getValues().get(1).getValue());
 
       wrappedEnumeration.setMetadata(newMetadata("foo", "bar"));
       assertNotNull("metadata not set!",

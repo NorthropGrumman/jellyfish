@@ -74,34 +74,4 @@ public class WrappingNamedChildCollection<X extends EObject, P, T extends INamed
             .findFirst();
       return xtextChild.map(wrapperFunction);
    }
-
-   @Override
-   public boolean contains(Object o) {
-      // Override the default contains since this is more efficient.
-
-      boolean contains = o instanceof INamedChild;
-      if (contains) {
-         contains = getByName(((INamedChild<?>) o).getName()).isPresent();
-      }
-      return contains;
-   }
-
-   @Override
-   public boolean remove(Object o) {
-      // Override the default remove since this is more efficient.
-
-      Preconditions.checkNotNull(o, "o may not be null!");
-      boolean removed = o instanceof INamedChild;
-      if (removed) {
-         String name = ((INamedChild<?>) o).getName();
-         Optional<X> xtextChild = wrapped.stream()
-               .filter(x -> namingFunction.apply(x).equals(name))
-               .findFirst();
-         removed = xtextChild.isPresent();
-         if (removed) {
-            wrapped.remove(xtextChild.get());
-         }
-      }
-      return removed;
-   }
 }

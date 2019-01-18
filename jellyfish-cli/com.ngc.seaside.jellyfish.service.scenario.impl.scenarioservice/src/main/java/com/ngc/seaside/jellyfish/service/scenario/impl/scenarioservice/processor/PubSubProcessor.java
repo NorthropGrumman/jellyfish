@@ -108,9 +108,10 @@ public class PubSubProcessor {
    }
 
    private ICorrelationDescription getCorrelationDescription(IScenario scenario) {
-      if (scenario.getSteps(CorrelateStepHandler.PRESENT.getVerb(), CorrelateStepHandler.FUTURE.getVerb()).isEmpty()) {
-         return null;
+      ICorrelationDescription correlationDescription = null;
+      if (!scenario.getSteps(CorrelateStepHandler.PRESENT.getVerb(), CorrelateStepHandler.FUTURE.getVerb()).isEmpty()) {
+         correlationDescription = new CorrelationDescription(scenario, correlateStepHandler);
       }
-      return new CorrelationDescription(scenario, correlateStepHandler);
+      return correlationDescription;
    }
 }

@@ -287,4 +287,26 @@ public class SystemDescriptorsTest {
                    targetField,
                    SystemDescriptors.getReferencedFieldOfLinkTarget(link).get());
    }
+
+   @SuppressWarnings({"unchecked"})
+   @Test
+   public void testDoesDetermineIfLinkIsForDataOrModel() {
+      IModelReferenceField sourceModelField = mock(IModelReferenceField.class);
+      IModelLink<IModelReferenceField> modelLink = mock(IModelLink.class);
+      when(modelLink.getSource()).thenReturn(sourceModelField);
+
+      IDataReferenceField sourceDataField = mock(IDataReferenceField.class);
+      IModelLink<IDataReferenceField> dataLink = mock(IModelLink.class);
+      when(dataLink.getSource()).thenReturn(sourceDataField);
+
+      assertTrue("should be a link to a model!",
+                 SystemDescriptors.isLinkToModel(modelLink));
+      assertFalse("should not be a link to a model!",
+                  SystemDescriptors.isLinkToModel(dataLink));
+
+      assertTrue("should be a link to data!",
+                 SystemDescriptors.isLinkToData(dataLink));
+      assertFalse("should not be a link to data!",
+                  SystemDescriptors.isLinkToData(modelLink));
+   }
 }

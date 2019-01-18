@@ -18,9 +18,10 @@ package com.ngc.seaside.systemdescriptor.model.impl.xtext.collection;
 
 import com.google.common.base.Preconditions;
 
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,6 +37,17 @@ import java.util.function.Function;
  * @param <T> the type of object that the contents of the wrapped list should be bridged to
  */
 public class AutoWrappingCollection<X extends EObject, T> implements Collection<T> {
+
+   /**
+    * A default unwrapper function that can unwrap {@code IUnwrappable} instances to their {@code EObject} types.
+    */
+   private static final Function DEFAULT_UNWRAPPER = o -> {
+      Preconditions.checkArgument(o instanceof IUnwrappable,
+                                  "%s is not an instance of %s!",
+                                  o,
+                                  IUnwrappable.class.getName());
+      return ((IUnwrappable) o).unwrap();
+   };
 
    /**
     * The function that adapts or wraps an element in the wrapped list to an element of type T.
@@ -84,8 +96,7 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
       Preconditions.checkNotNull(o, "o may not be null!");
       // No way to avoid this unsafe cast, sorry.
       X unwrapped = unwrapperFunction.apply((T) o);
-      // Equals is not implemented correctly in the Xtext objects, so we have to manually traverse the list.
-      return wrapped.stream().anyMatch(x -> EcoreUtil.equals(x, unwrapped));
+      return wrapped.contains(unwrapped);
    }
 
    @Override
@@ -136,8 +147,7 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
       Preconditions.checkNotNull(o, "o may not be null!");
       // No way to avoid this unsafe cast, sorry.
       X unwrapped = unwrapperFunction.apply((T) o);
-      // Equals is not implemented correctly in the Xtext objects, so we have to manually traverse the list.
-      return wrapped.removeIf(x -> EcoreUtil.equals(x, unwrapped));
+      return wrapped.remove(unwrapped);
    }
 
    @Override
@@ -207,6 +217,18 @@ public class AutoWrappingCollection<X extends EObject, T> implements Collection<
    @Override
    public String toString() {
       return wrapped.toString();
+   }
+
+   /**
+    * Return a default unwrapper function that can be used for generic {@code Object}s provided the input is an
+    * {@code IUnwrappable}.
+    *
+    * @param <A> the type of the input
+    * @param <B> the type of the output
+    * @return a default unwrapper function
+    */
+   public static <A, B> Function<A, B> defaultUnwrapper() {
+      return DEFAULT_UNWRAPPER;
    }
 
    /**

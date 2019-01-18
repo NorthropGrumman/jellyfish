@@ -117,18 +117,7 @@ public class WrappedDataTest extends AbstractWrappedXtextTest {
 
    @Test
    public void testDoesUpdateXtextObject() throws Throwable {
-      IDataField primitiveField = mock(IDataField.class);
-      when(primitiveField.getName()).thenReturn("newField");
-      when(primitiveField.getMetadata()).thenReturn(IMetadata.EMPTY_METADATA);
-      when(primitiveField.getType()).thenReturn(DataTypes.STRING);
-      when(primitiveField.getCardinality()).thenReturn(FieldCardinality.SINGLE);
-
       wrappedData = new WrappedData(resolver(), data);
-      wrappedData.getFields().add(primitiveField);
-      assertEquals("new field name not correct!",
-                   primitiveField.getName(),
-                   data.getFields().get(1).getName());
-
       wrappedData.setMetadata(newMetadata("foo", "bar"));
       assertNotNull("metadata not set!",
                     data.getMetadata());

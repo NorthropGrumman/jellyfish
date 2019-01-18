@@ -16,6 +16,12 @@
  */
 package com.ngc.seaside.threateval.datatype
 
-data TrackPriorityRequest {
+import com.ngc.seaside.common.datatype.SystemTrackIdentifier
 
+data TrackPriorityRequest {
+	many SystemTrackIdentifier identifiers {
+		metadata {
+			"optional": true
+		}
+	}
 }

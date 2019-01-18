@@ -76,6 +76,9 @@ project(':com.ngc.seaside.jellyfish.service.impl.propertyservice').name = 'jelly
 include 'com.ngc.seaside.jellyfish.service.impl.templateservice'
 project(':com.ngc.seaside.jellyfish.service.impl.templateservice').name = 'jellyfish.service.impl.templateservice'
 
+include 'com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice'
+project(':com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice').name = 'jellyfish.service.sequence.impl.sequenceservice'
+
 include 'com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice'
 project(':com.ngc.seaside.jellyfish.service.analysis.impl.analysisservice').name = 'jellyfish.service.analysis.impl.analysisservice'
 

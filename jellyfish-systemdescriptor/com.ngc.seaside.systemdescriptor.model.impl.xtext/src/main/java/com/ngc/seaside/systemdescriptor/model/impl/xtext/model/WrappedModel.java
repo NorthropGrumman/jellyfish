@@ -234,7 +234,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       if (wrapped.getInput() == null) {
          inputs = new SelfInitializingWrappingNamedChildCollection<>(
                d -> new WrappedInputDataReferenceField(resolver, d),
-               d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setInput(SystemDescriptorFactory.eINSTANCE.createInput());
@@ -245,7 +245,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
          inputs = new WrappingNamedChildCollection<>(
                wrapped.getInput().getDeclarations(),
                d -> new WrappedInputDataReferenceField(resolver, d),
-               d -> WrappedInputDataReferenceField.toXTextInputDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName);
       }
    }
@@ -254,7 +254,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       if (wrapped.getOutput() == null) {
          outputs = new SelfInitializingWrappingNamedChildCollection<>(
                d -> new WrappedOutputDataReferenceField(resolver, d),
-               d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setOutput(SystemDescriptorFactory.eINSTANCE.createOutput());
@@ -264,7 +264,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
          outputs = new WrappingNamedChildCollection<>(
                wrapped.getOutput().getDeclarations(),
                d -> new WrappedOutputDataReferenceField(resolver, d),
-               d -> WrappedOutputDataReferenceField.toXTextOutputDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName);
       }
    }
@@ -273,7 +273,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       if (wrapped.getParts() == null) {
          parts = new SelfInitializingWrappingNamedChildCollection<>(
                d -> getWrappedModelReferenceField(resolver, d),
-               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setParts(SystemDescriptorFactory.eINSTANCE.createParts());
@@ -283,7 +283,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
          parts = new WrappingNamedChildCollection<>(
                wrapped.getParts().getDeclarations(),
                d -> getWrappedModelReferenceField(resolver, d),
-               d -> WrappedBasePartModelReferenceField.toXTextPartDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName);
       }
    }
@@ -292,7 +292,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
       if (wrapped.getRequires() == null) {
          requires = new SelfInitializingWrappingNamedChildCollection<>(
                d -> getWrappedModelReferenceField(resolver, d),
-               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName,
                () -> {
                   wrapped.setRequires(SystemDescriptorFactory.eINSTANCE.createRequires());
@@ -302,7 +302,7 @@ public class WrappedModel extends AbstractWrappedXtext<Model> implements IModel 
          requires = new WrappingNamedChildCollection<>(
                wrapped.getRequires().getDeclarations(),
                d -> getWrappedModelReferenceField(resolver, d),
-               d -> WrappedBaseRequireModelReferenceField.toXTextRequireDeclaration(resolver, d),
+               AutoWrappingCollection.defaultUnwrapper(),
                FieldDeclaration::getName);
       }
    }

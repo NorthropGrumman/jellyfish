@@ -48,9 +48,17 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       return Collections.unmodifiableCollection(inputs);
    }
 
+   public Collection<IDataReferenceField> getInputsModifiable() {
+      return inputs;
+   }
+
    @Override
    public Collection<IDataReferenceField> getOutputs() {
       return Collections.unmodifiableCollection(outputs);
+   }
+
+   public Collection<IDataReferenceField> getOutputsModifiable() {
+      return outputs;
    }
 
    @Override
@@ -63,17 +71,14 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       return scenario;
    }
 
-   public Collection<IDataReferenceField> getInputsModifiable() {
-      return inputs;
-   }
-
-   public Collection<IDataReferenceField> getOutputsModifiable() {
-      return outputs;
-   }
-
    public PublishSubscribeMessagingFlow setScenario(IScenario scenario) {
       this.scenario = scenario;
       return this;
+   }
+
+   @Override
+   public Optional<ICorrelationDescription> getCorrelationDescription() {
+      return Optional.ofNullable(correlationDescription);
    }
 
    public PublishSubscribeMessagingFlow setCorrelationDescriptor(ICorrelationDescription description) {
@@ -91,9 +96,9 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
       }
       PublishSubscribeMessagingFlow that = (PublishSubscribeMessagingFlow) o;
       return Objects.equals(inputs, that.inputs)
-            && Objects.equals(outputs, that.outputs)
-            && flowType == that.flowType
-            && Objects.equals(scenario, that.scenario);
+             && Objects.equals(outputs, that.outputs)
+             && flowType == that.flowType
+             && Objects.equals(scenario, that.scenario);
    }
 
    @Override
@@ -102,10 +107,5 @@ public class PublishSubscribeMessagingFlow implements IPublishSubscribeMessaging
                           outputs,
                           flowType,
                           scenario);
-   }
-
-   @Override
-   public Optional<ICorrelationDescription> getCorrelationDescription() {
-      return Optional.ofNullable(correlationDescription);
    }
 }

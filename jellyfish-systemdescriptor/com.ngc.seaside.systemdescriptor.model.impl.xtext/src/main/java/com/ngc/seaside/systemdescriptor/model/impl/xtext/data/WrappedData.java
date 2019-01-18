@@ -24,6 +24,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.AbstractWrappedXtext;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.AutoWrappingCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.collection.WrappingNamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.exception.UnrecognizedXtextTypeException;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.metadata.WrappedMetadata;
@@ -55,7 +56,7 @@ public class WrappedData extends AbstractWrappedXtext<Data> implements IData {
       this.metadata = WrappedMetadata.fromXtext(wrapped.getMetadata());
       this.fields = new WrappingNamedChildCollection<>(wrapped.getFields(),
                                                        f -> toWrappedDataField(resolver, f),
-                                                       f -> toXtextDataFieldDeclaration(resolver, f),
+                                                       AutoWrappingCollection.defaultUnwrapper(),
                                                        DataFieldDeclaration::getName);
    }
 

@@ -29,12 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.util.Collections;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WrappedScenarioTest extends AbstractWrappedXtextTest {
@@ -140,18 +137,6 @@ public class WrappedScenarioTest extends AbstractWrappedXtextTest {
                  wrappedScenario.getWhens().isEmpty());
       assertTrue("steps should be empty!",
                  wrappedScenario.getThens().isEmpty());
-
-      IScenarioStep step = mock(IScenarioStep.class);
-      when(step.getKeyword()).thenReturn("do");
-      when(step.getParameters()).thenReturn(Collections.singletonList("something"));
-      wrappedScenario.getGivens().add(step);
-
-      assertEquals("did not add new step!",
-                   "do",
-                   scenario.getGiven().getSteps().get(0).getKeyword());
-      assertEquals("did not add new step!",
-                   "something",
-                   scenario.getGiven().getSteps().get(0).getParameters().get(0));
    }
 
    @Test

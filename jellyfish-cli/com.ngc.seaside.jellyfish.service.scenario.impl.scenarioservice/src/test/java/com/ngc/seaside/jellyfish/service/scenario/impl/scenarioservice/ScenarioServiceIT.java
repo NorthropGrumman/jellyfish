@@ -34,6 +34,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepH
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
@@ -51,6 +52,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -109,7 +111,7 @@ public class ScenarioServiceIT {
       IScenario scenario = systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService")
             .get()
             .getScenarios()
-            .getByName("getPriority")
+            .getByName("getTrackPriorities")
             .get();
 
       Collection<MessagingParadigm> paradigms = service.getMessagingParadigms(options, scenario);
@@ -155,10 +157,10 @@ public class ScenarioServiceIT {
    @Test
    public void testDoesGetServerSideRequestResponseFlow() {
       IModel model = systemDescriptor.findModel("com.ngc.seaside.threateval.TrackPriorityService").get();
-      IScenario scenario = model.getScenarios().getByName("getPriority").get();
+      IScenario scenario = model.getScenarios().getByName("getTrackPriorities").get();
 
       Optional<IRequestResponseMessagingFlow> optionalFlow = service.getRequestResponseMessagingFlow(options,
-                                                                                                      scenario);
+                                                                                                     scenario);
       assertTrue("contains an incorrect number of flows!", optionalFlow.isPresent());
 
       IRequestResponseMessagingFlow flow = optionalFlow.get();
@@ -172,10 +174,10 @@ public class ScenarioServiceIT {
                    MessagingParadigm.REQUEST_RESPONSE,
                    flow.getMessagingParadigm());
       assertEquals("input not correct!",
-                   model.getInputs().getByName("droppedSystemTrack").get(),
+                   model.getInputs().getByName("trackPriorityRequest").get(),
                    flow.getInput());
       assertEquals("output not correct!",
-                   model.getOutputs().getByName("prioritizedSystemTracks").get(),
+                   model.getOutputs().getByName("trackPriorityResponse").get(),
                    flow.getOutput());
    }
 
@@ -185,9 +187,14 @@ public class ScenarioServiceIT {
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
       modules.add(new StepsSystemDescriptorServiceModule());
 
-      return Guice.createInjector(modules)
+      IParsingResult result = Guice.createInjector(modules)
             .getInstance(ISystemDescriptorService.class)
-            .parseProject(Paths.get("src/test/resources/"))
-            .getSystemDescriptor();
+            .parseProject(Paths.get("src/test/resources/"));
+      if (!result.isSuccessful()) {
+         result.getIssues().forEach(System.err::println);
+         fail("failed to parse project for analysis!");
+      }
+
+      return result.getSystemDescriptor();
    }
 }

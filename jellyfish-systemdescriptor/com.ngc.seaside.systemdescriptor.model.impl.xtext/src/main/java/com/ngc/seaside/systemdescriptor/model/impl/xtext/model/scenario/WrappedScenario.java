@@ -66,7 +66,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
       if (wrapped.getGiven() == null) {
          givens = new SelfInitializingAutoWrappingCollection<>(
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextGivenStep,
+               AutoWrappingCollection.defaultUnwrapper(),
                () -> {
                   // On the first add, create the GivenDeclaration and make the collection start wrapping the EList
                   // within the declaration.
@@ -78,13 +78,13 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
          givens = new AutoWrappingCollection<>(
                wrapped.getGiven().getSteps(),
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextGivenStep);
+               AutoWrappingCollection.defaultUnwrapper());
       }
 
       if (wrapped.getWhen() == null) {
          whens = new SelfInitializingAutoWrappingCollection<>(
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextWhenStep,
+               AutoWrappingCollection.defaultUnwrapper(),
                () -> {
                   // On the first add, create the WhenDeclaration and make the collection start wrapping the EList
                   // within the declaration.
@@ -96,13 +96,13 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
          whens = new AutoWrappingCollection<>(
                wrapped.getWhen().getSteps(),
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextWhenStep);
+               AutoWrappingCollection.defaultUnwrapper());
       }
 
       if (wrapped.getThen() == null) {
          thens = new SelfInitializingAutoWrappingCollection<>(
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextThenStep,
+               AutoWrappingCollection.defaultUnwrapper(),
                () -> {
                   // On the first add, create the ThenDeclaration and make the collection start wrapping the EList
                   // within the declaration.
@@ -114,7 +114,7 @@ public class WrappedScenario extends AbstractWrappedXtext<Scenario> implements I
          thens = new AutoWrappingCollection<>(
                wrapped.getThen().getSteps(),
                s -> new WrappedScenarioStep<>(resolver, s),
-               WrappedScenarioStep::toXtextThenStep);
+               AutoWrappingCollection.defaultUnwrapper());
       }
    }
 
