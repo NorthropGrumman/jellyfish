@@ -5,7 +5,7 @@
     Northrop Grumman Proprietary
     ____________________________
 
-    Copyright (C) 2018, Northrop Grumman Systems Corporation
+    Copyright (C) 2019, Northrop Grumman Systems Corporation
     All Rights Reserved.
 
     NOTICE:  All information contained herein is, and remains the property of
@@ -17,7 +17,6 @@
     permission is obtained from Northrop Grumman.
 
 -->
-
 <!-- This file configures logging for unit and integration tests. -->
 <configuration>
    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -13,7 +13,7 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#${header.java}
+ *#
 package $dto.packageName;
 
 public#if($dto.isAbstract()) abstract#end #if($dto.isEnum())enum#{else}class#end ${dto.className}#if($dto.extendedClass) extends $dto.extendedClass#end {

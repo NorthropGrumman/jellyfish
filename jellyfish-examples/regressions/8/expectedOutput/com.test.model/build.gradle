@@ -1,19 +1,4 @@
-/*
- * UNCLASSIFIED
- * Northrop Grumman Proprietary
- * ____________________________
- * 
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
- * All Rights Reserved.
- * 
- * NOTICE:  All information contained herein is, and remains the property of
- * Northrop Grumman Systems Corporation. The intellectual and technical concepts
- * contained herein are proprietary to Northrop Grumman Systems Corporation and
- * may be covered by U.S. and Foreign Patents or patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Northrop Grumman.
- */
+
 buildscript {
     repositories {
         mavenLocal()
@@ -31,7 +16,7 @@ buildscript {
       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"
       classpath "com.ngc.blocs:gradle.plugin:0.5"
       classpath "com.ngc.seaside:gradle.plugins:2.22.4"
-      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.18.0-SNAPSHOT"
+      classpath "com.ngc.seaside:jellyfish.cli.gradle.plugins:2.20.0-SNAPSHOT"
       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
    }
 }
@@ -60,7 +45,7 @@ subprojects {
       blocsCoreVersion = '3.0.0'
       guavaVersion = '26.0-jre'
       guiceVersion = '4.1.0'
-      jellyfishVersion = '2.18.0-SNAPSHOT'
+      jellyfishVersion = '2.20.0-SNAPSHOT'
       junitVersion = '4.12'
       mockitoVersion = '2.19.0'
       osgiVersion = '6.0.0'

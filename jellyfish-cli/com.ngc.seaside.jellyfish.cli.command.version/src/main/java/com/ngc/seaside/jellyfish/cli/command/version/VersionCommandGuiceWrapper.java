@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -14,7 +14,6 @@
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
  */
-
 package com.ngc.seaside.jellyfish.cli.command.version;
 
 import com.google.inject.Inject;
