@@ -73,7 +73,8 @@ public class CreateJavaServiceGeneratedConfigCommandMulticastIT extends CreateJa
       MulticastTransportProviderPlugin providerPlugin =
                new MulticastTransportProviderPlugin(Collections.singleton(topicPlugin));
       TransportServiceConfigurationPlugin transportPlugin =
-               new TransportServiceConfigurationPlugin(Collections.singleton(providerPlugin));
+               new TransportServiceConfigurationPlugin(Collections.singleton(providerPlugin),
+                                                       javaServiceGenerationService);
 
       command.addConfigurationPlugin(providerPlugin);
       command.addConfigurationPlugin(transportPlugin);

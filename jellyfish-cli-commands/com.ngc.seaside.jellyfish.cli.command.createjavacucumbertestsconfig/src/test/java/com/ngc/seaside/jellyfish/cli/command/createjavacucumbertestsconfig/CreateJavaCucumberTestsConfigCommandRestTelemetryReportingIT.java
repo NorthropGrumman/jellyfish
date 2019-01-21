@@ -79,7 +79,8 @@ public class CreateJavaCucumberTestsConfigCommandRestTelemetryReportingIT
                new HttpClientTransportProviderPlugin(Collections.singleton(topicPlugin));
       TransportServiceConfigurationPlugin transportPlugin =
                new TransportServiceConfigurationPlugin(
-                        new LinkedHashSet<>(Arrays.asList(sparkProviderPlugin, httpProviderPlugin)));
+                        new LinkedHashSet<>(Arrays.asList(sparkProviderPlugin, httpProviderPlugin)),
+                        javaServiceGenerationService);
 
       command.addConfigurationPlugin(sparkProviderPlugin);
       command.addConfigurationPlugin(httpProviderPlugin);

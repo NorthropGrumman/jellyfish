@@ -1,0 +1,118 @@
+#*
+ * UNCLASSIFIED
+ * Northrop Grumman Proprietary
+ * ____________________________
+ *
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains the property of
+ * Northrop Grumman Systems Corporation. The intellectual and technical concepts
+ * contained herein are proprietary to Northrop Grumman Systems Corporation and
+ * may be covered by U.S. and Foreign Patents or patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Northrop Grumman.
+ *#${header.java}
+package ${dto.interface.packageName};
+
+import com.ngc.blocs.service.event.api.IEventTopic;
+import com.ngc.seaside.service.readiness.api.IReadinessConfiguration;
+import com.ngc.seaside.service.transport.api.ITransportConfiguration;
+import com.ngc.seaside.service.transport.api.TransportConfiguration;
+import ${dto.topicsEnum.packageName}.${dto.topicsEnum.name};
+
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * This component acts as an adviser so developers can manually configure parts of the service that are generated
+ * from a model.  This is useful for experimentation.  In many cases, services will supply an implementation of this
+ * interface that does nothing.  Note an instance of this interface <i>must</i> be registered even if the implementation
+ * does nothing.
+ * <p/>
+ * The methods below are invoked to alter the service's transport configuration, readiness configuration, and to
+ * disable parts of the connector.  Implementations should be thread-safe as methods may be invoked concurrently.
+ */
+public interface ${dto.interface.name}Adviser {
+
+   /**
+    * Invoked to alter the transport configuration of the service.  The provided configuration is the default
+    * configuration of the service.  The default implementation does nothing.
+    * @param config the default generated transport configuration of the service
+    * @return the transport configuration to use (typically, just return {@code config})
+    */
+   default ITransportConfiguration adviseTransportConfiguration(TransportConfiguration config) {
+      return config;
+   }
+
+   /**
+    * Invoked to alter the readiness configuration of the service.  The provided configuration is the default
+    * configuration of the service.  The default implementation does nothing.
+    * @param config the default generated readiness configuration of the service
+    * @return the readiness configuration to use (typically, just return {@code config})
+    */
+   default IReadinessConfiguration adviseReadinessConfiguration(IReadinessConfiguration config) {
+      return config;
+   }
+
+   /**
+    * Invoked to alter the connector.  Use the context to selectively disable the handling of certain transport
+    * or event topics by the connector.
+    * @param ctx the context used to configure the connector
+    */
+   default void adviseConnector(ConnectorContext ctx) {
+      // Default implementation does nothing.
+   }
+
+   /**
+    * Context for configuring a connector.
+    */
+   class ConnectorContext {
+
+      private final Set<${dto.topicsEnum.name}> disabledTransportTopics =
+            Collections.synchronizedSet(EnumSet.noneOf(${dto.topicsEnum.name}.class));
+
+      private final Set<IEventTopic<?>> disabledEventTopics = Collections.synchronizedSet(new HashSet<>());
+
+      /**
+       * Returns true if the connector should not perform operations related to the given transport topic.
+       * @param topic the application topic
+       * @return true if the connector should not perform operations related to the given transport topic
+       */
+      public boolean isTransportTopicDisabled(${dto.topicsEnum.name} topic) {
+         return disabledTransportTopics.contains(topic);
+      }
+
+      /**
+       * Configures the connector to not perform operations related to the given transport topic.
+       * @param topic the application topic
+       * @return this context
+       */
+      public ConnectorContext disableHandlingOfTransportTopic(${dto.topicsEnum.name} topic) {
+         disabledTransportTopics.add(topic);
+         return this;
+      }
+
+      /**
+       * Returns true if the connector should not perform operations related to the given event topic.
+       * @param topic the event topic
+       * @return true if the connector should not perform operations related to the given event topic
+       */
+      public boolean isEventTopicDisabled(IEventTopic<?> topic) {
+         return disabledEventTopics.contains(topic);
+      }
+
+      /**
+       * Configures the connector to not perform operations related to the given event topic.
+       * @param topic the event topic
+       * @return this context
+       */
+      public ConnectorContext disableHandlingOfEventTopic(IEventTopic<?> topic) {
+         disabledEventTopics.add(topic);
+         return this;
+      }
+   }
+}

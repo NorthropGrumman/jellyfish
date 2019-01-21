@@ -76,7 +76,8 @@ public class CreateJavaServiceGeneratedConfigCommandZeroMqTcpIT extends CreateJa
                new ZeroMqTcpTransportProviderPlugin(Collections.singleton(topicPlugin));
       TransportServiceConfigurationPlugin transportPlugin =
                new TransportServiceConfigurationPlugin(
-                        new LinkedHashSet<>(Collections.singleton(providerPlugin)));
+                        new LinkedHashSet<>(Collections.singleton(providerPlugin)),
+                        javaServiceGenerationService);
 
       command.addConfigurationPlugin(providerPlugin);
       command.addConfigurationPlugin(transportPlugin);

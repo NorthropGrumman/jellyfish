@@ -27,6 +27,7 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.dto.Req
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.CommonDependencies;
 import com.ngc.seaside.jellyfish.service.codegen.api.IDataFieldGenerationService;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.dto.EnumDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
@@ -185,6 +186,9 @@ public class CreateJavaProtobufConnectorCommand extends AbstractMultiphaseJellyf
       dto.setTransportTopicsClass(transportTopics.getFullyQualifiedName());
 
       dto.setServiceInterface(generationService.getServiceInterfaceDescription(getOptions(), model));
+      dto.setAdviser(new ClassDto()
+                           .setPackageName(dto.getServiceInterface().getPackageName())
+                           .setTypeName(dto.getServiceInterface().getTypeName() + "Adviser"));
 
       dto.setProjectDependencies(new LinkedHashSet<>(
             Arrays.asList(projectNamingService.getBaseServiceProjectName(getOptions(), model).getArtifactId(),

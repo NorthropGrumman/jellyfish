@@ -13,7 +13,7 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#
+ *#${header.java}
 package ${dto.packageName};
 
 #set ($dto.imports.package = $dto.packageName)
@@ -38,6 +38,8 @@ public class ${dto.model.name}ReadinessConfiguration {
 
    private IReadinessService readinessService;
 
+   private ${dto.adviser.typeName} adviser;
+
    @Activate
    public void activate() {
       IReadinessConfiguration config = readinessService.newConfiguration();
@@ -57,7 +59,7 @@ public class ${dto.model.name}ReadinessConfiguration {
 #end
             ;
 
-      readinessService.register(config);
+      readinessService.register(adviser.adviseReadinessConfiguration(config));
 
       logService.debug(getClass(), "Activated.");
    }
@@ -83,5 +85,14 @@ public class ${dto.model.name}ReadinessConfiguration {
 
    public void removeReadinessService(IReadinessService ref) {
       setReadinessService(null);
+   }
+
+   @Reference
+   public void setAdviser(${dto.adviser.typeName} ref) {
+      this.adviser = ref;
+   }
+
+   public void removeAdviser(${dto.adviser.typeName} ref) {
+      setAdviser(null);
    }
 }

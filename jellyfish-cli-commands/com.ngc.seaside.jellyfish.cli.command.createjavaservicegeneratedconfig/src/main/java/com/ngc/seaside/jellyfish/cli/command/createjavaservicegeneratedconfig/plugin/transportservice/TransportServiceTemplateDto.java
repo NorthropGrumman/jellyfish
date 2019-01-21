@@ -19,6 +19,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.p
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.BaseConfigurationDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationContext;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transportprovider.ITransportProviderConfigurationDto;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,6 +29,10 @@ public class TransportServiceTemplateDto extends BaseConfigurationDto {
    private final Set<ITransportProviderConfigurationDto> transportProviders = new LinkedHashSet<>();
 
    private String className;
+
+   private ClassDto adviser;
+
+   private boolean system;
 
    public TransportServiceTemplateDto(ConfigurationContext context) {
       super(context);
@@ -55,4 +60,21 @@ public class TransportServiceTemplateDto extends BaseConfigurationDto {
       return this;
    }
 
+   public ClassDto getAdviser() {
+      return adviser;
+   }
+
+   public TransportServiceTemplateDto setAdviser(ClassDto adviser) {
+      this.adviser = adviser;
+      return this;
+   }
+
+   public boolean isSystem() {
+      return system;
+   }
+
+   public TransportServiceTemplateDto setSystem(boolean system) {
+      this.system = system;
+      return this;
+   }
 }

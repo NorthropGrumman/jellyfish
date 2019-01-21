@@ -33,6 +33,7 @@ public class ServiceDto {
    private Set<String> projectDependencies;
    private String interfaze;
    private String baseClass;
+   private ClassDto adviser;
 
    public ServiceDto(IBuildManagementService buildManagementService,
                      IJellyFishCommandOptions options) {
@@ -82,6 +83,15 @@ public class ServiceDto {
 
    public ServiceDto setBaseClass(String baseClass) {
       this.baseClass = baseClass;
+      return this;
+   }
+
+   public ClassDto getAdviser() {
+      return adviser;
+   }
+
+   public ServiceDto setAdviser(ClassDto adviser) {
+      this.adviser = adviser;
       return this;
    }
 

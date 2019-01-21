@@ -31,6 +31,8 @@ import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedAdminstra
 import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetryConfigurationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTelemetryReportingConfigurationService;
 import com.ngc.seaside.jellyfish.cli.command.test.service.config.MockedTransportConfigurationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
@@ -46,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -82,8 +85,15 @@ public class CreateJavaServiceGeneratedConfigCommandBaseIT {
    
    protected final MockedAdminstrationConfigurationService adminService = new MockedAdminstrationConfigurationService();
 
+   protected final IJavaServiceGenerationService javaServiceGenerationService =
+         mock(IJavaServiceGenerationService.class);
+
    protected void setup() throws Exception {
       templateService.useRealPropertyService();
+
+      when(javaServiceGenerationService.getServiceInterfaceDescription(any(), any())).thenReturn(
+            new ClassDto().setTypeName("IFooService").setPackageName("a.b.c").setName("fooService")
+      );
 
       Files.list(Paths.get("src", "main", "templates")).filter(Files::isDirectory).forEach(path -> {
          templateService.setTemplateDirectory(

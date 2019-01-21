@@ -13,7 +13,7 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#
+ *#${header.java}
 package ${dto.packageName};
 
 #set ($dto.imports.package = $dto.packageName)
@@ -38,6 +38,8 @@ public class ${dto.className} {
 
    private ITransportService transportService;
 
+   private ${dto.adviser.typeName} adviser;
+
 #foreach ($transportProvider in $dto.transportProviders)
    private ITransportProvider<${dto.imports.getType($transportProvider.topicType)}> ${dto.variables.get($transportProvider)};
 
@@ -48,7 +50,7 @@ public class ${dto.className} {
 #foreach ($transportProvider in $dto.transportProviders)
       ${dto.imports.getType($transportProvider.configurationType)}.configure(config, ${dto.variables.get($transportProvider)});
 #end
-      transportService.registerConfiguration(config);
+      transportService.registerConfiguration(adviser.adviseTransportConfiguration(config));
       logService.debug(getClass(), "activated");
    }
 
@@ -73,6 +75,15 @@ public class ${dto.className} {
 
    public void removeTransportService(ITransportService ref) {
       setTransportService(null);
+   }
+
+   @Reference
+   public void setAdviser(${dto.adviser.typeName} ref) {
+      this.adviser = ref;
+   }
+
+   public void removeAdviser(${dto.adviser.typeName} ref) {
+      setAdviser(null);
    }
 #foreach ($transportProvider in $dto.transportProviders)
 #set ($methodName = ${StringUtils.capitalize($dto.variables.get($transportProvider))})

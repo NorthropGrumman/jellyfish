@@ -27,6 +27,7 @@ import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests.dto.CucumberDto;
 import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 import com.ngc.seaside.jellyfish.service.config.api.ITelemetryConfigurationService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
@@ -146,6 +147,28 @@ public class CreateJavaCucumberTestsCommand extends AbstractJellyfishCommand {
       String configModule = packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model) + "."
                             + model.getName() + "TestConfigurationModule";
       dto.setConfigModule(configModule);
+
+      ClassDto adviser = new ClassDto();
+      ClassDto adviserImpl = new ClassDto();
+      if (dto.isSystem()) {
+         adviser.setPackageName(packageNamingService.getCucumberTestsConfigPackageName(commandOptions, model)
+                                + "."
+                                + model.getName()
+                                + "TestTransportConfiguration")
+               .setTypeName("I" + dto.getClassName() + "Adviser");
+         adviserImpl.setPackageName(dto.getPackageName() + ".di")
+               .setTypeName(dto.getClassName() + "TestAdviser");
+      } else {
+         ClassDto interfacez = generationService.getServiceInterfaceDescription(commandOptions, model);
+         adviser.setPackageName(interfacez.getPackageName())
+               .setTypeName(interfacez.getTypeName() + "Adviser");
+         adviserImpl.setPackageName(dto.getPackageName() + ".di")
+               .setTypeName(dto.getClassName() + "TestAdviser");
+      }
+      dto.setAdviser(adviser)
+            .setAdviserImpl(adviserImpl);
+
+
       parameters.addParameter(new DefaultParameter<>("dto", dto));
 
       if (isConfigGenerated) {

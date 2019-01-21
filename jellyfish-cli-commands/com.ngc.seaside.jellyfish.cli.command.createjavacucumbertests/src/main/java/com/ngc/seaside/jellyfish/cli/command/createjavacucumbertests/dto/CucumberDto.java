@@ -20,6 +20,7 @@ import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,6 +41,8 @@ public class CucumberDto {
    private String configModule;
    private boolean isConfigGenerated;
    private boolean system;
+   private ClassDto adviser;
+   private ClassDto adviserImpl;
 
    /**
     * Constructor.
@@ -154,6 +157,24 @@ public class CucumberDto {
 
    public void addRemoteService(String remoteService) {
       this.remoteServices.add(remoteService);
+   }
+
+   public ClassDto getAdviser() {
+      return adviser;
+   }
+
+   public CucumberDto setAdviser(ClassDto adviser) {
+      this.adviser = adviser;
+      return this;
+   }
+
+   public ClassDto getAdviserImpl() {
+      return adviserImpl;
+   }
+
+   public CucumberDto setAdviserImpl(ClassDto adviserImpl) {
+      this.adviserImpl = adviserImpl;
+      return this;
    }
 
    /**

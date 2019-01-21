@@ -16,12 +16,15 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transportservice;
 
+import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.CreateJavaServiceGeneratedConfigCommand;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationContext;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationType;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.IConfigurationTemplatePlugin;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transportprovider.ITransportProviderConfigurationDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.transportprovider.ITransportProviderConfigurationPlugin;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,11 +51,14 @@ public class TransportServiceConfigurationPlugin implements IConfigurationTempla
             setOf("com.ngc.seaside:service.transport.impl.defaulttransportservice.module");
 
    private Set<ITransportProviderConfigurationPlugin<? extends ITransportProviderConfigurationDto>> plugins;
+   private IJavaServiceGenerationService genService;
 
    @Inject
    public TransportServiceConfigurationPlugin(Set<
-            ITransportProviderConfigurationPlugin<? extends ITransportProviderConfigurationDto>> plugins) {
+            ITransportProviderConfigurationPlugin<? extends ITransportProviderConfigurationDto>> plugins,
+                                              IJavaServiceGenerationService genService) {
       this.plugins = plugins;
+      this.genService = genService;
    }
 
    @Override
@@ -65,6 +71,22 @@ public class TransportServiceConfigurationPlugin implements IConfigurationTempla
       TransportServiceTemplateDto dto = new TransportServiceTemplateDto(context);
       dto.setClassName(context.getModel().getName() + (configurationType == ConfigurationType.TEST ? "Test" : "")
                + "TransportConfiguration");
+      dto.setSystem(isSystem(context));
+
+      if (dto.isSystem()) {
+         ClassDto interfacez = genService.getServiceInterfaceDescription(context.getOptions(), context.getModel());
+         ClassDto adviser = new ClassDto()
+               .setTypeName(interfacez.getTypeName() + "Adviser");
+         dto.setAdviser(adviser);
+         dto.getImports().add("com.ngc.seaside.service.transport.api.ITransportConfiguration");
+      } else {
+         ClassDto interfacez = genService.getServiceInterfaceDescription(context.getOptions(), context.getModel());
+         ClassDto adviser = new ClassDto()
+               .setPackageName(interfacez.getPackageName())
+               .setTypeName(interfacez.getTypeName() + "Adviser");
+         dto.setAdviser(adviser);
+         dto.getImports().add(adviser.getFullyQualifiedName());
+      }
 
       this.plugins.stream()
                .map(plugin -> plugin.getConfigurationDto(context))
@@ -103,8 +125,13 @@ public class TransportServiceConfigurationPlugin implements IConfigurationTempla
       return Collections.singletonMap(StringUtils.class.getSimpleName(), StringUtils.class);
    }
 
-   private static final Set<String> setOf(String... values) {
+   private static Set<String> setOf(String... values) {
       return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
    }
 
+   private static boolean isSystem(ConfigurationContext ctx) {
+      return CommonParameters.evaluateBooleanParameter(ctx.getOptions().getParameters(),
+                                                       CommonParameters.SYSTEM.getName(),
+                                                       false);
+   }
 }

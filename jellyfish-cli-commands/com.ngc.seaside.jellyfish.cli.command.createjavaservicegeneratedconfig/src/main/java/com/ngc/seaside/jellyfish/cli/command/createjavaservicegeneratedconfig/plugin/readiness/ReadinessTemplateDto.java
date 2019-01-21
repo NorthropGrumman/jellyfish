@@ -18,6 +18,7 @@ package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.p
 
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.BaseConfigurationDto;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationContext;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class ReadinessTemplateDto extends BaseConfigurationDto {
    private final Set<String> classes = new LinkedHashSet<>();
    private final Set<String> eventSubscribers = new LinkedHashSet<>();
    private final Set<String> components = new LinkedHashSet<>();
+   private ClassDto adviser;
 
    public ReadinessTemplateDto(ConfigurationContext context) {
       super(context);
@@ -59,6 +61,15 @@ public class ReadinessTemplateDto extends BaseConfigurationDto {
 
    public ReadinessTemplateDto addComponent(String component) {
       components.add(component);
+      return this;
+   }
+
+   public ClassDto getAdviser() {
+      return adviser;
+   }
+
+   public ReadinessTemplateDto setAdviser(ClassDto adviser) {
+      this.adviser = adviser;
       return this;
    }
 }

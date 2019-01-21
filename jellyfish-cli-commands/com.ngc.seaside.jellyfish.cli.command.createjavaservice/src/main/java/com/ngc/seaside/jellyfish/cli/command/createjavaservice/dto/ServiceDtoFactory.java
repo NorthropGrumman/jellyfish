@@ -67,6 +67,14 @@ public class ServiceDtoFactory implements IServiceDtoFactory {
             .setInterface(baseDto.getInterface().getName())
             .setBaseClass(baseDto.getAbstractClass().getName());
 
+      ClassDto adviser = new ClassDto()
+            .setName(model.getName() + "Adviser");
+      dto.setAdviser(adviser);
+      adviser.getImports().add(baseDto.getInterface().getPackageName()
+                               + "."
+                               + baseDto.getInterface().getName()
+                               + "Adviser");
+
       return dto;
    }
 

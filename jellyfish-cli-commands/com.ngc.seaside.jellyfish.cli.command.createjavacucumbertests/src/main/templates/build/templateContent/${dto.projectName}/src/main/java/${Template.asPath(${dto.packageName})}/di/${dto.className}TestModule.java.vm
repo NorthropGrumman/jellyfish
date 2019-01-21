@@ -13,11 +13,12 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#
+ *#${header.java}
 package ${dto.packageName}.di;
 
 import com.google.inject.AbstractModule;
 
+import ${dto.adviser.fullyQualifiedName};
 import ${dto.configPackageName}.${dto.className}TestTransportConfiguration;
 
 /**
@@ -28,5 +29,6 @@ public class ${dto.className}TestModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(${dto.className}TestTransportConfiguration.class).asEagerSingleton();
+      bind(${dto.adviser.typeName}.class).to(${dto.adviserImpl.typeName}.class);
    }
 }

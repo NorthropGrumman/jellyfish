@@ -58,6 +58,7 @@ public class ConnectorDto {
    private IJellyFishCommandOptions options;
    private boolean requiresInjectedService;
    private ClassDto serviceInterface;
+   private ClassDto adviser;
 
    public IModel getModel() {
       return model;
@@ -206,6 +207,15 @@ public class ConnectorDto {
 
    public ConnectorDto setServiceInterface(ClassDto serviceInterface) {
       this.serviceInterface = serviceInterface;
+      return this;
+   }
+
+   public ClassDto getAdviser() {
+      return adviser;
+   }
+
+   public ConnectorDto setAdviser(ClassDto adviser) {
+      this.adviser = adviser;
       return this;
    }
 

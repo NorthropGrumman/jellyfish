@@ -13,7 +13,7 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#
+ *#${header.java}
 package ${dto.packageName};
 
 #set ($dto.imports.package = $dto.packageName)
@@ -31,18 +31,22 @@ public class ${dto.className} {
 
    private ITransportService transportService;
 
+   private ${dto.adviser.typeName} adviser;
+
 #foreach ($transportProvider in $dto.transportProviders)
    private ITransportProvider<${dto.imports.getType($transportProvider.topicType)}> ${dto.variables.get($transportProvider)};
 
 #end
    @Inject
    public ${dto.className}(ITransportService transportService,
+         ${dto.adviser.typeName} adviser,
 #foreach ($transportProvider in $dto.transportProviders)
          ITransportProvider<${dto.imports.getType($transportProvider.topicType)}> ${dto.variables.get($transportProvider)}#if( $foreach.hasNext ),
 #{else}) {
 #end
 #end
-      this.transportService = transportService;   
+      this.transportService = transportService;
+      this.adviser = adviser;
 #foreach ($transportProvider in $dto.transportProviders)
       this.${dto.variables.get($transportProvider)} = ${dto.variables.get($transportProvider)};
 #end
@@ -54,6 +58,15 @@ public class ${dto.className} {
 #foreach ($transportProvider in $dto.transportProviders)
       ${dto.imports.getType($transportProvider.configurationType)}.configure(config, ${dto.variables.get($transportProvider)});
 #end
-      transportService.registerConfiguration(config);
+      transportService.registerConfiguration(adviser.adviseTransportConfiguration(config));
    }
+#if ( ${dto.system} )
+
+   public interface IThreatEvaluationAdviser {
+      default ITransportConfiguration adviseTransportConfiguration(TransportConfiguration config) {
+         return config;
+      }
+   }
+
+#end
 }

@@ -13,7 +13,7 @@
  * protected by trade secret or copyright law. Dissemination of this information
  * or reproduction of this material is strictly forbidden unless prior written
  * permission is obtained from Northrop Grumman.
- *#
+ *#${header.java}
 package ${dto.packageName};
 
 #if(${dto.requiresInjectedService})import ${dto.serviceInterface.getFullyQualifiedName()};
@@ -34,6 +34,7 @@ import com.ngc.seaside.service.transport.api.InvalidPayloadException;
 import com.ngc.seaside.service.transport.api.ITransportReceiver;
 import com.ngc.seaside.service.request.api.IRequestService;
 import com.ngc.seaside.service.request.api.IServiceRequest;
+import ${dto.adviser.fullyQualifiedName};
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -50,10 +51,13 @@ import java.util.concurrent.Future;
 @Component(service = ${dto.model.name}Connector.class, immediate = true)
 public class ${dto.model.name}Connector {
 
+   private final ${dto.adviser.typeName}.ConnectorContext connectorContext = new ${dto.adviser.typeName}.ConnectorContext();
+
    private ILogService logService;
    private IEventService eventService;
    private IRequestService requestService;
    private ITransportService transportService;
+   private ${dto.adviser.typeName} adviser;
 #if(${dto.requiresInjectedService})   private IFaultManagementService faultManagementService;
    private ${dto.serviceInterface.name} ${dto.getServiceFieldName()};
 #end
@@ -61,24 +65,32 @@ public class ${dto.model.name}Connector {
    @SuppressWarnings("unchecked")
    @Activate
    public void activate() {
+      adviser.adviseConnector(connectorContext);
+
 #foreach($inputEntry in $dto.inputTopics.entrySet())
 #set ($topic = $inputEntry.key)
 #set ($input = $inputEntry.value)
-      transportService.addReceiver(this::receive${input.name},
-         ${dto.transportTopicsClass}.${topic});
+      if (!connectorContext.isTransportTopicDisabled(${dto.transportTopicsClass}.${topic})) {
+         transportService.addReceiver(this::receive${input.name},
+            ${dto.transportTopicsClass}.${topic});
+      }
 
 #end
 #foreach($requestEntry in $dto.requestTopics.entrySet())
 #set ($topic = $requestEntry.key)
 #set ($request = $requestEntry.value.request)
-      transportService.addReceiver(this::handle${request.name},
-         ${dto.transportTopicsClass}.${topic});
+      if (!connectorContext.isTransportTopicDisabled(${dto.transportTopicsClass}.${topic})) {
+         transportService.addReceiver(this::handle${request.name},
+            ${dto.transportTopicsClass}.${topic});
+      }
 
 #end
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($output = $outputEntry.value)
-      eventService.addSubscriber(this::send${output.name},
-         ${dto.eventPackage($output)}.${output.name}.TOPIC);
+      if (!connectorContext.isEventTopicDisabled(${dto.eventPackage($output)}.${output.name}.TOPIC)) {
+         eventService.addSubscriber(this::send${output.name},
+            ${dto.eventPackage($output)}.${output.name}.TOPIC);
+      }
 
 #end
       logService.debug(getClass(), "Activated.");
@@ -90,21 +102,27 @@ public class ${dto.model.name}Connector {
       #foreach($inputEntry in $dto.inputTopics.entrySet())
       #set ($topic = $inputEntry.key)
       #set ($input = $inputEntry.value)
-      transportService.removeReceiver(this::receive${input.name},
-         ${dto.transportTopicsClass}.${topic});
+      if (!connectorContext.isTransportTopicDisabled(${dto.transportTopicsClass}.${topic})) {
+         transportService.removeReceiver(this::receive${input.name},
+            ${dto.transportTopicsClass}.${topic});
+      }
 
 #end
 #foreach($requestEntry in $dto.requestTopics.entrySet())
 #set ($topic = $requestEntry.key)
 #set ($request = $requestEntry.value.request)
-      transportService.removeReceiver(this::handle${request.name},
-         ${dto.transportTopicsClass}.${topic});
+      if (!connectorContext.isTransportTopicDisabled(${dto.transportTopicsClass}.${topic})) {
+         transportService.removeReceiver(this::handle${request.name},
+            ${dto.transportTopicsClass}.${topic});
+      }
 
 #end
 #foreach($outputEntry in $dto.outputTopics.entrySet())
 #set ($output = $outputEntry.value)
-      eventService.removeSubscriber(this::send${output.name},
-         ${dto.eventPackage($output)}.${output.name}.TOPIC);
+      if (!connectorContext.isEventTopicDisabled(${dto.eventPackage($output)}.${output.name}.TOPIC)) {
+         eventService.removeSubscriber(this::send${output.name},
+            ${dto.eventPackage($output)}.${output.name}.TOPIC);
+      }
 
 #end
       logService.debug(getClass(), "Deactivated.");
@@ -163,6 +181,15 @@ public class ${dto.model.name}Connector {
 
    public void removeLogService(ILogService ref) {
       setLogService(null);
+   }
+
+   @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC, unbind = "removeAdviser")
+   public void setAdviser(${dto.adviser.typeName} ref) {
+      this.adviser = ref;
+   }
+
+   public void removeAdviser(${dto.adviser.typeName} ref) {
+      setAdviser(null);
    }
 #foreach($inputEntry in $dto.inputTopics.entrySet())
 #set ($topic = $inputEntry.key)

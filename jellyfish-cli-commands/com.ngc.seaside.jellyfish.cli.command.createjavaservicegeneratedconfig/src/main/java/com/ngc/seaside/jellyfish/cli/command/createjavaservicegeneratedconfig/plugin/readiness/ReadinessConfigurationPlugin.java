@@ -20,6 +20,9 @@ import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.Cr
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationContext;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.ConfigurationType;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig.plugin.IConfigurationTemplatePlugin;
+import com.ngc.seaside.jellyfish.service.codegen.api.IJavaServiceGenerationService;
+import com.ngc.seaside.jellyfish.service.codegen.api.dto.ClassDto;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -30,10 +33,13 @@ import javax.inject.Inject;
 public class ReadinessConfigurationPlugin implements IConfigurationTemplatePlugin<ReadinessTemplateDto> {
 
    private Set<IReadinessPlugin> plugins;
+   private IJavaServiceGenerationService genService;
 
    @Inject
-   public ReadinessConfigurationPlugin(Set<IReadinessPlugin> plugins) {
+   public ReadinessConfigurationPlugin(Set<IReadinessPlugin> plugins,
+                                       IJavaServiceGenerationService genService) {
       this.plugins = plugins;
+      this.genService = genService;
    }
 
    @Override
@@ -42,7 +48,13 @@ public class ReadinessConfigurationPlugin implements IConfigurationTemplatePlugi
          return Optional.empty();
       }
 
+      ClassDto interfacez = genService.getServiceInterfaceDescription(context.getOptions(), context.getModel());
+      ClassDto adviser = new ClassDto()
+            .setPackageName(interfacez.getPackageName())
+            .setTypeName(interfacez.getTypeName() + "Adviser");
       ReadinessTemplateDto dto = new ReadinessTemplateDto(context);
+      dto.setAdviser(adviser);
+      dto.getImports().add(adviser.getFullyQualifiedName());
 
       for (IReadinessPlugin plugin : plugins) {
          plugin.configure(dto);
