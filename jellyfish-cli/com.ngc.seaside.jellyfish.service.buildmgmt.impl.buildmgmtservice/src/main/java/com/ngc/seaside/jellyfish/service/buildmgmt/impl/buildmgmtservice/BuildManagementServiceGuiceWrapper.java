@@ -17,9 +17,8 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
 import com.google.inject.Inject;
-
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -42,31 +41,31 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
    }
 
    @Override
-   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
+   public Collection<IBuildDependency> getRegisteredDependencies(ICommandOptions options,
                                                                  DependencyScope type) {
       return buildManagementService.getRegisteredDependencies(options, type);
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId,
+   public IBuildDependency registerDependency(ICommandOptions options, String groupId,
                                               String artifactId) {
       return buildManagementService.registerDependency(options, groupId, artifactId);
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public IBuildDependency registerDependency(ICommandOptions options, String groupAndArtifact) {
       return buildManagementService.registerDependency(options, groupAndArtifact);
    }
 
    @Override
    public IBuildDependency getDependency(
-         IJellyFishCommandOptions options, String groupId, String artifactId) {
+         ICommandOptions options, String groupId, String artifactId) {
       return buildManagementService.getDependency(options, groupId, artifactId);
    }
 
    @Override
    public IBuildDependency getDependency(
-         IJellyFishCommandOptions options, String groupAndArtifact) {
+         ICommandOptions options, String groupAndArtifact) {
       return buildManagementService.getDependency(options, groupAndArtifact);
    }
 
@@ -76,7 +75,7 @@ public class BuildManagementServiceGuiceWrapper implements IBuildManagementServi
    }
 
    @Override
-   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
+   public void registerProject(ICommandOptions options, IProjectInformation project) {
       buildManagementService.registerProject(options, project);
    }
 }

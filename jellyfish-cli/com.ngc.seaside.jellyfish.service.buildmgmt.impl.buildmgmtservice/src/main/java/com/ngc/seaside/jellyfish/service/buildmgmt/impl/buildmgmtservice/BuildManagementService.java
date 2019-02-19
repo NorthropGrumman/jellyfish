@@ -17,9 +17,8 @@
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -80,7 +79,7 @@ public class BuildManagementService implements IBuildManagementService {
    private ILogService logService;
 
    @Override
-   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
+   public Collection<IBuildDependency> getRegisteredDependencies(ICommandOptions options,
                                                                  DependencyScope scope) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(scope, "scope may not be null!");
@@ -90,21 +89,21 @@ public class BuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+   public IBuildDependency registerDependency(ICommandOptions options, String groupId, String artifactId) {
       DependenciesConfiguration.Artifact dependency = getDependency(options, groupId, artifactId);
       registeredArtifacts.add(dependency);
       return dependency;
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public IBuildDependency registerDependency(ICommandOptions options, String groupAndArtifact) {
       DependenciesConfiguration.Artifact dependency = getDependency(options, groupAndArtifact);
       registeredArtifacts.add(dependency);
       return dependency;
    }
 
    @Override
-   public DependenciesConfiguration.Artifact getDependency(IJellyFishCommandOptions options,
+   public DependenciesConfiguration.Artifact getDependency(ICommandOptions options,
                                                            String groupId,
                                                            String artifactId) {
       Preconditions.checkNotNull(options, "options may not be null!");
@@ -129,7 +128,7 @@ public class BuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public DependenciesConfiguration.Artifact getDependency(IJellyFishCommandOptions options,
+   public DependenciesConfiguration.Artifact getDependency(ICommandOptions options,
                                                            String groupAndArtifact) {
       Preconditions.checkNotNull(options, "options may not be null!");
       Preconditions.checkNotNull(groupAndArtifact, "groupAndArtifact may not be null!");
@@ -147,7 +146,7 @@ public class BuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
+   public void registerProject(ICommandOptions options, IProjectInformation project) {
       Preconditions.checkNotNull(project, "project may not be null!");
       registeredProjects.add(project);
       logService.info(getClass(), "Project %s.%s generated.", project.getGroupId(), project.getArtifactId());

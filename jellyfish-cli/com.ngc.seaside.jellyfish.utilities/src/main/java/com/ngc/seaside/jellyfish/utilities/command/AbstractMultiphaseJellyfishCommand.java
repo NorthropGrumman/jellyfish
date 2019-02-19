@@ -44,14 +44,14 @@ public abstract class AbstractMultiphaseJellyfishCommand extends AbstractJellyfi
     * Invoked to run the default phase of the command.  This method should generate stubs only and not fully generated
     * code.  This method may safely invoke
     * {@link com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService#registerProject(
-    * IJellyFishCommandOptions, IProjectInformation)}.
+    * ICommandOptions, IProjectInformation)}.
     */
    protected abstract void runDefaultPhase();
 
    /**
     * Invoked to run the deferred phase of the command.  This method should not generate stubs.  It should generate only
     * fully generated code that is never modified.  This method may not invoked {@link
-    * com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService#registerProject(IJellyFishCommandOptions,
+    * com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService#registerProject(ICommandOptions,
     * IProjectInformation)}.
     */
    protected abstract void runDeferredPhase();

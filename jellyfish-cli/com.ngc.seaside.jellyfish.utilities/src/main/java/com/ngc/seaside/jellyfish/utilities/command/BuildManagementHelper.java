@@ -16,7 +16,7 @@
  */
 package com.ngc.seaside.jellyfish.utilities.command;
 
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 
@@ -28,9 +28,9 @@ public class BuildManagementHelper {
 
    private final IBuildManagementService buildManagementService;
 
-   private final IJellyFishCommandOptions options;
+   private final ICommandOptions options;
 
-   BuildManagementHelper(IBuildManagementService buildManagementService, IJellyFishCommandOptions options) {
+   BuildManagementHelper(IBuildManagementService buildManagementService, ICommandOptions options) {
       this.buildManagementService = buildManagementService;
       this.options = options;
    }

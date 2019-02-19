@@ -222,7 +222,7 @@ public class DependenciesConfiguration {
        *
        * @param artifact that will be added
        * @param artifacts collection of artifacts to add
-       * @return
+       * @return Group
        */
       public Group includes(Artifact artifact, Artifact... artifacts) {
          Preconditions.checkNotNull(artifact, "artifact may not be null!");

@@ -16,7 +16,7 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.test.service;
 
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
@@ -27,13 +27,13 @@ import java.util.Collection;
 public class MockedBuildManagementService implements IBuildManagementService {
 
    @Override
-   public Collection<IBuildDependency> getRegisteredDependencies(IJellyFishCommandOptions options,
+   public Collection<IBuildDependency> getRegisteredDependencies(ICommandOptions options,
                                                                  DependencyScope type) {
       throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+   public IBuildDependency registerDependency(ICommandOptions options, String groupId, String artifactId) {
       return new IBuildDependency() {
          @Override
          public String getGroupId() {
@@ -58,18 +58,18 @@ public class MockedBuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public IBuildDependency registerDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public IBuildDependency registerDependency(ICommandOptions options, String groupAndArtifact) {
       String[] parts = groupAndArtifact.split(":");
       return registerDependency(options, parts[0], parts[1]);
    }
 
    @Override
-   public IBuildDependency getDependency(IJellyFishCommandOptions options, String groupId, String artifactId) {
+   public IBuildDependency getDependency(ICommandOptions options, String groupId, String artifactId) {
       throw new UnsupportedOperationException("not implemented");
    }
 
    @Override
-   public IBuildDependency getDependency(IJellyFishCommandOptions options, String groupAndArtifact) {
+   public IBuildDependency getDependency(ICommandOptions options, String groupAndArtifact) {
       throw new UnsupportedOperationException("not implemented");
    }
 
@@ -79,6 +79,6 @@ public class MockedBuildManagementService implements IBuildManagementService {
    }
 
    @Override
-   public void registerProject(IJellyFishCommandOptions options, IProjectInformation project) {
+   public void registerProject(ICommandOptions options, IProjectInformation project) {
    }
 }
