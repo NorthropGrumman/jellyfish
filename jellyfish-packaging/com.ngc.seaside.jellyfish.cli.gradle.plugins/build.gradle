@@ -59,13 +59,10 @@ dependencies {
    testImplementation "com.ngc.seaside:gradle.plugins.testutils:$seasidePluginsVersion"
 }
 
-// Include the command templates in the JAR.
-jar {
-   from "${buildDir}/commands-templates/"
-}
-
 processResources {
-   expand(version: version, group: project.group)
+   filesNotMatching('**/*.zip') {
+      expand(version: version, group: project.group)
+   }
 }
 
 task copyCommandTemplate(type: Copy) {
@@ -79,7 +76,16 @@ task copyCommandTemplate(type: Copy) {
    into "${buildDir}/commands-templates/templates/"
 }
 
-jar.dependsOn(copyCommandTemplate)
+
+sourceSets {
+   main {
+      resources {
+         srcDir "${buildDir}/commands-templates/"
+      }
+   }
+}
+
+compileJava.dependsOn copyCommandTemplate
 
 test.systemProperty 'nexusConsolidated', nexusConsolidated
 test.systemProperty 'nexusSnapshots', nexusSnapshots
