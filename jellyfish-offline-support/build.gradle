@@ -31,6 +31,7 @@ buildscript {
    dependencies {
       classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
       classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+      classpath "com.ngc.seaside:jellyfish.service.buildmgmt.impl.buildmgmtservice:$version"
    }
 }
 
@@ -40,6 +41,16 @@ apply plugin: 'com.ngc.seaside.root.parent'
 
 configurations {
    extra
+}
+
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.DefaultDependenciesConfiguration
+
+ext {
+   starfishVersion = DefaultDependenciesConfiguration
+                           .config
+                           .groups
+                           .find { it.versionPropertyName == 'starfishVersion' }
+                           .version
 }
 
 // These are extra dependencies we need.
@@ -61,6 +72,8 @@ dependencies {
    extra 'com.mycila.xmltool:xmltool:3.3'
    // Needed for the Jellyfish Sonarqube plugin.
    extra "org.sonarsource.sonarqube:sonar-plugin-api:$sonarqubeVersion"
+   // Missing because it isn't captured by the two jellyfish examples audits
+   extra "com.ngc.seaside:service.transport.impl.provider.spark.module:$starfishVersion"
 }
 
 seasideCi {
