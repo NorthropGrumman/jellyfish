@@ -133,3 +133,19 @@ scenario has some max time to complete.  Its general form is:
 ```
 (hasCompleted|completing|willBeCompleted) (within|atLeast) <duration:double> (nanoseconds|milliseconds|microseconds|seconds|minutes|hours|days)
 ```
+
+# Other
+
+## Todo
+
+| Past | Present | Future |
+|------|---------|--------|
+| TODO | TODO    | TODO   |
+
+This verb is used as a placeholder marking a scenario step that needs to be filled in. Using this verb generates a
+warning that it needs to be filled in.
+
+**Verb format**
+```
+TODO any text
+```
