@@ -26,6 +26,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -57,10 +58,12 @@ public class JellyfishCommandProviderGuiceWrapper implements IJellyFishCommandPr
          ILogService logService,
          IParameterService parameterService,
          ISystemDescriptorService systemDescriptorService,
+         IGherkinService gherkinService,
          Set<IJellyFishCommand> commands) {
       delegate.setLogService(logService);
       delegate.setParameterService(parameterService);
       delegate.setSystemDescriptorService(systemDescriptorService);
+      delegate.setGherkinService(gherkinService);
       // Note we can't call commands.forEach(delegate::addCommand) because they may throw a Guice exception if a
       // command requires the IJellyFishCommandProvider to be injected into it.  If this is the case, Guice creates a
       // proxy for the command but it would let us use the proxy until all injection is completed.

@@ -39,8 +39,11 @@ import java.util.stream.Stream;
 
 @Component(service = IFeatureService.class)
 public class FeatureService implements IFeatureService {
+
    private static final Collector<IFeatureInformation, ?, ? extends Collection<IFeatureInformation>> COLLECTOR =
             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(IFeatureInformation::getPath)));
+
+   // TODO TH: use the Gherkin service to actually parse feature files.
 
    @Override
    public Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IModel model) {

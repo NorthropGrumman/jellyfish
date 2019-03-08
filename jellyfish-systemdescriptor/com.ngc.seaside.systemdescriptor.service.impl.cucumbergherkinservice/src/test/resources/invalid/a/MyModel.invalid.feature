@@ -15,3 +15,22 @@
 # permission is obtained from Northrop Grumman.
 #
 
+@my-feature-tag
+Feature: A simple example with invalid syntax
+
+   This is a longer description
+
+   Background:
+      Given the room has been built
+
+   Scenario Outline: Has an invalid number of columns
+
+      Given Bob is in the room
+      And the lights are on
+      When <person> enters the "room"
+      Then Bob should greet <person> by saying <greeting> with <lastCol>
+
+      Examples:
+         | Person  | Greeting | lastCol |
+         | Adam    | Hello    |
+         | Charles | Hi       | okay    |

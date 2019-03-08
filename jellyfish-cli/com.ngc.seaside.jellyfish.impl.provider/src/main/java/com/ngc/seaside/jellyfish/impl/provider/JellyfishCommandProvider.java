@@ -34,6 +34,8 @@ import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -69,6 +71,8 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
    private final Map<String, IJellyFishCommand> commands = new ConcurrentHashMap<>();
 
    private ISystemDescriptorService systemDescriptorService;
+
+   private IGherkinService gherkinService;
 
    /**
     * Ensure the dynamic references are added only after the activation of this Component.
@@ -165,6 +169,17 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
       setSystemDescriptorService(null);
    }
 
+   @Reference(cardinality = ReferenceCardinality.MANDATORY,
+         policy = ReferencePolicy.STATIC,
+         unbind = "removeGherkinService")
+   public void setGherkinService(IGherkinService ref) {
+      this.gherkinService = ref;
+   }
+
+   public void removeGherkinService(IGherkinService ref) {
+      setGherkinService(null);
+   }
+
    private JellyfishCommandContext parseParameters(String command, List<String> params) {
       JellyfishCommandContext ctx = new JellyfishCommandContext(command, parameterService.parseParameters(params));
 
@@ -235,9 +250,13 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
    }
 
    private IJellyFishCommandOptions buildCommandOptions(JellyfishCommandContext ctx) {
+      IParsingResult parsingResult = parseProject(ctx);
+      IGherkinParsingResult gherkinResult = parseGherkin(parsingResult);
+
       DefaultJellyFishCommandOptions options = new DefaultJellyFishCommandOptions();
       options.setParameters(ctx.getParameters());
-      options.setParsingResult(parseProject(ctx));
+      options.setParsingResult(parsingResult);
+      options.setGherkinParsingResult(gherkinResult);
       return options;
    }
 
@@ -257,5 +276,17 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
          result = systemDescriptorService.parseProject(Paths.get(inputDirectory));
       }
       return result;
+   }
+
+   private IGherkinParsingResult parseGherkin(IParsingResult parsingResult) {
+      if (parsingResult.getTestSourcesRoot() != null
+               && Files.isDirectory(parsingResult.getTestSourcesRoot())
+               && Files.isReadable(parsingResult.getTestSourcesRoot())) {
+         logService.debug(getClass(), "Project has a test sources, attempting to parse feature files.");
+         return gherkinService.parseProject(parsingResult);
+      } else {
+         logService.debug(getClass(), "Project has no test sources.");
+         return EmptyParsingResult.INSTANCE;
+      }
    }
 }

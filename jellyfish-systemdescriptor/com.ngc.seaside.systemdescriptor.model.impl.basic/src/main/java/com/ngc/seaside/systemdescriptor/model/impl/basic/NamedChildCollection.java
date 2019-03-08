@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -35,7 +35,6 @@ import java.util.function.Consumer;
  *
  * @param <P> Parent class of the child
  * @param <T> INamedChild class type
- * @author thooper
  */
 public class NamedChildCollection<P, T extends INamedChild<P>> implements INamedChildCollection<P, T> {
 

@@ -24,22 +24,26 @@ import java.util.Collection;
 
 /**
  * Service for dealing with feature files.
+ *
+ * @deprecated Use the {@link com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService} instead.  Commands
+ * can reference the parsed Gherkin files from {@link IJellyFishCommandOptions#getGherkinParsingResult()}.
  */
+@Deprecated
 public interface IFeatureService {
 
    /**
     * Returns all of the feature files associated with the given model.
-    * 
+    *
     * @param options jellyfish command options
-    * @param model the model
+    * @param model   the model
     * @return a collection of feature file information
     */
    Collection<IFeatureInformation> getFeatures(IJellyFishCommandOptions options, IModel model);
 
    /**
     * Returns all of the feature files associated with the given scenario.
-    * 
-    * @param options jellyfish command options
+    *
+    * @param options  jellyfish command options
     * @param scenario the scenario to get the features for
     * @return a collection of feature file information
     */
@@ -47,7 +51,7 @@ public interface IFeatureService {
 
    /**
     * Returns all of the feature files for the system descriptor.
-    * 
+    *
     * @param options jellyfish command options
     * @return a collection of feature file information
     */

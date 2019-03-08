@@ -16,22 +16,22 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.analyze.feature;
 
+import com.google.inject.Inject;
+
+import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureInformation;
-import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishAnalysisCommand;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
-
-import org.osgi.service.component.annotations.Reference;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 /**
  * An analysis that checks for that all scenarios have a corresponding feature and vice versa.
@@ -43,93 +43,74 @@ public class AnalyzeFeaturesCommand extends AbstractJellyfishAnalysisCommand {
     */
    public static final String NAME = "analyze-features";
 
-   private IFeatureService featureService;
-   private Collection<IFeatureInformation> features;
-   private Set<String> scenariosWithFeatures;
-
    /**
     * Creates a new command.
     */
-   public AnalyzeFeaturesCommand() {
+   @Inject
+   public AnalyzeFeaturesCommand(ILogService logService,
+                                 IAnalysisService analysisService,
+                                 ISourceLocatorService sourceLocatorService) {
       super(NAME);
-   }
-
-   @Override
-   public void activate() {
-      logService.debug(AnalyzeFeaturesCommand.class, "Activated.");
-   }
-
-   @Override
-   public void deactivate() {
-      logService.debug(AnalyzeFeaturesCommand.class, "Deactivated.");
+      setLogService(logService);
+      setAnalysisService(analysisService);
+      setSourceLocatorService(sourceLocatorService);
    }
 
    @Override
    protected IUsage createUsage() {
       return new DefaultUsage("Checks that scenarios have a corresponding feature file and vice versa. "
-               + "This command is rarely ran directly;"
-               + " instead it is run with the 'analyze' command.",
-               CommonParameters.MODEL.required(),
-               CommonParameters.STEREOTYPES.optional());
+                              + "This command is rarely ran directly;"
+                              + " instead it is run with the 'analyze' command.",
+                              CommonParameters.MODEL.required(),
+                              CommonParameters.STEREOTYPES.optional());
    }
 
    @Override
    protected void analyzeModel(IModel model) {
-      for (IScenario scenario : model.getScenarios()) {
-         String id = getScenarioId(scenario);
-         if (!scenariosWithFeatures.contains(id)) {
-            addScenarioMissingFeature(scenario);
+      IGherkinParsingResult gherkinResult = getOptions().getGherkinParsingResult();
+      if (gherkinResult.isSuccessful()) {
+         // Require all SD scenarios to have feature files.
+         for (IScenario scenario : model.getScenarios()) {
+            if (!gherkinResult.findFeature(scenario).isPresent()) {
+               missingFeatureFileForSdScenario(scenario);
+            }
          }
-      }
-   }
-
-   @Override
-   public void preAnalysis() {
-      features = featureService.getAllFeatures(getOptions());
-      scenariosWithFeatures = new HashSet<>();
-      for (IFeatureInformation feature : features) {
-         feature.getScenario()
-                  .map(AnalyzeFeaturesCommand::getScenarioId)
-                  .ifPresent(scenariosWithFeatures::add);
       }
    }
 
    @Override
    protected void analyzeEntireProject() {
-      super.analyzeEntireProject();
-      for (IFeatureInformation feature : features) {
-         if (!feature.getScenario().isPresent()) {
-            addFeatureMissingScenario(feature);
+      IGherkinParsingResult gherkinResult = getOptions().getGherkinParsingResult();
+      if (gherkinResult.isSuccessful()) {
+         super.analyzeEntireProject();
+         // Require all feature files to have an SD scenario.
+         for (IFeature feature : gherkinResult.getFeatures()) {
+            if (!feature.getModelScenario().isPresent()) {
+               missingSdScenarioForFeatureFile(feature);
+            }
          }
       }
    }
 
-   private static final String getScenarioId(IScenario scenario) {
-      return scenario.getParent().getFullyQualifiedName() + "." + scenario.getName();
-   }
-
-   private void addFeatureMissingScenario(IFeatureInformation feature) {
-      String message =
-               "Feature " + feature.getPath().getFileName().toString() + " does not correspond to any scenario.";
-      SystemDescriptorFinding<?> finding = FeatureFindingTypes.FEATURE_WITHOUT_SCENARIO.createFinding(message, null, 2);
-      reportFinding(finding);
-   }
-
-   private void addScenarioMissingFeature(IScenario scenario) {
-      String message = "Scenario " + scenario.getName() + " in model " + scenario.getParent().getFullyQualifiedName()
-               + " does not have a feature file.";
+   private void missingFeatureFileForSdScenario(IScenario scenario) {
+      String message = "Scenario "
+                       + scenario.getName()
+                       + " in model "
+                       + scenario.getParent().getFullyQualifiedName()
+                       + " does not have a feature file.";
       ISourceLocation location = sourceLocatorService.getLocation(scenario, false);
-      SystemDescriptorFinding<?> finding =
-               FeatureFindingTypes.SCENARIO_WITHOUT_FEATURE.createFinding(message, location, 2);
+      SystemDescriptorFinding<?> finding = FeatureFindingTypes.SCENARIO_WITHOUT_FEATURE.createFinding(message,
+                                                                                                      location,
+                                                                                                      2);
       reportFinding(finding);
    }
 
-   @Reference
-   public void setFeatureService(IFeatureService ref) {
-      this.featureService = ref;
-   }
-
-   public void removeFeatureService(IFeatureService ref) {
-      setFeatureService(null);
+   private void missingSdScenarioForFeatureFile(IFeature feature) {
+      String msg = "Feature "
+                   + feature.getFullyQualifiedName()
+                   + " does not have a corresponding System Descriptor scenario.";
+      ISourceLocation location = sourceLocatorService.getLocation(feature, false);
+      SystemDescriptorFinding<?> finding = FeatureFindingTypes.FEATURE_WITHOUT_SCENARIO.createFinding(msg, location, 2);
+      reportFinding(finding);
    }
 }

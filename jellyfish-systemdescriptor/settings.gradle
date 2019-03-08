@@ -25,6 +25,7 @@ include 'com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps'
 include 'com.ngc.blocs.service.log.impl.common.log4jlogservice'
 include 'com.ngc.seaside.systemdescriptor.testutils'
 include 'com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice'
+include 'com.ngc.seaside.systemdescriptor.service.impl.cucumbergherkinservice'
 
 project(':com.ngc.seaside.systemdescriptor.model.api').name = 'systemdescriptor.model.api'
 project(':com.ngc.seaside.systemdescriptor.model.impl.basic').name = 'systemdescriptor.model.impl.basic'
@@ -35,3 +36,4 @@ project(':com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps').name = 
 project(':com.ngc.blocs.service.log.impl.common.log4jlogservice').name = 'service.log.impl.common.log4jlogservice'
 project(':com.ngc.seaside.systemdescriptor.testutils').name = 'systemdescriptor.testutils'
 project(':com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice').name = 'systemdescriptor.service.impl.m2repositoryservice'
+project(':com.ngc.seaside.systemdescriptor.service.impl.cucumbergherkinservice').name = 'systemdescriptor.service.impl.cucumbergherkinservice'

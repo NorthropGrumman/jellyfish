@@ -24,7 +24,11 @@ import java.util.Optional;
 
 /**
  * Information about a feature file.
+ *
+ * @deprecated Use {@link com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature} provided by the
+ * {@link com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService} instead.
  */
+@Deprecated
 public interface IFeatureInformation {
 
    /**

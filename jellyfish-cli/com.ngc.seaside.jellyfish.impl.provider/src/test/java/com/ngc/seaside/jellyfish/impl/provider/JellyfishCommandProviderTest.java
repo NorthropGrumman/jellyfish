@@ -31,6 +31,8 @@ import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,6 +42,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
@@ -65,7 +68,13 @@ public class JellyfishCommandProviderTest {
    private ISystemDescriptorService systemDescriptorService;
 
    @Mock
+   private IGherkinService gherkinService;
+
+   @Mock
    private IParsingResult parsingResult;
+
+   @Mock
+   private IGherkinParsingResult gherkinParsingResult;
 
    @Before
    public void setup() {
@@ -73,6 +82,7 @@ public class JellyfishCommandProviderTest {
       provider.setLogService(logService);
       provider.setParameterService(parameterService);
       provider.setSystemDescriptorService(systemDescriptorService);
+      provider.setGherkinService(gherkinService);
       provider.activate();
    }
 
@@ -95,7 +105,9 @@ public class JellyfishCommandProviderTest {
       IJellyFishCommand command = mockedCommand("foo-command");
       when(parameterService.parseParameters(anyList())).thenReturn(mockedParams());
       when(systemDescriptorService.parseProject(any(Path.class))).thenReturn(parsingResult);
+      when(gherkinService.parseProject(parsingResult)).thenReturn(gherkinParsingResult);
       when(parsingResult.isSuccessful()).thenReturn(true);
+      when(parsingResult.getTestSourcesRoot()).thenReturn(Paths.get("build"));
 
       provider.addCommand(command);
       provider.run(new String[]{command.getName()});

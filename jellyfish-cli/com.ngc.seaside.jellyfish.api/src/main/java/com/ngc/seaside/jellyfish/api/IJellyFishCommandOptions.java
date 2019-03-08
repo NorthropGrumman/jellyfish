@@ -18,6 +18,7 @@ package com.ngc.seaside.jellyfish.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
 
 /**
  * This interface provides the same information as the {@link ICommandOptions} plus the added System Descriptor model.
@@ -35,6 +36,14 @@ public interface IJellyFishCommandOptions extends ICommandOptions {
     * @return the results of parsing the system descriptor project (never {@code null})
     */
    IParsingResult getParsingResult();
+
+   /**
+    * Gets the results of parsing the feature files associated with the system descriptor project.  This will contain
+    * any errors or warnings that where discovered during parsing.
+    *
+    * @return the results of parsing the feature files (never {@code null})
+    */
+   IGherkinParsingResult getGherkinParsingResult();
 
    /**
     * Get the system descriptor. Some commands may not require the system descriptor but most will. In the event that

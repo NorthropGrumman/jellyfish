@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -17,7 +17,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.XTextSourceLocation;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.SourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
@@ -60,8 +60,8 @@ public class XTextParsingIssue implements IParsingIssue {
 
    @Override
    public ISourceLocation getLocation() {
-      return new XTextSourceLocation(wrapped.getUriToProblem(), wrapped.getLineNumber(), wrapped.getColumn(),
-               wrapped.getLength());
+      return new SourceLocation(wrapped.getUriToProblem(), wrapped.getLineNumber(), wrapped.getColumn(),
+                                wrapped.getLength());
    }
 
    @Override

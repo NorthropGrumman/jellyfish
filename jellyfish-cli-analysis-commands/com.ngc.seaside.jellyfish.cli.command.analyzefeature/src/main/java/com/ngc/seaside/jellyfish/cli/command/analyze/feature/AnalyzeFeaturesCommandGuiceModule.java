@@ -31,7 +31,7 @@ public class AnalyzeFeaturesCommandGuiceModule extends AbstractModule {
    protected void configure() {
       Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
             .addBinding()
-            .to(AnalyzeFeaturesCommandGuiceWrapper.class);
+            .to(AnalyzeFeaturesCommand.class);
 
       // Register the finding types for this analysis.
       Multibinder<ISystemDescriptorFindingType> typesBinder = Multibinder.newSetBinder(

@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Objects;
 
-public class XTextSourceLocation implements ISourceLocation {
+public class SourceLocation implements ISourceLocation {
 
    private final Path path;
    private final int lineNumber;
@@ -46,7 +46,7 @@ public class XTextSourceLocation implements ISourceLocation {
     * @param column offset of location from start of line
     * @param length length of location
     */
-   public XTextSourceLocation(Path path, int lineNumber, int column, int length) {
+   public SourceLocation(Path path, int lineNumber, int column, int length) {
       this.path = path;
       this.lineNumber = lineNumber;
       this.column = column;
@@ -61,7 +61,7 @@ public class XTextSourceLocation implements ISourceLocation {
     * @param column offset of location from start of line
     * @param length length of location
     */
-   public XTextSourceLocation(URI uri, int lineNumber, int column, int length) {
+   public SourceLocation(URI uri, int lineNumber, int column, int length) {
       this.path = getPathFromUri(uri);
       this.lineNumber = lineNumber;
       this.column = column;
@@ -90,10 +90,10 @@ public class XTextSourceLocation implements ISourceLocation {
 
    @Override
    public boolean equals(Object o) {
-      if (!(o instanceof XTextSourceLocation)) {
+      if (!(o instanceof SourceLocation)) {
          return false;
       }
-      XTextSourceLocation that = (XTextSourceLocation) o;
+      SourceLocation that = (SourceLocation) o;
       return Objects.equals(this.path, that.path) && this.lineNumber == that.lineNumber && this.column == that.column
                && this.length == that.length;
    }

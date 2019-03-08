@@ -15,3 +15,4 @@
 # permission is obtained from Northrop Grumman.
 #
 
+com.ngc.seaside.systemdescriptor.service.impl.gherkin.module.CucumberGherkinServiceGuiceModule

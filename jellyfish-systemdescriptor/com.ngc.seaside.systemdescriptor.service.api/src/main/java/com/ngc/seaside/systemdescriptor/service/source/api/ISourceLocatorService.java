@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -19,21 +19,25 @@ package com.ngc.seaside.systemdescriptor.service.source.api;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinScenario;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinStep;
 
 /**
- * Service for locating where a System Descriptor element is located in the source code.
+ * Service for locating where a System Descriptor element is located in the source code.  Also supports locating
+ * elements within a Gherkin feature file.
  */
 public interface ISourceLocatorService {
 
    /**
     * Returns the source location of the given system descriptor element, such as an {@link IModel},
-    * {@link IModelLink}, or {@link IDataField}. If {@code entireElement} is {@code false}, the service will attempt to
+    * {@link IModelLink}, {@link IDataField}, {@link IFeature}, {@link IGherkinScenario},
+    * or {@link IGherkinStep}. If {@code entireElement} is {@code false}, the service will attempt to
     * narrow the location of the element, such as the location of just the name of the model for an {@link IModel}.
-    * 
-    * @param element system descriptor element
+    *
+    * @param element       system descriptor element
     * @param entireElement whether or not to return the location of the entire element
     * @return the source location of the given element
     */
    ISourceLocation getLocation(Object element, boolean entireElement);
-
 }

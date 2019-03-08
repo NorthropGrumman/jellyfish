@@ -18,6 +18,7 @@ package com.ngc.seaside.jellyfish.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import java.util.Objects;
 public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions {
 
    private IParsingResult parsingResult;
+   private IGherkinParsingResult gherkinParsingResult;
    private IParameterCollection parameters;
 
    @Override
@@ -48,6 +50,16 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
 
    public DefaultJellyFishCommandOptions setParsingResult(IParsingResult parsingResult) {
       this.parsingResult = parsingResult;
+      return this;
+   }
+
+   @Override
+   public IGherkinParsingResult getGherkinParsingResult() {
+      return gherkinParsingResult;
+   }
+
+   public DefaultJellyFishCommandOptions setGherkinParsingResult(IGherkinParsingResult gherkinParsingResult) {
+      this.gherkinParsingResult = gherkinParsingResult;
       return this;
    }
 
@@ -71,12 +83,13 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
       }
       IJellyFishCommandOptions that = (IJellyFishCommandOptions) obj;
       return Objects.equals(parameters, that.getParameters())
-             && Objects.equals(parsingResult, that.getParsingResult());
+             && Objects.equals(parsingResult, that.getParsingResult())
+             && Objects.equals(gherkinParsingResult, that.getGherkinParsingResult());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(parameters, parsingResult);
+      return Objects.hash(parameters, parsingResult, gherkinParsingResult);
    }
 
    /**
@@ -136,6 +149,7 @@ public class DefaultJellyFishCommandOptions implements IJellyFishCommandOptions 
 
       DefaultJellyFishCommandOptions mergedOptions = new DefaultJellyFishCommandOptions();
       mergedOptions.setParsingResult(options.getParsingResult());
+      mergedOptions.setGherkinParsingResult(options.getGherkinParsingResult());
       mergedOptions.setParameters(mergedParams);
       return mergedOptions;
    }

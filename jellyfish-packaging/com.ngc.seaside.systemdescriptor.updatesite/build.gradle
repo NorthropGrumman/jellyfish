@@ -72,6 +72,11 @@ eclipseUpdateSite {
          unpack = false
       }
       plugin {
+         id = 'com.ngc.seaside.systemdescriptor.service.impl.cucumbergherkinservice'
+         version = "${project.version}"
+         unpack = false
+      }
+      plugin {
          id = 'com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice'
          version = "${project.version}"
          unpack = false

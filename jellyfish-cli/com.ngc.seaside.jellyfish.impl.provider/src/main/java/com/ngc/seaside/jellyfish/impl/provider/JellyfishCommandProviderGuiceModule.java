@@ -22,7 +22,7 @@ import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 
 /**
- * Guice wrapper around the {@link JellyfishCommandProvider} and {@link DefaultCommandProvider} implementations.
+ * Guice wrapper around the {@code JellyfishCommandProvider} and {@code DefaultCommandProvider} implementations.
  */
 public class JellyfishCommandProviderGuiceModule extends AbstractModule {
 

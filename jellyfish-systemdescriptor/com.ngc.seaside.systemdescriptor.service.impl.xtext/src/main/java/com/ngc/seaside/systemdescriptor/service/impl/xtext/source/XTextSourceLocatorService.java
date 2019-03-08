@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -17,6 +17,7 @@
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.source;
 
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
+import com.ngc.seaside.systemdescriptor.service.impl.gherkin.model.IGherkinUnwrappable;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
@@ -44,21 +45,32 @@ public class XTextSourceLocatorService implements ISourceLocatorService {
    @Override
    public ISourceLocation getLocation(Object element, boolean fullRegion) {
       if (element instanceof IUnwrappable) {
-         @SuppressWarnings("unchecked")
-         IUnwrappable<? extends EObject> wrappable = (IUnwrappable<? extends EObject>) element;
-         EObject object = wrappable.unwrap();
-         URI uri = EcoreUtil2.getNormalizedURI(object);
-         INode node = NodeModelUtils.findActualNodeFor(object);
-         ITextRegion region;
-         if (fullRegion) {
-            region = provider.getFullTextRegion(object);
-         } else {
-            region = provider.getSignificantTextRegion(object);
-         }
-         LineAndColumn lineAndColumn = WrapperInternalNodeModelUtils.getLineAndColumn(node, region.getOffset());
-         return new XTextSourceLocation(uri, lineAndColumn.getLine(), lineAndColumn.getColumn(), region.getLength());
+         return doGetXtextLocation(element, fullRegion);
+      } else if (element instanceof IGherkinUnwrappable) {
+         return doGetGherkinLocation(element);
       }
       throw new IllegalArgumentException("Unable to get source location for element " + element);
+   }
+
+   private ISourceLocation doGetXtextLocation(Object element, boolean fullRegion) {
+      IUnwrappable<? extends EObject> wrappable = (IUnwrappable<? extends EObject>) element;
+      EObject object = wrappable.unwrap();
+      URI uri = EcoreUtil2.getNormalizedURI(object);
+      INode node = NodeModelUtils.findActualNodeFor(object);
+      ITextRegion region;
+      if (fullRegion) {
+         region = provider.getFullTextRegion(object);
+      } else {
+         region = provider.getSignificantTextRegion(object);
+      }
+      LineAndColumn lineAndColumn = WrapperInternalNodeModelUtils.getLineAndColumn(node, region.getOffset());
+      return new SourceLocation(uri, lineAndColumn.getLine(), lineAndColumn.getColumn(), region.getLength());
+   }
+
+   private ISourceLocation doGetGherkinLocation(Object element) {
+      IGherkinUnwrappable<?> wrapped = (IGherkinUnwrappable<?>) element;
+      // Length information is not available from Gherkin.
+      return new SourceLocation(wrapped.getPath(), wrapped.getLineNumber(), wrapped.getColumn(), -1);
    }
 
    private static class WrapperInternalNodeModelUtils extends InternalNodeModelUtils {

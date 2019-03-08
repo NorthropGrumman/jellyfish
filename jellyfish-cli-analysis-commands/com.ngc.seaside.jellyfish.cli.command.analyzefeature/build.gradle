@@ -16,7 +16,7 @@
  */
 dependencies {
    api "com.ngc.seaside:jellyfish.api:$version"
-
+   
    implementation "com.ngc.seaside:jellyfish.service.api:$version"
    implementation "com.ngc.seaside:jellyfish.utilities:$version"
 

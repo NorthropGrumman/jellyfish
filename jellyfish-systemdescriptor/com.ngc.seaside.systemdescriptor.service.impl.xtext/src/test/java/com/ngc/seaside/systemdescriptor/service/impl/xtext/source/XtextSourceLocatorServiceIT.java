@@ -3,7 +3,7 @@
  * Northrop Grumman Proprietary
  * ____________________________
  *
- * Copyright (C) 2018, Northrop Grumman Systems Corporation
+ * Copyright (C) 2019, Northrop Grumman Systems Corporation
  * All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains the property of
@@ -26,6 +26,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.impl.gherkin.model.IGherkinUnwrappable;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil.InjectorTestFactory;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
@@ -39,6 +40,8 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class XtextSourceLocatorServiceIT {
 
@@ -88,6 +91,15 @@ public class XtextSourceLocatorServiceIT {
       testLocation(time, filename, 19, 6, 4);
       IDataField field = time.getFields().getByName("hour").get();
       testLocation(field, filename, 25, 7, 4);
+   }
+
+   @Test
+   public void testGherkin() {
+      IGherkinUnwrappable<?> gherkin = mock(IGherkinUnwrappable.class);
+      when(gherkin.getPath()).thenReturn(Paths.get("foo.feature"));
+      when(gherkin.getLineNumber()).thenReturn(100);
+      when(gherkin.getColumn()).thenReturn(10);
+      testLocation(gherkin, "foo.feature", 100, 10, -1);
    }
 
    private static void testLocation(Object o, String filename, int line, int column, int length) {

@@ -17,16 +17,22 @@
 package com.ngc.seaside.jellyfish.impl.provider;
 
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingIssue;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinScenario;
 
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
-public class EmptyParsingResult implements IParsingResult {
+public class EmptyParsingResult implements IParsingResult, IGherkinParsingResult {
 
-   public static final IParsingResult INSTANCE = new EmptyParsingResult();
+   public static final EmptyParsingResult INSTANCE = new EmptyParsingResult();
 
    private EmptyParsingResult() {
    }
@@ -54,5 +60,50 @@ public class EmptyParsingResult implements IParsingResult {
    @Override
    public Path getTestSourcesRoot() {
       return null;
+   }
+
+   @Override
+   public Collection<IFeature> getFeatures() {
+      return Collections.emptyList();
+   }
+
+   @Override
+   public Optional<IFeature> findFeature(String fullyQualifiedName) {
+      return Optional.empty();
+   }
+
+   @Override
+   public Optional<IFeature> findFeature(String packageName, String featureName) {
+      return Optional.empty();
+   }
+
+   @Override
+   public Optional<IFeature> findFeature(IScenario scenario) {
+      return Optional.empty();
+   }
+
+   @Override
+   public Collection<IFeature> findFeatures(IModel model) {
+      return Collections.emptyList();
+   }
+
+   @Override
+   public Collection<IFeature> findFeatures(Collection<String> tags) {
+      return Collections.emptyList();
+   }
+
+   @Override
+   public Collection<IFeature> findFeatures(String tag, String... tags) {
+      return Collections.emptyList();
+   }
+
+   @Override
+   public Collection<IGherkinScenario> findScenarios(Collection<String> tags) {
+      return Collections.emptyList();
+   }
+
+   @Override
+   public Collection<IGherkinScenario> findScenarios(String tag, String... tags) {
+      return Collections.emptyList();
    }
 }

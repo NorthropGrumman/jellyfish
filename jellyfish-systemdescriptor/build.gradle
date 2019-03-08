@@ -50,7 +50,20 @@ subprojects {
         deploymentScriptFile = m2DeploymentScriptFile
     }
 
-    license {
+    task licenseCheckSd(type: com.hierynomus.gradle.license.tasks.LicenseCheck,
+                        group: 'License',
+                        description: 'Check for header consistency of System Descriptor files.') {
+        source 'src/test/resources'
         include '**/*.sd'
     }
+
+    task licenseFormatSd(type: com.hierynomus.gradle.license.tasks.LicenseFormat,
+                         group: 'License',
+                         description: 'Applies the configured license to System Descriptor files.') {
+        source 'src/test/resources'
+        include '**/*.sd'
+    }
+
+    tasks.getByName('license').dependsOn(licenseCheckSd)
+    licenseFormat.dependsOn(licenseFormatSd)
 }
