@@ -27,8 +27,8 @@ public class ValidateCommandGuiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      Multibinder.newSetBinder(binder(), IJellyFishCommand.class)
-            .addBinding()
-            .to(ValidateCommandGuiceWrapper.class);
+      Multibinder<IJellyFishCommand> binder = Multibinder.newSetBinder(binder(), IJellyFishCommand.class);
+      binder.addBinding().to(ValidateCommandGuiceWrapper.class);
+      binder.addBinding().to(ValidateFeaturesCommand.class);
    }
 }

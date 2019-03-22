@@ -286,7 +286,7 @@ public class JellyfishCommandProvider extends AbstractCommandProvider<
          return gherkinService.parseProject(parsingResult);
       } else {
          logService.debug(getClass(), "Project has no test sources.");
-         return EmptyParsingResult.INSTANCE;
+         return EmptyParsingResult.SUCCESSFUL_INSTANCE;
       }
    }
 }

@@ -115,6 +115,11 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
     * The name of the task that validates the SD project.
     */
    public static final String VALIDATE_TASK_NAME = "validateSd";
+   
+   /**
+    * The name of the task that validates the feature files associated with the project.
+    */
+   public static final String VALIDATE_FEATURES_TASK_NAME = "validateFeatures";
 
    /**
     * Performs and analyst of the project using the analysis configured in the {@link
@@ -174,9 +179,9 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
          build.dependsOn(task);
       });
 
-      tasks.create(VALIDATE_TASK_NAME, JellyFishCliCommandTask.class, task -> {
+      Task validate = tasks.create(VALIDATE_TASK_NAME, JellyFishCliCommandTask.class, task -> {
          task.setCommand("validate");
-         task.setDescription("Validates the system descriptor project");
+         task.setDescription("Validates the system descriptor project.");
          task.setGroup(LifecycleBasePlugin.BUILD_GROUP);
          task.setArguments(Collections.singletonMap(CommonParameters.INPUT_DIRECTORY.getName(),
                                                     project.getProjectDir().toString()));
@@ -192,12 +197,24 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
                .matching(projectTask -> MavenPlugin.INSTALL_TASK_NAME.equals(projectTask.getName()))
                .all(task::dependsOn));
       });
+      
+      Task validateFeatures = tasks.create(VALIDATE_FEATURES_TASK_NAME, JellyFishCliCommandTask.class, task -> {
+         task.setCommand("validate-features");
+         task.setDescription("Validates the feature files of the project.");
+         task.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+         task.setArguments(Collections.singletonMap(CommonParameters.INPUT_DIRECTORY.getName(),
+                                                    project.getProjectDir().toString()));
+         build.dependsOn(task);
+         sdJar.dependsOn(task);
+         testJar.dependsOn(task);
+         task.dependsOn(validate);
+      });
 
       tasks.create(ANALYZE_TASK_NAME, JellyFishCliCommandTask.class, task -> {
          task.setCommand(AnalyzeCommand.NAME);
          task.setDescription("Runs various analyses that have been configured.");
          task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
-         task.dependsOn(tasks.getByName(VALIDATE_TASK_NAME));
+         task.dependsOn(validate, validateFeatures);
          task.argument(CommonParameters.INPUT_DIRECTORY.getName(), project.getProjectDir().toString());
       });
    }
@@ -313,7 +330,8 @@ public class SystemDescriptorProjectPlugin extends AbstractProjectPlugin {
                properties.property(SystemDescriptorProperties.JELLYFISH_CLI_EXTRA_ARGUMENTS_KEY, args);
             }
          });
-         project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME).dependsOn(VALIDATE_TASK_NAME);
+         project.getTasks().getByName(SonarQubeExtension.SONARQUBE_TASK_NAME)
+            .dependsOn(VALIDATE_TASK_NAME, VALIDATE_FEATURES_TASK_NAME);
       });
    }
 

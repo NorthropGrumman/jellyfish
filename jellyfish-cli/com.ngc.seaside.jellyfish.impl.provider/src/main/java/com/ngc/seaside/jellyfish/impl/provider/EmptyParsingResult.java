@@ -32,9 +32,14 @@ import java.util.Optional;
 
 public class EmptyParsingResult implements IParsingResult, IGherkinParsingResult {
 
-   public static final EmptyParsingResult INSTANCE = new EmptyParsingResult();
+   public static final EmptyParsingResult UNSUCCESSFUL_INSTANCE = new EmptyParsingResult(false);
+   
+   public static final EmptyParsingResult SUCCESSFUL_INSTANCE = new EmptyParsingResult(true);
 
-   private EmptyParsingResult() {
+   private final boolean successful;
+   
+   private EmptyParsingResult(boolean successful) {
+      this.successful = successful;
    }
 
    @Override
@@ -44,7 +49,7 @@ public class EmptyParsingResult implements IParsingResult, IGherkinParsingResult
 
    @Override
    public boolean isSuccessful() {
-      return false;
+      return successful;
    }
 
    @Override
