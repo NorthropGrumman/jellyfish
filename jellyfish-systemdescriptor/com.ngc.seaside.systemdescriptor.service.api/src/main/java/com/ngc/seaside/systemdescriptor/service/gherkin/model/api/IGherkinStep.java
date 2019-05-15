@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A step is a single line in a Gherkin {@link IGherkinScenario scenaio}.
+ * A step is a single line in a Gherkin {@link IGherkinScenario scenario}.
  */
 public interface IGherkinStep {
 

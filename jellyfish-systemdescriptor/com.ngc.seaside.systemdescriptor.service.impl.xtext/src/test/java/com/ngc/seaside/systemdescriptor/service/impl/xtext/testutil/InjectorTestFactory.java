@@ -24,6 +24,7 @@ import com.google.inject.Module;
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.service.impl.gherkin.module.CucumberGherkinServiceGuiceModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
@@ -75,6 +76,7 @@ public class InjectorTestFactory {
                // Do nothing.
             }
          });
+         modules.add(new CucumberGherkinServiceGuiceModule());
          injector = Guice.createInjector(modules);
          new SystemDescriptorStandaloneSetup().register(injector);
       }

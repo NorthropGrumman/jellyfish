@@ -21,6 +21,7 @@ dependencies {
    implementation project(':systemdescriptor.model.impl.xtext')
    implementation project(':systemdescriptor.model.impl.basic')
    implementation project(':systemdescriptor.service.impl.cucumbergherkinservice')
+   implementation "io.cucumber:gherkin:$gherkinVersion"
    implementation "com.ngc.seaside:systemdescriptor:$version"
 
    implementation "com.google.inject:guice:$guiceVersion"

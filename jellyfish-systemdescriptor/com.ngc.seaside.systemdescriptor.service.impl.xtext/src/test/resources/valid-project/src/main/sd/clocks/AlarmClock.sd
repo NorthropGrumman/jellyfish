@@ -36,6 +36,9 @@ model AlarmClock {
     Timer timer
     ClockDisplay display
     Alarm alarm
+  }
+  
+  requires {
     Speaker speaker
   }
 
@@ -44,5 +47,14 @@ model AlarmClock {
       link timer.currentTime -> alarm.currentTime
       link speaker -> alarm.speaker
       link alarmTimes -> alarm.alarmTimes
+  }
+  
+  scenario beep {
+      metadata {
+          "example": "value"
+      }
+      given TODO a b c
+      when TODO a b c
+      then TODO a b c
   }
 }

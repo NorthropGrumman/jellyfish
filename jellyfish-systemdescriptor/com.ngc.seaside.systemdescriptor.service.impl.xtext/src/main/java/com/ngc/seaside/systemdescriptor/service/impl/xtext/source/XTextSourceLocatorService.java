@@ -16,10 +16,14 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.source;
 
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.systemdescriptor.model.impl.xtext.IUnwrappable;
 import com.ngc.seaside.systemdescriptor.service.impl.gherkin.model.IGherkinUnwrappable;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.chained.ChainedMethodCallContext;
+import com.ngc.seaside.systemdescriptor.service.source.api.IChainedMethodCall;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
+import com.ngc.seaside.systemdescriptor.service.source.api.UnknownSourceLocationException;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -36,10 +40,12 @@ import javax.inject.Inject;
 public class XTextSourceLocatorService implements ISourceLocatorService {
 
    private ILocationInFileProvider provider;
+   private final ChainedMethodCallContext context;
 
    @Inject
    public XTextSourceLocatorService(ILocationInFileProvider provider) {
       this.provider = provider;
+      this.context = new ChainedMethodCallContext(provider);
    }
 
    @Override
@@ -49,10 +55,11 @@ public class XTextSourceLocatorService implements ISourceLocatorService {
       } else if (element instanceof IGherkinUnwrappable) {
          return doGetGherkinLocation(element);
       }
-      throw new IllegalArgumentException("Unable to get source location for element " + element);
+      throw new UnknownSourceLocationException("Unable to get source location for element " + element);
    }
 
    private ISourceLocation doGetXtextLocation(Object element, boolean fullRegion) {
+      @SuppressWarnings("unchecked")
       IUnwrappable<? extends EObject> wrappable = (IUnwrappable<? extends EObject>) element;
       EObject object = wrappable.unwrap();
       URI uri = EcoreUtil2.getNormalizedURI(object);
@@ -77,5 +84,11 @@ public class XTextSourceLocatorService implements ISourceLocatorService {
       public static LineAndColumn getLineAndColumn(INode node, int offset) {
          return InternalNodeModelUtils.getLineAndColumn(node, offset);
       }
+   }
+
+   @Override
+   public <T> IChainedMethodCall<T> with(T element) {
+      Preconditions.checkNotNull(element, "element may not be null");
+      return context.getChainedMethodCallForElement(element);
    }
 }

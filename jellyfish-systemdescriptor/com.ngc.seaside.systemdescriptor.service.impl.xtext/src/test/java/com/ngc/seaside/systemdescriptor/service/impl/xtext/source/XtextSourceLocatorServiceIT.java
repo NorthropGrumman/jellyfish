@@ -49,6 +49,7 @@ public class XtextSourceLocatorServiceIT {
    private static ISystemDescriptor sd;
    private static ISystemDescriptor zippedSd;
 
+   @SuppressWarnings("deprecation")
    @BeforeClass
    public static void setup() {
       TerminalsStandaloneSetup.doSetup();
