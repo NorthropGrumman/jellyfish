@@ -47,7 +47,7 @@ public class GherkinFeature extends AbstractWrappedGherkin<Feature> implements I
 
    private final Collection<IGherkinTag> tags;
 
-   private final NamedChildCollection<IFeature, IGherkinScenario> scenarios;
+   private final INamedChildCollection<IFeature, IGherkinScenario> scenarios;
 
    private String name;
 
@@ -69,7 +69,7 @@ public class GherkinFeature extends AbstractWrappedGherkin<Feature> implements I
             .collect(Collectors.toList());
 
       IGherkinScenario background = null;
-      scenarios = new NamedChildCollection<>();
+      scenarios = new NamedChildCollectionWithDuplicateNames<>();
       for (ScenarioDefinition definition : wrapped.getChildren()) {
          if (background == null && definition instanceof Background) {
             background = GherkinScenario.from((Background) definition, path, this);

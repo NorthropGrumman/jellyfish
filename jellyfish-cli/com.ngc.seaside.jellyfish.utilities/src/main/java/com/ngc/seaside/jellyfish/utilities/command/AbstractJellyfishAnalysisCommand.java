@@ -29,6 +29,7 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.ModelPredicates;
 import com.ngc.seaside.systemdescriptor.model.api.traversal.Traversals;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 import org.apache.commons.io.IOUtils;
@@ -162,6 +163,16 @@ public abstract class AbstractJellyfishAnalysisCommand extends AbstractJellyfish
          packagez.getData().forEach(this::analyzeData);
          packagez.getEnumerations().forEach(this::analyzeEnumeration);
       }
+      for (IFeature feature : getOptions().getGherkinParsingResult().getFeatures()) {
+         analyzeFeature(feature);
+      }
+   }
+
+   /**
+    * Invoked to analyze a feature.  The default implementation does nothing. Extenders of this class will override
+    * this method to perform analysis and report findings via {@link #reportFinding(SystemDescriptorFinding)}.
+    */
+   protected void analyzeFeature(IFeature feature) {
    }
 
    /**

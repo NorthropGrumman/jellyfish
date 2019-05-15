@@ -142,6 +142,7 @@ dependencies {
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzeinputsoutputs:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzestyle:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzefeature:$version"
+   implementation "com.ngc.seaside:jellyfish.cli.command.analyzefeaturescenarios:$version"
    implementation "com.ngc.seaside:jellyfish.cli.command.analyzebudget:$version"
 
    implementation "com.ngc.seaside:jellyfish.cli.command.consoleanalysisreport:$version"

@@ -30,6 +30,8 @@ import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +62,9 @@ public class AbstractJellyfishAnalysisCommandTest {
    private ISystemDescriptor systemDescriptor;
 
    @Mock
+   private IGherkinParsingResult gherkinResult;
+
+   @Mock
    private IJellyFishCommandOptions options;
 
    @Mock
@@ -70,6 +75,7 @@ public class AbstractJellyfishAnalysisCommandTest {
       parameters = new DefaultParameterCollection();
       when(options.getParameters()).thenReturn(parameters);
       when(options.getSystemDescriptor()).thenReturn(systemDescriptor);
+      when(options.getGherkinParsingResult()).thenReturn(gherkinResult);
 
       command = new TestableCommand();
       command.setLogService(logService);
@@ -123,10 +129,12 @@ public class AbstractJellyfishAnalysisCommandTest {
       IModel model = registeredModel("com.foo.FooModel");
       IData data = registeredData("com.foo.BarData");
       IEnumeration enumeration = registeredEnum("com.foo.CooEnum");
+      IFeature feature = mock(IFeature.class);
 
       NamedChildCollection<IPackage, IModel> models = new NamedChildCollection<>();
       NamedChildCollection<IPackage, IData> datum = new NamedChildCollection<>();
       NamedChildCollection<IPackage, IEnumeration> enums = new NamedChildCollection<>();
+      Collection<IFeature> features = Collections.singleton(feature);
       models.add(model);
       datum.add(data);
       enums.add(enumeration);
@@ -139,6 +147,7 @@ public class AbstractJellyfishAnalysisCommandTest {
       NamedChildCollection<ISystemDescriptor, IPackage> packages = new NamedChildCollection<>();
       packages.add(packagez);
       when(systemDescriptor.getPackages()).thenReturn(packages);
+      when(gherkinResult.getFeatures()).thenReturn(features);
 
       command.run(options);
       assertTrue("model was not analyzed!",
@@ -147,6 +156,8 @@ public class AbstractJellyfishAnalysisCommandTest {
                  command.wasAnalyzed(data));
       assertTrue("enum was not analyzed!",
                  command.wasAnalyzed(enumeration));
+      assertTrue("feature was not analyzed!",
+                 command.wasAnalyzed(feature));
       assertEquals("too many models analyzed!",
                    1,
                    command.models.size());
@@ -156,6 +167,9 @@ public class AbstractJellyfishAnalysisCommandTest {
       assertEquals("too many enums analyzed!",
                    1,
                    command.enums.size());
+      assertEquals("too many features analyzed!",
+                   1,
+                   command.features.size());
    }
 
    @Test
@@ -203,6 +217,7 @@ public class AbstractJellyfishAnalysisCommandTest {
       private final Collection<IModel> models = new ArrayList<>();
       private final Collection<IData> datum = new ArrayList<>();
       private final Collection<IEnumeration> enums = new ArrayList<>();
+      private final Collection<IFeature> features = new ArrayList<>();
 
       TestableCommand() {
          super("testable-command");
@@ -228,6 +243,11 @@ public class AbstractJellyfishAnalysisCommandTest {
          enums.add(enumeration);
       }
 
+      @Override
+      protected void analyzeFeature(IFeature feature) {
+         features.add(feature);
+      }
+
       boolean wasAnalyzed(IModel model) {
          return models.contains(model);
       }
@@ -238,6 +258,10 @@ public class AbstractJellyfishAnalysisCommandTest {
 
       boolean wasAnalyzed(IEnumeration enumeration) {
          return enums.contains(enumeration);
+      }
+
+      boolean wasAnalyzed(IFeature feature) {
+         return features.contains(feature);
       }
    }
 }
