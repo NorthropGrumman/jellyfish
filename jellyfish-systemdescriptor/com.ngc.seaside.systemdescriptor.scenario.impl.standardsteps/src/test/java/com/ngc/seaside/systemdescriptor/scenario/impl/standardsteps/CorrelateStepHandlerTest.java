@@ -35,6 +35,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -651,5 +653,48 @@ public class CorrelateStepHandlerTest {
 
       // Results
       verify(mockedStep).getKeyword();
+   }
+
+   @Test
+   public void testParameterCompletion() throws Throwable {
+      step = new ScenarioStep();
+      step.setKeyword(CorrelateStepHandler.FUTURE.getVerb());
+
+      IData inputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.InputDataType0");
+      IData outputDataType0 = ModelUtils.getMockNamedChild(IData.class, "test.OutputDataType0");
+
+      ModelUtils.mockData(inputDataType0, null, "field0", DataTypes.INT);
+      ModelUtils.mockData(outputDataType0, null, "field1", DataTypes.INT);
+
+      PubSubModel model = new PubSubModel("com.ModelName");
+      model.addInput("input0", inputDataType0);
+      model.addOutput("output0", outputDataType0);
+      IScenario scenarioParent = mock(IScenario.class);
+      when(scenarioParent.getParent()).thenReturn(model);
+
+      model.addScenario(scenarioParent);
+      step.setParent(scenarioParent);
+
+      Set<String> suggestions;
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("inpu", "to", "output0.field1"));
+      suggestions = handler.getSuggestedParameterCompletions(step, CorrelateStepHandler.FUTURE, 0);
+      assertEquals(Collections.singleton("input0"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("input0.field0", "to", "o"));
+      suggestions = handler.getSuggestedParameterCompletions(step, CorrelateStepHandler.FUTURE, 2);
+      assertEquals(Collections.singleton("output0"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("input0.f", "to", "output0.field1"));
+      suggestions = handler.getSuggestedParameterCompletions(step, CorrelateStepHandler.FUTURE, 0);
+      assertEquals(Collections.singleton("input0.field0"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("input0.field0", "to", "output0."));
+      suggestions = handler.getSuggestedParameterCompletions(step, CorrelateStepHandler.FUTURE, 2);
+      assertEquals(Collections.singleton("output0.field1"), suggestions);
    }
 }

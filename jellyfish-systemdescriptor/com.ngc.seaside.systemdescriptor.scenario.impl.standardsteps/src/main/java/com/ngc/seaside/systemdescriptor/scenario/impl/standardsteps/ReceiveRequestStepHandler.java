@@ -27,7 +27,10 @@ import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +88,19 @@ public class ReceiveRequestStepHandler extends AbstractStepHandler {
             ReceiveStepHandler.PRESENT,
             "Scenarios that receive requests cannot asynchronously receive multiple inputs!");
       requireWillRespondStep(context);
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+                                                            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 1) {
+         return Collections.emptySet();
+      }
+      Set<String> suggestions = new TreeSet<>();
+      for (IDataReferenceField field : step.getParent().getParent().getInputs()) {
+         suggestions.add(field.getName());
+      }
+      return suggestions;
    }
 
    private static void requireNoOtherReceiveRequestStepsInScenario(IValidationContext<IScenarioStep> context) {

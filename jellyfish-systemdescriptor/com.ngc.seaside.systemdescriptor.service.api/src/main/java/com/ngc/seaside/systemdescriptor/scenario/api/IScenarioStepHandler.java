@@ -18,7 +18,9 @@ package com.ngc.seaside.systemdescriptor.scenario.api;
 
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A step handler is register to handle a particular verb that is used as a {@link IScenarioStep#getKeyword() keyword in
@@ -34,4 +36,19 @@ public interface IScenarioStepHandler {
     * @return a unmodifiable map of all verbs this handler supports.
     */
    Map<VerbTense, ScenarioStepVerb> getVerbs();
+
+   /**
+    * Returns a collection of potential strings that can be used to complete the parameter at the given index, or an
+    * empty list if there is none. The scenario step's parameters represent the currently filled in parameters for the
+    * scenario step, possible containing empty string elements.
+    *
+    * @param step           scenario step
+    * @param verb           scenario step verb
+    * @param parameterIndex index of parameter
+    * @return a collection of potential strings that can be used to complete the parameter at the given index
+    */
+   default Set<String> getSuggestedParameterCompletions(IScenarioStep step, ScenarioStepVerb verb,
+            int parameterIndex) {
+      return Collections.emptySet();
+   }
 }

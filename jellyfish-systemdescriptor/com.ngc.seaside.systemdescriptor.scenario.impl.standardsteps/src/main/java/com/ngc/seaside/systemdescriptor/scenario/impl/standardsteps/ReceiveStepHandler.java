@@ -26,6 +26,10 @@ import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Implements the "receive" step verb.  This verb is used to indicate some input is asynchronously received using some
  * pub/sub protocol.  It's only argument is the input field of the model that contains the scenario that is published.
@@ -69,6 +73,19 @@ public class ReceiveStepHandler extends AbstractStepHandler {
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
       requireOnlyOneParameter(context, "The 'receive' verb requires exactly one parameter which is an input field!");
       requireParameterReferenceAnInputField(context, 0);
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+                                                            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 1) {
+         return Collections.emptySet();
+      }
+      Set<String> suggestions = new TreeSet<>();
+      for (IDataReferenceField field : step.getParent().getParent().getInputs()) {
+         suggestions.add(field.getName());
+      }
+      return suggestions;
    }
 
    static void requireParameterReferenceAnInputField(IValidationContext<IScenarioStep> context,

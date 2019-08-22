@@ -81,6 +81,11 @@ Workflow {
 				generateStub = true
 				generateXtendStub = false
 			}
+			
+			contentAssist = {
+				generateStub = true
+				generateXtendStub = false
+			}
 		}
 	}
 }

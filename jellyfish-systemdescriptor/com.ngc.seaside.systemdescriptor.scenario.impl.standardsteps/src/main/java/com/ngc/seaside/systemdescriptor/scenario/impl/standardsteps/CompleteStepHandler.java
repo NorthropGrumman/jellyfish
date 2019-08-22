@@ -17,15 +17,17 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -104,6 +106,37 @@ public class CompleteStepHandler extends AbstractStepHandler {
       Preconditions.checkArgument(parameters.size() == 3,
                                   "invalid step!");
       return validateTimeUnit(null, step, parameters.get(2));
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+                                                            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 3) {
+         return Collections.emptySet();
+      }
+      Set<String> suggestions = new TreeSet<>();
+      switch (parameterIndex) {
+         case 0:
+            for (Operand operand : Operand.values()) {
+               String keyword = operand.keyword;
+               if (keyword.startsWith(partialParameter)) {
+                  suggestions.add(keyword);
+               }
+            }
+            break;
+         case 2:
+            for (TimeUnit unit : TimeUnit.values()) {
+               String keyword = unit.name().toLowerCase();
+               if (keyword.startsWith(partialParameter)) {
+                  suggestions.add(keyword);
+               }
+            }
+            break;
+         default:
+            // ignore
+            break;
+      }
+      return suggestions;
    }
 
    @Override

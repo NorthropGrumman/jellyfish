@@ -32,6 +32,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -66,6 +70,7 @@ public class ReceiveStepHandlerTest {
 
       model = new Model("TestModel");
       model.addInput(field);
+      model.addInput(new DataReferenceField("in2").setType(data));
 
       Scenario scenario = new Scenario("test");
       scenario.setParent(model);
@@ -150,5 +155,22 @@ public class ReceiveStepHandlerTest {
       assertEquals("did not return correct field!",
                    field,
                    handler.getInputs(step));
+   }
+
+   @Test
+   public void testParameterCompletion() throws Throwable {
+      List<String> suggestions;
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList(""));
+      suggestions =
+               new ArrayList<>(handler.getSuggestedParameterCompletions(step, ReceiveRequestStepHandler.FUTURE, 0));
+      assertEquals(Arrays.asList("in2", "input1"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("inp"));
+      suggestions =
+               new ArrayList<>(handler.getSuggestedParameterCompletions(step, ReceiveRequestStepHandler.FUTURE, 0));
+      assertEquals(Arrays.asList("input1"), suggestions);
    }
 }

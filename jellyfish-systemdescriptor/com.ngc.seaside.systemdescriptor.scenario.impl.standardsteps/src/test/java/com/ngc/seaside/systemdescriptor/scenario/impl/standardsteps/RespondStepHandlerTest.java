@@ -32,6 +32,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,6 +72,7 @@ public class RespondStepHandlerTest {
 
       model = new Model("TestModel");
       model.addOutput(field);
+      model.addOutput(new DataReferenceField("out2").setType(data));
 
       scenario = new Scenario("test");
       scenario.setParent(model);
@@ -179,5 +184,28 @@ public class RespondStepHandlerTest {
       assertEquals("did not return correct field!",
                    field,
                    handler.getResponse(step));
+   }
+
+   @Test
+   public void testParameterCompletion() throws Throwable {
+      List<String> suggestions;
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("w"));
+      suggestions =
+               new ArrayList<>(handler.getSuggestedParameterCompletions(step, ReceiveRequestStepHandler.FUTURE, 0));
+      assertEquals(Arrays.asList("with"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("with", ""));
+      suggestions =
+               new ArrayList<>(handler.getSuggestedParameterCompletions(step, ReceiveRequestStepHandler.FUTURE, 1));
+      assertEquals(Arrays.asList("out2", "output1"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("with", "outp"));
+      suggestions =
+               new ArrayList<>(handler.getSuggestedParameterCompletions(step, ReceiveRequestStepHandler.FUTURE, 1));
+      assertEquals(Arrays.asList("output1"), suggestions);
    }
 }

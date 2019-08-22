@@ -17,17 +17,23 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
-
+import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
+import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IDataField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
 import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
+import com.ngc.seaside.systemdescriptor.scenario.api.VerbTense;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
@@ -148,6 +154,67 @@ public class CorrelateStepHandler extends AbstractStepHandler {
             validateInputOutputTense(context, step, leftData, rightData);
          }
       }
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 3 || verb.getTense() == VerbTense.PAST_TENSE) {
+         return Collections.emptySet();
+      }
+      switch (parameterIndex) {
+         case 0:
+            return getParameterCompletions(partialParameter, step.getParent().getParent(), false);
+         case 1:
+            return Collections.singleton("to");
+         case 2:
+            return getParameterCompletions(partialParameter, step.getParent().getParent(),
+                     verb.getTense() == VerbTense.FUTURE_TENSE);
+         default:
+            return Collections.emptySet();
+      }
+   }
+
+   private Set<String> getParameterCompletions(String partialParameter, IModel model, boolean output) {
+      Set<String> suggestions = new TreeSet<>();
+      int index = partialParameter.indexOf('.');
+      if (index >= 0) {
+         IDataReferenceField field;
+         if (output) {
+            field = model.getOutputs().getByName(partialParameter.substring(0, index)).orElse(null);
+         } else {
+            field = model.getInputs().getByName(partialParameter.substring(0, index)).orElse(null);
+         }
+         int startIndex = index + 1;
+         IData data = field == null ? null : field.getType();
+         while (data != null) {
+            index = partialParameter.indexOf('.', startIndex);
+            if (index < 0) {
+               break;
+            } else {
+               String part = partialParameter.substring(startIndex, index);
+               IDataField dataField = data.getFields().getByName(part).orElse(null);
+               data = dataField == null || dataField.getType() != DataTypes.DATA ? null
+                        : dataField.getReferencedDataType();
+            }
+            startIndex = index + 1;
+         }
+
+         String prefix = partialParameter.substring(0, partialParameter.lastIndexOf('.') + 1);
+         if (data != null) {
+            for (IDataField dataField : data.getFields()) {
+               suggestions.add(prefix + dataField.getName());
+            }
+         }
+      } else {
+         for (IDataReferenceField field : model.getInputs()) {
+            suggestions.add(field.getName());
+         }
+         for (IDataReferenceField field : model.getOutputs()) {
+            suggestions.add(field.getName());
+         }
+      }
+      return suggestions;
    }
 
    /**

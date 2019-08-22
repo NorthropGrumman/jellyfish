@@ -24,8 +24,10 @@ import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
+import com.ngc.seaside.systemdescriptor.extension.IScenarioStepCompletionExtension;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.XTextSystemDescriptorService;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.codecompletion.XtextScenarioStepCodeCompletion;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.source.XTextSourceLocatorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ScenarioStepValidator;
@@ -72,6 +74,7 @@ public class XTextSystemDescriptorServiceModule extends AbstractModule {
       bind(ISourceLocatorService.class).to(XTextSourceLocatorService.class).in(Singleton.class);
       bind(ParsingDelegate.class).in(Singleton.class);
       bind(ValidationDelegate.class).in(Singleton.class);
+      bind(IScenarioStepCompletionExtension.class).to(XtextScenarioStepCodeCompletion.class).in(Singleton.class);
       bindDefaultValidators();
 
       // If in standalone mode, include the DSL module so the client does not have to.

@@ -27,7 +27,10 @@ import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -79,6 +82,29 @@ public class RespondStepHandler extends AbstractStepHandler {
       requireWithParameter(context);
       PublishStepHandler.requireParameterReferenceAnOutputField(context, 1);
       requireNoOtherRespondStepsInScenario(context);
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+                                                            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 2) {
+         return Collections.emptySet();
+      }
+      Set<String> suggestions = new TreeSet<>();
+      switch (parameterIndex) {
+         case 0:
+            suggestions.add("with");
+            break;
+         case 1:
+            for (IDataReferenceField field : step.getParent().getParent().getOutputs()) {
+               suggestions.add(field.getName());
+            }
+            break;
+         default:
+            //ignore
+            break;
+      }
+      return suggestions;
    }
 
    private static void requireWithParameter(IValidationContext<IScenarioStep> context) {

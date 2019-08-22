@@ -24,7 +24,12 @@ import com.ngc.seaside.systemdescriptor.validation.api.Severity;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A base class for {@code IScenarioStepHandler}s.  The different forms of the verb supported by this handler must be
@@ -211,6 +216,48 @@ public abstract class AbstractStepHandler extends AbstractSystemDescriptorValida
             context.declare(Severity.ERROR, errorMessage, step).getKeyword();
          }
       }
+   }
+
+   /**
+    * Checks that the given arguments are valid and delegates to
+    * {@link #doGetSuggestedParameterCompletions(String, int, IScenarioStep, ScenarioStepVerb)}, filtering the resulting
+    * suggestions for those that don't start with the provided partial completion.
+    */
+   @Override
+   public Set<String> getSuggestedParameterCompletions(IScenarioStep step, ScenarioStepVerb verb, int parameterIndex) {
+      Objects.requireNonNull(step, "step cannot be null");
+      Objects.requireNonNull(verb, "verb cannot be null");
+      List<String> partialParameterCompletion = step.getParameters();
+      if (partialParameterCompletion.isEmpty()) {
+         throw new IllegalArgumentException("step parameter list cannot be empty");
+      }
+      if (parameterIndex < 0 || parameterIndex >= partialParameterCompletion.size()) {
+         throw new IllegalArgumentException(
+                  "partial parameter completion at " + parameterIndex + " index cannot be null");
+      }
+      String partialParameter = partialParameterCompletion.get(parameterIndex);
+      Objects.requireNonNull(partialParameter,
+               "partial parameter completion at " + parameterIndex + " index cannot be null");
+      Set<String> suggestions = doGetSuggestedParameterCompletions(partialParameter, parameterIndex, step, verb);
+      return suggestions.stream().filter(suggestion -> suggestion.startsWith(partialParameter))
+               .collect(Collectors.toCollection(LinkedHashSet::new));
+   }
+
+   /**
+    * Returns the suggestions for the given parameter. The suggestions do not need to be prefixed with the partial
+    * parameter as this is performed by {@link #getSuggestedParameterCompletions(IScenarioStep, ScenarioStepVerb, int)}.
+    *
+    * @see IScenarioStepHandler#getSuggestedParameterCompletions(IScenarioStep, ScenarioStepVerb, int)
+    *
+    * @param partialParameter partially-completed parameter (may be empty)
+    * @param parameterIndex   index of parameter
+    * @param step scenario    step
+    * @param verb             verb
+    * @return collection of suggested completions for the given parameter
+    */
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+            IScenarioStep step, ScenarioStepVerb verb) {
+      return Collections.emptySet();
    }
 
    private boolean shouldStepBeValidated(IScenarioStep step) {

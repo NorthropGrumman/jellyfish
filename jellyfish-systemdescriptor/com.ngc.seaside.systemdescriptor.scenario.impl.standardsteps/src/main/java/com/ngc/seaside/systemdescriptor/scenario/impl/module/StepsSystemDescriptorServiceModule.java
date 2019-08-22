@@ -21,7 +21,7 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
 import com.ngc.seaside.systemdescriptor.scenario.api.IScenarioStepHandler;
-import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.BeginCorrleationEventStepHandler;
+import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.BeginCorrelationEventStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CompleteStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.CorrelateStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepHandler;
@@ -45,7 +45,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       bind(PublishStepHandler.class).in(Singleton.class);
       bind(CompleteStepHandler.class).in(Singleton.class);
       bind(CorrelateStepHandler.class).in(Singleton.class);
-      bind(BeginCorrleationEventStepHandler.class).in(Singleton.class);
+      bind(BeginCorrelationEventStepHandler.class).in(Singleton.class);
       bind(ReceiveRequestStepHandler.class).in(Singleton.class);
       bind(RespondStepHandler.class).in(Singleton.class);
       bind(TodoStepHandler.class).in(Singleton.class);
@@ -57,7 +57,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       handlers.addBinding().to(PublishStepHandler.class);
       handlers.addBinding().to(CompleteStepHandler.class);
       handlers.addBinding().to(CorrelateStepHandler.class);
-      handlers.addBinding().to(BeginCorrleationEventStepHandler.class);
+      handlers.addBinding().to(BeginCorrelationEventStepHandler.class);
       handlers.addBinding().to(ReceiveRequestStepHandler.class);
       handlers.addBinding().to(RespondStepHandler.class);
       handlers.addBinding().to(TodoStepHandler.class);
@@ -70,7 +70,7 @@ public class StepsSystemDescriptorServiceModule extends AbstractModule {
       validators.addBinding().to(ReceiveStepHandler.class);
       validators.addBinding().to(CompleteStepHandler.class);
       validators.addBinding().to(CorrelateStepHandler.class);
-      validators.addBinding().to(BeginCorrleationEventStepHandler.class);
+      validators.addBinding().to(BeginCorrelationEventStepHandler.class);
       validators.addBinding().to(ReceiveRequestStepHandler.class);
       validators.addBinding().to(RespondStepHandler.class);
       validators.addBinding().to(TodoStepHandler.class);

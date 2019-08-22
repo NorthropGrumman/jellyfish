@@ -17,7 +17,6 @@
 package com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps;
 
 import com.google.common.base.Preconditions;
-
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenarioStep;
@@ -25,6 +24,10 @@ import com.ngc.seaside.systemdescriptor.scenario.api.AbstractStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.api.ScenarioStepVerb;
 import com.ngc.seaside.systemdescriptor.validation.api.IValidationContext;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Implements the "publish" step verb.  This verb is used to indicate some output is asynchronously published using some
@@ -69,6 +72,19 @@ public class PublishStepHandler extends AbstractStepHandler {
    protected void doValidateStep(IValidationContext<IScenarioStep> context) {
       requireOnlyOneParameter(context, "The 'publish' verb requires exactly one parameter which is an output field!");
       requireParameterReferenceAnOutputField(context, 0);
+   }
+
+   @Override
+   protected Set<String> doGetSuggestedParameterCompletions(String partialParameter, int parameterIndex,
+                                                            IScenarioStep step, ScenarioStepVerb verb) {
+      if (step.getParameters().size() > 1) {
+         return Collections.emptySet();
+      }
+      Set<String> suggestions = new TreeSet<>();
+      for (IDataReferenceField field : step.getParent().getParent().getOutputs()) {
+         suggestions.add(field.getName());
+      }
+      return suggestions;
    }
 
    static void requireParameterReferenceAnOutputField(IValidationContext<IScenarioStep> context,

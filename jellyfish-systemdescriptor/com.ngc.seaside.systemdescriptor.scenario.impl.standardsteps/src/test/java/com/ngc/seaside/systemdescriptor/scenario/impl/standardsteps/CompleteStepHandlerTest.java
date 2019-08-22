@@ -28,7 +28,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -132,5 +135,30 @@ public class CompleteStepHandlerTest {
       assertEquals("time unit not correct!",
                    TimeUnit.SECONDS,
                    handler.getTimeUnit(step));
+   }
+
+   @Test
+   public void testParameterCompletion() throws Throwable {
+      List<String> suggestions;
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList(""));
+      suggestions = new ArrayList<>(handler.getSuggestedParameterCompletions(step, CompleteStepHandler.FUTURE, 0));
+      assertEquals(Arrays.asList("atLeast", "within"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("w"));
+      suggestions = new ArrayList<>(handler.getSuggestedParameterCompletions(step, CompleteStepHandler.FUTURE, 0));
+      assertEquals(Collections.singletonList("within"), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("within", "5"));
+      suggestions = new ArrayList<>(handler.getSuggestedParameterCompletions(step, CompleteStepHandler.FUTURE, 1));
+      assertEquals(Collections.emptyList(), suggestions);
+
+      step.getParameters().clear();
+      step.getParameters().addAll(Arrays.asList("within", "5", "m"));
+      suggestions = new ArrayList<>(handler.getSuggestedParameterCompletions(step, CompleteStepHandler.FUTURE, 2));
+      assertEquals(Arrays.asList("microseconds", "milliseconds", "minutes"), suggestions);
    }
 }
