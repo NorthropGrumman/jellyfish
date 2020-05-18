@@ -21,15 +21,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 repositories {
+    mavenCentral()
     mavenLocal()
-
-    maven {
-        credentials {
-            username nexusUsername
-            password nexusPassword
-        }
-        url nexusConsolidated
-    }
 }
 
 dependencies {

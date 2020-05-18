@@ -21,11 +21,8 @@
 \${header.gradle}
 buildscript {
     repositories {
+        mavenCentral()
         mavenLocal()
-
-        maven {
-            url nexusConsolidated
-        }
     }
     
     dependencies {

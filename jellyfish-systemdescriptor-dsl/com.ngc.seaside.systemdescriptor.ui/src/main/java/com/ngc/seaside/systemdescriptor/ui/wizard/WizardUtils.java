@@ -51,7 +51,7 @@ public class WizardUtils {
    public static final String GRADLE_USER_HOME_ENVIRONMENT_VARIABLE = "GRADLE_USER_HOME";
 
    public static final String DEFAULT_GRADLE_DISTRIBUTION = 
-            "https\\://nexusrepomgr.ms.northgrum.com/repository/gradle-distributions/gradle-4.9-bin.zip";
+            "https\://services.gradle.org/distributions/gradle-4.9-bin.zip";
 
    /**
     * Returns the {@link FileHeader}

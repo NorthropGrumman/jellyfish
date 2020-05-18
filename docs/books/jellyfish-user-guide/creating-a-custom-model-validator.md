@@ -201,11 +201,8 @@ Recall our `SoftwareStore` example contains a `build.gradle` file that looks lik
 ```groovy
 buildscript {
    repositories {
+      mavenCentral()
       mavenLocal()
-
-      maven {
-         url nexusConsolidated
-      }
    }
 
    dependencies {
@@ -264,7 +261,7 @@ In this example, we are going to package our validator in its own update site th
 for Jellyfish.  This will require users to first install the Jellyfish update site and then the custom update site.
 Some teams may prefer to produce an update site that also installs Jellyfish itself so users don't have to configure
 multiple update sites.  See the
-[project for the Jellyfish update site](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite)
+[project for the Jellyfish update site](https://google.com)
 to see how to create such an update site.
 
 ### Configuring the Update Site Project
@@ -275,11 +272,8 @@ We'll need to configure a new Gradle project.  This project will produce a ZIP f
 ```groovy
 buildscript {
    repositories {
+      mavenCentral()
       mavenLocal()
-
-      maven {
-         url nexusConsolidated
-      }
    }
 
    dependencies {
@@ -292,10 +286,8 @@ apply plugin: 'com.ngc.seaside.eclipse.updatesite'
 apply plugin: 'com.ngc.seaside.eclipse.p2'
 
 eclipseDistribution {
-   linuxVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
-   windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
-   linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
-   windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
+   linuxDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
+   windowsDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
 }
 
 eclipseUpdateSite {

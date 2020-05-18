@@ -15,7 +15,7 @@ Once installed, Eclipse can be used to create and edit SD models.  Two items mus
 1. the [System Descriptor language update site]({{ safebase }}/index.html#get-jellyfish)
 
 Note that the latest versions can be located on the
-[GitHub releases page](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).
+[GitHub releases page](https://google.com).
 
 # Setting up Eclipse
 1. Unzip the Eclipse zip to any location you wish.

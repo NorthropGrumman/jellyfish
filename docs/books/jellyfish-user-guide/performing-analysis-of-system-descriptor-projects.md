@@ -16,7 +16,7 @@ Jellyfish command.s  Analysis can be run in three ways:
    Gradle.
 
 Jellyfish includes various default report generators and analysis.  See 
-https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-cli-analysis-commands for a complete list of
+https://github.com/NorthropGrumman/jellyfish/tree/master/jellyfish-cli-analysis-commands for a complete list of
 items built directly into Jellyfish.
 
 # Running Analysis with Jellyfish

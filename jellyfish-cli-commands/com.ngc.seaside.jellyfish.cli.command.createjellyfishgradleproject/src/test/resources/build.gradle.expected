@@ -1,14 +1,7 @@
 buildscript {
     repositories {
+        mavenCentral()
         mavenLocal()
-
-        maven {
-            credentials {
-                username nexusUsername
-                password nexusPassword
-            }
-            url nexusConsolidated
-        }
     }
 
    dependencies {

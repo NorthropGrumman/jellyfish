@@ -28,11 +28,8 @@ buildscript {
    ext.currentJellyfishVersion = version
 
    repositories {
+      mavenCentral()
       mavenLocal()
-
-      maven {
-         url nexusConsolidated
-      }
    }
 
    dependencies {

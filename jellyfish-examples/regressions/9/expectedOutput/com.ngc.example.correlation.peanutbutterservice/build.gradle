@@ -21,17 +21,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 buildscript {
-    repositories {
-        mavenLocal()
-
-        maven {
-            credentials {
-                username nexusUsername
-                password nexusPassword
-            }
-            url nexusConsolidated
-        }
-    }
+   repositories {
+      mavenCentral()
+      mavenLocal()
+   }
 
    dependencies {
       classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.5"

@@ -27,12 +27,10 @@ buildscript {
     apply from: versionsFile, to: project
 
     repositories {
+        mavenCentral()
         mavenLocal()
-
-        maven {
-            url nexusConsolidated
-        }
     }
+    
     dependencies {
         classpath "org.xtext:xtext-gradle-plugin:$xtextPluginVersion"
         classpath "com.ngc.seaside:gradle.plugins:$seasidePluginsVersion"
@@ -125,14 +123,15 @@ subprojects {
     }
 
     repositories {
+        mavenCentral()
         mavenLocal()
 
-        maven {
-            // The name of the repo must match the repository name configured by the SeasideCi plugin.
-            // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
-            name 'NexusConsolidated'
-            url nexusConsolidated
-        }
+        // maven {
+        //     // The name of the repo must match the repository name configured by the SeasideCi plugin.
+        //     // You can override the name with seasideCi { remoteM2RepositoryName = 'foo' }
+        //     name 'NexusConsolidated'
+        //     url nexusConsolidated
+        // }
     }
 
     /**
@@ -192,10 +191,8 @@ subprojects {
 project(':systemdescriptor.ui') {
     apply plugin: 'com.ngc.seaside.eclipse.base'
     eclipseDistribution {
-       linuxVersion = "eclipse-dsl-photon-R-linux-gtk-x86_64"
-       windowsVersion = "eclipse-dsl-photon-R-win32-x86_64"
-       linuxDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${linuxVersion}.zip"
-       windowsDownloadUrl = "https://nexusrepomgr.ms.northgrum.com/repository/raw-ng-repo/ceacide/${windowsVersion}.zip"
+       linuxDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
+       windowsDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
        enablePluginsRepository()
     }
 }

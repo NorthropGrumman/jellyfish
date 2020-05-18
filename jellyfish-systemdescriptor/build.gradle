@@ -27,11 +27,8 @@ buildscript {
     apply from: versionsFile, to: project
 
     repositories {
-        mavenLocal()
-
-        maven {
-            url nexusConsolidated
-        }
+      mavenCentral()
+      mavenLocal()
     }
 
     dependencies {

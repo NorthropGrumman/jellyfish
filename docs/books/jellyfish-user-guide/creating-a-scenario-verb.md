@@ -152,7 +152,7 @@ custom verbs need to be installed into Eclipse.  This can be done in one of two 
 
 1. Create an Eclipse update site that includes the JAR with the verbs.  Users can create a single update site that
    installs both Jellyfish and any custom verbs or validators.  See `build.gradle` in the
-   [Jellyfish update site](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging/com.ngc.seaside.systemdescriptor.updatesite)
+   [Jellyfish update site](https://google.com)
    for an example project that creates an update site with Gradle.
 2. Using Jellyfish user home: simply copy the JAR to `~/.jellyfish/plugins`
    (or `$JELLYFISH_USER_HOME/plugins`). This option is simpler than the update site option and allows

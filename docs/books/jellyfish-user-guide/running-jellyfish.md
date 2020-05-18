@@ -79,11 +79,8 @@ Next, we need to create a file named `build.gradle`:
 ```groovy
 buildscript {
    repositories {
+      mavenCentral()
       mavenLocal()
-
-      maven {
-         url nexusConsolidated
-      }
    }
 
    dependencies {
