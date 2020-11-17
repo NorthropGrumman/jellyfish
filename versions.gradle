@@ -80,4 +80,19 @@ allprojects {
          exclude "**/*.txt"
       }
    }
+   
+   plugins.withId('com.ngc.seaside.repository') {
+      ext {
+           nexusConsolidated = 'https://repo1.maven.org/maven2/'
+           nexusUsername = 'foo'
+           nexusPassword = 'bar'
+		   nexusSnapshots = nexusConsolidated
+		   nexusReleases = nexusConsolidated
+      }
+	  
+	  seasideRepository {
+	     snapshots { it.optional() }
+		 releases { it.optional() }
+	  }
+   }
 }

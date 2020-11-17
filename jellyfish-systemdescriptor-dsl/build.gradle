@@ -126,8 +126,8 @@ subprojects {
     }
 
     repositories {
-        mavenCentral()
-        mavenLocal()
+        //mavenCentral()
+        //mavenLocal()
 
         // maven {
         //     // The name of the repo must match the repository name configured by the SeasideCi plugin.
