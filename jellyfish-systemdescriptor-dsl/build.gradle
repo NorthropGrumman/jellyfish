@@ -194,6 +194,8 @@ subprojects {
 project(':systemdescriptor.ui') {
     apply plugin: 'com.ngc.seaside.eclipse.base'
     eclipseDistribution {
+	   linuxVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
+	   windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
        linuxDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
        windowsDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
        enablePluginsRepository()
