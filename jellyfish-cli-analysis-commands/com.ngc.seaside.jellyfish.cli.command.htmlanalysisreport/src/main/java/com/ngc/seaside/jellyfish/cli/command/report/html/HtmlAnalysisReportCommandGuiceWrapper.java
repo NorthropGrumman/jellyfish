@@ -23,14 +23,13 @@
 package com.ngc.seaside.jellyfish.cli.command.report.html;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
 import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * The Guice wrapper for the HTML command.

@@ -23,12 +23,11 @@
 package com.ngc.seaside.jellyfish.cli.command.report.console;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * The Guice wrapper for the console command.

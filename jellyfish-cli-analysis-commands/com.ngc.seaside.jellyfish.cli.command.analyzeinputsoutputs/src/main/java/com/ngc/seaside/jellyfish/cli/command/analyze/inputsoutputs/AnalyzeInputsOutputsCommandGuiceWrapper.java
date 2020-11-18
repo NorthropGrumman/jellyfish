@@ -23,12 +23,11 @@
 package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 /**

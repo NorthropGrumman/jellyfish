@@ -22,17 +22,17 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.report.html;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.CommonParameters;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
-import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
-import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
-import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
-import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,17 +42,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.jellyfish.api.CommonParameters;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.cli.command.test.service.MockedTemplateService;
+import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.jellyfish.service.analysis.api.IReportingOutputService;
+import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
+import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HtmlAnalysisReportCommandIT {

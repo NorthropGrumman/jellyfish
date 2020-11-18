@@ -23,8 +23,6 @@
 package com.ngc.seaside.jellyfish.cli.command.analyze.feature;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
@@ -34,8 +32,8 @@ import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishAnalysisComm
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
 import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
-import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 

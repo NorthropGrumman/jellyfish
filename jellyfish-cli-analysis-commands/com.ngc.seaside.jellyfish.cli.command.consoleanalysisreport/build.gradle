@@ -34,6 +34,5 @@ dependencies {
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

@@ -37,6 +37,5 @@ dependencies {
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
    testImplementation "com.ngc.seaside:jellyfish.cli.command.testutils:$version"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }
