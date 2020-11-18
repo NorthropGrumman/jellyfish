@@ -22,11 +22,18 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
-import com.google.common.base.Preconditions;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
-import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Settings;
@@ -58,18 +65,10 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.RepositoryServiceException;
 
 /**
  * This implementation uses maven's .m2 local repository in combination with nexusConsolidated

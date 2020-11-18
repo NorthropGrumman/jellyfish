@@ -22,28 +22,27 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.testutil;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
-import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
-import com.ngc.seaside.systemdescriptor.service.impl.gherkin.module.CucumberGherkinServiceGuiceModule;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
-
-import org.eclipse.xtext.common.TerminalsStandaloneSetup;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.eclipse.xtext.common.TerminalsStandaloneSetup;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.ngc.seaside.systemdescriptor.SystemDescriptorRuntimeModule;
+import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
+import com.ngc.seaside.systemdescriptor.service.impl.gherkin.module.CucumberGherkinServiceGuiceModule;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 /**
  * Maintains singleton access to the {@code Injector} that manages the XText related resources and the system descriptor

@@ -22,18 +22,18 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
 
 import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
 
 public class RemoteRepositoryServiceTest {
 

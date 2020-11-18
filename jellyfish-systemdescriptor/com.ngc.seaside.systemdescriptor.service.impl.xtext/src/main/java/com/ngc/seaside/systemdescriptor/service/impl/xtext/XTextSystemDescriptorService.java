@@ -22,13 +22,18 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.xtext;
 
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.SystemDescriptorStandaloneSetup;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
@@ -41,14 +46,8 @@ import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing.ParsingDelegate;
 import com.ngc.seaside.systemdescriptor.service.impl.xtext.validation.ValidationDelegate;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.validation.api.ISystemDescriptorValidator;
-
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Provides an implementation of the {@code ISystemDescriptorService} that uses the XText JellyFish DSL. New instances

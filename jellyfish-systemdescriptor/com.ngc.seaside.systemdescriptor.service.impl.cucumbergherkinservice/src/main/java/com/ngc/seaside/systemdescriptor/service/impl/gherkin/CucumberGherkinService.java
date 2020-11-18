@@ -22,22 +22,6 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.gherkin;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
-import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
-import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
-import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
-import com.ngc.seaside.systemdescriptor.service.impl.gherkin.model.GherkinFeature;
-
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.ast.GherkinDocument;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -45,6 +29,21 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
+import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
+import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
+import com.ngc.seaside.systemdescriptor.service.impl.gherkin.model.GherkinFeature;
+import  com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+
+import gherkin.AstBuilder;
+import gherkin.Parser;
+import gherkin.ParserException;
+import gherkin.ast.GherkinDocument;
 
 /**
  * Parses Gherkin feature files.  Only parses files that end with the extension {@code .feature}.

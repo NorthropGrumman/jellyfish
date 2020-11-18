@@ -22,21 +22,6 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.xtext.parsing;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
-import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
-import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
-import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
-
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.validation.CheckMode;
-import org.eclipse.xtext.validation.IResourceValidator;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +29,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
+import com.google.inject.Inject;
+import com.ngc.seaside.systemdescriptor.model.impl.xtext.WrappedSystemDescriptor;
+import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
+import com.ngc.seaside.systemdescriptor.service.api.ParsingException;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
+import com.ngc.seaside.systemdescriptor.systemDescriptor.Package;
 
 /**
  * The parsing delegate does the actual work of parsing system descriptor files.

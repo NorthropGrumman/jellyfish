@@ -28,12 +28,10 @@ dependencies {
    implementation "com.google.guava:guava:$guavaVersion"
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
-   implementation "com.ngc.blocs:service.api:$blocsVersion"
 
    testImplementation project(":systemdescriptor.testutils")
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testImplementation project(":systemdescriptor.model.impl.basic")
 }
 
