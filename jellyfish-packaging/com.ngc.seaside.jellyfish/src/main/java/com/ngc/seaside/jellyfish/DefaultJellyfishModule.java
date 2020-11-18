@@ -22,16 +22,13 @@
  */
 package com.ngc.seaside.jellyfish;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-
-import com.ngc.blocs.guice.module.LogServiceModule;
-import com.ngc.blocs.guice.module.ResourceServiceModule;
-import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.ngc.seaside.systemdescriptor.service.impl.xtext.module.XTextSystemDescriptorServiceModule;
 
 /**
  * The default Jellyfish Guice module.  Clients can use this module directly when {@link
@@ -63,8 +60,7 @@ public class DefaultJellyfishModule extends AbstractModule {
    protected Collection<Module> configureDefaultModules(Collection<Module> modules) {
       // Register the standalone version of the XText service.
       modules.add(XTextSystemDescriptorServiceModule.forStandaloneUsage());
-      modules.add(new LogServiceModule());
-      modules.add(new ResourceServiceModule());
+      modules.add(new Log4J2Module());
       return modules;
    }
 

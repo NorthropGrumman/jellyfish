@@ -20,23 +20,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.ngc.seaside.jellyfish.sonarqube.module;
+package com.ngc.seaside.jellyfish;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
-import com.ngc.seaside.jellyfish.sonarqube.service.impl.SonarqubeLogService;
 import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
-/**
- * A module for configuring the {@code SonarqubeLogService} with Guice.
- *
- * @see SonarqubeLogService
- */
-public class SonarqubeLogServiceModule extends AbstractModule {
+public class Log4J2Module  extends AbstractModule {
 
-   @Override
-   protected void configure() {
-      // Use the log service adapter that forwards to the SonarQube logging API.
-      bind(ILogService.class).to(SonarqubeLogService.class).in(Singleton.class);
-   }
+    @Override
+    protected void configure() {
+        bind(ILogService.class).to(Log4J2LogService.class);
+    }
+
 }

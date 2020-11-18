@@ -26,8 +26,11 @@ apply plugin: 'com.ngc.seaside.eclipse.updatesite'
 apply plugin: 'com.ngc.seaside.eclipse.p2'
 
 eclipseDistribution {
-   linuxDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
-   windowsDownloadUrl = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
+   linuxVersion = 'eclipse-dsl-photon-R-linux-gtk-x86_64'
+   windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
+   linuxDownloadUrl = "https://mirror.umd.edu/eclipse/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
+   windowsDownloadUrl = "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
+   //enablePluginsRepository()
 }
 
 def licenseText = project.resources.text.fromFile(licenseFile).asString()
@@ -168,7 +171,6 @@ dependencies {
    plugin "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    plugin "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
    plugin "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
-   plugin "com.ngc.seaside:service.log.impl.common.log4jlogservice:$version"
 
    // Our stuff needs Guice.
    plugin "com.google.inject:guice:$guiceVersion"

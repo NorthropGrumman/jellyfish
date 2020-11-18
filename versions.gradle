@@ -24,7 +24,7 @@ allprojects {
       jaxbVersion = '2.3.0'
       junitVersion = '4.12'
       licensePluginVersion = '0.14.0'
-      log4jVersion = '1.2.17'
+      log4jVersion = '2.14.0'
       mavenVersion = '3.5.2'
       mockitoVersion = '2.19.0'
       osgiVersion = '6.0.0'

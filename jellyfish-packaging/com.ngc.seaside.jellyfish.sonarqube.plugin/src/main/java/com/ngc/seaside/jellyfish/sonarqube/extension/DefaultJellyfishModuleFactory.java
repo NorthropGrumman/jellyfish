@@ -22,21 +22,20 @@
  */
 package com.ngc.seaside.jellyfish.sonarqube.extension;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Module;
-
-import com.ngc.blocs.guice.module.LogServiceModule;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
-import com.ngc.seaside.jellyfish.sonarqube.module.NoOpLogServiceModule;
-import com.ngc.seaside.jellyfish.sonarqube.module.SonarqubeLogServiceModule;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.server.ServerSide;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import com.google.common.base.Preconditions;
+import com.google.inject.Module;
+import com.ngc.seaside.jellyfish.Log4J2Module;
+import com.ngc.seaside.jellyfish.sonarqube.module.JellyfishSonarqubePluginModule;
+import com.ngc.seaside.jellyfish.sonarqube.module.NoOpLogServiceModule;
+import com.ngc.seaside.jellyfish.sonarqube.module.SonarqubeLogServiceModule;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @ScannerSide
 @ServerSide
@@ -125,6 +124,6 @@ public class DefaultJellyfishModuleFactory implements IJellyfishModuleFactory {
     * @return true if the module should not be used to run Jellyfish, true otherwise
     */
    protected boolean shouldModuleBeExcluded(Module module) {
-      return module.getClass() == LogServiceModule.class;
+      return module.getClass() == Log4J2Module.class;
    }
 }

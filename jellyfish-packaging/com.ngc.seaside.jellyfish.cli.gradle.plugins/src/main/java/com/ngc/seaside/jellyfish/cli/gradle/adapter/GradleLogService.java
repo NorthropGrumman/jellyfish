@@ -22,13 +22,12 @@
  */
 package com.ngc.seaside.jellyfish.cli.gradle.adapter;
 
+import org.gradle.api.logging.Logging;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.cli.command.report.console.ConsoleAnalysisReportCommand;
-
-import org.gradle.api.logging.Logging;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class GradleLogService implements ILogService {
 
@@ -161,31 +160,6 @@ public class GradleLogService implements ILogService {
    @Override
    public boolean isTraceEnabled(Class<?> clazz) {
       return Logging.getLogger(clazz).isTraceEnabled();
-   }
-
-   @Override
-   public boolean isMdcAvailable() {
-      return false;
-   }
-
-   @Override
-   public Object mdcGet(String s) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcPut(String s, Object o) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcClear(String s) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcRemove(String s) {
-      throw new UnsupportedOperationException("not implemented");
    }
 
    public static final Module MODULE = new AbstractModule() {

@@ -24,9 +24,8 @@ package com.ngc.seaside.jellyfish.sonarqube.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.sonarqube.service.impl.NoOpLogService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * A module for configuring the {@code NoOpLogServiceModule} with Guice.

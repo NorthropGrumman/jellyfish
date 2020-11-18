@@ -32,7 +32,6 @@ dependencies {
    api "com.google.guava:guava:$guavaVersion"
    api "com.google.inject:guice:$guiceVersion"
 
-   implementation "com.ngc.seaside:guice.modules:$version"
    implementation "com.ngc.seaside:jellyfish.service.impl.jellyfishuserservice:$version"
    implementation "com.ngc.seaside:jellyfish.service.name.impl.namingservices:$version"
    implementation "com.ngc.seaside:jellyfish.service.codegen.impl.codegenservices:$version"
@@ -50,13 +49,12 @@ dependencies {
    implementation "com.ngc.seaside:jellyfish.service.analysis.impl.markdownreportingservice:$version"
    implementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    implementation "com.ngc.seaside:systemdescriptor.service.impl.m2repositoryservice:$version"
-   implementation "com.ngc.blocs:service.log.impl.common.logservice:$blocsVersion"
-   implementation "com.ngc.blocs:service.resource.impl.common.resourceservice:$blocsVersion"
    compileOnly "org.osgi:osgi.core:$osgiVersion"
    compileOnly "org.osgi:osgi.enterprise:$osgiVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
-   implementation "com.ngc.blocs:service.log.impl.common.slf4jlogservicebridge:$blocsVersion"
+   implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+   implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
    implementation "com.ngc.seaside:jellyfish.impl.provider:$version"
    implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
@@ -179,7 +177,7 @@ seasideApplication {
    mainClassName = 'com.ngc.seaside.jellyfish.Jellyfish'
    includeDistributionDirs = ['src/main/resources/', "$buildDir/commands-templates/"]
    appHomeVarName = 'appHome'
-   appSystemProperties = [NG_FW_HOME: "APP_HOME_VAR"]
+   appSystemProperties = [JELLYFISH_HOME: "APP_HOME_VAR"]
    distributionName = "${project.name}-${project.version}"
    installationDir = "build/distributions/${project.name}-${project.version}"
 

@@ -22,11 +22,8 @@
  */
 package com.ngc.seaside.jellyfish.sonarqube.extension;
 
-import com.google.inject.Module;
-
-import com.ngc.blocs.guice.module.LogServiceModule;
-import com.ngc.seaside.jellyfish.sonarqube.module.NoOpLogServiceModule;
-import com.ngc.seaside.jellyfish.sonarqube.module.SonarqubeLogServiceModule;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +31,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.inject.Module;
+import com.ngc.seaside.jellyfish.Log4J2Module;
+import com.ngc.seaside.jellyfish.sonarqube.module.NoOpLogServiceModule;
+import com.ngc.seaside.jellyfish.sonarqube.module.SonarqubeLogServiceModule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultJellyfishModuleFactoryTest {
@@ -68,7 +67,7 @@ public class DefaultJellyfishModuleFactoryTest {
    @Test
    public void testDoesFilterOutLogServiceModule() {
       assertTrue("factory should exclude log service module!",
-                 factory.shouldModuleBeExcluded(new LogServiceModule()));
+                 factory.shouldModuleBeExcluded(new Log4J2Module()));
       assertFalse("module should not be excluded!",
                   factory.shouldModuleBeExcluded(module));
    }

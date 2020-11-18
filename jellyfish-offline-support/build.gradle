@@ -58,8 +58,6 @@ ext {
 
 // These are extra dependencies we need.
 dependencies {
-   // Required at runtime for OSGi.
-   extra "log4j:log4j-osgi:$log4jVersion"
    // Required by the protobuf plugin when building on Linux.  Does not show up as a dependency until actually running
    // the protobuf plugin.
    extra "com.google.protobuf:protoc:$protobufVersion:linux-x86_64@exe"
