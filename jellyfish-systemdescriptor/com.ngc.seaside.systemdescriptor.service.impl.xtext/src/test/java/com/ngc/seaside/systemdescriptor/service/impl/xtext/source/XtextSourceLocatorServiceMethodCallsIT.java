@@ -308,7 +308,7 @@ public class XtextSourceLocatorServiceMethodCallsIT {
                         .then(List::get, 1).getLocation(),
                "AlarmClock.beep.feature");
 
-      assertText("| example | table |\n      | 1       | true  |",
+      assertText("| example | table |\n      | 1       | true  |\n",
                service.with(step).then(IGherkinStep::getTableArgument).then(Optional::get).then(IGherkinTable::getRows)
                         .then(List::subList, 0, 2).getLocation(),
                "AlarmClock.beep.feature");
@@ -343,7 +343,7 @@ public class XtextSourceLocatorServiceMethodCallsIT {
                "AlarmClock.beep.feature");
 
       IGherkinStep stepWithDocString = scenario.getSteps().get(1);
-      assertText("\"\"\"\n      Example docstring\n      Line 2\n      \"\"\"",
+      assertText("\"\"\"\n      Example docstring\n      Line 2\n      \"\"\"\n  ",
                service.with(stepWithDocString).then(IGherkinStep::getDocStringArgument).getLocation(),
                "AlarmClock.beep.feature");
       assertText("Example", service.with(stepWithDocString).then(IGherkinStep::getDocStringArgument).then(List::get, 0)
