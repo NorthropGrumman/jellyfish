@@ -70,9 +70,6 @@ project(':com.ngc.seaside.jellyfish.cli.command.createjavaserviceconfig').name =
 include 'com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavacucumbertests').name = 'jellyfish.cli.command.createjavacucumbertests'
 
-include 'com.ngc.blocs.guice.modules'
-project(':com.ngc.blocs.guice.modules').name = 'guice.modules'
-
 include 'com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig'
 project(':com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig').name = 'jellyfish.cli.command.createjavaservicegeneratedconfig'
 

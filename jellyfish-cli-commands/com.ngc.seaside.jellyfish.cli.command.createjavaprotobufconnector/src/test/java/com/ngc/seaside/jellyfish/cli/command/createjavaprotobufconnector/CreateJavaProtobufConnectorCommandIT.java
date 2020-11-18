@@ -22,7 +22,28 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
+import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -44,29 +65,8 @@ import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.data.DataTypes;
 import com.ngc.seaside.systemdescriptor.model.api.data.IData;
 import com.ngc.seaside.systemdescriptor.model.api.data.IEnumeration;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.test.systemdescriptor.ModelUtils;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_BUILD_TEMPLATE_SUFFIX;
-import static com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector.CreateJavaProtobufConnectorCommand.PUBSUB_GENBUILD_TEMPLATE_SUFFIX;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CreateJavaProtobufConnectorCommandIT {
 
