@@ -93,11 +93,6 @@ eclipseUpdateSite {
          version = "${project.version}"
          unpack = false
       }
-      plugin {
-         id = 'com.ngc.seaside.service.log.impl.common.log4jlogservice'
-         version = "${project.version}"
-         unpack = false
-      }
       // This plugin includes 3rd party items used by com.ngc.seaside which are not packaged as OSGi bundles.
       // This "uber" JAR embeds all those non-OSGi dependencies and exports the appropriate packages.
       plugin {
@@ -137,7 +132,7 @@ eclipseUpdateSite {
    }
    
    def externalUpdateSites = [
-      'https://cucumber.io/cucumber-eclipse/update-site',                 // Cucumber
+      //'https://cucumber.io/cucumber-eclipse/update-site',                 // Cucumber - really slow
       'https://nodeclipse.github.io/updates/markdown',                    // Markdown editor
       // 'https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite' // Markdown git viewer - really slow
    ]

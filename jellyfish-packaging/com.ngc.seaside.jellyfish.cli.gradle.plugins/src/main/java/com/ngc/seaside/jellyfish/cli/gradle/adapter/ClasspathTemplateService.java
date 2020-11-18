@@ -22,16 +22,6 @@
  */
 package com.ngc.seaside.jellyfish.cli.gradle.adapter;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Module;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateService;
-import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -51,6 +41,15 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Module;
+import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateService;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * An implementation of {@code ITemplateService} that loads template resources (IE, ZIP) directly from the classpath.
@@ -85,10 +84,8 @@ public class ClasspathTemplateService extends TemplateService {
 
    @Inject
    public ClasspathTemplateService(ILogService logService,
-                                   IResourceService resourceService,
                                    IPropertyService propertyService) {
       super.setLogService(logService);
-      super.setResourceService(resourceService);
       super.setPropertyService(propertyService);
       super.activate();
       try {
