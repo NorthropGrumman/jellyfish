@@ -24,8 +24,6 @@ dependencies {
    api project(':jellyfish.service.api')
    api "com.ngc.seaside:systemdescriptor.model.api:$version"
 
-   implementation "com.ngc.blocs:service.api:$blocsVersion"
-
    implementation "com.google.inject:guice:$guiceVersion"
    implementation "com.google.inject.extensions:guice-multibindings:$guiceVersion"
    compileOnly "org.osgi:osgi.core:$osgiVersion"
@@ -36,6 +34,5 @@ dependencies {
    testImplementation "com.ngc.seaside:systemdescriptor.testutils:$version"
    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    testImplementation project(':jellyfish.service.scenario.impl.scenarioservice')
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testCompileOnly "org.osgi:osgi.enterprise:$osgiVersion"
 }

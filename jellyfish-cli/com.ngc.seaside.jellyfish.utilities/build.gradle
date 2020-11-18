@@ -24,8 +24,6 @@ dependencies {
    api project(":jellyfish.api")
    api project(":jellyfish.service.api")
 
-   api "com.ngc.blocs:api:$blocsVersion"
-   api "com.ngc.blocs:service.api:$blocsVersion"
    api "com.ngc.seaside:systemdescriptor.service.api:$version"
 
    implementation "com.google.guava:guava:$guavaVersion"

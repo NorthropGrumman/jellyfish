@@ -22,9 +22,20 @@
  */
 package com.ngc.seaside.jellyfish.service.scenario.impl.scenarioservice;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IPublishSubscribeMessagingFlow;
 import com.ngc.seaside.jellyfish.service.scenario.api.IRequestResponseMessagingFlow;
@@ -40,19 +51,7 @@ import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.PublishStepH
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveRequestStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.ReceiveStepHandler;
 import com.ngc.seaside.systemdescriptor.scenario.impl.standardsteps.RespondStepHandler;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * An implementation of {@code IScenarioService} that mostly delegates to to components that handle specific messaging

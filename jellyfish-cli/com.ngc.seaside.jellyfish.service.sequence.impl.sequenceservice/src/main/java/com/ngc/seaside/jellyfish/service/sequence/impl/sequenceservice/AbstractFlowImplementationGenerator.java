@@ -22,10 +22,12 @@
  */
 package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice.model.SequenceFlow;
@@ -35,10 +37,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.link.IModelLink;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Base class for components that need to generate implementations of flows.

@@ -22,7 +22,21 @@
  */
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -32,21 +46,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.data.Data;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PackageNamingServiceTest {

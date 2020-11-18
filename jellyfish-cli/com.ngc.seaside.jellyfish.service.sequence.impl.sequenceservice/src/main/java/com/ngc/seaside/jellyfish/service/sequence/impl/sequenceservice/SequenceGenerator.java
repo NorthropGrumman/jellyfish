@@ -22,9 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.sequence.api.ISequence;
@@ -34,10 +36,7 @@ import com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice.model.Seq
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Generates a sequence.

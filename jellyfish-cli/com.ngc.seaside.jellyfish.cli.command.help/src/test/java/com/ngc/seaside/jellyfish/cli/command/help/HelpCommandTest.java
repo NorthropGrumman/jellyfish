@@ -22,15 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.help;
 
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.api.ParameterCategory;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,13 +38,15 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.api.ParameterCategory;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HelpCommandTest {

@@ -22,16 +22,16 @@
  */
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
+import java.util.Collection;
+
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
 import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
 import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-
-import java.util.Collection;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class BuildManagementServiceGuiceWrapper implements IBuildManagementService {
 

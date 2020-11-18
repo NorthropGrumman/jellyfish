@@ -22,17 +22,16 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.parameterservice;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.jellyfish.service.parameter.api.ParameterServiceException;
-
-import java.util.List;
-import java.util.Map;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wrap the service using Guice Injection

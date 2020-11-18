@@ -22,8 +22,24 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.help;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.BiPredicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+
 import com.google.common.base.Preconditions;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
@@ -37,23 +53,7 @@ import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.api.ParameterCategory;
 import com.ngc.seaside.jellyfish.utilities.console.api.ITableFormat;
 import com.ngc.seaside.jellyfish.utilities.console.impl.stringtable.StringTable;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.function.BiPredicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @Component(service = ICommand.class)
 public final class HelpCommand implements ICommand<ICommandOptions> {

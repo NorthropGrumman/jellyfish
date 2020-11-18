@@ -22,13 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice;
 
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -40,11 +38,13 @@ import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
 
 public class RequirementsServiceTest {
 

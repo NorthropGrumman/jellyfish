@@ -23,7 +23,6 @@
 dependencies {
     api project(':jellyfish.service.api')
 
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "org.apache.velocity:velocity-engine-core:$velocityVersion"
     implementation "com.google.inject:guice:$guiceVersion"
     compileOnly "org.osgi:osgi.core:$osgiVersion"

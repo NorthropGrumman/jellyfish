@@ -22,7 +22,6 @@
  */
 dependencies {
    api project(':jellyfish.service.api')
-   api "com.ngc.blocs:service.api:$blocsVersion"
 
    implementation project(':jellyfish.service.scenario.impl.scenarioservice')
    implementation project(':jellyfish.service.impl.templateservice')

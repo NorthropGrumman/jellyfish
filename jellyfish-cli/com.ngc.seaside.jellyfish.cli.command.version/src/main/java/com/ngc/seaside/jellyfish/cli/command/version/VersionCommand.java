@@ -22,13 +22,12 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.version;
 
-import com.google.common.base.Preconditions;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.ICommand;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.IUsage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
@@ -36,12 +35,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Supplier;
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @Component(service = ICommand.class)
 public class VersionCommand implements ICommand<ICommandOptions> {

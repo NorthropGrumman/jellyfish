@@ -22,13 +22,12 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.promptuserservice;
 
+import java.util.function.Predicate;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
-
-import java.util.function.Predicate;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wrap the service using Guice Injection

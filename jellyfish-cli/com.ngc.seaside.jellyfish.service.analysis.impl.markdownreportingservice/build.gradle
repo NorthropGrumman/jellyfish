@@ -23,7 +23,6 @@
 dependencies {
    api project(':jellyfish.service.api')
 
-   implementation "com.ngc.blocs:service.api:$blocsVersion"
    implementation("com.vladsch.flexmark:flexmark-all:$flexmarkVersion") {
       // Exclude this transtive dependency because it has a security issue and we don't actually use this functionality.
       exclude group: 'org.apache.pdfbox', module: 'fontbox'

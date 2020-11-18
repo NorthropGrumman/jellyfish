@@ -22,8 +22,10 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.promptuserservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.function.Predicate;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -32,10 +34,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.InputStream;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.function.Predicate;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * @author justan.provence@ngc.com

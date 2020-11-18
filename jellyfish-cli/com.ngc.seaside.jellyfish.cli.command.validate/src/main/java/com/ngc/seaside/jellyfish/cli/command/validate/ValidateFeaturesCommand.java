@@ -23,13 +23,13 @@
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
 import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Validates that feature files associated with a project are valid.

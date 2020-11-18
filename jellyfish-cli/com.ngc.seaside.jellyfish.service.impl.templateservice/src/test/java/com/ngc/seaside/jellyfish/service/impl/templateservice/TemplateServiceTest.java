@@ -22,33 +22,6 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.jellyfish.api.DefaultParameter;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
-import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.jellyfish.service.property.api.IProperties;
-import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
-import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.ArgumentCaptor;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
@@ -61,6 +34,32 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mockito.ArgumentCaptor;
+
+import com.ngc.seaside.jellyfish.api.DefaultParameter;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.property.api.IProperties;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
+
 /**
  *
  */
@@ -68,7 +67,6 @@ import static org.mockito.Mockito.when;
 public class TemplateServiceTest {
 
    private ILogService logService;
-   private IResourceService resourceService;
    private IPromptUserService promptUserService;
    private IPropertyService propertyService;
 
@@ -80,20 +78,21 @@ public class TemplateServiceTest {
    @Before
    public void setup() throws URISyntaxException {
       logService = new PrintStreamLogService();
-      resourceService = mock(IResourceService.class);
 
       URL resourcesDir = getClass().getClassLoader().getResource("templates");
       assertNotNull(resourcesDir);
       File file = new File(resourcesDir.toURI()).getParentFile();
 
-      when(resourceService.getResourceRootPath()).thenReturn(Paths.get(file.getAbsolutePath()));
-
       promptUserService = mock(IPromptUserService.class);
       propertyService = mock(IPropertyService.class);
 
-      templateService = new TemplateService();
+      templateService = new TemplateService() {
+          @Override
+          protected Path getResourceRootPath() { 
+              return file.getAbsoluteFile().toPath();
+          }
+      };
       templateService.setLogService(logService);
-      templateService.setResourceService(resourceService);
       templateService.setPromptUserService(promptUserService);
       templateService.setPropertyService(propertyService);
       templateService.activate();
@@ -104,7 +103,6 @@ public class TemplateServiceTest {
       templateService.deactivate();
       templateService.removeLogService(logService);
       templateService.removePromptUserService(promptUserService);
-      templateService.removeResourceService(resourceService);
    }
 
    /**

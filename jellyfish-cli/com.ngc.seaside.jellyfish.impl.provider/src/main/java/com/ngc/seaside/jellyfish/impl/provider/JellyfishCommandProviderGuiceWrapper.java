@@ -22,10 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.impl.provider;
 
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
@@ -33,9 +34,7 @@ import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
 import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinService;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wraps the Jellyfish command provider.

@@ -22,8 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.version;
 
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,11 +34,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VersionCommandTest {

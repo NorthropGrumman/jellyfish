@@ -22,7 +22,24 @@
  */
 package com.ngc.seaside.jellyfish.utilities.command;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+
+import javax.json.Json;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
@@ -38,24 +55,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.NamedChildCollection;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
 import com.ngc.seaside.systemdescriptor.service.gherkin.api.IGherkinParsingResult;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-
-import javax.json.Json;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractJellyfishAnalysisCommandTest {

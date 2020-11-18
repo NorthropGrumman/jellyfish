@@ -22,9 +22,8 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.propertyservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.property.api.IProperties;
-import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -33,8 +32,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import com.ngc.seaside.jellyfish.service.property.api.IProperties;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Provide an OSGi enabled component representation of the IPropertyService interface.

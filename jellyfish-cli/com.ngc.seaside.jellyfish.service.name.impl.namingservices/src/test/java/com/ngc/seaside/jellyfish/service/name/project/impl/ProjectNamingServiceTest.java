@@ -22,14 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.name.MetadataNames;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import javax.json.Json;
+import javax.json.JsonObject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +34,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.name.MetadataNames;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.Package;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.metadata.Metadata;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectNamingServiceTest {

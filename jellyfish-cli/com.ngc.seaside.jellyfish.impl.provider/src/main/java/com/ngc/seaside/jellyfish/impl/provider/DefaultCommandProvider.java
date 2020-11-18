@@ -22,9 +22,15 @@
  */
 package com.ngc.seaside.jellyfish.impl.provider;
 
-import com.google.common.base.Preconditions;
+import java.util.Arrays;
+import java.util.Collections;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.jellyfish.api.DefaultJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.ICommand;
@@ -33,14 +39,7 @@ import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
-import java.util.Arrays;
-import java.util.Collections;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * A default command provider that runs non Jellyfish commands.  These are commands that implement the {@code ICommand}

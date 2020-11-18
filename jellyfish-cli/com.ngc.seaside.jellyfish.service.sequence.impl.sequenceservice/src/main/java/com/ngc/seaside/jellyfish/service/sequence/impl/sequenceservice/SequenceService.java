@@ -22,16 +22,12 @@
  */
 package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
-import com.ngc.seaside.jellyfish.service.sequence.api.ISequence;
-import com.ngc.seaside.jellyfish.service.sequence.api.ISequenceService;
-import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -40,12 +36,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
+import com.ngc.seaside.jellyfish.service.sequence.api.ISequence;
+import com.ngc.seaside.jellyfish.service.sequence.api.ISequenceService;
+import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Implementation of {@code ISequenceService}.

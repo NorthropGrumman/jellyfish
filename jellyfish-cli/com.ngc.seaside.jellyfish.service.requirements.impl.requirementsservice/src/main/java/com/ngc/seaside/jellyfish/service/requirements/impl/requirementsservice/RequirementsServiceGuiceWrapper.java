@@ -22,13 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice;
 
+import java.util.Set;
+
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
-
-import java.util.Set;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class RequirementsServiceGuiceWrapper implements IRequirementsService {
 
