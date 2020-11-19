@@ -22,15 +22,14 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.propertyservice;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.property.api.IProperties;
-import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
-
 import java.io.IOException;
 import java.nio.file.Path;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.ngc.seaside.jellyfish.service.property.api.IProperties;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wrap the service using Guice Injection

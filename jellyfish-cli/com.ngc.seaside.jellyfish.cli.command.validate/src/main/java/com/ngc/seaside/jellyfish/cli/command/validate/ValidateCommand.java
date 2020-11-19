@@ -22,7 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.validate;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
@@ -30,11 +34,7 @@ import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.utilities.parsing.ParsingResultLogging;
 import com.ngc.seaside.systemdescriptor.service.api.IParsingResult;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * This class provides the implementation of the validate command.

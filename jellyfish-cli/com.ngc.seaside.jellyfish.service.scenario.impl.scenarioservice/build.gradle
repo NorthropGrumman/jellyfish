@@ -23,7 +23,6 @@
 dependencies {
     api project(':jellyfish.service.api')
     
-    implementation "com.ngc.blocs:service.api:$blocsVersion"
     implementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
 
     implementation "com.google.inject:guice:$guiceVersion"

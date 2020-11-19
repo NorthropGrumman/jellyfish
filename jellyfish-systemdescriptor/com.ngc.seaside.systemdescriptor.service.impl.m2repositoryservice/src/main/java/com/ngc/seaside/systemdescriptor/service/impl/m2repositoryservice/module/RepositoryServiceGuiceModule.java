@@ -24,9 +24,9 @@ package com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.module
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.GradlePropertiesService;
 import com.ngc.seaside.systemdescriptor.service.impl.m2repositoryservice.RepositoryServiceGuiceWrapper;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.repository.api.IRepositoryService;
 
 /**

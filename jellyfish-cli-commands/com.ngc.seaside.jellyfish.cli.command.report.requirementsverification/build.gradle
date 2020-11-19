@@ -40,7 +40,6 @@ dependencies {
 
    testImplementation "junit:junit:$junitVersion"
    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-   testImplementation "com.ngc.blocs:test.impl.common.testutilities:$blocsVersion"
    testImplementation "com.ngc.seaside:systemdescriptor.service.impl.xtext:$version"
    testImplementation "com.ngc.seaside:systemdescriptor.scenario.impl.standardsteps:$version"
    testImplementation "com.ngc.seaside:jellyfish.service.requirements.impl.requirementsservice:$version"

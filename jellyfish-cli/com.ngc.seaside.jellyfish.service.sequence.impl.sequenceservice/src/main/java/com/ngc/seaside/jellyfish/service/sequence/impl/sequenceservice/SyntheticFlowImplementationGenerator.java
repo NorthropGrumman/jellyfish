@@ -22,9 +22,9 @@
  */
 package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice.model.SequenceFlowImplementation;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Finds undeclared flows by looking for implementations that exists but aren't declared.  This functionality is

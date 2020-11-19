@@ -22,7 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.sequence.api.ISequence;
 import com.ngc.seaside.jellyfish.service.sequence.api.ISequenceFlow;
@@ -31,13 +37,7 @@ import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.SystemDescriptors;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Contains state for tests.

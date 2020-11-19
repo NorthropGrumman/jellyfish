@@ -22,8 +22,6 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +29,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Ignore the files in the templateContent that are listed in the templateContent's ignore file.

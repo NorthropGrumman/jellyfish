@@ -22,11 +22,7 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.test.impl.common.log.PrintStreamLogService;
-
-import org.junit.Before;
-import org.junit.Test;
+import static junit.framework.TestCase.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -35,7 +31,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.log.api.PrintStreamLogService;
 
 /**
  *

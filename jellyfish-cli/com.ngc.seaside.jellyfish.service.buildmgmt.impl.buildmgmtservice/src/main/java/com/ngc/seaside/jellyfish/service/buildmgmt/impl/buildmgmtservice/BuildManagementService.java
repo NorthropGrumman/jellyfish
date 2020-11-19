@@ -22,21 +22,6 @@
  */
 package com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice;
 
-import com.google.common.base.Preconditions;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
-import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
-import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
-import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -46,6 +31,21 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.base.Preconditions;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.DependencyScope;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildDependency;
+import com.ngc.seaside.jellyfish.service.buildmgmt.api.IBuildManagementService;
+import com.ngc.seaside.jellyfish.service.buildmgmt.impl.buildmgmtservice.config.DependenciesConfiguration;
+import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * A stateful implementation of the {@code IBuildManagementService}.  Unlike most services, a new instance of this

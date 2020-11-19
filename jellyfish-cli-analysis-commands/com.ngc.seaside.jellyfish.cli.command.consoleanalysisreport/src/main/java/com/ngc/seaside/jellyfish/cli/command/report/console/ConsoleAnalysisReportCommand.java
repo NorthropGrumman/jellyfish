@@ -22,19 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.report.console;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.DefaultUsage;
-import com.ngc.seaside.jellyfish.api.ICommand;
-import com.ngc.seaside.jellyfish.api.ICommandOptions;
-import com.ngc.seaside.jellyfish.api.IUsage;
-import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
-import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
-import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Deactivate;
@@ -42,11 +34,18 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
+import com.ngc.seaside.jellyfish.api.DefaultUsage;
+import com.ngc.seaside.jellyfish.api.ICommand;
+import com.ngc.seaside.jellyfish.api.ICommandOptions;
+import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.jellyfish.service.analysis.api.ISystemDescriptorFindingType;
+import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 /**
  * A report command that outputs all findings added to the {@link IAnalysisService} to the console via the log service.

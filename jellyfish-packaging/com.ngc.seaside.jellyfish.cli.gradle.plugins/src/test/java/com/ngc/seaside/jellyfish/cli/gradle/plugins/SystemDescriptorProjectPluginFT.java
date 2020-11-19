@@ -66,15 +66,15 @@ public class SystemDescriptorProjectPluginFT {
             .withArguments("clean",
                            "build",
                            SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME,
-                           "publishToMavenLocal",
-                           "publish");
+                           "publishToMavenLocal"
+                           /*"publish"*/);
 
       try {
          BuildResult result = runner.build();
          TestingUtilities.assertTaskSuccess(result, null, "build");
          TestingUtilities.assertTaskSuccess(result, null, SystemDescriptorProjectPlugin.ANALYZE_TASK_NAME);
          TestingUtilities.assertTaskSuccess(result, null, "publishToMavenLocal");
-         TestingUtilities.assertTaskSuccess(result, null, "publish");
+         //TestingUtilities.assertTaskSuccess(result, null, "publish");
       } catch (Exception e) {
          e.printStackTrace(new PasswordHidingWriter(System.err));
          fail();

@@ -23,11 +23,10 @@
 package com.ngc.seaside.jellyfish.cli.command.version;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class VersionCommandGuiceWrapper implements ICommand<ICommandOptions> {
 

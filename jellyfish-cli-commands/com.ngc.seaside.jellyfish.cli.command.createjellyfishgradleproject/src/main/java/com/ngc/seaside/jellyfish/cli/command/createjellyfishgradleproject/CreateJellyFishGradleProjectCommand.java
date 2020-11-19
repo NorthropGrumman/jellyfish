@@ -22,6 +22,20 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.createjellyfishgradleproject;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+
 import com.ngc.seaside.jellyfish.api.CommandException;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
@@ -41,20 +55,6 @@ import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishCommand;
 import com.ngc.seaside.jellyfish.utilities.command.FileHeader;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModelReferenceField;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 @Component(service = IJellyFishCommand.class)
 public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishCommand {
@@ -76,7 +76,7 @@ public class CreateJellyFishGradleProjectCommand extends AbstractJellyfishComman
    public static final String GRADLE_USER_HOME_ENVIRONMENT_VARIABLE = "GRADLE_USER_HOME";
 
    public static final String DEFAULT_GRADLE_DISTRIBUTION = 
-            "https\://services.gradle.org/distributions/gradle-4.9-bin.zip";
+            "https\\://services.gradle.org/distributions/gradle-4.9-bin.zip";
 
    /**
     * The name of the property in $JELLYFISH_USER_HOME/jellyfish.properties for identifying the default

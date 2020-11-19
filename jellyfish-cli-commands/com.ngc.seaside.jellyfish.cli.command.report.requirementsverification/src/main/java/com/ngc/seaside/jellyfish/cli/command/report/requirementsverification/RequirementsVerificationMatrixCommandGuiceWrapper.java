@@ -23,13 +23,12 @@
 package com.ngc.seaside.jellyfish.cli.command.report.requirementsverification;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.feature.api.IFeatureService;
 import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class RequirementsVerificationMatrixCommandGuiceWrapper implements IJellyFishCommand {
 

@@ -22,10 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.service.requirements.impl.requirementsservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
-import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
-import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.json.JsonArray;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -34,13 +37,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.json.JsonArray;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
+import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
+import com.ngc.seaside.systemdescriptor.model.api.metadata.IMetadata;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @Component(service = IRequirementsService.class)
 public class RequirementsService implements IRequirementsService {

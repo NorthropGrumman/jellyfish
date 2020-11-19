@@ -22,7 +22,21 @@
  */
 package com.ngc.seaside.systemdescriptor.service.impl.gherkin;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import com.ngc.seaside.systemdescriptor.model.api.ISystemDescriptor;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
@@ -34,22 +48,8 @@ import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinScenario;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinStep;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinTable;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.validation.api.Severity;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.nio.file.Paths;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CucumberGherkinServiceIT {
@@ -175,8 +175,8 @@ public class CucumberGherkinServiceIT {
       assertEquals("path not correct!",
                    Paths.get("build", "resources", "test", "invalid", "a", "MyModel.invalid.feature"),
                    issue.getLocation().getPath());
-      assertEquals("line number correct correct!",
-                   35,
+      assertEquals("line number not correct!",
+                   41,
                    issue.getLocation().getLineNumber());
       assertEquals("column not correct!",
                    10,

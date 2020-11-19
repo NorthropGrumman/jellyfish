@@ -24,10 +24,9 @@ package com.ngc.seaside.jellyfish.service.sequence.impl.sequenceservice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.sequence.api.ISequenceService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Guice module for the {@code ISequenceService} impl.

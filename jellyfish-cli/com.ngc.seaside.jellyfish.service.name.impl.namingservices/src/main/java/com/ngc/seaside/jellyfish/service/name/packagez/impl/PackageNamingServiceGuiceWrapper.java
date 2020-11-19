@@ -23,12 +23,12 @@
 package com.ngc.seaside.jellyfish.service.name.packagez.impl;
 
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.INamedChild;
 import com.ngc.seaside.systemdescriptor.model.api.IPackage;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class PackageNamingServiceGuiceWrapper implements IPackageNamingService {
 

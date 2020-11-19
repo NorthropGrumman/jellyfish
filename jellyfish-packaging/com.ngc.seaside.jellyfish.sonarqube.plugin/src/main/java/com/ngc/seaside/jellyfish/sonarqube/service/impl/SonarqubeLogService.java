@@ -22,9 +22,9 @@
  */
 package com.ngc.seaside.jellyfish.sonarqube.service.impl;
 
-import com.ngc.blocs.service.log.api.ILogService;
-
 import org.sonar.api.utils.log.Loggers;
+
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * An adapter of the {@link ILogService} to the Sonarqube logging API.
@@ -144,30 +144,5 @@ public class SonarqubeLogService implements ILogService {
    @Override
    public boolean isTraceEnabled(Class<?> clazz) {
       return Loggers.get(clazz).isTraceEnabled();
-   }
-
-   @Override
-   public boolean isMdcAvailable() {
-      return false;
-   }
-
-   @Override
-   public Object mdcGet(String key) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcPut(String key, Object o) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcClear(String key) {
-      throw new UnsupportedOperationException("not implemented");
-   }
-
-   @Override
-   public void mdcRemove(String key) {
-      throw new UnsupportedOperationException("not implemented");
    }
 }

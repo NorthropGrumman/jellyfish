@@ -22,18 +22,17 @@
  */
 package com.ngc.seaside.jellyfish.impl.provider;
 
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.ICommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.parameter.api.IParameterService;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wraps the default command provider for use with Guice.

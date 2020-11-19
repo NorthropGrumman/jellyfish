@@ -22,21 +22,20 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.help;
 
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.ICommand;
 import com.ngc.seaside.jellyfish.api.ICommandOptions;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandProvider;
 import com.ngc.seaside.jellyfish.api.IUsage;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @Singleton
 public class HelpCommandGuiceWrapper implements ICommand<ICommandOptions> {

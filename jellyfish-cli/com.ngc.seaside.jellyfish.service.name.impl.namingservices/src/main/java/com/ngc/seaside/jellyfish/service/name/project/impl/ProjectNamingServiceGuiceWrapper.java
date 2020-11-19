@@ -23,11 +23,11 @@
 package com.ngc.seaside.jellyfish.service.name.project.impl;
 
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectInformation;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class ProjectNamingServiceGuiceWrapper implements IProjectNamingService {
 

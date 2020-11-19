@@ -22,7 +22,16 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicegeneratedconfig;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
+
+import org.mockito.Mockito;
+
 import com.ngc.seaside.jellyfish.api.DefaultParameter;
 import com.ngc.seaside.jellyfish.api.DefaultParameterCollection;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
@@ -47,16 +56,7 @@ import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceFiel
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.Scenario;
 import com.ngc.seaside.systemdescriptor.model.impl.basic.model.scenario.ScenarioStep;
-
-import org.mockito.Mockito;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class CreateJavaServiceGeneratedConfigCommandBaseIT {
 

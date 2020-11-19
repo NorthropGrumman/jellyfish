@@ -22,7 +22,11 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.nio.file.Paths;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,11 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.file.Paths;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JellyfishUserServiceTest {

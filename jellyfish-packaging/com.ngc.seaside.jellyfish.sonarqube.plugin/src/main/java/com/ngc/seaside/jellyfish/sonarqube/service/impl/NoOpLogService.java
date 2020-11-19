@@ -22,7 +22,7 @@
  */
 package com.ngc.seaside.jellyfish.sonarqube.service.impl;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * An implementation of {@code ILogService} that suppresses all logging.  This is useful when running Jellyfish just to
@@ -123,27 +123,5 @@ public class NoOpLogService implements ILogService {
    @Override
    public boolean isTraceEnabled(Class<?> clazz) {
       return false;
-   }
-
-   @Override
-   public boolean isMdcAvailable() {
-      return false;
-   }
-
-   @Override
-   public Object mdcGet(String s) {
-      return null;
-   }
-
-   @Override
-   public void mdcPut(String s, Object o) {
-   }
-
-   @Override
-   public void mdcClear(String s) {
-   }
-
-   @Override
-   public void mdcRemove(String s) {
    }
 }

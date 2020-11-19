@@ -22,13 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.analyze.inputsoutputs;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
-import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
-import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
-import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,13 +37,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
+import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.DataReferenceField;
+import com.ngc.seaside.systemdescriptor.model.impl.basic.model.Model;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
+import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzeInputsOutputsCommandTest {

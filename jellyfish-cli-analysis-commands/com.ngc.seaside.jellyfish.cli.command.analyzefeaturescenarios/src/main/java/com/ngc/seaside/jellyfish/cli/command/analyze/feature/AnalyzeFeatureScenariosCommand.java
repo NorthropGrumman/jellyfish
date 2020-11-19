@@ -22,8 +22,13 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.analyze.feature;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.DefaultUsage;
 import com.ngc.seaside.jellyfish.api.IUsage;
 import com.ngc.seaside.jellyfish.service.analysis.api.IAnalysisService;
@@ -31,14 +36,9 @@ import com.ngc.seaside.jellyfish.service.analysis.api.SystemDescriptorFinding;
 import com.ngc.seaside.jellyfish.utilities.command.AbstractJellyfishAnalysisCommand;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IFeature;
 import com.ngc.seaside.systemdescriptor.service.gherkin.model.api.IGherkinScenario;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * An analysis that checks that all scenarios in a feature are uniquely named.

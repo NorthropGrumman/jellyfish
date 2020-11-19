@@ -22,19 +22,17 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
+import java.nio.file.Path;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-
-import java.nio.file.Path;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Wrap the service using Guice Injection
@@ -46,11 +44,9 @@ public class TemplateServiceGuiceWrapper implements ITemplateService {
 
    @Inject
    public TemplateServiceGuiceWrapper(ILogService logService,
-                                      IResourceService resourceService,
                                       IPromptUserService promptUserService,
                                       IPropertyService propertyService) {
       delegate.setLogService(logService);
-      delegate.setResourceService(resourceService);
       delegate.setPromptUserService(promptUserService);
       delegate.setPropertyService(propertyService);
       delegate.activate();

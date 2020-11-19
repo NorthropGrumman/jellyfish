@@ -22,9 +22,6 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.jellyfishuserservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -37,6 +34,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
+
+import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class JellyfishUserService implements IJellyfishUserService {
 

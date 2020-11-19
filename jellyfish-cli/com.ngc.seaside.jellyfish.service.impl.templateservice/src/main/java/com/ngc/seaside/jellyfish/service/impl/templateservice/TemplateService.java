@@ -22,16 +22,19 @@
  */
 package com.ngc.seaside.jellyfish.service.impl.templateservice;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
-import com.ngc.seaside.jellyfish.api.IParameterCollection;
-import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
-import com.ngc.seaside.jellyfish.service.property.api.IProperties;
-import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
-import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
-import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
-import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -41,20 +44,16 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.JellyfishHome;
+import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
+import com.ngc.seaside.jellyfish.service.property.api.IProperties;
+import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;
+import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
+import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
+import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 /**
  * Default implementation of the {@link ITemplateService} interface.
@@ -62,6 +61,8 @@ import java.util.zip.ZipInputStream;
 @Component(service = ITemplateService.class)
 public class TemplateService implements ITemplateService {
 
+   private static final String RESOURCE_LOCATION = "resources";
+    
    private static final String TEMPLATES_DIRECTORY = "templates";
 
    private static final String TEMPLATE_FOLDER = "templateContent";
@@ -69,7 +70,6 @@ public class TemplateService implements ITemplateService {
    private static final String TEMPLATE_NAME_ENDING_FORMAT = "-template%s.zip";
 
    private ILogService logService;
-   private IResourceService resourceService;
    private IPromptUserService promptUserService;
    private IPropertyService propertyService;
 
@@ -102,24 +102,6 @@ public class TemplateService implements ITemplateService {
       setLogService(null);
    }
 
-   /**
-    * Sets the resource service.
-    *
-    * @param ref the ref
-    */
-   @Reference(cardinality = ReferenceCardinality.MANDATORY,
-         policy = ReferencePolicy.STATIC,
-         unbind = "removeResourceService")
-   public void setResourceService(IResourceService ref) {
-      this.resourceService = ref;
-   }
-
-   /**
-    * Remove the resource service.
-    */
-   public void removeResourceService(IResourceService ref) {
-      setResourceService(null);
-   }
 
    /**
     * Sets the prompt user service.
@@ -313,7 +295,7 @@ public class TemplateService implements ITemplateService {
     * @return the Path to the template or null if the file doesn't exists or if it is a directory.
     */
    protected Path getTemplatePath(String templatePrefix) throws IOException {
-      Path templatesPath = Paths.get(resourceService.getResourceRootPath().toString(), TEMPLATES_DIRECTORY);
+      Path templatesPath = getResourceRootPath().resolve(TEMPLATES_DIRECTORY);
 
       if (Files.isDirectory(templatesPath)) {
          int index = templatePrefix.indexOf('-');
@@ -344,5 +326,9 @@ public class TemplateService implements ITemplateService {
             && Files.isRegularFile(templateFolder.resolve(TEMPLATE_PROPERTIES))
             && Files.exists(templateFolder.resolve(TEMPLATE_FOLDER))
             && Files.isDirectory(templateFolder.resolve(TEMPLATE_FOLDER));
+   }
+   
+   protected Path getResourceRootPath() {
+       return JellyfishHome.get().resolve(RESOURCE_LOCATION);
    }
 }

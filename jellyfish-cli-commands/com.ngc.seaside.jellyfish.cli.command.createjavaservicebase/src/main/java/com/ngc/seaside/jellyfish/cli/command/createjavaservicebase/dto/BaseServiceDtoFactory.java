@@ -22,14 +22,31 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.event.api.IEvent;
-import com.ngc.blocs.service.event.api.Subscriber;
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.thread.api.ISubmittedLongLivingTask;
 import com.ngc.seaside.jellyfish.api.CommonParameters;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.cli.command.createjavaservicebase.dto.TriggerDto.CompletenessDto;
@@ -55,28 +72,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IDataPath;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.model.api.model.scenario.IScenario;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
@@ -312,8 +308,8 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
 
          receive.setBasicScenarios(basicScenarios);
          receiveDtos.add(receive);
-         dto.getAbstractClass().getImports().add(IEvent.class.getName());
-         dto.getAbstractClass().getImports().add(Subscriber.class.getName());
+         //dto.getAbstractClass().getImports().add(IEvent.class.getName());
+         //dto.getAbstractClass().getImports().add(Subscriber.class.getName());
          dto.getAbstractClass().getImports().add(Preconditions.class.getName());
       }
       dto.setReceiveMethods(receiveDtos);
@@ -646,7 +642,7 @@ public class BaseServiceDtoFactory implements IBaseServiceDtoFactory {
       dto.getAbstractClass().getImports().add(Collections.class.getName());
       dto.getAbstractClass().getImports().add(Map.class.getName());
       dto.getAbstractClass().getImports().add(ConcurrentHashMap.class.getName());
-      dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
+      //dto.getAbstractClass().getImports().add(ISubmittedLongLivingTask.class.getName());
 
       return Optional.of(scenarioDto);
    }

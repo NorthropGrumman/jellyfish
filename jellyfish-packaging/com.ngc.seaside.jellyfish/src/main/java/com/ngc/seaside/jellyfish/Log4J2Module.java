@@ -20,17 +20,16 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.ngc.blocs.service.log.impl.common.log4jlogservice.module;
+package com.ngc.seaside.jellyfish;
 
 import com.google.inject.AbstractModule;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.log.impl.common.log4jlogservice.Log4jLogService;
+public class Log4J2Module  extends AbstractModule {
 
-public class Log4jLogServiceModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(ILogService.class).to(Log4J2LogService.class);
+    }
 
-   @Override
-   protected void configure() {
-      bind(ILogService.class).to(Log4jLogService.class);
-   }
 }

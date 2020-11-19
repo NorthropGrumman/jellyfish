@@ -22,8 +22,10 @@
  */
 package com.ngc.seaside.jellyfish.service.config.impl.transportconfigurationservice;
 
+import java.util.Collection;
+import java.util.Set;
+
 import com.google.inject.Inject;
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.service.config.api.ITransportConfigurationService;
 import com.ngc.seaside.jellyfish.service.config.api.TransportConfigurationType;
@@ -34,9 +36,7 @@ import com.ngc.seaside.jellyfish.service.scenario.api.IMessagingFlow;
 import com.ngc.seaside.systemdescriptor.model.api.model.IDataReferenceField;
 import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.api.ISystemDescriptorService;
-
-import java.util.Collection;
-import java.util.Set;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class TransportConfigurationServiceGuiceWrapper implements ITransportConfigurationService {
 

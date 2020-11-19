@@ -23,8 +23,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createjavaprotobufconnector;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
@@ -38,6 +36,7 @@ import com.ngc.seaside.jellyfish.service.requirements.api.IRequirementsService;
 import com.ngc.seaside.jellyfish.service.scenario.api.IScenarioService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class CreateJavaProtobufConnectorCommandGuiceWrapper implements IJellyFishCommand {
 

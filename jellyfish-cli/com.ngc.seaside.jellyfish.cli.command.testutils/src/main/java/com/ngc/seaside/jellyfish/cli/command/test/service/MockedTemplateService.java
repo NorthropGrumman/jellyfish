@@ -22,9 +22,15 @@
  */
 package com.ngc.seaside.jellyfish.cli.command.test.service;
 
-import com.google.common.base.Preconditions;
+import static org.mockito.Mockito.mock;
 
-import com.ngc.blocs.service.log.api.ILogService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
 import com.ngc.seaside.jellyfish.service.impl.propertyservice.PropertyService;
 import com.ngc.seaside.jellyfish.service.impl.templateservice.TemplateIgnoreComponent;
@@ -35,14 +41,7 @@ import com.ngc.seaside.jellyfish.service.template.api.DefaultTemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateOutput;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.template.api.TemplateServiceException;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.mock;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class MockedTemplateService implements ITemplateService {
 

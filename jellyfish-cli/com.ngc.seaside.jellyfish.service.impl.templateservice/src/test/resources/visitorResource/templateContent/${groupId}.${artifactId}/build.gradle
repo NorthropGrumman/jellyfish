@@ -35,11 +35,9 @@ dependencies {
 
     compile "com.google.inject:guice:${D}guiceVersion"
     compile "com.google.inject.extensions:guice-multibindings:${D}guiceVersion"
-    compile "com.ngc.blocs:service.api:${D}blocsVersion"
     compile "org.osgi:osgi.core:${D}osgiVersion"
     compile "org.osgi:osgi.enterprise:${D}osgiVersion"
 
-    testCompile "com.ngc.blocs:test.impl.common.testutilities:${D}blocsVersion"
     testCompile "junit:junit:${D}junitVersion"
     testCompile "org.mockito:mockito-core:${D}mockitoVersion"
 }

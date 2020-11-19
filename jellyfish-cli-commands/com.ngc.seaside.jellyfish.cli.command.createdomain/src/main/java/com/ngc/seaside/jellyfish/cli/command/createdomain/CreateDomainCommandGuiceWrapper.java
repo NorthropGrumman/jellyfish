@@ -23,9 +23,6 @@
 package com.ngc.seaside.jellyfish.cli.command.createdomain;
 
 import com.google.inject.Inject;
-
-import com.ngc.blocs.service.log.api.ILogService;
-import com.ngc.blocs.service.resource.api.IResourceService;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommand;
 import com.ngc.seaside.jellyfish.api.IJellyFishCommandOptions;
 import com.ngc.seaside.jellyfish.api.IUsage;
@@ -34,6 +31,7 @@ import com.ngc.seaside.jellyfish.service.name.api.IPackageNamingService;
 import com.ngc.seaside.jellyfish.service.name.api.IProjectNamingService;
 import com.ngc.seaside.jellyfish.service.template.api.ITemplateService;
 import com.ngc.seaside.jellyfish.service.user.api.IJellyfishUserService;
+import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
 
@@ -42,14 +40,12 @@ public class CreateDomainCommandGuiceWrapper implements IJellyFishCommand {
    @Inject
    public CreateDomainCommandGuiceWrapper(ILogService logService,
                                           ITemplateService templateService,
-                                          IResourceService resourceService,
                                           IProjectNamingService projectNamingService,
                                           IPackageNamingService packageNamingService,
                                           IBuildManagementService buildManagementService,
                                           IJellyfishUserService jellyfishUserService) {
       delegate.setLogService(logService);
       delegate.setTemplateService(templateService);
-      delegate.setResourceService(resourceService);
       delegate.setProjectNamingService(projectNamingService);
       delegate.setPackageNamingService(packageNamingService);
       delegate.setBuildManagementService(buildManagementService);

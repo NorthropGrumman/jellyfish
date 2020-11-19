@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+@Deprecated
 public class TemporaryFileResource implements ITemporaryFileResource {
 
    private final URL url;
