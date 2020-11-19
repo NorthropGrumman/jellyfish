@@ -84,15 +84,10 @@ allprojects {
    plugins.withId('com.ngc.seaside.repository') {
       ext {
            nexusConsolidated = 'https://repo1.maven.org/maven2/'
-           nexusUsername = 'foo'
-           nexusPassword = 'bar'
-		   nexusSnapshots = nexusConsolidated
-		   nexusReleases = nexusConsolidated
+           nexusUsername = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+           nexusPassword = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+		   nexusSnapshots = 'https://maven.pkg.github.com/northropgrumman/jellyfish'
+		   nexusReleases = 'https://maven.pkg.github.com/northropgrumman/jellyfish'
       }
-	  
-	  seasideRepository {
-	     snapshots { it.optional() }
-		 releases { it.optional() }
-	  }
    }
 }
