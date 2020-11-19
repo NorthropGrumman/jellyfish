@@ -30,7 +30,6 @@ eclipseDistribution {
    windowsVersion = 'eclipse-dsl-photon-R-win32-x86_64'
    linuxDownloadUrl = "https://mirror.umd.edu/eclipse/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-linux-gtk-x86_64.tar.gz"
    windowsDownloadUrl = "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/photon/R/eclipse-dsl-photon-R-win32-x86_64.zip"
-   //enablePluginsRepository()
 }
 
 def licenseText = project.resources.text.fromFile(licenseFile).asString()
