@@ -22,11 +22,26 @@
  */
 package com.ngc.seaside.jellyfish;
 
-import org.apache.logging.log4j.LogManager;
+import java.nio.file.Path;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+
+import com.ngc.seaside.jellyfish.api.JellyfishHome;
 import com.ngc.seaside.systemdescriptor.service.log.api.ILogService;
 
 public class Log4J2LogService implements ILogService {
+
+    public Log4J2LogService() {
+        this(true);
+    }
+
+    private Log4J2LogService(boolean resetLog4JConfig) {
+        if (resetLog4JConfig) {
+            Path logConfig = JellyfishHome.get().resolve("resources/config/common/log4j2.xml");
+            ((LoggerContext) LogManager.getContext(false)).setConfigLocation(logConfig.toUri());
+        }
+    }
 
     @Override
     public void error(Class<?> clazz, Object message) {
@@ -143,4 +158,7 @@ public class Log4J2LogService implements ILogService {
         return LogManager.getLogger(clazz).isTraceEnabled();
     }
 
+    public static ILogService withoutDefaultLog4jConfig() {
+        return new Log4J2LogService(false);
+    }
 }

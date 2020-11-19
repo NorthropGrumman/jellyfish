@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.ngc.seaside.jellyfish.service.impl.templateservice;
+package com.ngc.seaside.jellyfish.api;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

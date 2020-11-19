@@ -45,6 +45,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.ngc.seaside.jellyfish.api.IParameterCollection;
+import com.ngc.seaside.jellyfish.api.JellyfishHome;
 import com.ngc.seaside.jellyfish.service.promptuser.api.IPromptUserService;
 import com.ngc.seaside.jellyfish.service.property.api.IProperties;
 import com.ngc.seaside.jellyfish.service.property.api.IPropertyService;

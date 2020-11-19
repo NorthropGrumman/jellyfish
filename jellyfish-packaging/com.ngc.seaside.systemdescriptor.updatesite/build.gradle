@@ -133,7 +133,7 @@ eclipseUpdateSite {
    
    def externalUpdateSites = [
       //'https://cucumber.io/cucumber-eclipse/update-site',                 // Cucumber - really slow
-      'https://nodeclipse.github.io/updates/markdown',                    // Markdown editor
+      //'https://nodeclipse.github.io/updates/markdown',                    // Markdown editor
       // 'https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite' // Markdown git viewer - really slow
    ]
 
