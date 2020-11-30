@@ -32,3 +32,6 @@ build/
 # Jekyll
 docs/_site/
 docs/Gemfile.lock 
+
+# VS Code
+.vscode/
