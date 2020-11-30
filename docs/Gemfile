@@ -20,4 +20,6 @@
 #  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 source "https://rubygems.org"
-gem "jekyll", "~> 3.7"
+gem "jekyll", ">= 3.7"
+gem "kramdown", ">= 2.3.0"
+
