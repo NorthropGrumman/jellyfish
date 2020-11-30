@@ -1,6 +1,6 @@
 # Jellyfish Docs
 This is the GitHub Pages site for the Jellyfish documentation and books.  The site is hosted at
-[https://pages.github.ms.northgrum.com/CEACIDE/jellyfish](https://pages.github.ms.northgrum.com/CEACIDE/jellyfish).
+[https://northropgrumman.github.io/jellyfish/index.html](https://northropgrumman.github.io/jellyfish/index.html).
 
 # Building and Serving the Site with Jekyll
 It's possible to host this site with a local instance of Jekyll.  This is useful for offline deployments and testing.
