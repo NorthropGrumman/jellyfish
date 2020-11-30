@@ -90,4 +90,6 @@ allprojects {
 		   nexusReleases = 'https://maven.pkg.github.com/northropgrumman/jellyfish'
       }
    }
+   
+   task dependenciesReport(type: DependencyReportTask) {}
 }
