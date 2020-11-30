@@ -138,7 +138,7 @@ com.ngc.seaside.systemdescriptor.validation.impl.mymodel.module.ExampleModelVali
 
 Always export the package that contains the module.
 
-See http://10.207.42.42:8080/display/SEAS/JellyFish+-+How+to+extend+JellyFish#JellyFish-HowtoextendJellyFish-CreatingnewvalidationrulesfortheSystemDescriptor
+See https://northropgrumman.github.io/jellyfish/books/jellyfish-user-guide/creating-a-custom-model-validator.html
 for a complete tutorial.
 
 # Creating Custom Scenario Step Handlers

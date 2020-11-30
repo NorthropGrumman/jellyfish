@@ -19,14 +19,10 @@ Various types of analysis can be executed.  Below is a summary of these analysis
 
 ## analyze-style
 This analysis checks that elements in System Descriptor projects conform to standard naming conventions and project
-layout. This command has several advanced parameters for changing the default naming conventions. See
-[Ch. 5 Follow the standard project structure and naming conventions](http://10.166.134.55/confluence/display/SEAS/Ch.+5+Follow+the+standard+project+structure+and+naming+conventions)
-for details
+layout. This command has several advanced parameters for changing the default naming conventions. 
 
 ## analyze-inputs-outputs 
-This analysis checks that models have at least one output.  See
-[Ch. 1 Avoid components that have inputs but no outputs](http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs)
-for details
+This analysis checks that models have at least one output.  
 
 ## analyze-budgets
 This analysis can check various "budgets" that are applied to models.  Users can declare 'Budget' properties on top 

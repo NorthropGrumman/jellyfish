@@ -7,14 +7,14 @@ This is an Eclipse XText project which defines the System Descriptor language an
 
 # Installation and Setup with Eclipse
 Installation requires Eclipse and the update site.  Download Eclipse from the links below.  You can download the update 
-site from [Releases](https://github.ms.northgrum.com/CEACIDE/jellyfish/releases).  Unzip the update site to any location
+site from [Releases](https://github.com/NorthropGrumman/jellyfish/releases).  Unzip the update site to any location
 you want.
 
-See [Ch. 2 Installation and Setup](https://pages.github.ms.northgrum.com/CEACIDE/jellyfish/books/modeling-with-the-system-descriptor/installation-and-setup.html)
+See [Ch. 2 Installation and Setup](https://northropgrumman.github.io/jellyfish/books/modeling-with-the-system-descriptor/installation-and-setup.html)
 for help with installation and setup.
 
 # Creating a New System Descriptor Project
-[Ch. 2 Installation and Setup](https://pages.github.ms.northgrum.com/CEACIDE/jellyfish/books/modeling-with-the-system-descriptor/installation-and-setup.html)
+[Ch. 2 Installation and Setup](https://northropgrumman.github.io/jellyfish/books/modeling-with-the-system-descriptor/installation-and-setup.html)
 also contains information about creating a new project.
 
 # Building the Project
@@ -25,7 +25,7 @@ the repository.  Since the Gradle wrapper is used, Gradle will download itself.
 ```
 This will build project and run the tests.  The update site can be creating by building the subproject
 `com.ngc.seaside.systemdescriptor.updatesite` inside the
-[jellyfish-packaging](https://github.ms.northgrum.com/CEACIDE/jellyfish/tree/master/jellyfish-packaging)
+[jellyfish-packaging](https://github.com/NorthropGrumman/jellyfish/tree/master/jellyfish-packaging)
 project.
 
 # Importing the Project with Eclipse
