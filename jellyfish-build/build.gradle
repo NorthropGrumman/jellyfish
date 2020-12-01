@@ -121,4 +121,15 @@ task prepare(type: Copy) {
 
 }
 
-build.dependsOn(populateCache, unzipEclipse)
+task untarEclipse(type: Copy) {
+    dependsOn downloadEclipse
+    from { tarTree(resources.gzip(eclipseDistribution.archive)) }
+    into eclipseDistribution.distributionDirectory
+    eachFile { file ->
+        if (file.name == 'eclipse') {
+            file.mode = 493
+        }
+    }
+}
+
+build.dependsOn(populateCache, untarEclipse)
