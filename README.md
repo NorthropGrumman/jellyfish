@@ -1,5 +1,5 @@
 # Jellyfish
-Jellyfish is a product suite for the System Descriptor (SD) which is a Architecture-as-Code construct modeled after the
+Jellyfish is a product suite for the System Descriptor (SD) which is an Architecture-as-Code construct modeled after the
 DevOps Infrastructure-as-Code paradigm.  Jellyfish is made up of several components:
 
 ## jellyfish-systemdescriptor-dsl
