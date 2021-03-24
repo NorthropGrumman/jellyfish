@@ -31,8 +31,7 @@ import com.ngc.seaside.systemdescriptor.model.api.model.IModel;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 
 /**
- * An analysis that checks for models which contain inputs but no outputs.  See
- * http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs for details.
+ * An analysis that checks for models which contain inputs but no outputs. 
  */
 public class AnalyzeInputsOutputsCommand extends AbstractJellyfishAnalysisCommand {
 

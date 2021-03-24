@@ -59,8 +59,7 @@ import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocation;
 import com.ngc.seaside.systemdescriptor.service.source.api.ISourceLocatorService;
 
 /**
- * An analysis that checks that System Descriptor types follow standard naming conventions. See
- * http://10.166.134.55/confluence/display/SEAS/Ch.+1+Avoid+components+that+have+inputs+but+no+outputs for details.
+ * An analysis that checks that System Descriptor types follow standard naming conventions. 
  */
 public class AnalyzeStyleCommand extends AbstractJellyfishAnalysisCommand {
 
