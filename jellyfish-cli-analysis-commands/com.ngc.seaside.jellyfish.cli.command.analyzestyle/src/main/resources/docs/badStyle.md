@@ -11,5 +11,3 @@ The default conventions are:
 
 These default conventions may not be applicable if your team or program has established a different convention.
 
-See [Follow the standard project structure and naming conventions](http://10.166.134.55/confluence/display/SEAS/Ch.+5+Follow+the+standard+project+structure+and+naming+conventions)
-for more information.

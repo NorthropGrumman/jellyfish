@@ -42,7 +42,7 @@ model FooService {
 	
 	scenario calculateFooness {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Engagement+Status+Calculation" }
+			"see": {"url": "http://localhost" }
 		}
 
 		when receiving fooStatus

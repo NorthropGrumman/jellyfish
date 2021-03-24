@@ -52,7 +52,7 @@ model TrackPriorityService {
 	
 	scenario calculateConsolidatedTrackPriority {
 		metadata {
-			"see": {"url": "http://10.207.42.43/confluence/display/SEAS/Track+Priority+Consolidation" } // TODO: need to find a way to stamp a version
+			"see": {"url": "http://localhost" } // TODO: need to find a way to stamp a version
 		}
 		when receiving trackPriority
 		then willCorrelate trackPriority.header.correlationEventId to prioritizedSystemTracks.header.correlationEventId

@@ -9,5 +9,3 @@ The standard folder structure for a System Descriptor project includes the follo
     the aforementioned `ExampleModel` should be located at
     `<project-folder>/src/test/gherkin/com/example/test/ExampleModel.exampleScenario.feature`
 
-See [Follow the standard project structure and naming conventions](http://10.166.134.55/confluence/display/SEAS/Ch.+5+Follow+the+standard+project+structure+and+naming+conventions)
-for more information.
