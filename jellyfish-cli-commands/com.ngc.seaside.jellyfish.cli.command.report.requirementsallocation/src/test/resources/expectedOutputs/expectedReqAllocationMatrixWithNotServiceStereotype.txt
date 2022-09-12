@@ -1,4 +1,0 @@
-| Req    | ModelReqsInMetadataOfScenario |
-| REQ001 |               X               |
-| REQ003 |               X               |
-| REQ007 |               X               |
