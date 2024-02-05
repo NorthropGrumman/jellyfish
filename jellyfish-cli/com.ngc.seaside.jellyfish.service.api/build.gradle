@@ -21,16 +21,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 dependencies {
-   api project(':jellyfish.api')
-   api "com.ngc.seaside:systemdescriptor.model.api:$version"
-   api "com.ngc.seaside:systemdescriptor.service.api:$version"
-   api "com.google.inject:guice:$guiceVersion"
+    // Use project dependencies for internal modules.
+    api project(':jellyfish.api')
+    
+    api "com.ngc.seaside:systemdescriptor.model.api:${version}"
+    api "com.ngc.seaside:systemdescriptor.service.api:${version}"
+    api "com.google.inject:guice:${guiceVersion}"
 }
 
 jar {
-   manifest {
-      // Bnd instructions to export the api package.
-      attributes('Export-Package': 'com.ngc.seaside.jellyfish.service.*')
-   }
+    // Configure the JAR manifest to export specific packages.
+    manifest {
+        // Use a map to define manifest attributes
+        attributes 'Export-Package': 'com.ngc.seaside.jellyfish.service.*'
+    }
 }
-
