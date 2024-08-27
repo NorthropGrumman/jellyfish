@@ -1,27 +1,24 @@
 #!/usr/bin/env bash
 
-set -e -u -x
+set -euo pipefail
 
-if [ $# -eq 0 ]
-then
-  params='clean build publishToMavenLocal'
-else
-  params="$@"
-fi
+params=${*:-'clean build publishToMavenLocal'}
 
-echo "Using build parameters to '$params'"
+echo "Using build parameters: '$params'"
 
-cd ./jellyfish-systemdescriptor-dsl \
-&& ../gradlew $params \
-&& cd ../jellyfish-systemdescriptor \
-&& ../gradlew $params \
-&& cd ../jellyfish-cli \
-&& ../gradlew $params \
-&& cd ../jellyfish-cli-commands \
-&& ../gradlew $params \
-&& cd ../jellyfish-cli-analysis-commands \
-&& ../gradlew $params \
-&& cd ../jellyfish-packaging \
-&& ../gradlew $params \
-&& cd ../jellyfish-systemdescriptor-lang \
-&& ../gradlew $params
+directories=(
+    "jellyfish-systemdescriptor-dsl"
+    "jellyfish-systemdescriptor"
+    "jellyfish-cli"
+    "jellyfish-cli-commands"
+    "jellyfish-cli-analysis-commands"
+    "jellyfish-packaging"
+    "jellyfish-systemdescriptor-lang"
+)
+
+for dir in "${directories[@]}"; do
+    (
+        cd "$dir"
+        ../gradlew $params
+    )
+done
